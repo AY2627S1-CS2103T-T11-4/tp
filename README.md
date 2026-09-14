@@ -1,3 +1,9 @@
+# BrotherGym
+BrotherGym helps gym trainers manage their students and allows them to plan and track the workouts of their students.
+It is optimised for CLI users so that frequent tasks can be done faster by typing in commands.
+
+## Existing AB3 Docs
+
 [![CI Status](https://github.com/se-edu/addressbook-level3/workflows/Java%20CI/badge.svg)](https://github.com/se-edu/addressbook-level3/actions)
 
 ![Ui](docs/images/Ui.png)
