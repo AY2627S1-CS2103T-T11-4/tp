@@ -4,7 +4,7 @@ It is optimised for CLI users so that frequent tasks can be done faster by typin
 
 ## Existing AB3 Docs
 
-[![CI Status](https://github.com/se-edu/addressbook-level3/workflows/Java%20CI/badge.svg)](https://github.com/se-edu/addressbook-level3/actions)
+[![CI Status](https://github.com/se-edu/addressbook-level3/workflows/Java%20CI/badge.svg)](https://github.com/se-edu/addressbook-level3/actions) [![codecov](https://codecov.io/gh/AY2627S1-CS2103T-T11-4/tp/graph/badge.svg?token=Q26D0A8JBU)](https://codecov.io/gh/AY2627S1-CS2103T-T11-4/tp)
 
 ![Ui](docs/images/Ui.png)
 
