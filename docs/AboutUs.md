@@ -59,13 +59,3 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 * Role: Developer
 * Responsibilities: UI
-
-### He Ziyang
-
-<img src="images/idkwattoput-689.png" width="200px">
-
-[[github](https://github.com/idkwattoput-689)]
-
-* Role: Developer
-* Responsibilities: Logic/Parser
-
