@@ -326,10 +326,20 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 ### Non-Functional Requirements
 
 1.  Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
-2.  Should be able to hold up to 1000 persons without noticeable sluggishness in performance for typical usage.
-3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-
-*{More to be added}*
+2.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
+3.  The application should support at least 1,000 students and 10,000 workout records on a typical modern computer.
+4.  Common commands should complete within 2 seconds during typical usage.
+5.  Student and workout data should be stored locally and should not be transmitted to external services by the application.
+6.  Successfully completed changes to student and workout records should be saved automatically and remain recoverable from the local data file after a normal application restart.
+7.  Invalid commands should display a clear error message without causing the application to crash or terminate unexpectedly.
+8.  Commands should follow a consistent syntax and provide consistent feedback when they succeed or fail.
+9.  New workout types and workout-planning features should be addable without requiring major changes to existing student-management features.
+10. Core student-management and workout-tracking functions should work without an Internet connection.
+11. The application should be distributable as a JAR file and should not require additional services to launch.
+12. Core application logic should be sufficiently modular to support automated unit and integration testing.
+13. Invalid student or workout data should be rejected without corrupting or unintentionally modifying existing records.
+14. The application should launch within 5 seconds when using a data file containing up to 1,000 students and 10,000 workout records.
+15. Student and workout information should be displayed in a clear and readable format so that trainers can identify relevant records quickly.
 
 ### Glossary
 
