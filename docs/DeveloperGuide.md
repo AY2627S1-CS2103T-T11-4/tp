@@ -283,16 +283,18 @@ A gym trainer who wants to plan & track the workouts of his student. He wants to
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …                                    | I want to …                 | So that I can…  |                                                                                           
-|----------|--------------------------------------------|------------------------------|------------------------------------------------------------------------|
 **Student management**
 
+| Priority | As a ... | I want to ... | So that I can... |
+|----------|----------|---------------|------------------|
 | `* * *`  | gym trainer | add my student's contact number to the address book | keep their contact information accessible |
-| `* * *`  | gym trainer with multiple students| hold multiple contact numbers in my address book | keep track of all my students' contact information |
+| `* * *`  | gym trainer with multiple students | hold multiple contact numbers in my address book | keep track of all my students' contact information |
 | `* * *`  | gym trainer | remove a student's record from the address book | clear up space in the address book |
 
 **Workout planning**
 
+| Priority | As a ... | I want to ... | So that I can... |
+|----------|----------|---------------|------------------|
 | `* * *`  | gym trainer | store different types of workout plans per student | ensure each workout can focus on a different muscle group |
 | `* * *`  | gym trainer | add different workouts to each workout plan | ensure that workout sessions are customised for each student |
 | `* * *`  | gym trainer | view all the workout plans for each student | pick which plan to follow during the student's next session |
