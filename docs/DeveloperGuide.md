@@ -268,31 +268,36 @@ _{Explain here how the data archiving feature will be implemented}_
 
 ### Product scope
 
-**Target user profile**:
-
+**Target user profile**: 
+* Gym trainers who want to keep track of students and their workouts
 * has a need to manage a significant number of contacts
 * prefers desktop apps over other types of applications
 * can type fast
 * prefers typing to mouse interactions
 * is reasonably comfortable using CLI apps
 
-**Value proposition**: Manage contacts faster than with a typical mouse-driven GUI application.
-
+**Value proposition**: 
+A gym trainer who wants to plan & track the workouts of his student. He wants to plan the workout split of his students, selecting exercises from different muscle groups personalised to each student. Afterwards, while the student goes to the gym, the trainer can log the actual reps that student has done, tracking his--her sets, reps, rest time and weights for progressive overload.
 
 ### User stories
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …                                    | I want to …                 | So that I can…                                                        |
-|----------|--------------------------------------------|------------------------------|------------------------------------------------------------------------|
-| `* * *`  | new user                                   | see usage instructions       | refer to instructions when I forget how to use the App                 |
-| `* * *`  | user                                       | add a new person             |                                                                        |
-| `* * *`  | user                                       | delete a person              | remove entries that I no longer need                                   |
-| `* * *`  | user                                       | find a person by name        | locate details of persons without having to go through the entire list |
-| `* *`    | user                                       | hide private contact details | minimize chance of someone else seeing them by accident                |
-| `*`      | user with many persons in the address book | sort persons by name         | locate a person easily                                                 |
+**Student management**
 
-*{More to be added}*
+| Priority | As a ... | I want to ... | So that I can... |
+|----------|----------|---------------|------------------|
+| `* * *`  | gym trainer | add my student's contact number to the address book | keep their contact information accessible |
+| `* * *`  | gym trainer with multiple students | hold multiple contact numbers in my address book | keep track of all my students' contact information |
+| `* * *`  | gym trainer | remove a student's record from the address book | clear up space in the address book |
+
+**Workout planning**
+
+| Priority | As a ... | I want to ... | So that I can... |
+|----------|----------|---------------|------------------|
+| `* * *`  | gym trainer | store different types of workout plans per student | ensure each workout can focus on a different muscle group |
+| `* * *`  | gym trainer | add different workouts to each workout plan | ensure that workout sessions are customised for each student |
+| `* * *`  | gym trainer | view all the workout plans for each student | pick which plan to follow during the student's next session |
 
 ### Use cases
 
