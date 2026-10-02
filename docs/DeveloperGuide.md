@@ -296,32 +296,154 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
+Note: For all use cases below, the **Software System** is BrotherGym and the **Actor** is a Gym Trainer.
 
-**Use case: Delete a person**
+| ID | Use case |
+|----|----------|
+| U1 | [Add a student](#add-a-student) |
+| U2 | [View all students](#view-all-students) |
+| U3 | [Delete a student](#delete-a-student) |
+| U4 | [View workout plans for a specific student](#view-workout-plans-for-a-specific-student) |
+| U5 | [Add a workout plan](#add-a-workout-plan) |
+| U6 | [Remove a workout plan](#remove-a-workout-plan) |
+| U7 | [View exercises of a workout plan](#view-exercises-of-a-workout-plan) |
 
-**MSS**
+### Add a student
 
-1.  User requests to list persons
-2.  AddressBook shows a list of persons
-3.  User requests to delete a specific person in the list
-4.  AddressBook deletes the person
+Use case: U1 - Add a student
 
-    Use case ends.
+**MSS:**
 
-**Extensions**
+1. Trainer <u>views all students (U2)</u>.
+2. Trainer requests to add a new student, providing the student's name and handphone number.
+3. BrotherGym adds the student.
+4. BrotherGym displays a success message.
+5. BrotherGym displays the updated list of students.
 
-* 2a. The list is empty.
+   Use case ends.
 
-  Use case ends.
+**Extensions:**
 
-* 3a. The given index is invalid.
+* 2a. Trainer provides student details in an invalid format.
+  * 2a1. BrotherGym displays an error message.
 
-    * 3a1. AddressBook shows an error message.
+    Use case resumes at step 2.
+* 2b. The student already exists in BrotherGym.
+  * 2b1. BrotherGym displays an error message.
 
-      Use case resumes at step 2.
+    Use case resumes at step 2.
 
-*{More to be added}*
+### View all students
+
+Use case: U2 - View all students
+
+**MSS:**
+
+1. Trainer requests to view all students.
+2. BrotherGym displays all students in the system.
+
+   Use case ends.
+
+### Delete a student
+
+Use case: U3 - Delete a student
+
+**MSS:**
+
+1. Trainer <u>views all students (U2)</u>.
+2. Trainer requests to delete a selected student.
+3. BrotherGym deletes the student.
+4. BrotherGym displays a success message.
+5. BrotherGym displays the updated list of students.
+
+   Use case ends.
+
+**Extensions:**
+
+* 2a. Trainer selects an invalid student.
+  * 2a1. BrotherGym displays an error message.
+
+    Use case resumes at step 2.
+
+### View workout plans for a specific student
+
+Use case: U4 - View workout plans for a specific student
+
+**MSS:**
+
+1. Trainer <u>views all students (U2)</u>.
+2. Trainer selects a specific student.
+3. BrotherGym displays all workout plans assigned to the student.
+
+   Use case ends.
+
+**Extensions:**
+
+* 2a. Trainer selects an invalid student.
+  * 2a1. BrotherGym displays an error message.
+
+    Use case resumes at step 2.
+
+### Add a workout plan
+
+Use case: U5 - Add a workout plan
+
+**MSS:**
+
+1. Trainer <u>views workout plans for a specific student (U4)</u>.
+2. Trainer requests to add a workout plan for the student, providing its name, description, and date.
+3. BrotherGym assigns the workout plan to the student.
+4. BrotherGym displays a success message.
+5. BrotherGym displays the student's updated workout plans.
+
+   Use case ends.
+
+**Extensions:**
+
+* 2a. Trainer provides invalid workout plan information.
+  * 2a1. BrotherGym displays an error message.
+
+    Use case resumes at step 2.
+
+### Remove a workout plan
+
+Use case: U6 - Remove a workout plan
+
+**MSS:**
+
+1. Trainer <u>views workout plans for a specific student (U4)</u>.
+2. Trainer chooses a workout plan to remove.
+3. BrotherGym removes the selected workout plan.
+4. BrotherGym displays a success message.
+5. BrotherGym displays the student's updated workout plans.
+
+   Use case ends.
+
+**Extensions:**
+
+* 2a. Trainer selects an invalid workout plan.
+  * 2a1. BrotherGym displays an error message.
+
+    Use case resumes at step 2.
+
+### View exercises of a workout plan
+
+Use case: U7 - View exercises of a workout plan
+
+**MSS:**
+
+1. Trainer <u>views workout plans for a specific student (U4)</u>.
+2. Trainer selects a workout plan belonging to the student.
+3. BrotherGym displays information about the exercises in the selected workout plan.
+
+   Use case ends.
+
+**Extensions:**
+
+* 2a. Trainer selects an invalid workout plan.
+  * 2a1. BrotherGym displays an error message.
+
+    Use case resumes at step 2.
 
 ### Non-Functional Requirements
 
