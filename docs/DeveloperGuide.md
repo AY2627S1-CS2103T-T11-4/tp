@@ -471,7 +471,16 @@ Use case: U7 - View exercises of a workout plan
 ### Glossary
 
 * **Mainstream OS**: Windows, Linux, Unix, or macOS
-* **Private contact detail**: A contact detail that is not meant to be shared with others
+* **Trainer**: The user who manages students’ workout plans and records their workout progress.
+* **Student**: A person whose workouts are planned and tracked by a trainer.
+* **Workout plan**: A prescribed set of exercises and targets prepared for a student.
+* **Workout session**: A specific occasion on which a student carries out a workout plan and their progress may be recorded.
+* **Exercise**: A physical activity within a workout plan, such as a bench press.
+* **Set**: A group of consecutive repetitions of an exercise.
+* **Repetition (rep)**: One complete performance of an exercise movement.
+* **Weight**: The resistance prescribed or recorded for an exercise, in kilograms.
+* **Student ID**: The positive integer used to identify a student within BrotherGym.
+* **Workout plan ID**: The positive integer used to identify a workout plan belonging to a student.
 
 --------------------------------------------------------------------------------------------------------------------
 
