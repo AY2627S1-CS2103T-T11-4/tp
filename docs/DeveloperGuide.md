@@ -284,7 +284,7 @@ A gym trainer who wants to plan & track the workouts of his student. He wants to
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
 | Priority | As a …                                    | I want to …                 | So that I can…  |                                                                                           
-
+|----------|--------------------------------------------|------------------------------|------------------------------------------------------------------------|
 **Student management**
 
 | `* * *`  | gym trainer | add my student's contact number to the address book | keep their contact information accessible |
