@@ -465,6 +465,7 @@ Use case: U7 - View exercises of a workout plan
 
 ### Glossary
 
+* **Mainstream OS**: Windows, Linux, Unix, or macOS
 * **Trainer**: The user who manages students’ workout plans and records their workout progress.
 * **Student**: A person whose workouts are planned and tracked by a trainer.
 * **Workout plan**: A prescribed set of exercises and targets prepared for a student.
