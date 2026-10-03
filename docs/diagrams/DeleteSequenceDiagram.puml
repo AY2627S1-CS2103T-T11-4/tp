@@ -4,9 +4,9 @@ skinparam ArrowFontStyle plain
 
 box Logic LOGIC_COLOR_T1
 participant ":LogicManager" as LogicManager LOGIC_COLOR
-participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
-participant ":DeleteCommandParser" as DeleteCommandParser LOGIC_COLOR
-participant "d:DeleteCommand" as DeleteCommand LOGIC_COLOR
+participant ":BrotherGymParser" as BrotherGymParser LOGIC_COLOR
+participant ":DeleteStudentCommandParser" as DeleteStudentCommandParser LOGIC_COLOR
+participant "d:DeleteStudentCommand" as DeleteStudentCommand LOGIC_COLOR
 participant "r:CommandResult" as CommandResult LOGIC_COLOR
 end box
 
@@ -17,53 +17,53 @@ end box
 [-> LogicManager : execute("delete 1")
 activate LogicManager
 
-LogicManager -> AddressBookParser : parseCommand("delete 1")
-activate AddressBookParser
+LogicManager -> BrotherGymParser : parseCommand("delete 1")
+activate BrotherGymParser
 
-create DeleteCommandParser
-AddressBookParser -> DeleteCommandParser
-activate DeleteCommandParser
+create DeleteStudentCommandParser
+BrotherGymParser -> DeleteStudentCommandParser
+activate DeleteStudentCommandParser
 
-DeleteCommandParser --> AddressBookParser
-deactivate DeleteCommandParser
+DeleteStudentCommandParser --> BrotherGymParser
+deactivate DeleteStudentCommandParser
 
-AddressBookParser -> DeleteCommandParser : parse("1")
-activate DeleteCommandParser
+BrotherGymParser -> DeleteStudentCommandParser : parse("1")
+activate DeleteStudentCommandParser
 
-create DeleteCommand
-DeleteCommandParser -> DeleteCommand
-activate DeleteCommand
+create DeleteStudentCommand
+DeleteStudentCommandParser -> DeleteStudentCommand
+activate DeleteStudentCommand
 
-DeleteCommand --> DeleteCommandParser :
-deactivate DeleteCommand
+DeleteStudentCommand --> DeleteStudentCommandParser :
+deactivate DeleteStudentCommand
 
-DeleteCommandParser --> AddressBookParser : d
-deactivate DeleteCommandParser
+DeleteStudentCommandParser --> BrotherGymParser : d
+deactivate DeleteStudentCommandParser
 'Hidden arrow to position the destroy marker below the end of the activation bar.
-DeleteCommandParser -[hidden]-> AddressBookParser
-destroy DeleteCommandParser
+DeleteStudentCommandParser -[hidden]-> BrotherGymParser
+destroy DeleteStudentCommandParser
 
-AddressBookParser --> LogicManager : d
-deactivate AddressBookParser
+BrotherGymParser --> LogicManager : d
+deactivate BrotherGymParser
 
-LogicManager -> DeleteCommand : execute(m)
-activate DeleteCommand
+LogicManager -> DeleteStudentCommand : execute(m)
+activate DeleteStudentCommand
 
-DeleteCommand -> Model : deleteStudent(1)
+DeleteStudentCommand -> Model : deleteStudent(1)
 activate Model
 
-Model --> DeleteCommand
+Model --> DeleteStudentCommand
 deactivate Model
 
 create CommandResult
-DeleteCommand -> CommandResult
+DeleteStudentCommand -> CommandResult
 activate CommandResult
 
-CommandResult --> DeleteCommand
+CommandResult --> DeleteStudentCommand
 deactivate CommandResult
 
-DeleteCommand --> LogicManager : r
-deactivate DeleteCommand
+DeleteStudentCommand --> LogicManager : r
+deactivate DeleteStudentCommand
 
 [<--LogicManager
 deactivate LogicManager
