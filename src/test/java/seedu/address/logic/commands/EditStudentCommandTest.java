@@ -13,14 +13,14 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.logic.commands.CommandTestUtil.showStudentAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
-import static seedu.address.testutil.TypicalStudents.getTypicalAddressBook;
+import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
-import seedu.address.model.AddressBook;
+import seedu.address.model.BrotherGym;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -33,7 +33,7 @@ import seedu.address.testutil.StudentBuilder;
  */
 public class EditStudentCommandTest {
 
-    private Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    private Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
 
     @Test
     public void execute_allFieldsSpecifiedUnfilteredList_success() {
@@ -43,7 +43,7 @@ public class EditStudentCommandTest {
 
         String expectedMessage = String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS, Messages.format(editedStudent));
 
-        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        Model expectedModel = new ModelManager(new BrotherGym(model.getBrotherGym()), new UserPrefs());
         expectedModel.setStudent(model.getFilteredStudentList().get(0), editedStudent);
 
         assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
@@ -64,7 +64,7 @@ public class EditStudentCommandTest {
 
         String expectedMessage = String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS, Messages.format(editedStudent));
 
-        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        Model expectedModel = new ModelManager(new BrotherGym(model.getBrotherGym()), new UserPrefs());
         expectedModel.setStudent(lastStudent, editedStudent);
 
         assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
@@ -77,7 +77,7 @@ public class EditStudentCommandTest {
 
         String expectedMessage = String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS, Messages.format(editedStudent));
 
-        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        Model expectedModel = new ModelManager(new BrotherGym(model.getBrotherGym()), new UserPrefs());
 
         assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
     }
@@ -93,7 +93,7 @@ public class EditStudentCommandTest {
 
         String expectedMessage = String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS, Messages.format(editedStudent));
 
-        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        Model expectedModel = new ModelManager(new BrotherGym(model.getBrotherGym()), new UserPrefs());
         expectedModel.setStudent(model.getFilteredStudentList().get(0), editedStudent);
 
         assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
@@ -112,8 +112,8 @@ public class EditStudentCommandTest {
     public void execute_duplicateStudentFilteredList_failure() {
         showStudentAtIndex(model, INDEX_FIRST_STUDENT);
 
-        // edit student in filtered list into a duplicate in address book
-        Student studentInList = model.getAddressBook().getStudentList().get(INDEX_SECOND_STUDENT.getZeroBased());
+        // edit student in filtered list into a duplicate in BrotherGym
+        Student studentInList = model.getBrotherGym().getStudentList().get(INDEX_SECOND_STUDENT.getZeroBased());
         EditStudentCommand editStudentCommand = new EditStudentCommand(INDEX_FIRST_STUDENT,
                 new EditStudentDescriptorBuilder(studentInList).build());
 
@@ -131,14 +131,14 @@ public class EditStudentCommandTest {
 
     /**
      * Edit filtered list where index is larger than size of filtered list,
-     * but smaller than size of address book
+     * but smaller than size of BrotherGym student list
      */
     @Test
     public void execute_invalidStudentIndexFilteredList_failure() {
         showStudentAtIndex(model, INDEX_FIRST_STUDENT);
         Index outOfBoundIndex = INDEX_SECOND_STUDENT;
-        // ensures that outOfBoundIndex is still in bounds of address book list
-        assertTrue(outOfBoundIndex.getZeroBased() < model.getAddressBook().getStudentList().size());
+        // ensures that outOfBoundIndex is still in bounds of BrotherGym student list
+        assertTrue(outOfBoundIndex.getZeroBased() < model.getBrotherGym().getStudentList().size());
 
         EditStudentCommand editStudentCommand = new EditStudentCommand(outOfBoundIndex,
                 new EditStudentDescriptorBuilder().withName(VALID_NAME_BOB).build());

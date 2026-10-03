@@ -7,7 +7,7 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalStudents.ALICE;
-import static seedu.address.testutil.TypicalStudents.getTypicalAddressBook;
+import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,25 +20,25 @@ import seedu.address.model.student.Student;
 import seedu.address.model.student.exceptions.DuplicateStudentException;
 import seedu.address.testutil.StudentBuilder;
 
-public class AddressBookTest {
+public class BrotherGymTest {
 
-    private final AddressBook addressBook = new AddressBook();
+    private final BrotherGym brotherGym = new BrotherGym();
 
     @Test
     public void constructor() {
-        assertEquals(List.of(), addressBook.getStudentList());
+        assertEquals(List.of(), brotherGym.getStudentList());
     }
 
     @Test
     public void resetData_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> addressBook.resetData(null));
+        assertThrows(NullPointerException.class, () -> brotherGym.resetData(null));
     }
 
     @Test
-    public void resetData_withValidReadOnlyAddressBook_replacesData() {
-        AddressBook newData = getTypicalAddressBook();
-        addressBook.resetData(newData);
-        assertEquals(newData, addressBook);
+    public void resetData_withValidReadOnlyBrotherGym_replacesData() {
+        BrotherGym newData = getTypicalBrotherGym();
+        brotherGym.resetData(newData);
+        assertEquals(newData, brotherGym);
     }
 
     @Test
@@ -48,54 +48,54 @@ public class AddressBookTest {
         Student editedAlice = new StudentBuilder(ALICE).withAddress(VALID_ADDRESS_BOB).withTags(VALID_TAG_HUSBAND)
                 .build();
         List<Student> newStudents = List.of(ALICE, editedAlice);
-        AddressBookStub newData = new AddressBookStub(newStudents);
+        BrotherGymStub newData = new BrotherGymStub(newStudents);
 
-        assertThrows(DuplicateStudentException.class, () -> addressBook.resetData(newData));
+        assertThrows(DuplicateStudentException.class, () -> brotherGym.resetData(newData));
     }
 
     @Test
     public void hasStudent_nullStudent_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> addressBook.hasStudent(null));
+        assertThrows(NullPointerException.class, () -> brotherGym.hasStudent(null));
     }
 
     @Test
-    public void hasStudent_studentNotInAddressBook_returnsFalse() {
-        assertFalse(addressBook.hasStudent(ALICE));
+    public void hasStudent_studentNotInBrotherGym_returnsFalse() {
+        assertFalse(brotherGym.hasStudent(ALICE));
     }
 
     @Test
-    public void hasStudent_studentInAddressBook_returnsTrue() {
-        addressBook.addStudent(ALICE);
-        assertTrue(addressBook.hasStudent(ALICE));
+    public void hasStudent_studentInBrotherGym_returnsTrue() {
+        brotherGym.addStudent(ALICE);
+        assertTrue(brotherGym.hasStudent(ALICE));
     }
 
     @Test
-    public void hasStudent_studentWithSameIdentityFieldsInAddressBook_returnsTrue() {
-        addressBook.addStudent(ALICE);
+    public void hasStudent_studentWithSameIdentityFieldsInBrotherGym_returnsTrue() {
+        brotherGym.addStudent(ALICE);
         Student editedAlice = new StudentBuilder(ALICE).withAddress(VALID_ADDRESS_BOB).withTags(VALID_TAG_HUSBAND)
                 .build();
-        assertTrue(addressBook.hasStudent(editedAlice));
+        assertTrue(brotherGym.hasStudent(editedAlice));
     }
 
     @Test
     public void getStudentList_modifyList_throwsUnsupportedOperationException() {
-        assertThrows(UnsupportedOperationException.class, () -> addressBook.getStudentList().remove(0));
+        assertThrows(UnsupportedOperationException.class, () -> brotherGym.getStudentList().remove(0));
     }
 
     @Test
     public void toStringMethod() {
-        String expected = AddressBook.class.getCanonicalName() + "{students=" + addressBook.getStudentList() + "}";
-        assertEquals(expected, addressBook.toString());
+        String expected = BrotherGym.class.getCanonicalName() + "{students=" + brotherGym.getStudentList() + "}";
+        assertEquals(expected, brotherGym.toString());
     }
 
     /**
-     * A stub ReadOnlyAddressBook whose student
+     * A stub ReadOnlyBrotherGym whose student
      * list can violate interface constraints.
      */
-    private static class AddressBookStub implements ReadOnlyAddressBook {
+    private static class BrotherGymStub implements ReadOnlyBrotherGym {
         private final ObservableList<Student> students = FXCollections.observableArrayList();
 
-        AddressBookStub(Collection<Student> students) {
+        BrotherGymStub(Collection<Student> students) {
             this.students.setAll(students);
         }
 

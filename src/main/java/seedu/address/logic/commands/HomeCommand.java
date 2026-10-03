@@ -6,7 +6,7 @@ import static seedu.address.model.Model.PREDICATE_SHOW_ALL_STUDENTS;
 import seedu.address.model.Model;
 
 /**
- * Lists all students in the address book to the user.
+ * Lists all students in the student list to the user.
  */
 public class HomeCommand extends Command {
 

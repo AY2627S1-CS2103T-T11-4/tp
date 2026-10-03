@@ -10,19 +10,19 @@ import seedu.address.model.student.Student;
 import seedu.address.model.student.UniqueStudentList;
 
 /**
- * Wraps all data at the address-book level.
+ * Wraps all data at the BrotherGym level.
  * Duplicates are not allowed (by .isSameStudent comparison).
  */
-public class AddressBook implements ReadOnlyAddressBook {
+public class BrotherGym implements ReadOnlyBrotherGym {
 
     private final UniqueStudentList students = new UniqueStudentList();
 
-    public AddressBook() {}
+    public BrotherGym() {}
 
     /**
-     * Creates an AddressBook using the Students in the {@code toBeCopied}
+     * Creates a BrotherGym model using the Students in the {@code toBeCopied}
      */
-    public AddressBook(ReadOnlyAddressBook toBeCopied) {
+    public BrotherGym(ReadOnlyBrotherGym toBeCopied) {
         this();
         resetData(toBeCopied);
     }
@@ -38,9 +38,9 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
-     * Resets the existing data of this {@code AddressBook} with {@code newData}.
+     * Resets the existing data of this {@code BrotherGym} with {@code newData}.
      */
-    public void resetData(ReadOnlyAddressBook newData) {
+    public void resetData(ReadOnlyBrotherGym newData) {
         requireNonNull(newData);
 
         setStudents(newData.getStudentList());
@@ -49,7 +49,7 @@ public class AddressBook implements ReadOnlyAddressBook {
     //// student-level operations
 
     /**
-     * Returns true if a student with the same identity as {@code student} exists in the address book.
+     * Returns true if a student with the same identity as {@code student} exists in the student list.
      */
     public boolean hasStudent(Student student) {
         requireNonNull(student);
@@ -57,8 +57,8 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
-     * Adds a student to the address book.
-     * The student must not already exist in the address book.
+     * Adds a student to the student list.
+     * The student must not already exist in the student list.
      */
     public void addStudent(Student p) {
         students.add(p);
@@ -66,8 +66,8 @@ public class AddressBook implements ReadOnlyAddressBook {
 
     /**
      * Replaces the given student {@code target} in the list with {@code editedStudent}.
-     * {@code target} must exist in the address book.
-     * The student identity of {@code editedStudent} must not be the same as another existing student in the address book.
+     * {@code target} must exist in the student list.
+     * The student identity of {@code editedStudent} must not be the same as another existing student in the student list.
      */
     public void setStudent(Student target, Student editedStudent) {
         requireNonNull(editedStudent);
@@ -76,8 +76,8 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
-     * Removes {@code key} from this {@code AddressBook}.
-     * {@code key} must exist in the address book.
+     * Removes {@code key} from this {@code BrotherGym}.
+     * {@code key} must exist in the student list.
      */
     public void removeStudent(Student key) {
         students.remove(key);
@@ -104,11 +104,11 @@ public class AddressBook implements ReadOnlyAddressBook {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof AddressBook otherAddressBook)) {
+        if (!(other instanceof BrotherGym otherBrotherGym)) {
             return false;
         }
 
-        return students.equals(otherAddressBook.students);
+        return students.equals(otherBrotherGym.students);
     }
 
     @Override
