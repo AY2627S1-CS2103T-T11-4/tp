@@ -31,7 +31,7 @@ import seedu.address.model.tag.Tag;
 /**
  * Edits the details of an existing student in the address book.
  */
-public class EditCommand extends Command {
+public class EditStudentCommand extends Command {
 
     public static final String COMMAND_WORD = "edit";
 
@@ -59,7 +59,7 @@ public class EditCommand extends Command {
      * @param index of the student in the filtered student list to edit
      * @param editStudentDescriptor details to edit the student with
      */
-    public EditCommand(Index index, EditStudentDescriptor editStudentDescriptor) {
+    public EditStudentCommand(Index index, EditStudentDescriptor editStudentDescriptor) {
         requireNonNull(index);
         requireNonNull(editStudentDescriptor);
 
@@ -111,12 +111,12 @@ public class EditCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof EditCommand otherEditCommand)) {
+        if (!(other instanceof EditStudentCommand otherEditStudentCommand)) {
             return false;
         }
 
-        return index.equals(otherEditCommand.index)
-                && editStudentDescriptor.equals(otherEditCommand.editStudentDescriptor);
+        return index.equals(otherEditStudentCommand.index)
+                && editStudentDescriptor.equals(otherEditStudentCommand.editStudentDescriptor);
     }
 
     @Override
