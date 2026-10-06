@@ -10,6 +10,7 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
 import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
@@ -34,6 +35,14 @@ public class ViewStudentCommandTest {
         Model expectedModel = new ModelManager(model.getBrotherGym(), new UserPrefs());
 
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
+    }
+
+    @Disabled("Enable after Backend adds WorkoutPlan test fixtures")
+    @Test
+    public void execute_validIndexWithWorkoutPlans_success() {
+        // Arrange: create a Student with one or more WorkoutPlan objects.
+        // Act: execute new ViewStudentCommand(INDEX_FIRST_STUDENT).
+        // Assert: the result contains the plan title and exercises.
     }
 
     @Test
