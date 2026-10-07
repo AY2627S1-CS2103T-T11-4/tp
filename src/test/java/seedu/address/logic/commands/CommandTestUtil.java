@@ -75,7 +75,6 @@ public class CommandTestUtil {
     public static final String INVALID_PLAN_DESC = " " + PREFIX_PLAN; // empty string not allowed for plan descriptions
     public static final String INVALID_DATE_DESC_LETTERS = " " + PREFIX_DATE + " dd102026"; // 'd' not allowed in date
     public static final String INVALID_DATE_DESC_LENGTH = " " + PREFIX_DATE + " 091026"; // date must be 8 chars long
-
     public static final String PREAMBLE_WHITESPACE = "\t  \r  \n";
     public static final String PREAMBLE_NON_EMPTY = "NonEmptyPreamble";
 
