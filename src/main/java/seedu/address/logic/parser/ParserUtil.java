@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.tag.Tag;
+import seedu.address.model.workoutplan.WorkoutDate;
 
 /**
  * Contains utility methods used for parsing strings in the various *Parser classes.
@@ -120,5 +122,24 @@ public class ParserUtil {
             tagSet.add(parseTag(tagName));
         }
         return tagSet;
+    }
+
+    /**
+     * Parses a {@code String date} into a {@code WorkoutDate}
+     *
+     * @throws ParseException if the given {@code date} is invalid
+     */
+    public static WorkoutDate parseDate(String date) throws ParseException {
+        requireNonNull(date);
+        if (!WorkoutDate.isValidDateString(date)) {
+            throw new ParseException(WorkoutDate.MESSAGE_CONSTRAINTS);
+        }
+        Date dateObject;
+        try {
+            dateObject = WorkoutDate.INPUT_FORMATTER.parse(date);
+        } catch (java.text.ParseException e) { // java ParseException != AB3 ParseException
+            throw new ParseException(WorkoutDate.MESSAGE_CONSTRAINTS);
+        }
+        return new WorkoutDate(dateObject);
     }
 }

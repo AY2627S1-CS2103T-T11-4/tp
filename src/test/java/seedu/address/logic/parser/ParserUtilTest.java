@@ -6,6 +6,8 @@ import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +38,8 @@ public class ParserUtilTest {
     private static final String VALID_TAG_1 = "friend";
     private static final String VALID_TAG_2 = "neighbour";
     private static final String VALID_DATE = "09102026";
-    private static final Date VALID_DATE_OBJECT = new Date(2026, 10, 9); // mirrors VALID_DATE
+    private static final Date VALID_DATE_OBJECT = Date.from(LocalDate.of(2026, 10, 9)
+            .atStartOfDay(ZoneId.systemDefault()).toInstant()); // mirrors VALID_DATE
 
     private static final String WHITESPACE = " \t\r\n";
 
@@ -209,7 +212,7 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseDate_validValue_returnsDate() {
+    public void parseDate_validValue_returnsDate() throws Exception {
         WorkoutDate expectedDate = new WorkoutDate(VALID_DATE_OBJECT);
         assertEquals(expectedDate, ParserUtil.parseDate(VALID_DATE));
     }
