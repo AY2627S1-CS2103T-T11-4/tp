@@ -16,6 +16,7 @@ import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutDate;
+import seedu.address.model.workoutplan.WorkoutDescription;
 
 /**
  * Contains utility methods used for parsing strings in the various *Parser classes.
@@ -122,6 +123,19 @@ public class ParserUtil {
             tagSet.add(parseTag(tagName));
         }
         return tagSet;
+    }
+
+    /**
+     * Parses a {@code String description} into a {@code WorkoutDescription}
+     *
+     * @throws ParseException if the given {@code description} is invalid
+     */
+    public static WorkoutDescription parseDescription(String desc) throws ParseException {
+        requireNonNull(desc);
+        if (!WorkoutDescription.isValidWorkoutDescription(desc)) {
+            throw new ParseException(WorkoutDescription.MESSAGE_CONSTRAINTS);
+        }
+        return new WorkoutDescription(desc);
     }
 
     /**

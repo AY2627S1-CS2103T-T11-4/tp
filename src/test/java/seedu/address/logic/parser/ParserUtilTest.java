@@ -21,13 +21,16 @@ import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutDate;
+import seedu.address.model.workoutplan.WorkoutDescription;
 
+@SuppressWarnings("checkstyle:Regexp")
 public class ParserUtilTest {
     private static final String INVALID_NAME = "R@chel";
     private static final String INVALID_PHONE = "+651234";
     private static final String INVALID_ADDRESS = " ";
     private static final String INVALID_EMAIL = "example.com";
     private static final String INVALID_TAG = "#friend";
+    private static final String INVALID_DESC = "";
     private static final String INVALID_DATE_CHARS = "dd102026";
     private static final String INVALID_DATE_LENGTH = "091026";
 
@@ -37,6 +40,7 @@ public class ParserUtilTest {
     private static final String VALID_EMAIL = "rachel@example.com";
     private static final String VALID_TAG_1 = "friend";
     private static final String VALID_TAG_2 = "neighbour";
+    private static final String VALID_DESC = "Shoulder Press 3x 80kg";
     private static final String VALID_DATE = "09102026";
     private static final Date VALID_DATE_OBJECT = Date.from(LocalDate.of(2026, 10, 9)
             .atStartOfDay(ZoneId.systemDefault()).toInstant()); // mirrors VALID_DATE
@@ -202,6 +206,17 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseDescription_invalidValue_throwsParseException() {
+        assertThrows(ParseException.class, () -> ParserUtil.parseDate(INVALID_DESC));
+    }
+
+    @Test
+    public void parseDescription_validValue_returnsWorkoutDescription() throws Exception {
+        WorkoutDescription expectedDesc = new WorkoutDescription(VALID_DESC);
+        assertEquals(expectedDesc, ParserUtil.parseDescription(VALID_DESC));
+    }
+
+    @Test
     public void parseDate_invalidValueChar_throwsParseException() {
         assertThrows(ParseException.class, () -> ParserUtil.parseDate(INVALID_DATE_CHARS));
     }
@@ -212,7 +227,7 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseDate_validValue_returnsDate() throws Exception {
+    public void parseDate_validValue_returnsWorkoutDate() throws Exception {
         WorkoutDate expectedDate = new WorkoutDate(VALID_DATE_OBJECT);
         assertEquals(expectedDate, ParserUtil.parseDate(VALID_DATE));
     }
