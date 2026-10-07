@@ -30,14 +30,14 @@ public final class WorkoutPlansList {
     /**
      * Returns the unmodifiable list of plans.
      */
-    public List<WorkoutPlan> asList() {
+    public List<WorkoutPlan> getWorkoutList() {
         return plans;
     }
 
     /**
      * Returns a new list with {@code plan} appended.
      */
-    public WorkoutPlansList withAdded(WorkoutPlan plan) {
+    public WorkoutPlansList addWorkoutPlan(WorkoutPlan plan) {
         Objects.requireNonNull(plan);
         List<WorkoutPlan> updated = new ArrayList<>(plans);
         updated.add(plan);
@@ -49,7 +49,7 @@ public final class WorkoutPlansList {
      *
      * @throws NoSuchElementException If no matching plan is present.
      */
-    public WorkoutPlansList without(WorkoutPlan plan) {
+    public WorkoutPlansList removeWorkoutPlan(WorkoutPlan plan) {
         Objects.requireNonNull(plan);
         List<WorkoutPlan> updated = new ArrayList<>(plans);
         if (!updated.remove(plan)) {

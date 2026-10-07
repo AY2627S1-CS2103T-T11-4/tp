@@ -1,8 +1,9 @@
 package seedu.address.model.workoutplan;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +21,7 @@ public class WorkoutPlansListTest {
 
     @Test
     public void constructors_rejectNullsAndCopyInput() {
-        assertEquals(List.of(), new WorkoutPlansList().asList());
+        assertEquals(List.of(), new WorkoutPlansList().getWorkoutList());
         assertThrows(NullPointerException.class, () -> new WorkoutPlansList(null));
         List<WorkoutPlan> inputWithNull = new ArrayList<>(List.of(FIRST));
         inputWithNull.add(null);
@@ -30,44 +31,52 @@ public class WorkoutPlansListTest {
         WorkoutPlansList plans = new WorkoutPlansList(input);
         input.add(SECOND);
 
-        assertEquals(List.of(FIRST), plans.asList());
-        assertThrows(UnsupportedOperationException.class, () -> plans.asList().add(SECOND));
+        assertEquals(List.of(FIRST), plans.getWorkoutList());
+        assertThrows(UnsupportedOperationException.class, () -> plans.getWorkoutList().add(SECOND));
     }
 
     @Test
-    public void withAdded_appendsInNewList() {
+    public void addWorkoutPlan_appendsInNewList() {
         WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST));
-        WorkoutPlansList updated = original.withAdded(SECOND);
+        WorkoutPlansList updated = original.addWorkoutPlan(SECOND);
 
-        assertEquals(List.of(FIRST), original.asList());
-        assertEquals(List.of(FIRST, SECOND), updated.asList());
-        assertThrows(NullPointerException.class, () -> original.withAdded(null));
+        assertEquals(List.of(FIRST), original.getWorkoutList());
+        assertEquals(List.of(FIRST, SECOND), updated.getWorkoutList());
+        assertThrows(NullPointerException.class, () -> original.addWorkoutPlan(null));
     }
 
     @Test
-    public void without_removesSpecifiedWorkoutPlanInNewList() {
+    public void removeWorkoutPlan_removesSpecifiedWorkoutPlanInNewList() {
         WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND, FIRST));
         WorkoutPlan equalFirst = new WorkoutPlan(
                 new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
 
-        WorkoutPlansList updated = original.without(equalFirst);
+        WorkoutPlansList updated = original.removeWorkoutPlan(equalFirst);
 
-        assertEquals(List.of(FIRST, SECOND, FIRST), original.asList());
-        assertEquals(List.of(SECOND, FIRST), updated.asList());
-        assertThrows(NullPointerException.class, () -> original.without(null));
-        assertThrows(NoSuchElementException.class, () -> new WorkoutPlansList().without(FIRST));
+        assertEquals(List.of(FIRST, SECOND, FIRST), original.getWorkoutList());
+        assertEquals(List.of(SECOND, FIRST), updated.getWorkoutList());
+        assertThrows(NullPointerException.class, () -> original.removeWorkoutPlan(null));
+        assertThrows(NoSuchElementException.class, () -> new WorkoutPlansList().removeWorkoutPlan(FIRST));
     }
 
     @Test
-    public void equalsAndHashCode_respectValuesAndOrder() {
+    public void equals() {
         WorkoutPlansList first = new WorkoutPlansList(List.of(FIRST, SECOND));
         WorkoutPlansList sameValues = new WorkoutPlansList(List.of(FIRST, SECOND));
         WorkoutPlansList reversed = new WorkoutPlansList(List.of(SECOND, FIRST));
 
-        assertEquals(first, sameValues);
+        assertTrue(first.equals(first));
+        assertTrue(first.equals(sameValues));
+        assertFalse(first.equals(reversed));
+        assertFalse(first.equals(null));
+        assertFalse(first.equals(FIRST));
+    }
+
+    @Test
+    public void hashCode_equalLists_haveSameHashCode() {
+        WorkoutPlansList first = new WorkoutPlansList(List.of(FIRST, SECOND));
+        WorkoutPlansList sameValues = new WorkoutPlansList(List.of(FIRST, SECOND));
+
         assertEquals(first.hashCode(), sameValues.hashCode());
-        assertNotEquals(first, reversed);
-        assertNotEquals(first, null);
-        assertNotEquals(first, FIRST);
     }
 }
