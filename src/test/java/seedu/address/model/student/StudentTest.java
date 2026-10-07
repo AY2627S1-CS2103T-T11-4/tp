@@ -12,11 +12,34 @@ import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalStudents.ALICE;
 import static seedu.address.testutil.TypicalStudents.BOB;
 
+import java.util.Date;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.workoutplan.WorkoutDate;
+import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlansList;
+import seedu.address.model.workoutplan.WorkoutTitle;
 import seedu.address.testutil.StudentBuilder;
 
 public class StudentTest {
+
+    private static final WorkoutPlan WORKOUT_PLAN = new WorkoutPlan(new WorkoutTitle("Strength"),
+            new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+
+    @Test
+    public void constructors_workoutPlansList() {
+        assertEquals(List.of(), ALICE.getWorkoutPlansList().getWorkoutList());
+
+        WorkoutPlansList plans = new WorkoutPlansList(List.of(WORKOUT_PLAN));
+        Student aliceWithPlan = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                ALICE.getAddress(), ALICE.getTags(), plans);
+        assertEquals(plans, aliceWithPlan.getWorkoutPlansList());
+        assertThrows(NullPointerException.class, () -> new Student(ALICE.getName(), ALICE.getPhone(),
+                ALICE.getEmail(), ALICE.getAddress(), ALICE.getTags(), null));
+    }
 
     @Test
     public void asObservableList_modifyList_throwsUnsupportedOperationException() {
@@ -49,6 +72,11 @@ public class StudentTest {
         String nameWithTrailingSpaces = VALID_NAME_BOB + " ";
         editedBob = new StudentBuilder(BOB).withName(nameWithTrailingSpaces).build();
         assertFalse(BOB.isSameStudent(editedBob));
+
+        // different workout plans do not change identity
+        Student aliceWithPlan = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                ALICE.getAddress(), ALICE.getTags(), new WorkoutPlansList(List.of(WORKOUT_PLAN)));
+        assertTrue(ALICE.isSameStudent(aliceWithPlan));
     }
 
     @Test
@@ -88,12 +116,20 @@ public class StudentTest {
         // different tags -> returns false
         editedAlice = new StudentBuilder(ALICE).withTags(VALID_TAG_HUSBAND).build();
         assertFalse(ALICE.equals(editedAlice));
+
+        // different workout plans -> returns false
+        Student aliceWithPlan = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                ALICE.getAddress(), ALICE.getTags(), new WorkoutPlansList(List.of(WORKOUT_PLAN)));
+        assertFalse(ALICE.equals(aliceWithPlan));
+        assertEquals(aliceWithPlan, new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                ALICE.getAddress(), ALICE.getTags(), new WorkoutPlansList(List.of(WORKOUT_PLAN))));
     }
 
     @Test
     public void toStringMethod() {
         String expected = Student.class.getCanonicalName() + "{name=" + ALICE.getName() + ", phone=" + ALICE.getPhone()
-                + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", tags=" + ALICE.getTags() + "}";
+                + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", tags=" + ALICE.getTags()
+                + ", workoutPlansList=" + ALICE.getWorkoutPlansList() + "}";
         assertEquals(expected, ALICE.toString());
     }
 }
