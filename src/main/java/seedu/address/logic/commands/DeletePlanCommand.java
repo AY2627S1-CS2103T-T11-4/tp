@@ -3,6 +3,7 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.Optional;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -15,7 +16,7 @@ import seedu.address.model.workoutplan.WorkoutPlansList;
 /**
  * Deletes a workout plan from the Student currently being viewed.
  */
-public class DeletePlanCommand extends Command implements CurrentStudentConsumer, CurrentStudentProvider {
+public class DeletePlanCommand extends Command {
 
     public static final String COMMAND_WORD = "deletePlan";
 
@@ -39,14 +40,13 @@ public class DeletePlanCommand extends Command implements CurrentStudentConsumer
         this.targetIndex = targetIndex;
     }
 
-    @Override
     public void setCurrentStudent(Student currentStudent) {
         this.currentStudent = currentStudent;
     }
 
     @Override
-    public Student getCurrentStudent() {
-        return updatedStudent;
+    public Optional<Student> getCurrentStudent() {
+        return Optional.ofNullable(updatedStudent);
     }
 
     @Override
