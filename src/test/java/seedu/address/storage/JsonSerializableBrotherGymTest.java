@@ -18,6 +18,11 @@ import seedu.address.testutil.TypicalStudents;
 
 public class JsonSerializableBrotherGymTest {
 
+    private static final Path TEST_DATA_FOLDER = Paths.get("src", "test", "data", "JsonSerializableBrotherGymTest");
+    private static final Path TYPICAL_STUDENTS_FILE = TEST_DATA_FOLDER.resolve("typicalStudentsBrotherGym.json");
+    private static final Path INVALID_STUDENT_FILE = TEST_DATA_FOLDER.resolve("invalidStudentBrotherGym.json");
+    private static final Path DUPLICATE_STUDENT_FILE = TEST_DATA_FOLDER.resolve("duplicateStudentBrotherGym.json");
+
     @Test
     public void toModelType_nullStudent_throwsIllegalValueException() {
         JsonSerializableBrotherGym adapted = new JsonSerializableBrotherGym(
@@ -29,11 +34,6 @@ public class JsonSerializableBrotherGymTest {
     public void constructor_nullStudents_createsEmptyModel() throws Exception {
         assertEquals(new BrotherGym(), new JsonSerializableBrotherGym((List<JsonAdaptedStudent>) null).toModelType());
     }
-
-    private static final Path TEST_DATA_FOLDER = Paths.get("src", "test", "data", "JsonSerializableBrotherGymTest");
-    private static final Path TYPICAL_STUDENTS_FILE = TEST_DATA_FOLDER.resolve("typicalStudentsBrotherGym.json");
-    private static final Path INVALID_STUDENT_FILE = TEST_DATA_FOLDER.resolve("invalidStudentBrotherGym.json");
-    private static final Path DUPLICATE_STUDENT_FILE = TEST_DATA_FOLDER.resolve("duplicateStudentBrotherGym.json");
 
     @Test
     public void toModelType_typicalStudentsFile_success() throws Exception {
