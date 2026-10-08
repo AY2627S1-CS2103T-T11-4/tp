@@ -5,7 +5,6 @@ import java.util.function.Predicate;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.student.Student;
-import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
  * The API of the Model component.
@@ -71,18 +70,4 @@ public interface Model {
      */
     void updateFilteredStudentList(Predicate<Student> predicate);
 
-    /** Returns the student whose workout plans are currently being viewed. */
-    Student getCurrentStudent();
-
-    /** Sets the student whose workout plans are currently being viewed. */
-    void setCurrentStudent(Student student);
-
-    /** Returns true if the student already has the given workout plan. */
-    boolean hasWorkout(Student student, WorkoutPlan plan);
-
-    /** Adds a workout plan to the given student. */
-    void addWorkout(Student student, WorkoutPlan plan);
-
-    /** Deletes a workout plan from the given student. */
-    void deleteWorkout(Student student, WorkoutPlan plan);
 }

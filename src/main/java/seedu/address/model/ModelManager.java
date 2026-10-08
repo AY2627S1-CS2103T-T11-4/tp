@@ -11,7 +11,6 @@ import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.student.Student;
-import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
  * Represents the in-memory model of the address book data.
@@ -22,7 +21,6 @@ public class ModelManager implements Model {
     private final BrotherGym brotherGym;
     private final UserPrefs userPrefs;
     private final FilteredList<Student> filteredStudents;
-    private Student currentStudent;
 
     /**
      * Initializes a ModelManager with the given brotherGym and userPrefs.
@@ -80,9 +78,6 @@ public class ModelManager implements Model {
     @Override
     public void deleteStudent(Student target) {
         brotherGym.removeStudent(target);
-        if (currentStudent == target) {
-            currentStudent = null;
-        }
     }
 
     @Override
@@ -115,47 +110,6 @@ public class ModelManager implements Model {
         filteredStudents.setPredicate(predicate);
     }
 
-    //=========== Current Student and Workout Plan Accessors ================================================
-
-    @Override
-    public Student getCurrentStudent() {
-        return currentStudent;
-    }
-
-    @Override
-    public void setCurrentStudent(Student student) {
-        currentStudent = requireNonNull(student);
-    }
-
-    @Override
-    public boolean hasWorkout(Student student, WorkoutPlan plan) {
-        requireAllNonNull(student, plan);
-        return student.getWorkoutPlansList().getWorkoutList().contains(plan);
-    }
-
-    @Override
-    public void addWorkout(Student student, WorkoutPlan plan) {
-        requireAllNonNull(student, plan);
-        Student editedStudent = new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getAddress(), student.getTags(),
-                student.getWorkoutPlansList().addWorkoutPlan(plan));
-        setStudent(student, editedStudent);
-        if (currentStudent == student) {
-            currentStudent = editedStudent;
-        }
-    }
-
-    @Override
-    public void deleteWorkout(Student student, WorkoutPlan plan) {
-        requireAllNonNull(student, plan);
-        Student editedStudent = new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getAddress(), student.getTags(),
-                student.getWorkoutPlansList().removeWorkoutPlan(plan));
-        setStudent(student, editedStudent);
-        if (currentStudent == student) {
-            currentStudent = editedStudent;
-        }
-    }
 
     @Override
     public boolean equals(Object other) {
