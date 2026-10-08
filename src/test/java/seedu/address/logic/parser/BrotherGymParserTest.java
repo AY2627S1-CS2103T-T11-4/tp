@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.testutil.Assert.assertThrows;
-import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
+import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.DeletePlanCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.EditStudentCommand;
 import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
@@ -52,8 +53,8 @@ public class BrotherGymParserTest {
     @Test
     public void parseCommand_deleteStudent() throws Exception {
         DeleteStudentCommand command = (DeleteStudentCommand) parser.parseCommand(
-                DeleteStudentCommand.COMMAND_WORD + " " + INDEX_FIRST_STUDENT.getOneBased());
-        assertEquals(new DeleteStudentCommand(INDEX_FIRST_STUDENT), command);
+                DeleteStudentCommand.COMMAND_WORD + " " + INDEX_FIRST.getOneBased());
+        assertEquals(new DeleteStudentCommand(INDEX_FIRST), command);
     }
 
     @Test
@@ -61,8 +62,15 @@ public class BrotherGymParserTest {
         Student student = new StudentBuilder().build();
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder(student).build();
         EditStudentCommand command = (EditStudentCommand) parser.parseCommand(EditStudentCommand.COMMAND_WORD + " "
-                + INDEX_FIRST_STUDENT.getOneBased() + " " + StudentUtil.getEditStudentDescriptorDetails(descriptor));
-        assertEquals(new EditStudentCommand(INDEX_FIRST_STUDENT, descriptor), command);
+                + INDEX_FIRST.getOneBased() + " " + StudentUtil.getEditStudentDescriptorDetails(descriptor));
+        assertEquals(new EditStudentCommand(INDEX_FIRST, descriptor), command);
+    }
+
+    @Test
+    public void parseCommand_deletePlan() throws Exception {
+        DeletePlanCommand command = (DeletePlanCommand) parser.parseCommand(
+                DeletePlanCommand.COMMAND_WORD + " " + INDEX_FIRST.getOneBased());
+        assertEquals(new DeletePlanCommand(INDEX_FIRST), command);
     }
 
     @Test

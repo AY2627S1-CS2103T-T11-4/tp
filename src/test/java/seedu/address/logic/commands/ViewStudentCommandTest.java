@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
-import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
-import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
+import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
+import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND;
 import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
 import java.util.Date;
@@ -38,7 +38,7 @@ public class ViewStudentCommandTest {
 
     @Test
     public void execute_validIndexNoWorkoutPlans_success() {
-        ViewStudentCommand command = new ViewStudentCommand(INDEX_FIRST_STUDENT);
+        ViewStudentCommand command = new ViewStudentCommand(INDEX_FIRST);
         String expectedMessage = "Viewing plans for Alice Pauline:\n"
                 + ViewStudentCommand.MESSAGE_NO_WORKOUTS;
 
@@ -58,7 +58,7 @@ public class ViewStudentCommandTest {
         brotherGym.addStudent(studentWithPlan);
         Model modelWithPlan = new ModelManager(brotherGym, new UserPrefs());
 
-        ViewStudentCommand command = new ViewStudentCommand(INDEX_FIRST_STUDENT);
+        ViewStudentCommand command = new ViewStudentCommand(INDEX_FIRST);
         String expectedMessage = "Viewing plans for Alice Pauline:\n1. " + plan;
         Model expectedModel = new ModelManager(modelWithPlan.getBrotherGym(), new UserPrefs());
 
@@ -80,11 +80,11 @@ public class ViewStudentCommandTest {
 
     @Test
     public void equals() {
-        ViewStudentCommand firstCommand = new ViewStudentCommand(INDEX_FIRST_STUDENT);
-        ViewStudentCommand secondCommand = new ViewStudentCommand(INDEX_SECOND_STUDENT);
+        ViewStudentCommand firstCommand = new ViewStudentCommand(INDEX_FIRST);
+        ViewStudentCommand secondCommand = new ViewStudentCommand(INDEX_SECOND);
 
         assertTrue(firstCommand.equals(firstCommand));
-        assertTrue(firstCommand.equals(new ViewStudentCommand(INDEX_FIRST_STUDENT)));
+        assertTrue(firstCommand.equals(new ViewStudentCommand(INDEX_FIRST)));
         assertFalse(firstCommand.equals(secondCommand));
         assertFalse(firstCommand.equals(null));
         assertFalse(firstCommand.equals(1));
@@ -92,9 +92,9 @@ public class ViewStudentCommandTest {
 
     @Test
     public void toStringMethod() {
-        ViewStudentCommand command = new ViewStudentCommand(INDEX_FIRST_STUDENT);
+        ViewStudentCommand command = new ViewStudentCommand(INDEX_FIRST);
         String expected = ViewStudentCommand.class.getCanonicalName()
-                + "{targetIndex=" + INDEX_FIRST_STUDENT + "}";
+                + "{targetIndex=" + INDEX_FIRST + "}";
 
         assertEquals(expected, command.toString());
     }

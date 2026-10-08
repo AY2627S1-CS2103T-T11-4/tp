@@ -82,6 +82,7 @@ public class DeletePlanCommand extends Command {
             return true;
         }
 
+        // instanceof handles nulls
         if (!(other instanceof DeletePlanCommand otherDeletePlanCommand)) {
             return false;
         }
