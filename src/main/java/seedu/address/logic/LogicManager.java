@@ -2,6 +2,7 @@ package seedu.address.logic;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
@@ -9,6 +10,10 @@ import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.AddPlanCommand;
+import seedu.address.logic.commands.DeletePlanCommand;
+import seedu.address.logic.commands.HomeCommand;
+import seedu.address.logic.commands.ViewStudentCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.BrotherGymParser;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -30,6 +35,7 @@ public class LogicManager implements Logic {
     private final Model model;
     private final Storage storage;
     private final BrotherGymParser brotherGymParser;
+    private Optional<Student> currentStudent = Optional.empty();
 
     /**
      * Constructs a {@code LogicManager} with the given {@code Model} and {@code Storage}.
@@ -46,7 +52,24 @@ public class LogicManager implements Logic {
 
         CommandResult commandResult;
         Command command = brotherGymParser.parseCommand(commandText);
+
+        if (command instanceof AddPlanCommand addPlanCommand) {
+            addPlanCommand.setCurrentStudent(currentStudent.orElse(null));
+        } else if (command instanceof DeletePlanCommand deletePlanCommand) {
+            deletePlanCommand.setCurrentStudent(currentStudent.orElse(null));
+        }
+
         commandResult = command.execute(model);
+
+        if (command instanceof ViewStudentCommand viewStudentCommand) {
+            currentStudent = Optional.of(viewStudentCommand.getSelectedStudent());
+        } else if (command instanceof AddPlanCommand addPlanCommand) {
+            currentStudent = Optional.of(addPlanCommand.getUpdatedStudent());
+        } else if (command instanceof DeletePlanCommand deletePlanCommand) {
+            currentStudent = Optional.of(deletePlanCommand.getUpdatedStudent());
+        } else if (command instanceof HomeCommand) {
+            currentStudent = Optional.empty();
+        }
 
         try {
             storage.saveBrotherGym(model.getBrotherGym());
