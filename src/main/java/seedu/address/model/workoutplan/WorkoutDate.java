@@ -2,6 +2,7 @@ package seedu.address.model.workoutplan;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -11,6 +12,15 @@ import java.util.Date;
  * Guarantees: immutable and not null.
  */
 public final class WorkoutDate {
+
+    public static final String MESSAGE_CONSTRAINTS =
+            "Dates should be formatted only in DDMMYYYY format";
+    /*
+     * Date strings have to be 8 numeric characters long
+     */
+    public static final String VALIDATION_REGEX = "^\\d{8}$";
+
+    public static final SimpleDateFormat INPUT_FORMATTER = new SimpleDateFormat("ddMMyyyy");
 
     private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
             DateTimeFormatter.ofPattern("dd-MM-uuuu");
@@ -30,6 +40,13 @@ public final class WorkoutDate {
      */
     public Date getValue() {
         return new Date(value.getTime());
+    }
+
+    /**
+     * Returns true if date is a string of 8 numerical digits
+     */
+    public static boolean isValidDateString(String test) {
+        return test.matches(VALIDATION_REGEX);
     }
 
     /** Returns this date formatted for display to the user. */
