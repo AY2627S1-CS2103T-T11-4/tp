@@ -2,9 +2,9 @@ package seedu.address.model.workoutplan;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Date;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * Represents the date of a workout plan.

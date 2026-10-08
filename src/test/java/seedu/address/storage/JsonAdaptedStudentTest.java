@@ -36,4 +36,61 @@ public class JsonAdaptedStudentTest {
                 "311, Clementi Ave 2, #02-25", List.of(new JsonAdaptedTag("#friend")), List.of());
         assertThrows(IllegalValueException.class, student::toModelType);
     }
+
+    @Test
+    public void toModelType_missingPhone_throwsIllegalValueException() {
+        JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", null, "johnd@example.com",
+                "311, Clementi Ave 2, #02-25", List.of(), List.of());
+        assertThrows(IllegalValueException.class, student::toModelType);
+    }
+
+    @Test
+    public void toModelType_missingEmail_throwsIllegalValueException() {
+        JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", "98765432", null,
+                "311, Clementi Ave 2, #02-25", List.of(), List.of());
+        assertThrows(IllegalValueException.class, student::toModelType);
+    }
+
+    @Test
+    public void toModelType_missingAddress_throwsIllegalValueException() {
+        JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", "98765432", "johnd@example.com",
+                null, List.of(), List.of());
+        assertThrows(IllegalValueException.class, student::toModelType);
+    }
+
+    @Test
+    public void toModelType_invalidPhone_throwsIllegalValueException() {
+        JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", "invalid", "johnd@example.com",
+                "311, Clementi Ave 2, #02-25", List.of(), List.of());
+        assertThrows(IllegalValueException.class, student::toModelType);
+    }
+
+    @Test
+    public void toModelType_invalidEmail_throwsIllegalValueException() {
+        JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", "98765432", "invalid",
+                "311, Clementi Ave 2, #02-25", List.of(), List.of());
+        assertThrows(IllegalValueException.class, student::toModelType);
+    }
+
+    @Test
+    public void toModelType_invalidAddress_throwsIllegalValueException() {
+        JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", "98765432", "johnd@example.com",
+                " ", List.of(), List.of());
+        assertThrows(IllegalValueException.class, student::toModelType);
+    }
+
+    @Test
+    public void toModelType_missingTag_throwsIllegalValueException() {
+        JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", "98765432", "johnd@example.com",
+                "311, Clementi Ave 2, #02-25", List.of(new JsonAdaptedTag((String) null)), List.of());
+        assertThrows(IllegalValueException.class, student::toModelType);
+    }
+
+    @Test
+    public void toModelType_invalidWorkoutPlan_throwsIllegalValueException() {
+        JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", "98765432", "johnd@example.com",
+                "311, Clementi Ave 2, #02-25", List.of(),
+                List.of(new JsonAdaptedWorkoutPlan(null, "Squats", "2023-11-15")));
+        assertThrows(IllegalValueException.class, student::toModelType);
+    }
 }

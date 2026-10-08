@@ -48,4 +48,25 @@ public class JsonAdaptedWorkoutPlanTest {
 
         assertThrows(IllegalValueException.class, adapted::toModelType);
     }
+
+    @Test
+    public void toModelType_missingFields_throwsIllegalValueException() {
+        assertThrows(IllegalValueException.class, () -> new JsonAdaptedWorkoutPlan(null, "Squats", "2023-11-15")
+                .toModelType());
+        assertThrows(IllegalValueException.class, () -> new JsonAdaptedWorkoutPlan("Strength", null, "2023-11-15")
+                .toModelType());
+        assertThrows(IllegalValueException.class, () -> new JsonAdaptedWorkoutPlan("Strength", "Squats", null)
+                .toModelType());
+    }
+
+    @Test
+    public void formatDateForStorage_nullDate_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> JsonAdaptedWorkoutPlan.formatDateForStorage(null));
+    }
+
+    @Test
+    public void formatDateForModel_invalidDate_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> JsonAdaptedWorkoutPlan.formatDateForModel("invalid"));
+        assertThrows(IllegalArgumentException.class, () -> JsonAdaptedWorkoutPlan.formatDateForModel(null));
+    }
 }
