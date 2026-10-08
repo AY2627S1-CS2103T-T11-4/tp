@@ -49,7 +49,9 @@ public class LogicManager implements Logic {
 
         CommandResult commandResult;
         Command command = brotherGymParser.parseCommand(commandText);
+
         command.setCurrentStudent(currentStudent.orElse(null));
+
         commandResult = command.execute(model);
 
         Optional<Student> updatedStudent = command.getCurrentStudent();
