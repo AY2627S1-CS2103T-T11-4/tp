@@ -35,6 +35,11 @@ public class DeletePlanCommand extends Command {
     private Student currentStudent;
     private Student updatedStudent;
 
+    /**
+     * Creates a command to delete the workout plan at the given index.
+     *
+     * @param targetIndex index of the workout plan to delete
+     */
     public DeletePlanCommand(Index targetIndex) {
         requireNonNull(targetIndex);
         this.targetIndex = targetIndex;
