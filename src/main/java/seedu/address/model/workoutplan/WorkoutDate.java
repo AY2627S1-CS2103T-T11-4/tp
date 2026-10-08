@@ -2,6 +2,8 @@ package seedu.address.model.workoutplan;
 
 import static java.util.Objects.requireNonNull;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -9,6 +11,9 @@ import java.util.Date;
  * Guarantees: immutable and not null.
  */
 public final class WorkoutDate {
+
+    private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
+            DateTimeFormatter.ofPattern("dd-MM-uuuu");
 
     private final Date value;
 
@@ -25,6 +30,12 @@ public final class WorkoutDate {
      */
     public Date getValue() {
         return new Date(value.getTime());
+    }
+
+    /** Returns this date formatted for display to the user. */
+    public String toDisplayString() {
+        return value.toInstant().atZone(ZoneId.systemDefault())
+                .toLocalDate().format(DISPLAY_DATE_FORMAT);
     }
 
     @Override
