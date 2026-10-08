@@ -7,7 +7,7 @@ import seedu.address.logic.commands.ViewStudentCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
- * Parses input arguments and creates a new DeleteStudentCommand object
+ * Parses input arguments and creates a new ViewStudentCommand object
  */
 public class ViewStudentCommandParser implements Parser<ViewStudentCommand> {
 

@@ -8,7 +8,8 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 
 /**
- * Deletes a student identified using its displayed index from the student list.
+ * View a student identified using its displayed index from the student list,
+ * and change the current student to the given student.
  */
 public class ViewStudentCommand extends Command {
 
@@ -20,7 +21,7 @@ public class ViewStudentCommand extends Command {
             + "Parameters: INDEX (must be a positive integer)\n"
             + "Example: " + COMMAND_WORD + " 1";
 
-    public static final String MESSAGE_DELETE_STUDENT_SUCCESS = "Viewing workouts for student: %1$s";
+    public static final String MESSAGE_VIEW_STUDENT_SUCCESS = "Viewing workouts for student: %1$s";
 
     private final Index targetIndex;
 
