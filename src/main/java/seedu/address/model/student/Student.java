@@ -9,6 +9,7 @@ import java.util.Set;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.Tag;
+import seedu.address.model.workoutplan.WorkoutPlansList;
 
 /**
  * Represents a Student in BrotherGym.
@@ -24,6 +25,26 @@ public class Student {
     // Data fields
     private final Address address;
     private final Set<Tag> tags = new HashSet<>();
+    private final WorkoutPlansList workoutPlansList;
+
+    /**
+     * Every field must be present and not null.
+     */
+    public Student(
+            Name name,
+            Phone phone,
+            Email email,
+            Address address,
+            Set<Tag> tags,
+            WorkoutPlansList workoutPlansList) {
+        requireAllNonNull(name, phone, email, address, tags, workoutPlansList);
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.tags.addAll(tags);
+        this.workoutPlansList = workoutPlansList;
+    }
 
     /**
      * Every field must be present and not null.
@@ -35,6 +56,7 @@ public class Student {
         this.email = email;
         this.address = address;
         this.tags.addAll(tags);
+        this.workoutPlansList = new WorkoutPlansList();
     }
 
     public Name getName() {
@@ -59,6 +81,10 @@ public class Student {
      */
     public Set<Tag> getTags() {
         return Collections.unmodifiableSet(tags);
+    }
+
+    public WorkoutPlansList getWorkoutPlansList() {
+        return workoutPlansList;
     }
 
     /**
@@ -93,13 +119,14 @@ public class Student {
                 && phone.equals(otherStudent.phone)
                 && email.equals(otherStudent.email)
                 && address.equals(otherStudent.address)
-                && tags.equals(otherStudent.tags);
+                && tags.equals(otherStudent.tags)
+                && workoutPlansList.equals(otherStudent.workoutPlansList);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, tags);
+        return Objects.hash(name, phone, email, address, tags, workoutPlansList);
     }
 
     @Override
@@ -110,6 +137,7 @@ public class Student {
                 .add("email", email)
                 .add("address", address)
                 .add("tags", tags)
+                .add("workoutPlansList", workoutPlansList)
                 .toString();
     }
 
