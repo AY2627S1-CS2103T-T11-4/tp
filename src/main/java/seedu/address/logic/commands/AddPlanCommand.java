@@ -6,7 +6,7 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
-import seedu.address.model.workout.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
  * Adds a workout plan to the Student currently being viewed.
