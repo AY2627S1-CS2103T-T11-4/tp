@@ -2,6 +2,8 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Optional;
+
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
@@ -12,7 +14,7 @@ import seedu.address.model.workoutplan.WorkoutPlan;
 /**
  * Adds a workout plan to the Student currently being viewed.
  */
-public class AddPlanCommand extends Command implements CurrentStudentConsumer, CurrentStudentProvider {
+public class AddPlanCommand extends Command {
 
     public static final String COMMAND_WORD = "addPlan";
 
@@ -36,15 +38,14 @@ public class AddPlanCommand extends Command implements CurrentStudentConsumer, C
     }
 
     /** Supplies the student currently selected by the Logic layer. */
-    @Override
     public void setCurrentStudent(Student currentStudent) {
         this.currentStudent = currentStudent;
     }
 
     /** Returns the updated student after successful execution. */
     @Override
-    public Student getCurrentStudent() {
-        return updatedStudent;
+    public Optional<Student> getCurrentStudent() {
+        return Optional.ofNullable(updatedStudent);
     }
 
     @Override
