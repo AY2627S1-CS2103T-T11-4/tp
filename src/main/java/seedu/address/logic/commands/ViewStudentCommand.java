@@ -12,6 +12,7 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
+import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
  * Displays all workout plans belonging to a selected student.
@@ -46,7 +47,8 @@ public class ViewStudentCommand extends Command {
         }
 
         Student student = students.get(targetIndex.getZeroBased());
-        List<?> workoutPlans = student.getWorkoutPlans();
+        model.setCurrentStudent(student);
+        List<WorkoutPlan> workoutPlans = student.getWorkoutPlansList().getWorkoutList();
 
         return new CommandResult(String.format(
                 MESSAGE_SUCCESS,
@@ -54,7 +56,7 @@ public class ViewStudentCommand extends Command {
                 formatWorkoutPlans(workoutPlans)));
     }
 
-    private static String formatWorkoutPlans(List<?> workoutPlans) {
+    private static String formatWorkoutPlans(List<WorkoutPlan> workoutPlans) {
         if (workoutPlans.isEmpty()) {
             return MESSAGE_NO_WORKOUTS;
         }
