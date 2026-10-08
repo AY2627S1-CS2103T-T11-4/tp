@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
@@ -24,9 +25,12 @@ import seedu.address.logic.commands.HomeCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
+import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
 import seedu.address.testutil.StudentBuilder;
 import seedu.address.testutil.StudentUtil;
+import seedu.address.testutil.WorkoutBuilder;
+import seedu.address.testutil.WorkoutUtil;
 
 public class BrotherGymParserTest {
 
@@ -59,6 +63,13 @@ public class BrotherGymParserTest {
         EditStudentCommand command = (EditStudentCommand) parser.parseCommand(EditStudentCommand.COMMAND_WORD + " "
                 + INDEX_FIRST_STUDENT.getOneBased() + " " + StudentUtil.getEditStudentDescriptorDetails(descriptor));
         assertEquals(new EditStudentCommand(INDEX_FIRST_STUDENT, descriptor), command);
+    }
+
+    @Test
+    public void parseCommand_addPlan() throws Exception {
+        WorkoutPlan workout = new WorkoutBuilder().build();
+        AddPlanCommand command = (AddPlanCommand) parser.parseCommand(WorkoutUtil.getAddPlanCommand(workout));
+        assertEquals(new AddPlanCommand(workout), command);
     }
 
     @Test

@@ -19,7 +19,7 @@ import seedu.address.model.tag.Tag;
 public class StudentUtil {
 
     /**
-     * Returns an add command string for adding the {@code student}.
+     * Returns an addStudent command string for adding the {@code student}.
      */
     public static String getAddStudentCommand(Student student) {
         return AddStudentCommand.COMMAND_WORD + " " + getStudentDetails(student);
