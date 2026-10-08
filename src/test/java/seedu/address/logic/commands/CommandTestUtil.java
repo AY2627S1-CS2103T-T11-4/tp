@@ -11,7 +11,10 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.testutil.Assert.assertThrows;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import seedu.address.commons.core.index.Index;
@@ -20,6 +23,7 @@ import seedu.address.model.BrotherGym;
 import seedu.address.model.Model;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
+import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
 
 /**
@@ -60,17 +64,23 @@ public class CommandTestUtil {
     public static final EditStudentCommand.EditStudentDescriptor DESC_BOB;
 
     // Workout commands
-    public static final String VALID_WORKOUT_NAME_LEGS = "Leg Day";
-    public static final String VALID_WORKOUT_NAME_CHEST = "Chest Day";
+    public static final String VALID_WORKOUT_TITLE_LEGS = "Leg Day";
+    public static final String VALID_WORKOUT_TITLE_CHEST = "Chest Day";
     public static final String VALID_WORKOUT_PLAN_LEGS = "Leg Press 3x 180kg, Leg Extension 3x 60kg, RDLs 3x 40kg";
     public static final String VALID_WORKOUT_PLAN_CHEST = "Bench Press 3x 80kg";
-    public static final String VALID_WORKOUT_DATE_LEGS = "15102026";
-    public static final String VALID_WORKOUT_DATE_CHEST = "09102026";
+    public static final Date VALID_WORKOUT_DATE_LEGS = Date.from(LocalDate.of(2026, 10, 15)
+            .atStartOfDay(ZoneId.systemDefault()).toInstant());
+    public static final Date VALID_WORKOUT_DATE_CHEST = Date.from(LocalDate.of(2026, 10, 9)
+            .atStartOfDay(ZoneId.systemDefault()).toInstant());
 
+    public static final String TITLE_PREAMBLE_LEGS = VALID_WORKOUT_TITLE_LEGS;
+    public static final String TITLE_PREAMBLE_CHEST = VALID_WORKOUT_TITLE_CHEST;
     public static final String PLAN_DESC_LEGS = " " + PREFIX_PLAN + " " + VALID_WORKOUT_PLAN_LEGS;
     public static final String PLAN_DESC_CHEST = " " + PREFIX_PLAN + " " + VALID_WORKOUT_PLAN_CHEST;
-    public static final String DATE_DESC_LEGS = " " + PREFIX_DATE + " " + VALID_WORKOUT_DATE_LEGS;
-    public static final String DATE_DESC_CHEST = " " + PREFIX_DATE + " " + VALID_WORKOUT_DATE_CHEST;
+    public static final String DATE_DESC_LEGS = " " + PREFIX_DATE + " "
+            + WorkoutDate.INPUT_FORMATTER.format(VALID_WORKOUT_DATE_LEGS);
+    public static final String DATE_DESC_CHEST = " " + PREFIX_DATE + " "
+            + WorkoutDate.INPUT_FORMATTER.format(VALID_WORKOUT_DATE_CHEST);
 
     public static final String INVALID_PLAN_DESC = " " + PREFIX_PLAN; // empty string not allowed for plan descriptions
     public static final String INVALID_DATE_DESC_LETTERS = " " + PREFIX_DATE + " dd102026"; // 'd' not allowed in date
