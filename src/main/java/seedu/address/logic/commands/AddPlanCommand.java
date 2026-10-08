@@ -8,8 +8,8 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
-import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlansList;
 
 /**
  * Adds a workout plan to the Student currently being viewed.
@@ -32,6 +32,11 @@ public class AddPlanCommand extends Command {
     private Student currentStudent;
     private Student updatedStudent;
 
+    /**
+     * Creates a command to add the given workout plan to the current student.
+     *
+     * @param toAdd workout plan to add
+     */
     public AddPlanCommand(WorkoutPlan toAdd) {
         requireNonNull(toAdd);
         this.toAdd = toAdd;
