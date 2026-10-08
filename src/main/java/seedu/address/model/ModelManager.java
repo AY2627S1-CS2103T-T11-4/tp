@@ -110,6 +110,7 @@ public class ModelManager implements Model {
         filteredStudents.setPredicate(predicate);
     }
 
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {

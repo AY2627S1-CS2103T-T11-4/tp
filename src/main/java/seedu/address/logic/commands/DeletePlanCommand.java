@@ -1,11 +1,11 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 
+import java.util.List;
 import java.util.Optional;
 
+import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
@@ -14,42 +14,41 @@ import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 
 /**
- * Adds a workout plan to the Student currently being viewed.
+ * Deletes a workout plan from the Student currently being viewed.
  */
-public class AddPlanCommand extends Command {
+public class DeletePlanCommand extends Command {
 
-    public static final String COMMAND_WORD = "addPlan";
+    public static final String COMMAND_WORD = "deletePlan";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Adds a workout plan to the Student currently being viewed.\n"
-            + "Parameters: PLAN_TITLE " + PREFIX_PLAN + " DESCRIPTION " + PREFIX_DATE + " DATE(DDMMYYYY)\n"
-            + "Example: " + COMMAND_WORD + " Strength " + PREFIX_PLAN + " Upper body " + PREFIX_DATE + " 081025";
+            + ": Deletes a workout plan from the Student currently being viewed.\n"
+            + "Parameters: WORKOUT_ID (must be a positive integer)\n"
+            + "Example: " + COMMAND_WORD + " 1";
 
-    public static final String MESSAGE_SUCCESS = "New workout added: %1$s";
+    public static final String MESSAGE_SUCCESS = "Deleted workout: %1$s";
     public static final String MESSAGE_NO_STUDENT_SELECTED =
             "No student is currently selected. Use viewStudent first.";
-    public static final String MESSAGE_DUPLICATE_PLAN = "This workout plan already exists.";
+    public static final String MESSAGE_INVALID_WORKOUT_ID =
+            "Workout ID exceeded total number of workout plans.";
 
-    private final WorkoutPlan toAdd;
+    private final Index targetIndex;
     private Student currentStudent;
     private Student updatedStudent;
 
     /**
-     * Creates a command to add the given workout plan to the current student.
+     * Creates a command to delete the workout plan at the given index.
      *
-     * @param toAdd workout plan to add
+     * @param targetIndex index of the workout plan to delete
      */
-    public AddPlanCommand(WorkoutPlan toAdd) {
-        requireNonNull(toAdd);
-        this.toAdd = toAdd;
+    public DeletePlanCommand(Index targetIndex) {
+        requireNonNull(targetIndex);
+        this.targetIndex = targetIndex;
     }
 
-    /** Supplies the student currently selected by the Logic layer. */
     public void setCurrentStudent(Student currentStudent) {
         this.currentStudent = currentStudent;
     }
 
-    /** Returns the updated student after successful execution. */
     @Override
     public Optional<Student> getCurrentStudent() {
         return Optional.ofNullable(updatedStudent);
@@ -63,15 +62,18 @@ public class AddPlanCommand extends Command {
             throw new CommandException(MESSAGE_NO_STUDENT_SELECTED);
         }
 
-        if (currentStudent.getWorkoutPlansList().getWorkoutList().contains(toAdd)) {
-            throw new CommandException(MESSAGE_DUPLICATE_PLAN);
+        List<WorkoutPlan> workoutPlans = currentStudent.getWorkoutPlansList().getWorkoutList();
+        if (targetIndex.getZeroBased() >= workoutPlans.size()) {
+            throw new CommandException(MESSAGE_INVALID_WORKOUT_ID);
         }
 
-        WorkoutPlansList updatedPlans = currentStudent.getWorkoutPlansList().addWorkoutPlan(toAdd);
+        WorkoutPlan planToDelete = workoutPlans.get(targetIndex.getZeroBased());
+        WorkoutPlansList updatedPlans = currentStudent.getWorkoutPlansList().removeWorkoutPlan(planToDelete);
         updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
         model.setStudent(currentStudent, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, toAdd));
+
+        return new CommandResult(String.format(MESSAGE_SUCCESS, planToDelete));
     }
 
     @Override
@@ -80,18 +82,17 @@ public class AddPlanCommand extends Command {
             return true;
         }
 
-        // instanceof handles nulls
-        if (!(other instanceof AddPlanCommand otherAddPlanCommand)) {
+        if (!(other instanceof DeletePlanCommand otherDeletePlanCommand)) {
             return false;
         }
 
-        return toAdd.equals(otherAddPlanCommand.toAdd);
+        return targetIndex.equals(otherDeletePlanCommand.targetIndex);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("toAdd", toAdd)
+                .add("targetIndex", targetIndex)
                 .toString();
     }
 }
