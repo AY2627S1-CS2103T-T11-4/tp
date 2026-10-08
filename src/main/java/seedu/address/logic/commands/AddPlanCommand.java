@@ -1,6 +1,8 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 
 import java.util.Optional;
 
@@ -20,8 +22,8 @@ public class AddPlanCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Adds a workout plan to the Student currently being viewed.\n"
-            + "Parameters: PLAN_NAME --plan DESCRIPTION --date DDMMYY\n"
-            + "Example: " + COMMAND_WORD + " Strength --plan Upper body --date 081025";
+            + "Parameters: PLAN_TITLE " + PREFIX_PLAN + " DESCRIPTION " + PREFIX_DATE + " DATE(DDMMYYYY)\n"
+            + "Example: " + COMMAND_WORD + " Strength " + PREFIX_PLAN + " Upper body " + PREFIX_DATE + " 081025";
 
     public static final String MESSAGE_SUCCESS = "New workout added: %1$s";
     public static final String MESSAGE_NO_STUDENT_SELECTED =
@@ -78,6 +80,7 @@ public class AddPlanCommand extends Command {
             return true;
         }
 
+        // instanceof handles nulls
         if (!(other instanceof AddPlanCommand otherAddPlanCommand)) {
             return false;
         }

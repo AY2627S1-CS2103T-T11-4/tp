@@ -19,7 +19,7 @@ import seedu.address.model.tag.Tag;
 public class StudentUtil {
 
     /**
-     * Returns an add command string for adding the {@code student}.
+     * Returns an addStudent command string for adding the {@code student}.
      */
     public static String getAddStudentCommand(Student student) {
         return AddStudentCommand.COMMAND_WORD + " " + getStudentDetails(student);
@@ -30,7 +30,7 @@ public class StudentUtil {
      */
     public static String getStudentDetails(Student student) {
         StringBuilder sb = new StringBuilder();
-        sb.append(PREFIX_NAME + " " + student.getName().fullName + " ");
+        sb.append(student.getName().fullName + " ");
         sb.append(PREFIX_PHONE + " " + student.getPhone().value + " ");
         sb.append(PREFIX_EMAIL + " " + student.getEmail().value + " ");
         sb.append(PREFIX_ADDRESS + " " + student.getAddress().value + " ");

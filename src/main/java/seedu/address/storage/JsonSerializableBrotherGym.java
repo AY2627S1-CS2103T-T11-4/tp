@@ -28,7 +28,9 @@ class JsonSerializableBrotherGym {
      */
     @JsonCreator
     public JsonSerializableBrotherGym(@JsonProperty("students") List<JsonAdaptedStudent> students) {
-        this.students.addAll(students);
+        if (students != null) {
+            this.students.addAll(students);
+        }
     }
 
     /**
@@ -48,6 +50,9 @@ class JsonSerializableBrotherGym {
     public BrotherGym toModelType() throws IllegalValueException {
         BrotherGym brotherGym = new BrotherGym();
         for (JsonAdaptedStudent jsonAdaptedStudent : students) {
+            if (jsonAdaptedStudent == null) {
+                throw new IllegalValueException("Students list contains a null student.");
+            }
             Student student = jsonAdaptedStudent.toModelType();
             if (brotherGym.hasStudent(student)) {
                 throw new IllegalValueException(MESSAGE_DUPLICATE_STUDENT);

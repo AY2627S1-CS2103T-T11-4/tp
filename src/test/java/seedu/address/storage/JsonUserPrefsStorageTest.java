@@ -57,6 +57,12 @@ public class JsonUserPrefsStorageTest {
     }
 
     @Test
+    public void getUserPrefsFilePath_returnsConfiguredPath() {
+        Path path = testFolder.resolve("prefs.json");
+        assertEquals(path, new JsonUserPrefsStorage(path).getUserPrefsFilePath());
+    }
+
+    @Test
     public void readUserPrefs_valuesMissingFromFile_defaultValuesUsed() throws DataLoadingException {
         UserPrefs actual = readUserPrefs("EmptyUserPrefs.json").get();
         assertEquals(new UserPrefs(), actual);
