@@ -13,6 +13,7 @@ import static seedu.address.testutil.TypicalStudents.AMY;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,6 +86,11 @@ public class LogicManagerTest {
     @Test
     public void getFilteredStudentList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> logic.getFilteredStudentList().remove(0));
+    }
+
+    @Test
+    public void getCurrentStudent_noStudentSelected_returnsEmptyOptional() {
+        assertEquals(Optional.empty(), logic.getCurrentStudent());
     }
 
     /**

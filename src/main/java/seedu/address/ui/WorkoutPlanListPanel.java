@@ -65,7 +65,7 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
     }
 
     /** Custom list cell that renders a workout plan using {@link WorkoutPlanCard}. */
-    private static class WorkoutPlanListViewCell extends ListCell<WorkoutPlan> {
+    static class WorkoutPlanListViewCell extends ListCell<WorkoutPlan> {
         @Override
         protected void updateItem(WorkoutPlan workoutPlan, boolean empty) {
             super.updateItem(workoutPlan, empty);

@@ -26,6 +26,11 @@ checkstyle {
 
 test {
     useJUnitPlatform()
+    systemProperty 'java.awt.headless', 'true'
+    systemProperty 'testfx.robot', 'glass'
+    systemProperty 'testfx.headless', 'true'
+    systemProperty 'prism.order', 'sw'
+    systemProperty 'prism.text', 't2k'
     finalizedBy jacocoTestReport
 }
 
@@ -66,9 +71,11 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.4'
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
+    testImplementation 'org.testfx:testfx-junit5:4.0.18'
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jUnitVersion}"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.4'
+    testRuntimeOnly 'org.testfx:openjfx-monocle:17.0.10'
 }
 
 shadowJar {
