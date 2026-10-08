@@ -84,8 +84,8 @@ public class BrotherGymParserTest {
     @Test
     public void parseCommand_viewStudent() throws Exception {
         ViewStudentCommand command = (ViewStudentCommand) parser.parseCommand(
-                ViewStudentCommand.COMMAND_WORD + " " + INDEX_FIRST_STUDENT.getOneBased());
-        assertEquals(new ViewStudentCommand(INDEX_FIRST_STUDENT), command);
+                ViewStudentCommand.COMMAND_WORD + " " + INDEX_FIRST.getOneBased());
+        assertEquals(new ViewStudentCommand(INDEX_FIRST), command);
     }
 
     @Test
