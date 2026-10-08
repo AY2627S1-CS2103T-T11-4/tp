@@ -10,11 +10,12 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlansList;
 
 /**
  * Deletes a workout plan from the Student currently being viewed.
  */
-public class DeletePlanCommand extends Command {
+public class DeletePlanCommand extends Command implements CurrentStudentConsumer, CurrentStudentProvider {
 
     public static final String COMMAND_WORD = "deletePlan";
 
@@ -30,6 +31,8 @@ public class DeletePlanCommand extends Command {
             "Workout ID exceeded total number of workout plans.";
 
     private final Index targetIndex;
+    private Student currentStudent;
+    private Student updatedStudent;
 
     public DeletePlanCommand(Index targetIndex) {
         requireNonNull(targetIndex);
@@ -37,10 +40,19 @@ public class DeletePlanCommand extends Command {
     }
 
     @Override
+    public void setCurrentStudent(Student currentStudent) {
+        this.currentStudent = currentStudent;
+    }
+
+    @Override
+    public Student getCurrentStudent() {
+        return updatedStudent;
+    }
+
+    @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        Student currentStudent = model.getCurrentStudent();
         if (currentStudent == null) {
             throw new CommandException(MESSAGE_NO_STUDENT_SELECTED);
         }
@@ -51,7 +63,10 @@ public class DeletePlanCommand extends Command {
         }
 
         WorkoutPlan planToDelete = workoutPlans.get(targetIndex.getZeroBased());
-        model.deleteWorkout(currentStudent, planToDelete);
+        WorkoutPlansList updatedPlans = currentStudent.getWorkoutPlansList().removeWorkoutPlan(planToDelete);
+        updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
+                currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
+        model.setStudent(currentStudent, updatedStudent);
 
         return new CommandResult(String.format(MESSAGE_SUCCESS, planToDelete));
     }
