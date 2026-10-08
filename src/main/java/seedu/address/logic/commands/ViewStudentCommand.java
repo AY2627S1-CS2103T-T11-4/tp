@@ -17,7 +17,7 @@ import seedu.address.model.workoutplan.WorkoutPlan;
 /**
  * Displays all workout plans belonging to a selected student.
  */
-public class ViewStudentCommand extends Command {
+public class ViewStudentCommand extends Command implements CurrentStudentProvider {
 
     public static final String COMMAND_WORD = "viewStudent";
 
@@ -30,6 +30,7 @@ public class ViewStudentCommand extends Command {
     public static final String MESSAGE_NO_WORKOUTS = "No workout plans assigned.";
 
     private final Index targetIndex;
+    private Student selectedStudent;
 
     public ViewStudentCommand(Index targetIndex) {
         requireNonNull(targetIndex);
@@ -46,14 +47,18 @@ public class ViewStudentCommand extends Command {
             throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
         }
 
-        Student student = students.get(targetIndex.getZeroBased());
-        model.setCurrentStudent(student);
-        List<WorkoutPlan> workoutPlans = student.getWorkoutPlansList().getWorkoutList();
+        selectedStudent = students.get(targetIndex.getZeroBased());
+        List<WorkoutPlan> workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
 
         return new CommandResult(String.format(
                 MESSAGE_SUCCESS,
-                student.getName(),
+                selectedStudent.getName(),
                 formatWorkoutPlans(workoutPlans)));
+    }
+
+    @Override
+    public Student getCurrentStudent() {
+        return selectedStudent;
     }
 
     private static String formatWorkoutPlans(List<WorkoutPlan> workoutPlans) {
