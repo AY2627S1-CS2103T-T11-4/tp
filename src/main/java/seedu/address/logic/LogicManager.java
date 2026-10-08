@@ -10,7 +10,6 @@ import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
-import seedu.address.logic.commands.CurrentStudentProvider;
 import seedu.address.logic.commands.HomeCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.BrotherGymParser;
@@ -52,8 +51,9 @@ public class LogicManager implements Logic {
         Command command = brotherGymParser.parseCommand(commandText);
         commandResult = command.execute(model);
 
-        if (command instanceof CurrentStudentProvider provider) {
-            currentStudent = Optional.of(provider.getCurrentStudent());
+        Optional<Student> updatedStudent = command.getCurrentStudent();
+        if (updatedStudent.isPresent()) {
+            currentStudent = updatedStudent;
         } else if (command instanceof HomeCommand) {
             currentStudent = Optional.empty();
         }

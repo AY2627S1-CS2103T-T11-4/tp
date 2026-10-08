@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Optional;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -17,7 +18,7 @@ import seedu.address.model.workoutplan.WorkoutPlan;
 /**
  * Displays all workout plans belonging to a selected student.
  */
-public class ViewStudentCommand extends Command implements CurrentStudentProvider {
+public class ViewStudentCommand extends Command {
 
     public static final String COMMAND_WORD = "viewStudent";
 
@@ -57,8 +58,8 @@ public class ViewStudentCommand extends Command implements CurrentStudentProvide
     }
 
     @Override
-    public Student getCurrentStudent() {
-        return selectedStudent;
+    public Optional<Student> getCurrentStudent() {
+        return Optional.ofNullable(selectedStudent);
     }
 
     private static String formatWorkoutPlans(List<WorkoutPlan> workoutPlans) {
