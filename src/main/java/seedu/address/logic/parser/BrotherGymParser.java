@@ -19,6 +19,7 @@ import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.HomeCommand;
+import seedu.address.logic.commands.ViewStudentCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -57,6 +58,7 @@ public class BrotherGymParser {
             case AddStudentCommand.COMMAND_WORD -> new AddStudentCommandParser().parse(arguments);
             case EditStudentCommand.COMMAND_WORD -> new EditStudentCommandParser().parse(arguments);
             case DeleteStudentCommand.COMMAND_WORD -> new DeleteStudentCommandParser().parse(arguments);
+            case ViewStudentCommand.COMMAND_WORD -> new ViewStudentCommandParser().parse(arguments);
             case AddPlanCommand.COMMAND_WORD -> new AddPlanCommandParser().parse(arguments);
             case DeletePlanCommand.COMMAND_WORD -> new DeletePlanCommandParser().parse(arguments);
             case ClearCommand.COMMAND_WORD -> new ClearCommand();

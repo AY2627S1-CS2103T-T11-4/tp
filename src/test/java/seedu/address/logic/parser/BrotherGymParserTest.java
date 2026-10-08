@@ -23,6 +23,7 @@ import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.HomeCommand;
+import seedu.address.logic.commands.ViewStudentCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
@@ -78,6 +79,13 @@ public class BrotherGymParserTest {
         WorkoutPlan workout = new WorkoutBuilder().build();
         AddPlanCommand command = (AddPlanCommand) parser.parseCommand(WorkoutUtil.getAddPlanCommand(workout));
         assertEquals(new AddPlanCommand(workout), command);
+    }
+
+    @Test
+    public void parseCommand_viewStudent() throws Exception {
+        ViewStudentCommand command = (ViewStudentCommand) parser.parseCommand(
+                ViewStudentCommand.COMMAND_WORD + " " + INDEX_FIRST.getOneBased());
+        assertEquals(new ViewStudentCommand(INDEX_FIRST), command);
     }
 
     @Test
