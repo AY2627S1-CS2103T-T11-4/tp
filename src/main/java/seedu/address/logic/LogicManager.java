@@ -10,10 +10,9 @@ import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
-import seedu.address.logic.commands.AddPlanCommand;
-import seedu.address.logic.commands.DeletePlanCommand;
+import seedu.address.logic.commands.CurrentStudentConsumer;
+import seedu.address.logic.commands.CurrentStudentProvider;
 import seedu.address.logic.commands.HomeCommand;
-import seedu.address.logic.commands.ViewStudentCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.BrotherGymParser;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -53,20 +52,14 @@ public class LogicManager implements Logic {
         CommandResult commandResult;
         Command command = brotherGymParser.parseCommand(commandText);
 
-        if (command instanceof AddPlanCommand addPlanCommand) {
-            addPlanCommand.setCurrentStudent(currentStudent.orElse(null));
-        } else if (command instanceof DeletePlanCommand deletePlanCommand) {
-            deletePlanCommand.setCurrentStudent(currentStudent.orElse(null));
+        if (command instanceof CurrentStudentConsumer consumer) {
+            consumer.setCurrentStudent(currentStudent.orElse(null));
         }
 
         commandResult = command.execute(model);
 
-        if (command instanceof ViewStudentCommand viewStudentCommand) {
-            currentStudent = Optional.of(viewStudentCommand.getSelectedStudent());
-        } else if (command instanceof AddPlanCommand addPlanCommand) {
-            currentStudent = Optional.of(addPlanCommand.getUpdatedStudent());
-        } else if (command instanceof DeletePlanCommand deletePlanCommand) {
-            currentStudent = Optional.of(deletePlanCommand.getUpdatedStudent());
+        if (command instanceof CurrentStudentProvider provider) {
+            currentStudent = Optional.of(provider.getCurrentStudent());
         } else if (command instanceof HomeCommand) {
             currentStudent = Optional.empty();
         }

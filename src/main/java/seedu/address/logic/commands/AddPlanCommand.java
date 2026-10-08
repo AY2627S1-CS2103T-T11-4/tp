@@ -12,7 +12,7 @@ import seedu.address.model.workoutplan.WorkoutPlan;
 /**
  * Adds a workout plan to the Student currently being viewed.
  */
-public class AddPlanCommand extends Command {
+public class AddPlanCommand extends Command implements CurrentStudentConsumer, CurrentStudentProvider {
 
     public static final String COMMAND_WORD = "addPlan";
 
@@ -36,12 +36,14 @@ public class AddPlanCommand extends Command {
     }
 
     /** Supplies the student currently selected by the Logic layer. */
+    @Override
     public void setCurrentStudent(Student currentStudent) {
         this.currentStudent = currentStudent;
     }
 
     /** Returns the updated student after successful execution. */
-    public Student getUpdatedStudent() {
+    @Override
+    public Student getCurrentStudent() {
         return updatedStudent;
     }
 
