@@ -9,7 +9,7 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
-import seedu.address.model.workout.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
  * Deletes a workout plan from the Student currently being viewed.
@@ -45,7 +45,7 @@ public class DeletePlanCommand extends Command {
             throw new CommandException(MESSAGE_NO_STUDENT_SELECTED);
         }
 
-        List<WorkoutPlan> workoutPlans = currentStudent.getWorkoutPlans();
+        List<WorkoutPlan> workoutPlans = currentStudent.getWorkoutPlansList().getWorkoutList();
         if (targetIndex.getZeroBased() >= workoutPlans.size()) {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID);
         }
