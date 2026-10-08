@@ -5,6 +5,8 @@ import static seedu.address.testutil.Assert.assertThrows;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +15,20 @@ import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.BrotherGym;
 import seedu.address.testutil.TypicalStudents;
 
+
 public class JsonSerializableBrotherGymTest {
+
+    @Test
+    public void toModelType_nullStudent_throwsIllegalValueException() {
+        JsonSerializableBrotherGym adapted = new JsonSerializableBrotherGym(
+                Arrays.asList((JsonAdaptedStudent) null));
+        assertThrows(IllegalValueException.class, adapted::toModelType);
+    }
+
+    @Test
+    public void constructor_nullStudents_createsEmptyModel() throws Exception {
+        assertEquals(new BrotherGym(), new JsonSerializableBrotherGym((List<JsonAdaptedStudent>) null).toModelType());
+    }
 
     private static final Path TEST_DATA_FOLDER = Paths.get("src", "test", "data", "JsonSerializableBrotherGymTest");
     private static final Path TYPICAL_STUDENTS_FILE = TEST_DATA_FOLDER.resolve("typicalStudentsBrotherGym.json");

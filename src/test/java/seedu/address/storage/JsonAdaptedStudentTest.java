@@ -93,4 +93,12 @@ public class JsonAdaptedStudentTest {
                 List.of(new JsonAdaptedWorkoutPlan(null, "Squats", "2023-11-15")));
         assertThrows(IllegalValueException.class, student::toModelType);
     }
+
+    @Test
+    public void toModelType_validWorkoutPlan_returnsStudentWithPlan() throws Exception {
+        JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", "98765432", "johnd@example.com",
+                "311, Clementi Ave 2, #02-25", List.of(),
+                List.of(new JsonAdaptedWorkoutPlan("Strength", "Squats", "2023-11-15")));
+        assertEquals(1, student.toModelType().getWorkoutPlansList().getWorkoutList().size());
+    }
 }
