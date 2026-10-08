@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox styleClass="workout-plan-card" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+  <VBox HBox.hgrow="ALWAYS">
+    <padding>
+      <Insets top="10" right="12" bottom="10" left="12" />
+    </padding>
+    <HBox alignment="CENTER_LEFT">
+      <Label fx:id="id" styleClass="workout-plan-title">
+        <minWidth>
+          <Region fx:constant="USE_PREF_SIZE" />
+        </minWidth>
+      </Label>
+      <Label fx:id="title" styleClass="workout-plan-title" HBox.hgrow="ALWAYS" />
+      <Label fx:id="date" styleClass="workout-plan-date" />
+    </HBox>
+    <Label fx:id="description" styleClass="workout-plan-description" wrapText="true" />
+  </VBox>
+</HBox>

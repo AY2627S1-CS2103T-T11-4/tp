@@ -1,5 +1,7 @@
 package seedu.address.logic;
 
+import java.util.Optional;
+
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.commands.CommandResult;
@@ -22,6 +24,9 @@ public interface Logic {
 
     /** Returns an unmodifiable view of the filtered list of students */
     ObservableList<Student> getFilteredStudentList();
+
+    /** Returns the student currently selected by {@code viewStudent}, if any. */
+    Optional<Student> getCurrentStudent();
 
     /**
      * Returns the user prefs' GUI settings.
