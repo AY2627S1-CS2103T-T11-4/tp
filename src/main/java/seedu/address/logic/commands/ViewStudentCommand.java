@@ -2,8 +2,8 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -33,6 +33,11 @@ public class ViewStudentCommand extends Command {
     private final Index targetIndex;
     private Student selectedStudent;
 
+    /**
+     * Creates a command to view the workout plans of the student at the given index.
+     *
+     * @param targetIndex index of the student whose plans should be viewed
+     */
     public ViewStudentCommand(Index targetIndex) {
         requireNonNull(targetIndex);
         this.targetIndex = targetIndex;
