@@ -16,7 +16,7 @@ import seedu.address.model.workoutplan.WorkoutPlansList;
 /**
  * Deletes a workout plan from the Student currently being viewed.
  */
-public class DeletePlanCommand extends Command {
+public class DeletePlanCommand extends SingleIndexCommand {
 
     public static final String COMMAND_WORD = "deletePlan";
 
@@ -31,7 +31,6 @@ public class DeletePlanCommand extends Command {
     public static final String MESSAGE_INVALID_WORKOUT_ID =
             "Workout ID exceeded total number of workout plans.";
 
-    private final Index targetIndex;
     private Student currentStudent;
     private Student updatedStudent;
 
@@ -41,8 +40,7 @@ public class DeletePlanCommand extends Command {
      * @param targetIndex index of the workout plan to delete
      */
     public DeletePlanCommand(Index targetIndex) {
-        requireNonNull(targetIndex);
-        this.targetIndex = targetIndex;
+        super(targetIndex);
     }
 
     public void setCurrentStudent(Student currentStudent) {
