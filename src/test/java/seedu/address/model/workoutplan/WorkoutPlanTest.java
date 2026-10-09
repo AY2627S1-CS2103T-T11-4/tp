@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import org.junit.jupiter.api.Test;
@@ -88,8 +90,11 @@ public class WorkoutPlanTest {
     @Test
     public void toStringMethod() {
         WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID);
-        String expected = WorkoutPlan.class.getCanonicalName() + "{title=" + TITLE_VALID
-                + ", workouts=" + DESCRIPTION_VALID + ", date=" + DATE_VALID + "}";
+        String formattedDate = DATE_VALID.getValue().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+                .format(DateTimeFormatter.ofPattern("dd MMM yyyy"));
+        String expected = TITLE_TEXT_VALID + " - " + DESCRIPTION_TEXT_VALID + " (" + formattedDate + ")";
         assertEquals(expected, plan.toString());
     }
 }

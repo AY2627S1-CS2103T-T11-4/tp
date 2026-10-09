@@ -18,7 +18,11 @@
         </minWidth>
       </Label>
       <Label fx:id="title" styleClass="workout-plan-title" HBox.hgrow="ALWAYS" />
-      <Label fx:id="date" styleClass="workout-plan-date" />
+      <Label fx:id="date" styleClass="workout-plan-date">
+        <HBox.margin>
+          <Insets left="12" />
+        </HBox.margin>
+      </Label>
     </HBox>
     <Label fx:id="description" styleClass="workout-plan-description" wrapText="true" />
   </VBox>

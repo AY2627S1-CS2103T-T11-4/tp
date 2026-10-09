@@ -2,15 +2,17 @@ package seedu.address.model.workoutplan;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-
-import seedu.address.commons.util.ToStringBuilder;
 
 /**
  * Represents a workout plan in BrotherGym.
  * Guarantees: details are present and not null, field values are validated, immutable.
  */
 public final class WorkoutPlan {
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     private final WorkoutTitle title;
     private final WorkoutDescription workouts;
@@ -58,10 +60,10 @@ public final class WorkoutPlan {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .add("title", title)
-                .add("workouts", workouts)
-                .add("date", date)
-                .toString();
+        String formattedDate = date.getValue().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+                .format(DATE_FORMATTER);
+        return title.getValue() + " - " + workouts.getValue() + " (" + formattedDate + ")";
     }
 }
