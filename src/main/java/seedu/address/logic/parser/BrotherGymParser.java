@@ -57,10 +57,13 @@ public class BrotherGymParser {
         return switch (commandWord) {
             case AddStudentCommand.COMMAND_WORD -> new AddStudentCommandParser().parse(arguments);
             case EditStudentCommand.COMMAND_WORD -> new EditStudentCommandParser().parse(arguments);
-            case DeleteStudentCommand.COMMAND_WORD -> new DeleteStudentCommandParser().parse(arguments);
-            case ViewStudentCommand.COMMAND_WORD -> new ViewStudentCommandParser().parse(arguments);
+            case DeleteStudentCommand.COMMAND_WORD -> new SingleIndexCommandParser<DeleteStudentCommand>(
+                    DeleteStudentCommand::new, DeleteStudentCommand.MESSAGE_USAGE).parse(arguments);
+            case ViewStudentCommand.COMMAND_WORD -> new SingleIndexCommandParser<ViewStudentCommand>(
+                    ViewStudentCommand::new, ViewStudentCommand.MESSAGE_USAGE).parse(arguments);
             case AddPlanCommand.COMMAND_WORD -> new AddPlanCommandParser().parse(arguments);
-            case DeletePlanCommand.COMMAND_WORD -> new DeletePlanCommandParser().parse(arguments);
+            case DeletePlanCommand.COMMAND_WORD -> new SingleIndexCommandParser<DeletePlanCommand>(
+                    DeletePlanCommand::new, DeletePlanCommand.MESSAGE_USAGE).parse(arguments);
             case ClearCommand.COMMAND_WORD -> new ClearCommand();
             case FindCommand.COMMAND_WORD -> new FindCommandParser().parse(arguments);
             case HomeCommand.COMMAND_WORD -> new HomeCommand();
