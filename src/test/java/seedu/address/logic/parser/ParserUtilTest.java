@@ -4,8 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.Assert.assertThrows;
-import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
+import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -17,13 +20,21 @@ import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.tag.Tag;
+import seedu.address.model.workoutplan.WorkoutDate;
+import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutTitle;
 
+@SuppressWarnings("checkstyle:Regexp")
 public class ParserUtilTest {
     private static final String INVALID_NAME = "R@chel";
     private static final String INVALID_PHONE = "+651234";
     private static final String INVALID_ADDRESS = " ";
     private static final String INVALID_EMAIL = "example.com";
     private static final String INVALID_TAG = "#friend";
+    private static final String INVALID_TITLE = "";
+    private static final String INVALID_DESC = "";
+    private static final String INVALID_DATE_CHARS = "dd102026";
+    private static final String INVALID_DATE_LENGTH = "091026";
 
     private static final String VALID_NAME = "Rachel Walker";
     private static final String VALID_PHONE = "123456";
@@ -31,6 +42,11 @@ public class ParserUtilTest {
     private static final String VALID_EMAIL = "rachel@example.com";
     private static final String VALID_TAG_1 = "friend";
     private static final String VALID_TAG_2 = "neighbour";
+    private static final String VALID_TITLE = "Shoulder Day";
+    private static final String VALID_DESC = "Shoulder Press 3x 80kg";
+    private static final String VALID_DATE = "09102026";
+    private static final Date VALID_DATE_OBJECT = Date.from(LocalDate.of(2026, 10, 9)
+            .atStartOfDay(ZoneId.systemDefault()).toInstant()); // mirrors VALID_DATE
 
     private static final String WHITESPACE = " \t\r\n";
 
@@ -48,10 +64,10 @@ public class ParserUtilTest {
     @Test
     public void parseIndex_validInput_success() throws Exception {
         // No whitespaces
-        assertEquals(INDEX_FIRST_STUDENT, ParserUtil.parseIndex("1"));
+        assertEquals(INDEX_FIRST, ParserUtil.parseIndex("1"));
 
         // Leading and trailing whitespaces
-        assertEquals(INDEX_FIRST_STUDENT, ParserUtil.parseIndex("  1  "));
+        assertEquals(INDEX_FIRST, ParserUtil.parseIndex("  1  "));
     }
 
     @Test
@@ -190,5 +206,43 @@ public class ParserUtilTest {
         Set<Tag> expectedTagSet = Set.of(new Tag(VALID_TAG_1), new Tag(VALID_TAG_2));
 
         assertEquals(expectedTagSet, actualTagSet);
+    }
+
+    @Test
+    public void parseTitle_invalidValue_throwsParseException() {
+        assertThrows(ParseException.class, () -> ParserUtil.parseTitle(INVALID_TITLE));
+    }
+
+    @Test
+    public void parseTitle_validValue_returnsWorkoutTitle() throws Exception {
+        WorkoutTitle expectedTitle = new WorkoutTitle(VALID_TITLE);
+        assertEquals(expectedTitle, ParserUtil.parseTitle(VALID_TITLE));
+    }
+
+    @Test
+    public void parseDescription_invalidValue_throwsParseException() {
+        assertThrows(ParseException.class, () -> ParserUtil.parseDescription(INVALID_DESC));
+    }
+
+    @Test
+    public void parseDescription_validValue_returnsWorkoutDescription() throws Exception {
+        WorkoutDescription expectedDesc = new WorkoutDescription(VALID_DESC);
+        assertEquals(expectedDesc, ParserUtil.parseDescription(VALID_DESC));
+    }
+
+    @Test
+    public void parseDate_invalidValueChar_throwsParseException() {
+        assertThrows(ParseException.class, () -> ParserUtil.parseDate(INVALID_DATE_CHARS));
+    }
+
+    @Test
+    public void parseDate_invalidValueLength_throwsParseException() {
+        assertThrows(ParseException.class, () -> ParserUtil.parseDate(INVALID_DATE_LENGTH));
+    }
+
+    @Test
+    public void parseDate_validValue_returnsWorkoutDate() throws Exception {
+        WorkoutDate expectedDate = new WorkoutDate(VALID_DATE_OBJECT);
+        assertEquals(expectedDate, ParserUtil.parseDate(VALID_DATE));
     }
 }

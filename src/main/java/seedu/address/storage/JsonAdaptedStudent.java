@@ -3,7 +3,6 @@ package seedu.address.storage;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -16,6 +15,8 @@ import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
 import seedu.address.model.tag.Tag;
+import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlansList;
 
 /**
  * Jackson-friendly version of {@link Student}.
@@ -29,14 +30,15 @@ class JsonAdaptedStudent {
     private final String email;
     private final String address;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
+    private final List<JsonAdaptedWorkoutPlan> workoutPlans = new ArrayList<>();
 
-    /**
-     * Constructs a {@code JsonAdaptedStudent} with the given student details.
-     */
     @JsonCreator
-    public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
-                              @JsonProperty("email") String email, @JsonProperty("address") String address,
-                              @JsonProperty("tags") List<JsonAdaptedTag> tags) {
+    public JsonAdaptedStudent(@JsonProperty("name") String name,
+                              @JsonProperty("phone") String phone,
+                              @JsonProperty("email") String email,
+                              @JsonProperty("address") String address,
+                              @JsonProperty("tags") List<JsonAdaptedTag> tags,
+                              @JsonProperty("workoutPlans") List<JsonAdaptedWorkoutPlan> workoutPlans) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -44,11 +46,11 @@ class JsonAdaptedStudent {
         if (tags != null) {
             this.tags.addAll(tags);
         }
+        if (workoutPlans != null) {
+            this.workoutPlans.addAll(workoutPlans);
+        }
     }
 
-    /**
-     * Converts a given {@code Student} into this class for Jackson use.
-     */
     public JsonAdaptedStudent(Student source) {
         name = source.getName().fullName;
         phone = source.getPhone().value;
@@ -57,53 +59,53 @@ class JsonAdaptedStudent {
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
+        workoutPlans.addAll(source.getWorkoutPlansList().getWorkoutList().stream()
+                .map(JsonAdaptedWorkoutPlan::new)
+                .collect(Collectors.toList()));
     }
 
-    /**
-     * Converts this Jackson-friendly adapted student object into the model's {@code Student} object.
-     *
-     * @throws IllegalValueException if there were any data constraints violated in the adapted student.
-     */
     public Student toModelType() throws IllegalValueException {
-        final List<Tag> studentTags = new ArrayList<>();
-        for (JsonAdaptedTag tag : tags) {
-            studentTags.add(tag.toModelType());
-        }
-
         if (name == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Name.class.getSimpleName()));
+            throw missing(Name.class);
         }
         if (!Name.isValidName(name)) {
             throw new IllegalValueException(Name.MESSAGE_CONSTRAINTS);
         }
-        final Name modelName = new Name(name);
-
         if (phone == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Phone.class.getSimpleName()));
+            throw missing(Phone.class);
         }
         if (!Phone.isValidPhone(phone)) {
             throw new IllegalValueException(Phone.MESSAGE_CONSTRAINTS);
         }
-        final Phone modelPhone = new Phone(phone);
-
         if (email == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Email.class.getSimpleName()));
+            throw missing(Email.class);
         }
         if (!Email.isValidEmail(email)) {
             throw new IllegalValueException(Email.MESSAGE_CONSTRAINTS);
         }
-        final Email modelEmail = new Email(email);
-
         if (address == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Address.class.getSimpleName()));
+            throw missing(Address.class);
         }
         if (!Address.isValidAddress(address)) {
             throw new IllegalValueException(Address.MESSAGE_CONSTRAINTS);
         }
-        final Address modelAddress = new Address(address);
 
-        final Set<Tag> modelTags = new HashSet<>(studentTags);
-        return new Student(modelName, modelPhone, modelEmail, modelAddress, modelTags);
+        List<Tag> modelTags = new ArrayList<>();
+        for (JsonAdaptedTag tag : tags) {
+            modelTags.add(tag.toModelType());
+        }
+
+        List<WorkoutPlan> modelPlans = new ArrayList<>();
+        for (JsonAdaptedWorkoutPlan plan : workoutPlans) {
+            modelPlans.add(plan.toModelType());
+        }
+
+        return new Student(new Name(name), new Phone(phone), new Email(email), new Address(address),
+                new HashSet<>(modelTags), new WorkoutPlansList(modelPlans));
     }
 
+    private static IllegalValueException missing(Class<?> fieldClass) {
+        return new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT,
+                fieldClass.getSimpleName()));
+    }
 }

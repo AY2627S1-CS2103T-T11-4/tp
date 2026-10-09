@@ -83,6 +83,7 @@ public class ViewStudentCommand extends Command {
             return true;
         }
 
+        // instanceof handles nulls
         if (!(other instanceof ViewStudentCommand otherViewStudentCommand)) {
             return false;
         }
