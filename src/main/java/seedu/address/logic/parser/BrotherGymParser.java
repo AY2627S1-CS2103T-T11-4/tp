@@ -34,6 +34,19 @@ public class BrotherGymParser {
     private static final Logger logger = LogsCenter.getLogger(BrotherGymParser.class);
 
     /**
+     * Parser objects
+     */
+    private static final AddStudentCommandParser ADD_STUDENT_PARSER = new AddStudentCommandParser();
+    private static final AddPlanCommandParser ADD_PLAN_PARSER = new AddPlanCommandParser();
+    private static final EditStudentCommandParser EDIT_STUDENT_PARSER = new EditStudentCommandParser();
+    private static final SingleIndexCommandParser<ViewStudentCommand> VIEW_STUDENT_PARSER =
+            new SingleIndexCommandParser<>(ViewStudentCommand::new, ViewStudentCommand.MESSAGE_USAGE);
+    private static final SingleIndexCommandParser<DeleteStudentCommand> DELETE_STUDENT_PARSER =
+            new SingleIndexCommandParser<>(DeleteStudentCommand::new, DeleteStudentCommand.MESSAGE_USAGE);
+    private static final SingleIndexCommandParser<DeletePlanCommand> DELETE_PLAN_PARSER =
+            new SingleIndexCommandParser<>(DeletePlanCommand::new, DeletePlanCommand.MESSAGE_USAGE);
+
+    /**
      * Parses user input into command for execution.
      *
      * @param userInput full user input string
@@ -55,15 +68,12 @@ public class BrotherGymParser {
         logger.fine("Command word: " + commandWord + "; Arguments: " + arguments);
 
         return switch (commandWord) {
-            case AddStudentCommand.COMMAND_WORD -> new AddStudentCommandParser().parse(arguments);
-            case EditStudentCommand.COMMAND_WORD -> new EditStudentCommandParser().parse(arguments);
-            case DeleteStudentCommand.COMMAND_WORD -> new SingleIndexCommandParser<DeleteStudentCommand>(
-                    DeleteStudentCommand::new, DeleteStudentCommand.MESSAGE_USAGE).parse(arguments);
-            case ViewStudentCommand.COMMAND_WORD -> new SingleIndexCommandParser<ViewStudentCommand>(
-                    ViewStudentCommand::new, ViewStudentCommand.MESSAGE_USAGE).parse(arguments);
-            case AddPlanCommand.COMMAND_WORD -> new AddPlanCommandParser().parse(arguments);
-            case DeletePlanCommand.COMMAND_WORD -> new SingleIndexCommandParser<DeletePlanCommand>(
-                    DeletePlanCommand::new, DeletePlanCommand.MESSAGE_USAGE).parse(arguments);
+            case AddStudentCommand.COMMAND_WORD -> ADD_STUDENT_PARSER.parse(arguments);
+            case EditStudentCommand.COMMAND_WORD -> EDIT_STUDENT_PARSER.parse(arguments);
+            case DeleteStudentCommand.COMMAND_WORD -> DELETE_STUDENT_PARSER.parse(arguments);
+            case ViewStudentCommand.COMMAND_WORD -> VIEW_STUDENT_PARSER.parse(arguments);
+            case AddPlanCommand.COMMAND_WORD -> ADD_PLAN_PARSER.parse(arguments);
+            case DeletePlanCommand.COMMAND_WORD -> DELETE_PLAN_PARSER.parse(arguments);
             case ClearCommand.COMMAND_WORD -> new ClearCommand();
             case FindCommand.COMMAND_WORD -> new FindCommandParser().parse(arguments);
             case HomeCommand.COMMAND_WORD -> new HomeCommand();
