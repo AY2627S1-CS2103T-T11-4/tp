@@ -18,7 +18,7 @@ import seedu.address.model.workoutplan.WorkoutPlan;
 /**
  * Displays all workout plans belonging to a selected student.
  */
-public class ViewStudentCommand extends Command {
+public class ViewStudentCommand extends SingleIndexCommand {
 
     public static final String COMMAND_WORD = "viewStudent";
 
@@ -30,7 +30,6 @@ public class ViewStudentCommand extends Command {
     public static final String MESSAGE_SUCCESS = "Viewing plans for %1$s:\n%2$s";
     public static final String MESSAGE_NO_WORKOUTS = "No workout plans assigned.";
 
-    private final Index targetIndex;
     private Student selectedStudent;
 
     /**
@@ -39,8 +38,7 @@ public class ViewStudentCommand extends Command {
      * @param targetIndex index of the student whose plans should be viewed
      */
     public ViewStudentCommand(Index targetIndex) {
-        requireNonNull(targetIndex);
-        this.targetIndex = targetIndex;
+        super(targetIndex);
     }
 
     @Override
