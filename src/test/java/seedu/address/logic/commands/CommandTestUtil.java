@@ -75,6 +75,8 @@ public class CommandTestUtil {
             .atStartOfDay(ZoneId.systemDefault()).toInstant());
     public static final Date VALID_WORKOUT_DATE_CHEST = Date.from(LocalDate.of(2026, 10, 9)
             .atStartOfDay(ZoneId.systemDefault()).toInstant());
+    public static final String VALID_TAG_HIIT = "HIIT";
+    public static final String VALID_TAG_STRENGTH = "strength";
 
     public static final String TITLE_PREAMBLE_LEGS = VALID_WORKOUT_TITLE_LEGS;
     public static final String TITLE_PREAMBLE_CHEST = VALID_WORKOUT_TITLE_CHEST;
@@ -84,6 +86,8 @@ public class CommandTestUtil {
             + WorkoutDate.INPUT_FORMATTER.format(VALID_WORKOUT_DATE_LEGS);
     public static final String DATE_DESC_CHEST = " " + PREFIX_DATE + " "
             + WorkoutDate.INPUT_FORMATTER.format(VALID_WORKOUT_DATE_CHEST);
+    public static final String TAG_DESC_HIIT = " " + PREFIX_TAG + " " + VALID_TAG_HIIT;
+    public static final String TAG_DESC_STRENGTH = " " + PREFIX_TAG + " " + VALID_TAG_STRENGTH;
 
     public static final String INVALID_PLAN_DESC = " " + PREFIX_PLAN; // empty string not allowed for plan descriptions
     public static final String INVALID_DATE_DESC_LETTERS = " " + PREFIX_DATE + " dd102026"; // 'd' not allowed in date

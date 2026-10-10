@@ -89,6 +89,9 @@ public class StudentBuilder {
         return this;
     }
 
+    /**
+     * Builds the {@code Student} object given the fields provided
+     */
     public Student build() {
         return new Student(name, phone, email, address, tags);
     }
