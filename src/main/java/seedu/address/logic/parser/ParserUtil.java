@@ -2,8 +2,9 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -162,12 +163,12 @@ public class ParserUtil {
         if (!WorkoutDate.isValidDateString(date)) {
             throw new ParseException(WorkoutDate.MESSAGE_CONSTRAINTS);
         }
-        Date dateObject;
+        LocalDate dateObject;
         try {
-            dateObject = WorkoutDate.INPUT_FORMATTER.parse(date);
-        } catch (java.text.ParseException e) { // java ParseException != AB3 ParseException
+            dateObject = LocalDate.parse(date, WorkoutDate.INPUT_DATE_FORMAT);
+        } catch (DateTimeParseException e) {
             throw new ParseException(WorkoutDate.MESSAGE_CONSTRAINTS);
         }
-        return new WorkoutDate(dateObject);
+        return WorkoutDate.fromLocalDate(dateObject);
     }
 }

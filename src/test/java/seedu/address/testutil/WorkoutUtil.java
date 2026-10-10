@@ -4,7 +4,6 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 
 import seedu.address.logic.commands.AddPlanCommand;
-import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
@@ -26,7 +25,7 @@ public class WorkoutUtil {
         StringBuilder sb = new StringBuilder();
         sb.append(workout.getTitle());
         sb.append(" " + PREFIX_PLAN + " " + workout.getWorkouts());
-        sb.append(" " + PREFIX_DATE + " " + WorkoutDate.INPUT_FORMATTER.format(workout.getDate().getValue()));
+        sb.append(" " + PREFIX_DATE + " " + workout.getDate().toInputString());
         return sb.toString();
     }
 }
