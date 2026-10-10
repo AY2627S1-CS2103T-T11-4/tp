@@ -2,7 +2,7 @@ package seedu.address.model.workoutplan;
 
 import static java.util.Objects.requireNonNull;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -20,7 +20,7 @@ public final class WorkoutDate {
      */
     public static final String VALIDATION_REGEX = "^\\d{8}$";
 
-    public static final SimpleDateFormat INPUT_FORMATTER = new SimpleDateFormat("ddMMyyyy");
+    public static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ofPattern("ddMMyyyy");
 
     private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
             DateTimeFormatter.ofPattern("dd-MM-uuuu");
@@ -33,6 +33,13 @@ public final class WorkoutDate {
     public WorkoutDate(Date date) {
         requireNonNull(date);
         value = new Date(date.getTime());
+    }
+
+    /**
+     * Constructs a {@code WorkoutDate} from a LocalDate object
+     */
+    public static WorkoutDate fromLocalDate(LocalDate localDate) {
+        return new WorkoutDate(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
     }
 
     /**
@@ -53,6 +60,12 @@ public final class WorkoutDate {
     public String toDisplayString() {
         return value.toInstant().atZone(ZoneId.systemDefault())
                 .toLocalDate().format(DISPLAY_DATE_FORMAT);
+    }
+
+    /** Returns this date formatted as the intended user input */
+    public String toInputString() {
+        return value.toInstant().atZone(ZoneId.systemDefault())
+                .toLocalDate().format(INPUT_DATE_FORMAT);
     }
 
     @Override
