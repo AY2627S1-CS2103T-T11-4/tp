@@ -26,7 +26,7 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_PLAN, PREFIX_DATE);
 
-        if (!arePrefixesPresent(argMultimap, PREFIX_PLAN, PREFIX_DATE) || argMultimap.getPreamble().isEmpty()) {
+        if (!argMultimap.arePrefixesPresent(PREFIX_PLAN, PREFIX_DATE) || argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddPlanCommand.MESSAGE_USAGE));
         }
 
