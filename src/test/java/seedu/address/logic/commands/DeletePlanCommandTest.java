@@ -52,8 +52,8 @@ public class DeletePlanCommandTest {
         BrotherGym brotherGym = new BrotherGym();
         brotherGym.addStudent(studentWithPlans);
         Model model = new ModelManager(brotherGym, new UserPrefs());
+        model.setCurrentStudent(studentWithPlans);
         DeletePlanCommand command = new DeletePlanCommand(Index.fromOneBased(1));
-        command.setCurrentStudent(studentWithPlans);
 
         Student updatedStudent = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
                 baseStudent.getAddress(), baseStudent.getTags(), new WorkoutPlansList(List.of(SECOND_PLAN)));
@@ -62,6 +62,7 @@ public class DeletePlanCommandTest {
 
         assertCommandSuccess(command, model, String.format(DeletePlanCommand.MESSAGE_SUCCESS, FIRST_PLAN),
                 expectedModel);
+        assertEquals(updatedStudent, model.getCurrentStudent().orElseThrow());
     }
 
     @Test
@@ -81,8 +82,8 @@ public class DeletePlanCommandTest {
         BrotherGym brotherGym = new BrotherGym();
         brotherGym.addStudent(studentWithPlan);
         Model model = new ModelManager(brotherGym, new UserPrefs());
+        model.setCurrentStudent(studentWithPlan);
         DeletePlanCommand command = new DeletePlanCommand(Index.fromOneBased(2));
-        command.setCurrentStudent(studentWithPlan);
 
         assertCommandFailure(command, model, DeletePlanCommand.MESSAGE_INVALID_WORKOUT_ID);
     }

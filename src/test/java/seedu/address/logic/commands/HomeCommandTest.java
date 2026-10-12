@@ -1,5 +1,6 @@
 package seedu.address.logic.commands;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.logic.commands.CommandTestUtil.showStudentAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
@@ -35,5 +36,14 @@ public class HomeCommandTest {
     public void execute_listIsFiltered_showsEverything() {
         showStudentAtIndex(model, INDEX_FIRST);
         assertCommandSuccess(new HomeCommand(), model, HomeCommand.MESSAGE_SUCCESS, expectedModel);
+    }
+
+    @Test
+    public void execute_currentStudentSelected_clearsCurrentStudent() {
+        model.setCurrentStudent(model.getFilteredStudentList().get(0));
+
+        new HomeCommand().execute(model);
+
+        assertTrue(model.getCurrentStudent().isEmpty());
     }
 }

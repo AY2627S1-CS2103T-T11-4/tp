@@ -45,8 +45,8 @@ public class AddPlanCommandTest {
     public void execute_validCurrentStudent_addsPlan() {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
         Student currentStudent = model.getFilteredStudentList().get(0);
+        model.setCurrentStudent(currentStudent);
         AddPlanCommand command = new AddPlanCommand(PLAN);
-        command.setCurrentStudent(currentStudent);
 
         Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(),
@@ -55,6 +55,7 @@ public class AddPlanCommandTest {
         expectedModel.setStudent(currentStudent, updatedStudent);
 
         assertCommandSuccess(command, model, String.format(AddPlanCommand.MESSAGE_SUCCESS, PLAN), expectedModel);
+        assertEquals(updatedStudent, model.getCurrentStudent().orElseThrow());
     }
 
     @Test
@@ -74,8 +75,8 @@ public class AddPlanCommandTest {
         BrotherGym brotherGym = new BrotherGym();
         brotherGym.addStudent(studentWithPlan);
         Model model = new ModelManager(brotherGym, new UserPrefs());
+        model.setCurrentStudent(studentWithPlan);
         AddPlanCommand command = new AddPlanCommand(PLAN);
-        command.setCurrentStudent(studentWithPlan);
 
         assertCommandFailure(command, model, AddPlanCommand.MESSAGE_DUPLICATE_PLAN);
     }

@@ -43,8 +43,10 @@ public class ViewStudentCommandTest {
                 + ViewStudentCommand.MESSAGE_NO_WORKOUTS;
 
         Model expectedModel = new ModelManager(model.getBrotherGym(), new UserPrefs());
+        expectedModel.setCurrentStudent(TypicalStudents.ALICE);
 
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
+        assertEquals(TypicalStudents.ALICE, model.getCurrentStudent().orElseThrow());
     }
 
     @Test
@@ -61,8 +63,10 @@ public class ViewStudentCommandTest {
         ViewStudentCommand command = new ViewStudentCommand(INDEX_FIRST);
         String expectedMessage = "Viewing plans for Alice Pauline:\n1. " + plan;
         Model expectedModel = new ModelManager(modelWithPlan.getBrotherGym(), new UserPrefs());
+        expectedModel.setCurrentStudent(studentWithPlan);
 
         assertCommandSuccess(command, modelWithPlan, expectedMessage, expectedModel);
+        assertEquals(studentWithPlan, modelWithPlan.getCurrentStudent().orElseThrow());
     }
 
     @Test

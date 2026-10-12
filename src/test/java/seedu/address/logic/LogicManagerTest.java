@@ -93,6 +93,14 @@ public class LogicManagerTest {
         assertSame(model.currentStudentProperty(), logic.currentStudentProperty());
     }
 
+    @Test
+    public void getCurrentStudent_delegatesToModel() {
+        Student selectedStudent = AMY;
+        model.setCurrentStudent(selectedStudent);
+
+        assertSame(selectedStudent, logic.getCurrentStudent().orElseThrow());
+    }
+
     /**
      * Executes the command and confirms that
      * - no exceptions are thrown <br>
