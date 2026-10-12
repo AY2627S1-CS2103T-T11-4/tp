@@ -19,6 +19,7 @@ public class HomeCommand extends Command {
     public CommandResult execute(Model model) {
         requireNonNull(model);
         model.updateFilteredStudentList(PREDICATE_SHOW_ALL_STUDENTS);
+        model.clearCurrentStudent();
         return new CommandResult(MESSAGE_SUCCESS);
     }
 }

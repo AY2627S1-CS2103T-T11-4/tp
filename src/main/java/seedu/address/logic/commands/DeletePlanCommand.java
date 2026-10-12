@@ -3,7 +3,6 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
-import java.util.Optional;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -31,9 +30,6 @@ public class DeletePlanCommand extends SingleIndexCommand {
     public static final String MESSAGE_INVALID_WORKOUT_ID =
             "Workout ID exceeded total number of workout plans.";
 
-    private Student currentStudent;
-    private Student updatedStudent;
-
     /**
      * Creates a command to delete the workout plan at the given index.
      *
@@ -43,22 +39,12 @@ public class DeletePlanCommand extends SingleIndexCommand {
         super(targetIndex);
     }
 
-    public void setCurrentStudent(Student currentStudent) {
-        this.currentStudent = currentStudent;
-    }
-
-    @Override
-    public Optional<Student> getCurrentStudent() {
-        return Optional.ofNullable(updatedStudent);
-    }
-
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        if (currentStudent == null) {
-            throw new CommandException(MESSAGE_NO_STUDENT_SELECTED);
-        }
+        Student currentStudent = model.getCurrentStudent()
+                .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
 
         List<WorkoutPlan> workoutPlans = currentStudent.getWorkoutPlansList().getWorkoutList();
         if (targetIndex.getZeroBased() >= workoutPlans.size()) {
@@ -67,7 +53,7 @@ public class DeletePlanCommand extends SingleIndexCommand {
 
         WorkoutPlan planToDelete = workoutPlans.get(targetIndex.getZeroBased());
         WorkoutPlansList updatedPlans = currentStudent.getWorkoutPlansList().removeWorkoutPlan(planToDelete);
-        updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
+        Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
         model.setStudent(currentStudent, updatedStudent);
 
