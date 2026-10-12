@@ -1,7 +1,9 @@
 package seedu.address.model;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.student.Student;
@@ -60,6 +62,18 @@ public interface Model {
      * another existing student in the student list.
      */
     void setStudent(Student target, Student editedStudent);
+
+    /** Returns the currently selected student as an observable, read-only property. */
+    ReadOnlyObjectProperty<Student> currentStudentProperty();
+
+    /** Returns the currently selected student, if any. */
+    Optional<Student> getCurrentStudent();
+
+    /** Selects a student. */
+    void setCurrentStudent(Student student);
+
+    /** Clears the current student selection. */
+    void clearCurrentStudent();
 
     /** Returns an unmodifiable view of the filtered student list */
     ObservableList<Student> getFilteredStudentList();

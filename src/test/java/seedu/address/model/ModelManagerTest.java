@@ -2,19 +2,25 @@ package seedu.address.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_STUDENTS;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalStudents.ALICE;
 import static seedu.address.testutil.TypicalStudents.BENSON;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
+import seedu.address.model.student.Student;
 import seedu.address.testutil.BrotherGymBuilder;
+import seedu.address.testutil.StudentBuilder;
 
 public class ModelManagerTest {
 
@@ -71,6 +77,79 @@ public class ModelManagerTest {
     @Test
     public void getFilteredStudentList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> modelManager.getFilteredStudentList().remove(0));
+    }
+
+    @Test
+    public void currentStudent_selectionChanges_notifiesObservers() {
+        modelManager.addStudent(ALICE);
+        modelManager.addStudent(BENSON);
+        List<Optional<Student>> observedSelections = new ArrayList<>();
+        modelManager.currentStudentProperty().addListener((observable, oldStudent, newStudent) ->
+                observedSelections.add(Optional.ofNullable(newStudent)));
+
+        assertTrue(modelManager.getCurrentStudent().isEmpty());
+        modelManager.setCurrentStudent(ALICE);
+        assertSame(ALICE, modelManager.getCurrentStudent().orElseThrow());
+        assertSame(ALICE, modelManager.currentStudentProperty().get());
+
+        modelManager.setCurrentStudent(BENSON);
+        modelManager.clearCurrentStudent();
+        assertTrue(modelManager.getCurrentStudent().isEmpty());
+        assertEquals(List.of(Optional.of(ALICE), Optional.of(BENSON), Optional.empty()), observedSelections);
+    }
+
+    @Test
+    public void setCurrentStudent_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.setCurrentStudent(null));
+    }
+
+    @Test
+    public void setStudent_selectedStudentReplaced_updatesCurrentStudent() {
+        modelManager.addStudent(ALICE);
+        modelManager.setCurrentStudent(ALICE);
+        var editedAlice = new StudentBuilder(ALICE).withAddress("New address").build();
+        List<Optional<Student>> observedSelections = new ArrayList<>();
+        modelManager.currentStudentProperty().addListener((observable, oldStudent, newStudent) ->
+                observedSelections.add(Optional.ofNullable(newStudent)));
+
+        modelManager.setStudent(ALICE, editedAlice);
+
+        assertSame(editedAlice, modelManager.getCurrentStudent().orElseThrow());
+        assertEquals(List.of(Optional.of(editedAlice)), observedSelections);
+    }
+
+    @Test
+    public void deleteStudent_selectedStudentDeleted_clearsCurrentStudent() {
+        modelManager.addStudent(ALICE);
+        modelManager.setCurrentStudent(ALICE);
+
+        modelManager.deleteStudent(ALICE);
+
+        assertTrue(modelManager.getCurrentStudent().isEmpty());
+        assertNull(modelManager.currentStudentProperty().get());
+    }
+
+    @Test
+    public void changeOtherStudent_keepsCurrentStudent() {
+        modelManager.addStudent(ALICE);
+        modelManager.addStudent(BENSON);
+        modelManager.setCurrentStudent(ALICE);
+        var editedBenson = new StudentBuilder(BENSON).withAddress("New address").build();
+
+        modelManager.setStudent(BENSON, editedBenson);
+        modelManager.deleteStudent(editedBenson);
+
+        assertSame(ALICE, modelManager.getCurrentStudent().orElseThrow());
+    }
+
+    @Test
+    public void setBrotherGym_replacesData_clearsCurrentStudent() {
+        modelManager.addStudent(ALICE);
+        modelManager.setCurrentStudent(ALICE);
+
+        modelManager.setBrotherGym(new BrotherGymBuilder().withStudent(BENSON).build());
+
+        assertTrue(modelManager.getCurrentStudent().isEmpty());
     }
 
     @Test
