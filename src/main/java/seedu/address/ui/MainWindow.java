@@ -1,6 +1,7 @@
 package seedu.address.ui;
 
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
@@ -123,6 +124,9 @@ public class MainWindow extends UiPart<Stage> {
 
         workoutPlanListPanel = new WorkoutPlanListPanel();
         workoutPlanPanelPlaceholder.getChildren().add(workoutPlanListPanel.getRoot());
+        workoutPlanListPanel.showStudent(Optional.ofNullable(logic.currentStudentProperty().get()));
+        logic.currentStudentProperty().addListener((observable, oldStudent, newStudent) ->
+                workoutPlanListPanel.showStudent(Optional.ofNullable(newStudent)));
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
