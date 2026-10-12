@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 import org.junit.jupiter.api.Test;
@@ -81,5 +83,13 @@ public class WorkoutDateTest {
     public void toStringMethod() {
         Date input = new Date(TIME_VALID);
         assertEquals(input.toString(), new WorkoutDate(input).toString());
+    }
+
+    @Test
+    public void toDisplayString_returnsFormattedDate() {
+        Date input = Date.from(LocalDate.of(2023, 11, 15)
+                .atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        assertEquals("15-11-2023", new WorkoutDate(input).toDisplayString());
     }
 }

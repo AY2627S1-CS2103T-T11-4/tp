@@ -2,6 +2,9 @@ package seedu.address.model.workoutplan;
 
 import static java.util.Objects.requireNonNull;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -9,6 +12,18 @@ import java.util.Date;
  * Guarantees: immutable and not null.
  */
 public final class WorkoutDate {
+
+    public static final String MESSAGE_CONSTRAINTS =
+            "Dates should be formatted only in DDMMYYYY format";
+    /*
+     * Date strings have to be 8 numeric characters long
+     */
+    public static final String VALIDATION_REGEX = "^\\d{8}$";
+
+    public static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ofPattern("ddMMyyyy");
+
+    private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
+            DateTimeFormatter.ofPattern("dd-MM-uuuu");
 
     private final Date value;
 
@@ -21,10 +36,36 @@ public final class WorkoutDate {
     }
 
     /**
+     * Constructs a {@code WorkoutDate} from a LocalDate object
+     */
+    public static WorkoutDate fromLocalDate(LocalDate localDate) {
+        return new WorkoutDate(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    }
+
+    /**
      * Returns a copy of the date.
      */
     public Date getValue() {
         return new Date(value.getTime());
+    }
+
+    /**
+     * Returns true if date is a string of 8 numerical digits
+     */
+    public static boolean isValidDateString(String test) {
+        return test.matches(VALIDATION_REGEX);
+    }
+
+    /** Returns this date formatted for display to the user. */
+    public String toDisplayString() {
+        return value.toInstant().atZone(ZoneId.systemDefault())
+                .toLocalDate().format(DISPLAY_DATE_FORMAT);
+    }
+
+    /** Returns this date formatted as the intended user input */
+    public String toInputString() {
+        return value.toInstant().atZone(ZoneId.systemDefault())
+                .toLocalDate().format(INPUT_DATE_FORMAT);
     }
 
     @Override

@@ -8,15 +8,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.Command;
+import seedu.address.logic.commands.DeletePlanCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.EditStudentCommand;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.HomeCommand;
+import seedu.address.logic.commands.ViewStudentCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -29,6 +32,19 @@ public class BrotherGymParser {
      */
     private static final Pattern BASIC_COMMAND_FORMAT = Pattern.compile("(?<commandWord>\\S+)(?<arguments>.*)");
     private static final Logger logger = LogsCenter.getLogger(BrotherGymParser.class);
+
+    /**
+     * Parser objects
+     */
+    private static final AddStudentCommandParser ADD_STUDENT_PARSER = new AddStudentCommandParser();
+    private static final AddPlanCommandParser ADD_PLAN_PARSER = new AddPlanCommandParser();
+    private static final EditStudentCommandParser EDIT_STUDENT_PARSER = new EditStudentCommandParser();
+    private static final SingleIndexCommandParser<ViewStudentCommand> VIEW_STUDENT_PARSER =
+            new SingleIndexCommandParser<>(ViewStudentCommand::new, ViewStudentCommand.MESSAGE_USAGE);
+    private static final SingleIndexCommandParser<DeleteStudentCommand> DELETE_STUDENT_PARSER =
+            new SingleIndexCommandParser<>(DeleteStudentCommand::new, DeleteStudentCommand.MESSAGE_USAGE);
+    private static final SingleIndexCommandParser<DeletePlanCommand> DELETE_PLAN_PARSER =
+            new SingleIndexCommandParser<>(DeletePlanCommand::new, DeletePlanCommand.MESSAGE_USAGE);
 
     /**
      * Parses user input into command for execution.
@@ -52,9 +68,12 @@ public class BrotherGymParser {
         logger.fine("Command word: " + commandWord + "; Arguments: " + arguments);
 
         return switch (commandWord) {
-            case AddStudentCommand.COMMAND_WORD -> new AddStudentCommandParser().parse(arguments);
-            case EditStudentCommand.COMMAND_WORD -> new EditStudentCommandParser().parse(arguments);
-            case DeleteStudentCommand.COMMAND_WORD -> new DeleteStudentCommandParser().parse(arguments);
+            case AddStudentCommand.COMMAND_WORD -> ADD_STUDENT_PARSER.parse(arguments);
+            case EditStudentCommand.COMMAND_WORD -> EDIT_STUDENT_PARSER.parse(arguments);
+            case DeleteStudentCommand.COMMAND_WORD -> DELETE_STUDENT_PARSER.parse(arguments);
+            case ViewStudentCommand.COMMAND_WORD -> VIEW_STUDENT_PARSER.parse(arguments);
+            case AddPlanCommand.COMMAND_WORD -> ADD_PLAN_PARSER.parse(arguments);
+            case DeletePlanCommand.COMMAND_WORD -> DELETE_PLAN_PARSER.parse(arguments);
             case ClearCommand.COMMAND_WORD -> new ClearCommand();
             case FindCommand.COMMAND_WORD -> new FindCommandParser().parse(arguments);
             case HomeCommand.COMMAND_WORD -> new HomeCommand();

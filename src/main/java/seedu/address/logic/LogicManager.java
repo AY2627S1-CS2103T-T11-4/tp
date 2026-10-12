@@ -78,6 +78,11 @@ public class LogicManager implements Logic {
     }
 
     @Override
+    public Optional<Student> getCurrentStudent() {
+        return currentStudent;
+    }
+
+    @Override
     public GuiSettings getGuiSettings() {
         return model.getGuiSettings();
     }

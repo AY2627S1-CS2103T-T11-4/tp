@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+  <padding>
+    <Insets top="20" right="20" bottom="20" left="20" />
+  </padding>
+  <Label fx:id="heading" styleClass="student-list-heading" />
+  <StackPane VBox.vgrow="ALWAYS">
+    <ListView fx:id="workoutPlanListView" />
+    <Label fx:id="emptyMessage" styleClass="label-bright" textAlignment="CENTER" wrapText="true" />
+  </StackPane>
+</VBox>

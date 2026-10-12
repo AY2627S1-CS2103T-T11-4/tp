@@ -14,7 +14,7 @@ import seedu.address.model.student.Student;
 /**
  * Deletes a student identified using its displayed index from the student list.
  */
-public class DeleteStudentCommand extends Command {
+public class DeleteStudentCommand extends SingleIndexCommand {
 
     public static final String COMMAND_WORD = "deleteStudent";
 
@@ -25,10 +25,8 @@ public class DeleteStudentCommand extends Command {
 
     public static final String MESSAGE_DELETE_STUDENT_SUCCESS = "Deleted student: %1$s";
 
-    private final Index targetIndex;
-
     public DeleteStudentCommand(Index targetIndex) {
-        this.targetIndex = targetIndex;
+        super(targetIndex);
     }
 
     @Override
