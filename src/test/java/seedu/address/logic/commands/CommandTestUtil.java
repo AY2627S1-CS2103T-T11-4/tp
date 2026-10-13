@@ -71,6 +71,8 @@ public class CommandTestUtil {
     public static final String VALID_WORKOUT_PLAN_CHEST = "Bench Press 3x 80kg";
     public static final LocalDate VALID_WORKOUT_DATE_LEGS = LocalDate.of(2026, 10, 15);
     public static final LocalDate VALID_WORKOUT_DATE_CHEST = LocalDate.of(2026, 10, 9);
+    public static final String VALID_TAG_HIIT = "HIIT";
+    public static final String VALID_TAG_STRENGTH = "strength";
 
     public static final String TITLE_PREAMBLE_LEGS = VALID_WORKOUT_TITLE_LEGS;
     public static final String TITLE_PREAMBLE_CHEST = VALID_WORKOUT_TITLE_CHEST;
@@ -80,6 +82,8 @@ public class CommandTestUtil {
             + VALID_WORKOUT_DATE_LEGS.format(WorkoutDate.INPUT_DATE_FORMAT);
     public static final String DATE_DESC_CHEST = " " + PREFIX_DATE + " "
             + VALID_WORKOUT_DATE_CHEST.format(WorkoutDate.INPUT_DATE_FORMAT);
+    public static final String TAG_DESC_HIIT = " " + PREFIX_TAG + " " + VALID_TAG_HIIT;
+    public static final String TAG_DESC_STRENGTH = " " + PREFIX_TAG + " " + VALID_TAG_STRENGTH;
 
     public static final String INVALID_PLAN_DESC = " " + PREFIX_PLAN; // empty string not allowed for plan descriptions
     public static final String INVALID_DATE_DESC_LETTERS = " " + PREFIX_DATE + " dd102026"; // 'd' not allowed in date

@@ -3,11 +3,14 @@ package seedu.address.logic.parser;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
+import java.util.Set;
 import java.util.stream.Stream;
 
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -24,9 +27,9 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
      */
     public AddPlanCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(args, PREFIX_PLAN, PREFIX_DATE);
+                ArgumentTokenizer.tokenize(args, PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
 
-        if (!arePrefixesPresent(argMultimap, PREFIX_PLAN, PREFIX_DATE) || argMultimap.getPreamble().isEmpty()) {
+        if (!argMultimap.arePrefixesPresent(PREFIX_PLAN, PREFIX_DATE) || argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddPlanCommand.MESSAGE_USAGE));
         }
 
@@ -34,8 +37,9 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
         WorkoutTitle title = ParserUtil.parseTitle(argMultimap.getPreamble());
         WorkoutDescription desc = ParserUtil.parseDescription(argMultimap.getValue(PREFIX_PLAN).get());
         WorkoutDate date = ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get());
+        Set<WorkoutPlanTag> tagList = ParserUtil.parseWorkoutPlanTags(argMultimap.getAllValues(PREFIX_TAG));
 
-        WorkoutPlan workout = new WorkoutPlan(title, desc, date);
+        WorkoutPlan workout = new WorkoutPlan(title, desc, date, tagList);
 
         return new AddPlanCommand(workout);
     }

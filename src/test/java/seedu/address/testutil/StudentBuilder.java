@@ -8,7 +8,7 @@ import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
-import seedu.address.model.tag.Tag;
+import seedu.address.model.tag.StudentTag;
 import seedu.address.model.util.SampleDataUtil;
 
 /**
@@ -25,7 +25,7 @@ public class StudentBuilder {
     private Phone phone;
     private Email email;
     private Address address;
-    private Set<Tag> tags;
+    private Set<StudentTag> tags;
 
     /**
      * Creates a {@code StudentBuilder} with the default details.
@@ -46,7 +46,7 @@ public class StudentBuilder {
         phone = studentToCopy.getPhone();
         email = studentToCopy.getEmail();
         address = studentToCopy.getAddress();
-        tags = new HashSet<>(studentToCopy.getTags());
+        tags = new HashSet<>(studentToCopy.getStudentTags());
     }
 
     /**
@@ -61,7 +61,7 @@ public class StudentBuilder {
      * Parses the {@code tags} into a {@code Set<Tag>} and sets it to the {@code Student} that we are building.
      */
     public StudentBuilder withTags(String ... tags) {
-        this.tags = SampleDataUtil.getTagSet(tags);
+        this.tags = SampleDataUtil.getStudentTagSet(tags);
         return this;
     }
 
@@ -89,6 +89,9 @@ public class StudentBuilder {
         return this;
     }
 
+    /**
+     * Builds the {@code Student} object given the fields provided
+     */
     public Student build() {
         return new Student(name, phone, email, address, tags);
     }

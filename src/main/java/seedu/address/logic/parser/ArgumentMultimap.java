@@ -63,6 +63,14 @@ public class ArgumentMultimap {
     }
 
     /**
+     * Returns true if none of the prefixes contains empty {@code Optional} values in the current
+     * {@code ArgumentMultimap}.
+     */
+    public boolean arePrefixesPresent(Prefix... prefixes) {
+        return Stream.of(prefixes).allMatch(prefix -> this.getValue(prefix).isPresent());
+    }
+
+    /**
      * Throws a {@code ParseException} if any of the prefixes given in {@code prefixes} appeared more than
      * once among the arguments.
      */

@@ -1,7 +1,11 @@
 package seedu.address.testutil;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
+import seedu.address.model.tag.WorkoutPlanTag;
+import seedu.address.model.util.SampleDataUtil;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -18,6 +22,7 @@ public class WorkoutBuilder {
     private WorkoutTitle title;
     private WorkoutDescription desc;
     private WorkoutDate date;
+    private Set<WorkoutPlanTag> tags;
 
     /**
      * Creates a {@code WorkoutBuilder}  with the default details
@@ -26,6 +31,7 @@ public class WorkoutBuilder {
         title = new WorkoutTitle(DEFAULT_TITLE);
         desc = new WorkoutDescription(DEFAULT_DESC);
         date = WorkoutDate.fromLocalDate(DEFAULT_DATE);
+        tags = new HashSet<>();
     }
 
     /**
@@ -35,6 +41,7 @@ public class WorkoutBuilder {
         title = workoutToCopy.getTitle();
         desc = workoutToCopy.getWorkouts();
         date = workoutToCopy.getDate();
+        tags = new HashSet<>(workoutToCopy.getTags());
     }
 
     /**
@@ -61,7 +68,18 @@ public class WorkoutBuilder {
         return this;
     }
 
+    /**
+     * Parses the {@code tags} into a {@code Set<Tag>} and sets it to the {@code Student} that we are building.
+     */
+    public WorkoutBuilder withTags(String... tags) {
+        this.tags = SampleDataUtil.getWorkoutPlanTagSet(tags);
+        return this;
+    }
+
+    /**
+     * Builds the {@code WorkoutPlan} object given the fields provided
+     */
     public WorkoutPlan build() {
-        return new WorkoutPlan(this.title, this.desc, this.date);
+        return new WorkoutPlan(this.title, this.desc, this.date, this.tags);
     }
 }

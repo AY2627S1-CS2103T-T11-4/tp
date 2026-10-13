@@ -7,6 +7,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
@@ -15,7 +16,9 @@ import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
+import seedu.address.model.tag.StudentTag;
 import seedu.address.model.tag.Tag;
+import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutTitle;
@@ -101,30 +104,46 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a {@code String tag} into a {@code Tag}.
+     * Parses a {@code String tag} into a {@code Tag} object, depending on the constructor provided.
      * Leading and trailing whitespaces will be trimmed.
      *
      * @throws ParseException if the given {@code tag} is invalid.
      */
-    public static Tag parseTag(String tag) throws ParseException {
+    protected static <T extends Tag> T parseTag(String tag, Function<String, T> tagConstructor) throws ParseException {
         requireNonNull(tag);
         String trimmedTag = tag.trim();
         if (!Tag.isValidTagName(trimmedTag)) {
             throw new ParseException(Tag.MESSAGE_CONSTRAINTS);
         }
-        return new Tag(trimmedTag);
+        return tagConstructor.apply(trimmedTag);
     }
 
     /**
-     * Parses {@code Collection<String> tags} into a {@code Set<Tag>}.
+     * Parses {@code Collection<String> tags} into {@code Set<Tag>} based on {@code tagConstructor}.
      */
-    public static Set<Tag> parseTags(Collection<String> tags) throws ParseException {
+    protected static <T extends Tag> Set<T> parseTags(
+            Collection<String> tags,
+            Function<String, T> tagConstructor) throws ParseException {
         requireNonNull(tags);
-        final Set<Tag> tagSet = new HashSet<>();
+        final Set<T> tagSet = new HashSet<>();
         for (String tagName : tags) {
-            tagSet.add(parseTag(tagName));
+            tagSet.add(parseTag(tagName, tagConstructor));
         }
         return tagSet;
+    }
+
+    /**
+     * Parses {@code Collection<String> tags} into {@code Set<WorkoutPlanTag>}.
+     */
+    public static Set<WorkoutPlanTag> parseWorkoutPlanTags(Collection<String> tags) throws ParseException {
+        return parseTags(tags, WorkoutPlanTag::new);
+    }
+
+    /**
+     * Parses {@code Collection<String> tags} into {@code Set<StudentTag>}.
+     */
+    public static Set<StudentTag> parseStudentTags(Collection<String> tags) throws ParseException {
+        return parseTags(tags, StudentTag::new);
     }
 
     /**
