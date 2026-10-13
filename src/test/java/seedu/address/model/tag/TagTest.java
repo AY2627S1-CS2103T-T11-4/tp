@@ -1,6 +1,7 @@
 package seedu.address.model.tag;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -25,15 +26,26 @@ public class TagTest {
     }
 
     @Test
-    public void equals_subclassWithSameName_notEqual() {
+    public void equals() {
         Tag tag = new Tag("strength");
-        StudentTag studentTag = new StudentTag("strength");
-        WorkoutPlanTag workoutPlanTag = new WorkoutPlanTag("strength");
 
-        assertNotEquals(tag, studentTag);
-        assertNotEquals(studentTag, tag);
-        assertNotEquals(tag, workoutPlanTag);
-        assertNotEquals(workoutPlanTag, tag);
+        // same values -> returns true
+        assertTrue(tag.equals(new Tag("strength")));
+
+        // same object -> returns true
+        assertTrue(tag.equals(tag));
+
+        // null -> returns false
+        assertFalse(tag.equals(null));
+
+        // different type -> returns false
+        assertFalse(tag.equals("strength"));
+
+        // different tag name -> returns false
+        assertFalse(tag.equals(new Tag("cardio")));
+
+        // same name but different tag type -> returns false
+        assertFalse(tag.equals(new StudentTag("strength")));
+        assertFalse(tag.equals(new WorkoutPlanTag("strength")));
     }
-
 }
