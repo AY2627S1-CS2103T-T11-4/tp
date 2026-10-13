@@ -26,7 +26,7 @@ import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
-import seedu.address.model.tag.Tag;
+import seedu.address.model.tag.StudentTag;
 
 /**
  * Edits the details of an existing student in the student list.
@@ -99,7 +99,7 @@ public class EditStudentCommand extends Command {
         Phone updatedPhone = editStudentDescriptor.getPhone().orElse(studentToEdit.getPhone());
         Email updatedEmail = editStudentDescriptor.getEmail().orElse(studentToEdit.getEmail());
         Address updatedAddress = editStudentDescriptor.getAddress().orElse(studentToEdit.getAddress());
-        Set<Tag> updatedTags = editStudentDescriptor.getTags().orElse(studentToEdit.getTags());
+        Set<StudentTag> updatedTags = editStudentDescriptor.getStudentTags().orElse(studentToEdit.getStudentTags());
 
         return new Student(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedTags,
                 studentToEdit.getWorkoutPlansList());
@@ -137,7 +137,7 @@ public class EditStudentCommand extends Command {
         private Phone phone;
         private Email email;
         private Address address;
-        private Set<Tag> tags;
+        private Set<StudentTag> tags;
 
         public EditStudentDescriptor() {}
 
@@ -196,7 +196,7 @@ public class EditStudentCommand extends Command {
          * Sets {@code tags} to this object's {@code tags}.
          * A defensive copy of {@code tags} is used internally.
          */
-        public void setTags(Set<Tag> tags) {
+        public void setTags(Set<StudentTag> tags) {
             this.tags = (tags != null) ? new HashSet<>(tags) : null;
         }
 
@@ -205,7 +205,7 @@ public class EditStudentCommand extends Command {
          * if modification is attempted.
          * Returns {@code Optional#empty()} if {@code tags} is null.
          */
-        public Optional<Set<Tag>> getTags() {
+        public Optional<Set<StudentTag>> getStudentTags() {
             return (tags != null) ? Optional.of(Collections.unmodifiableSet(tags)) : Optional.empty();
         }
 
