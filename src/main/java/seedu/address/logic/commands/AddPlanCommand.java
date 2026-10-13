@@ -3,6 +3,7 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -20,8 +21,10 @@ public class AddPlanCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Adds a workout plan to the Student currently being viewed.\n"
-            + "Parameters: PLAN_TITLE " + PREFIX_PLAN + " DESCRIPTION " + PREFIX_DATE + " DATE(DDMMYYYY)\n"
-            + "Example: " + COMMAND_WORD + " Strength " + PREFIX_PLAN + " Upper body " + PREFIX_DATE + " 08102025";
+            + "Parameters: PLAN_TITLE " + PREFIX_PLAN + " DESCRIPTION " + PREFIX_DATE + " DATE(DDMMYYYY) ["
+            + PREFIX_TAG + " TAG]...\n"
+            + "Example: " + COMMAND_WORD + " Strength " + PREFIX_PLAN + " Upper body " + PREFIX_DATE
+            + " 08102025 " + PREFIX_TAG + " strength " + PREFIX_TAG + " upperbody";
 
     public static final String MESSAGE_SUCCESS = "New workout added: %1$s";
     public static final String MESSAGE_NO_STUDENT_SELECTED =

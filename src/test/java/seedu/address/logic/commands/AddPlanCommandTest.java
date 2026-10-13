@@ -10,6 +10,7 @@ import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.student.Student;
+import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -64,6 +66,24 @@ public class AddPlanCommandTest {
         AddPlanCommand command = new AddPlanCommand(PLAN);
 
         assertCommandFailure(command, model, AddPlanCommand.MESSAGE_NO_STUDENT_SELECTED);
+    }
+
+    @Test
+    public void execute_taggedPlan_preservesWorkoutPlanTags() throws Exception {
+        Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
+        Student currentStudent = model.getFilteredStudentList().get(0);
+        model.setCurrentStudent(currentStudent);
+        WorkoutPlan taggedPlan = new WorkoutPlan(new WorkoutTitle("Strength"),
+                new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)),
+                Set.of(new WorkoutPlanTag("strength"), new WorkoutPlanTag("upperbody")));
+
+        new AddPlanCommand(taggedPlan).execute(model);
+
+        WorkoutPlan storedPlan = model.getCurrentStudent().orElseThrow()
+                .getWorkoutPlansList().getWorkoutList().get(0);
+        assertEquals(taggedPlan, storedPlan);
+        assertEquals(Set.of(new WorkoutPlanTag("strength"), new WorkoutPlanTag("upperbody")),
+                storedPlan.getTags());
     }
 
     @Test
