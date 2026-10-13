@@ -3,6 +3,7 @@ package seedu.address.storage;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -14,6 +15,7 @@ import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
+import seedu.address.model.tag.StudentTag;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
@@ -56,7 +58,7 @@ class JsonAdaptedStudent {
         phone = source.getPhone().value;
         email = source.getEmail().value;
         address = source.getAddress().value;
-        tags.addAll(source.getTags().stream()
+        tags.addAll(source.getStudentTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
         workoutPlans.addAll(source.getWorkoutPlansList().getWorkoutList().stream()
@@ -90,9 +92,12 @@ class JsonAdaptedStudent {
             throw new IllegalValueException(Address.MESSAGE_CONSTRAINTS);
         }
 
-        List<Tag> modelTags = new ArrayList<>();
+        Set<StudentTag> modelTags = new HashSet<>();
         for (JsonAdaptedTag tag : tags) {
-            modelTags.add(tag.toModelType());
+            if (tag == null) {
+                throw new IllegalValueException(Tag.MESSAGE_CONSTRAINTS);
+            }
+            modelTags.add(tag.toStudentTag());
         }
 
         List<WorkoutPlan> modelPlans = new ArrayList<>();
@@ -101,7 +106,7 @@ class JsonAdaptedStudent {
         }
 
         return new Student(new Name(name), new Phone(phone), new Email(email), new Address(address),
-                new HashSet<>(modelTags), new WorkoutPlansList(modelPlans));
+                modelTags, new WorkoutPlansList(modelPlans));
     }
 
     private static IllegalValueException missing(Class<?> fieldClass) {

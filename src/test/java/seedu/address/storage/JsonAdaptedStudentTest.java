@@ -4,12 +4,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.testutil.TypicalStudents.BENSON;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.exceptions.IllegalValueException;
+import seedu.address.model.tag.StudentTag;
+
 public class JsonAdaptedStudentTest {
+
+    @Test
+    public void toModelType_duplicateTags_returnsStudentTagSet() throws Exception {
+        JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", "98765432", "johnd@example.com",
+                "311, Clementi Ave 2, #02-25",
+                List.of(new JsonAdaptedTag("friends"), new JsonAdaptedTag("friends")), List.of());
+
+        assertEquals(Set.of(new StudentTag("friends")), student.toModelType().getStudentTags());
+    }
+
+    @Test
+    public void toModelType_nullTagEntry_throwsIllegalValueException() {
+        JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", "98765432", "johnd@example.com",
+                "311, Clementi Ave 2, #02-25", Arrays.asList((JsonAdaptedTag) null), List.of());
+
+        assertThrows(IllegalValueException.class, student::toModelType);
+    }
 
     @Test
     public void toModelType_validStudent_returnsStudent() throws Exception {

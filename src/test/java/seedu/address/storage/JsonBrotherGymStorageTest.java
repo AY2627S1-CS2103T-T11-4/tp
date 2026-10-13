@@ -11,6 +11,8 @@ import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -18,6 +20,13 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.commons.exceptions.DataLoadingException;
 import seedu.address.model.BrotherGym;
 import seedu.address.model.ReadOnlyBrotherGym;
+import seedu.address.model.student.Student;
+import seedu.address.model.tag.StudentTag;
+import seedu.address.model.tag.WorkoutPlanTag;
+import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlansList;
+import seedu.address.model.workoutplan.WorkoutTitle;
 
 public class JsonBrotherGymStorageTest {
     private static final Path TEST_DATA_FOLDER = Paths.get("src", "test", "data", "JsonBrotherGymStorageTest");
@@ -84,6 +93,30 @@ public class JsonBrotherGymStorageTest {
         readBack = jsonBrotherGymStorage.readBrotherGym().get(); // file path not specified
         assertEquals(original, new BrotherGym(readBack));
 
+    }
+
+    @Test
+    public void readAndSaveBrotherGym_typedTags_preservesStudentAndWorkoutPlanTags() throws Exception {
+        Path filePath = testFolder.resolve("TaggedBrotherGym.json");
+        WorkoutPlan plan = new WorkoutPlan(
+                new WorkoutTitle("Strength"),
+                new WorkoutDescription("Squats"),
+                JsonAdaptedWorkoutPlan.formatDateForModel("2026-10-14"),
+                Set.of(new WorkoutPlanTag("strength"), new WorkoutPlanTag("legs")));
+        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(), ALICE.getAddress(),
+                Set.<StudentTag>of(new StudentTag("strength"), new StudentTag("beginner")),
+                new WorkoutPlansList(List.of(plan)));
+        BrotherGym original = new BrotherGym();
+        original.addStudent(student);
+        JsonBrotherGymStorage storage = new JsonBrotherGymStorage(filePath);
+
+        storage.saveBrotherGym(original);
+        ReadOnlyBrotherGym readBack = storage.readBrotherGym().orElseThrow();
+
+        assertEquals(original, new BrotherGym(readBack));
+        Student restored = readBack.getStudentList().get(0);
+        assertEquals(student.getStudentTags(), restored.getStudentTags());
+        assertEquals(plan.getTags(), restored.getWorkoutPlansList().getWorkoutList().get(0).getTags());
     }
 
     @Test
