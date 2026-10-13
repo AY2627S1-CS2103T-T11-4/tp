@@ -2,6 +2,7 @@ package seedu.address.logic;
 
 import java.util.Optional;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.commands.CommandResult;
@@ -27,6 +28,9 @@ public interface Logic {
 
     /** Returns the student currently selected by {@code viewStudent}, if any. */
     Optional<Student> getCurrentStudent();
+
+    /** Returns the current student as a read-only observable property. */
+    ReadOnlyObjectProperty<Student> currentStudentProperty();
 
     /**
      * Returns the user prefs' GUI settings.

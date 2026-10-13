@@ -3,7 +3,6 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -30,8 +29,6 @@ public class ViewStudentCommand extends SingleIndexCommand {
     public static final String MESSAGE_SUCCESS = "Viewing plans for %1$s:\n%2$s";
     public static final String MESSAGE_NO_WORKOUTS = "No workout plans assigned.";
 
-    private Student selectedStudent;
-
     /**
      * Creates a command to view the workout plans of the student at the given index.
      *
@@ -51,18 +48,14 @@ public class ViewStudentCommand extends SingleIndexCommand {
             throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
         }
 
-        selectedStudent = students.get(targetIndex.getZeroBased());
+        Student selectedStudent = students.get(targetIndex.getZeroBased());
+        model.setCurrentStudent(selectedStudent);
         List<WorkoutPlan> workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
 
         return new CommandResult(String.format(
                 MESSAGE_SUCCESS,
                 selectedStudent.getName(),
                 formatWorkoutPlans(workoutPlans)));
-    }
-
-    @Override
-    public Optional<Student> getCurrentStudent() {
-        return Optional.ofNullable(selectedStudent);
     }
 
     private static String formatWorkoutPlans(List<WorkoutPlan> workoutPlans) {

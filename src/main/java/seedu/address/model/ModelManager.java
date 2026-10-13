@@ -3,9 +3,12 @@ package seedu.address.model;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
@@ -21,6 +24,7 @@ public class ModelManager implements Model {
     private final BrotherGym brotherGym;
     private final UserPrefs userPrefs;
     private final FilteredList<Student> filteredStudents;
+    private final ReadOnlyObjectWrapper<Student> currentStudent = new ReadOnlyObjectWrapper<>();
 
     /**
      * Initializes a ModelManager with the given brotherGym and userPrefs.
@@ -62,6 +66,7 @@ public class ModelManager implements Model {
     @Override
     public void setBrotherGym(ReadOnlyBrotherGym brotherGym) {
         this.brotherGym.resetData(brotherGym);
+        clearCurrentStudent();
     }
 
     @Override
@@ -78,6 +83,9 @@ public class ModelManager implements Model {
     @Override
     public void deleteStudent(Student target) {
         brotherGym.removeStudent(target);
+        if (currentStudent.get() == target) {
+            clearCurrentStudent();
+        }
     }
 
     @Override
@@ -91,6 +99,29 @@ public class ModelManager implements Model {
         requireAllNonNull(target, editedStudent);
 
         brotherGym.setStudent(target, editedStudent);
+        if (currentStudent.get() == target) {
+            setCurrentStudent(editedStudent);
+        }
+    }
+
+    @Override
+    public ReadOnlyObjectProperty<Student> currentStudentProperty() {
+        return currentStudent.getReadOnlyProperty();
+    }
+
+    @Override
+    public Optional<Student> getCurrentStudent() {
+        return Optional.ofNullable(currentStudent.get());
+    }
+
+    @Override
+    public void setCurrentStudent(Student student) {
+        currentStudent.set(requireNonNull(student));
+    }
+
+    @Override
+    public void clearCurrentStudent() {
+        currentStudent.set(null);
     }
 
     //=========== Filtered Student List Accessors =============================================================
