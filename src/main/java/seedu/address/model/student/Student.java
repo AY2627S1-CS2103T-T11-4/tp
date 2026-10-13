@@ -2,12 +2,14 @@ package seedu.address.model.student;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.model.tag.StudentTag;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 
@@ -24,39 +26,61 @@ public class Student {
 
     // Data fields
     private final Address address;
-    private final Set<Tag> tags = new HashSet<>();
+    private final Set<StudentTag> tags;
     private final WorkoutPlansList workoutPlansList;
 
     /**
-     * Every field must be present and not null.
+     * Creates a student with tags and workout plans. Every field must be present and not null.
      */
     public Student(
             Name name,
             Phone phone,
             Email email,
             Address address,
-            Set<Tag> tags,
+            Set<StudentTag> tags,
             WorkoutPlansList workoutPlansList) {
         requireAllNonNull(name, phone, email, address, tags, workoutPlansList);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
-        this.tags.addAll(tags);
+        tags.forEach(Objects::requireNonNull);
+        this.tags = Collections.unmodifiableSet(new HashSet<>(tags));
         this.workoutPlansList = workoutPlansList;
     }
 
     /**
-     * Every field must be present and not null.
+     * Creates a student with tags and an empty workout plan list.
      */
-    public Student(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, tags);
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.address = address;
-        this.tags.addAll(tags);
-        this.workoutPlansList = new WorkoutPlansList();
+    public Student(Name name, Phone phone, Email email, Address address, Set<StudentTag> tags) {
+        this(name, phone, email, address, tags, new WorkoutPlansList());
+    }
+
+    /**
+     * Converts legacy tags into student tags. The collection type keeps this overload distinct
+     * from the typed set constructor while accepting existing sets of tags.
+     */
+    @Deprecated
+    public Student(Name name, Phone phone, Email email, Address address,
+            Collection<Tag> tags, WorkoutPlansList workoutPlansList) {
+        this(name, phone, email, address, convertLegacyTags(tags), workoutPlansList);
+    }
+
+    /**
+     * Converts legacy tags into student tags. Remove after callers have migrated.
+     */
+    @Deprecated
+    public Student(Name name, Phone phone, Email email, Address address, Collection<Tag> tags) {
+        this(name, phone, email, address, convertLegacyTags(tags));
+    }
+
+    private static Set<StudentTag> convertLegacyTags(Collection<Tag> tags) {
+        Objects.requireNonNull(tags);
+        Set<StudentTag> studentTags = new HashSet<>();
+        for (Tag tag : tags) {
+            studentTags.add(new StudentTag(Objects.requireNonNull(tag).tagName));
+        }
+        return studentTags;
     }
 
     public Name getName() {
@@ -76,11 +100,18 @@ public class Student {
     }
 
     /**
-     * Returns an immutable tag set, which throws {@code UnsupportedOperationException}
-     * if modification is attempted.
+     * Returns the student's unmodifiable, typed tags.
      */
-    public Set<Tag> getTags() {
+    public Set<StudentTag> getStudentTags() {
         return Collections.unmodifiableSet(tags);
+    }
+
+    /**
+     * Returns tags through the legacy API. Remove after callers have migrated.
+     */
+    @Deprecated
+    public Set<Tag> getTags() {
+        return Collections.unmodifiableSet(new HashSet<Tag>(tags));
     }
 
     public WorkoutPlansList getWorkoutPlansList() {

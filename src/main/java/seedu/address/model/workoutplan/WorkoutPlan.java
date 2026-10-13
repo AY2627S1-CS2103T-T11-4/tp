@@ -5,6 +5,10 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.Set;
+
+import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.model.tag.WorkoutPlanTag;
 
 /**
  * Represents a workout plan in BrotherGym.
@@ -17,15 +21,25 @@ public final class WorkoutPlan {
     private final WorkoutTitle title;
     private final WorkoutDescription workouts;
     private final WorkoutDate date;
+    private final Set<WorkoutPlanTag> tags;
 
     /**
      * Constructs a workout plan with validated, non-null fields.
      */
+    @Deprecated
     public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date) {
-        requireAllNonNull(title, workouts, date);
+        this(title, workouts, date, Set.of());
+    }
+
+    /**
+     * Constructs a workout plan with validated, non-null fields.
+     */
+    public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date, Set<WorkoutPlanTag> tags) {
+        requireAllNonNull(title, workouts, date, tags);
         this.title = title;
         this.workouts = workouts;
         this.date = date;
+        this.tags = Set.copyOf(tags);
     }
 
     public WorkoutTitle getTitle() {
@@ -40,6 +54,13 @@ public final class WorkoutPlan {
         return date;
     }
 
+    /**
+     * Returns an unmodifiable set of tags belonging to this workout plan.
+     */
+    public Set<WorkoutPlanTag> getTags() {
+        return tags;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -50,12 +71,13 @@ public final class WorkoutPlan {
         }
         return title.equals(otherPlan.title)
                 && workouts.equals(otherPlan.workouts)
-                && date.equals(otherPlan.date);
+                && date.equals(otherPlan.date)
+                && tags.equals(otherPlan.tags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, workouts, date);
+        return Objects.hash(title, workouts, date, tags);
     }
 
     @Override
@@ -64,6 +86,11 @@ public final class WorkoutPlan {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()
                 .format(DATE_FORMATTER);
-        return title.getValue() + " - " + workouts.getValue() + " (" + formattedDate + ")";
+        return new ToStringBuilder(this)
+                .add("title", title)
+                .add("workouts", workouts)
+                .add("date", formattedDate)
+                .add("tags", tags.stream().map(WorkoutPlanTag::toString).sorted().toList())
+                .toString();
     }
 }
