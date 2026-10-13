@@ -1,9 +1,14 @@
 package seedu.address.testutil;
-
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
+
+import java.util.Set;
 
 import seedu.address.logic.commands.AddPlanCommand;
+import seedu.address.logic.commands.EditPlanCommand;
+import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
@@ -26,6 +31,25 @@ public class WorkoutUtil {
         sb.append(workout.getTitle());
         sb.append(" " + PREFIX_PLAN + " " + workout.getWorkouts());
         sb.append(" " + PREFIX_DATE + " " + workout.getDate().toInputString());
+        return sb.toString();
+    }
+
+    /**
+     * Returns the part of command string for the given {@code EditPlanDescriptor}'s details.
+     */
+    public static String getEditPlanDescriptorDetails(EditPlanCommand.EditPlanDescriptor descriptor) {
+        StringBuilder sb = new StringBuilder();
+        descriptor.getTitle().ifPresent(title -> sb.append(PREFIX_NAME).append(title.getValue()).append(" "));
+        descriptor.getDescription().ifPresent(plan -> sb.append(PREFIX_PLAN).append(plan.getValue()).append(" "));
+        descriptor.getDate().ifPresent(date -> sb.append(PREFIX_DATE).append(date.toInputString()).append(" "));
+        if (descriptor.getWorkoutPlanTags().isPresent()) {
+            Set<WorkoutPlanTag> tags = descriptor.getWorkoutPlanTags().get();
+            if (tags.isEmpty()) {
+                sb.append(PREFIX_TAG);
+            } else {
+                tags.forEach(s -> sb.append(PREFIX_TAG).append(s.tagName).append(" "));
+            }
+        }
         return sb.toString();
     }
 }
