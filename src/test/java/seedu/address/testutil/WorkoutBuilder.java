@@ -1,8 +1,6 @@
 package seedu.address.testutil;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,8 +16,7 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 public class WorkoutBuilder {
     public static final String DEFAULT_TITLE = "Leg Day";
     public static final String DEFAULT_DESC = "Leg Press 3x 180kg, Leg Extension 3x 60kg, RDLs 3x 40kg";
-    public static final Date DEFAULT_DATE = Date.from(LocalDate.of(2026, 10, 9)
-            .atStartOfDay(ZoneId.systemDefault()).toInstant());
+    public static final LocalDate DEFAULT_DATE = LocalDate.of(2026, 10, 9);
 
     private WorkoutTitle title;
     private WorkoutDescription desc;
@@ -34,6 +31,7 @@ public class WorkoutBuilder {
         desc = new WorkoutDescription(DEFAULT_DESC);
         date = new WorkoutDate(DEFAULT_DATE);
         tags = new HashSet<>();
+        date = WorkoutDate.fromLocalDate(DEFAULT_DATE);
     }
 
     /**
@@ -65,8 +63,8 @@ public class WorkoutBuilder {
     /**
      * Sets the {@code date} of the workout we are building
      */
-    public WorkoutBuilder withDate(Date date) {
-        this.date = new WorkoutDate(date);
+    public WorkoutBuilder withDate(LocalDate date) {
+        this.date = WorkoutDate.fromLocalDate(date);
         return this;
     }
 

@@ -5,12 +5,12 @@ import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
-import seedu.address.logic.commands.HomeCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.BrotherGymParser;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -32,8 +32,6 @@ public class LogicManager implements Logic {
     private final Model model;
     private final Storage storage;
     private final BrotherGymParser brotherGymParser;
-    private Optional<Student> currentStudent = Optional.empty();
-
     /**
      * Constructs a {@code LogicManager} with the given {@code Model} and {@code Storage}.
      */
@@ -50,16 +48,7 @@ public class LogicManager implements Logic {
         CommandResult commandResult;
         Command command = brotherGymParser.parseCommand(commandText);
 
-        command.setCurrentStudent(currentStudent.orElse(null));
-
         commandResult = command.execute(model);
-
-        Optional<Student> updatedStudent = command.getCurrentStudent();
-        if (updatedStudent.isPresent()) {
-            currentStudent = updatedStudent;
-        } else if (command instanceof HomeCommand) {
-            currentStudent = Optional.empty();
-        }
 
         try {
             storage.saveBrotherGym(model.getBrotherGym());
@@ -79,7 +68,12 @@ public class LogicManager implements Logic {
 
     @Override
     public Optional<Student> getCurrentStudent() {
-        return currentStudent;
+        return model.getCurrentStudent();
+    }
+
+    @Override
+    public ReadOnlyObjectProperty<Student> currentStudentProperty() {
+        return model.currentStudentProperty();
     }
 
     @Override

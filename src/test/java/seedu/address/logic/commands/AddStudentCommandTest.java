@@ -9,10 +9,12 @@ import static seedu.address.testutil.TypicalStudents.ALICE;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.Messages;
@@ -130,6 +132,26 @@ public class AddStudentCommandTest {
 
         @Override
         public void setStudent(Student target, Student editedStudent) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public ReadOnlyObjectProperty<Student> currentStudentProperty() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public Optional<Student> getCurrentStudent() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void setCurrentStudent(Student student) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void clearCurrentStudent() {
             throw new AssertionError("This method should not be called.");
         }
 

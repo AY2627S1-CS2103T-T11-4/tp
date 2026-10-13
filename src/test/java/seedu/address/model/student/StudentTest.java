@@ -13,10 +13,14 @@ import static seedu.address.testutil.TypicalStudents.ALICE;
 import static seedu.address.testutil.TypicalStudents.BOB;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.tag.StudentTag;
+import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -45,6 +49,48 @@ public class StudentTest {
     public void asObservableList_modifyList_throwsUnsupportedOperationException() {
         Student student = new StudentBuilder().build();
         assertThrows(UnsupportedOperationException.class, () -> student.getTags().remove(0));
+    }
+
+    @Test
+    public void constructor_acceptsStudentTags() {
+        Set<StudentTag> tags = Set.of(new StudentTag("friend"));
+        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                ALICE.getAddress(), tags);
+
+        Set<StudentTag> storedTags = student.getStudentTags();
+        assertEquals(Set.of(new StudentTag("friend")), storedTags);
+    }
+
+    @Test
+    public void constructor_legacyTags_convertsToStudentTags() {
+        Set<Tag> legacyTags = Set.of(new Tag("friend"));
+        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                ALICE.getAddress(), legacyTags);
+        Student studentWithPlans = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                ALICE.getAddress(), legacyTags, new WorkoutPlansList());
+
+        assertEquals(Set.of(new StudentTag("friend")), student.getStudentTags());
+        assertEquals(Set.of(new StudentTag("friend")), studentWithPlans.getStudentTags());
+    }
+
+    @Test
+    public void constructor_nullTag_throwsNullPointerException() {
+        Set<StudentTag> tags = new HashSet<>();
+        tags.add(null);
+
+        assertThrows(NullPointerException.class, () -> new Student(ALICE.getName(), ALICE.getPhone(),
+                ALICE.getEmail(), ALICE.getAddress(), tags));
+    }
+
+    @Test
+    public void constructor_copiesTagsAndGetterCannotChangeThem() {
+        Set<StudentTag> inputTags = new HashSet<>(Set.of(new StudentTag("friend")));
+        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                ALICE.getAddress(), inputTags);
+
+        inputTags.clear();
+        assertEquals(Set.of(new StudentTag("friend")), student.getStudentTags());
+        assertThrows(UnsupportedOperationException.class, () -> student.getStudentTags().clear());
     }
 
     @Test

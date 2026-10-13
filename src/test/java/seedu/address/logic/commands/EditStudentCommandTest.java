@@ -14,6 +14,9 @@ import static seedu.address.logic.commands.CommandTestUtil.showStudentAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND;
 import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
+import static seedu.address.testutil.TypicalWorkouts.LEG_DAY;
+
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +27,9 @@ import seedu.address.model.BrotherGym;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
+import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
 import seedu.address.testutil.StudentBuilder;
 
@@ -71,6 +76,32 @@ public class EditStudentCommandTest {
         expectedModel.setStudent(lastStudent, editedStudent);
 
         assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_editStudentWithWorkoutPlans_preservesWorkoutPlans() {
+        Student originalStudent = model.getFilteredStudentList().get(INDEX_FIRST.getZeroBased());
+        Student studentWithWorkoutPlan = new Student(originalStudent.getName(), originalStudent.getPhone(),
+                originalStudent.getEmail(), originalStudent.getAddress(), originalStudent.getTags(),
+                new WorkoutPlansList(List.of(LEG_DAY)));
+        model.setStudent(originalStudent, studentWithWorkoutPlan);
+
+        EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder()
+                .withPhone(VALID_PHONE_BOB).build();
+        EditStudentCommand editStudentCommand = new EditStudentCommand(INDEX_FIRST, descriptor);
+
+        Student editedStudent = new Student(studentWithWorkoutPlan.getName(), new Phone(VALID_PHONE_BOB),
+                studentWithWorkoutPlan.getEmail(), studentWithWorkoutPlan.getAddress(),
+                studentWithWorkoutPlan.getTags(), studentWithWorkoutPlan.getWorkoutPlansList());
+        String expectedMessage = String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS,
+                Messages.format(editedStudent));
+
+        Model expectedModel = new ModelManager(new BrotherGym(model.getBrotherGym()), new UserPrefs());
+        expectedModel.setStudent(studentWithWorkoutPlan, editedStudent);
+
+        assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
+        assertEquals(List.of(LEG_DAY), model.getFilteredStudentList().get(INDEX_FIRST.getZeroBased())
+                .getWorkoutPlansList().getWorkoutList());
     }
 
     @Test

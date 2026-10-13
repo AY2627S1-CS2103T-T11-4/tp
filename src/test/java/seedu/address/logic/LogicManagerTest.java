@@ -1,6 +1,7 @@
 package seedu.address.logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
@@ -85,6 +86,19 @@ public class LogicManagerTest {
     @Test
     public void getFilteredStudentList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> logic.getFilteredStudentList().remove(0));
+    }
+
+    @Test
+    public void currentStudentProperty_exposesModelProperty() {
+        assertSame(model.currentStudentProperty(), logic.currentStudentProperty());
+    }
+
+    @Test
+    public void getCurrentStudent_delegatesToModel() {
+        Student selectedStudent = AMY;
+        model.setCurrentStudent(selectedStudent);
+
+        assertSame(selectedStudent, logic.getCurrentStudent().orElseThrow());
     }
 
     /**
