@@ -8,8 +8,11 @@ import static seedu.address.testutil.Assert.assertThrows;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+
+import seedu.address.model.tag.WorkoutPlanTag;
 
 public class WorkoutPlanTest {
 
@@ -46,6 +49,17 @@ public class WorkoutPlanTest {
         assertEquals(TITLE_VALID, plan.getTitle());
         assertEquals(DESCRIPTION_VALID, plan.getWorkouts());
         assertEquals(DATE_VALID, plan.getDate());
+        assertTrue(plan.getTags().isEmpty());
+    }
+
+    @Test
+    public void equals_differentTags_notEqual() {
+        WorkoutPlan strength = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(new WorkoutPlanTag("strength")));
+        WorkoutPlan cardio = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(new WorkoutPlanTag("cardio")));
+
+        assertFalse(strength.equals(cardio));
     }
 
     @Test
@@ -94,7 +108,15 @@ public class WorkoutPlanTest {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()
                 .format(DateTimeFormatter.ofPattern("dd MMM yyyy"));
-        String expected = TITLE_TEXT_VALID + " - " + DESCRIPTION_TEXT_VALID + " (" + formattedDate + ")";
+        String expected = WorkoutPlan.class.getCanonicalName() + "{title=" + TITLE_TEXT_VALID
+                + ", workouts=" + DESCRIPTION_TEXT_VALID + ", date=" + formattedDate + ", tags=[]}";
         assertEquals(expected, plan.toString());
+
+        WorkoutPlan taggedPlan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(new WorkoutPlanTag("strength"), new WorkoutPlanTag("cardio")));
+        String taggedExpected = WorkoutPlan.class.getCanonicalName() + "{title=" + TITLE_TEXT_VALID
+                + ", workouts=" + DESCRIPTION_TEXT_VALID + ", date=" + formattedDate
+                + ", tags=[[cardio], [strength]]}";
+        assertEquals(taggedExpected, taggedPlan.toString());
     }
 }

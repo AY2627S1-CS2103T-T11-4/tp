@@ -1,5 +1,6 @@
 package seedu.address.model.tag;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static seedu.address.testutil.Assert.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,18 @@ public class TagTest {
     public void isValidTagName() {
         // null tag name
         assertThrows(NullPointerException.class, () -> Tag.isValidTagName(null));
+    }
+
+    @Test
+    public void equals_subclassWithSameName_notEqual() {
+        Tag tag = new Tag("strength");
+        StudentTag studentTag = new StudentTag("strength");
+        WorkoutPlanTag workoutPlanTag = new WorkoutPlanTag("strength");
+
+        assertNotEquals(tag, studentTag);
+        assertNotEquals(studentTag, tag);
+        assertNotEquals(tag, workoutPlanTag);
+        assertNotEquals(workoutPlanTag, tag);
     }
 
 }
