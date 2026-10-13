@@ -104,28 +104,12 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a {@code String tag} into a {@code Tag}.
-     * Leading and trailing whitespaces will be trimmed.
-     *
-     * @throws ParseException if the given {@code tag} is invalid.
-     */
-    @Deprecated
-    public static Tag parseTag(String tag) throws ParseException {
-        requireNonNull(tag);
-        String trimmedTag = tag.trim();
-        if (!Tag.isValidTagName(trimmedTag)) {
-            throw new ParseException(Tag.MESSAGE_CONSTRAINTS);
-        }
-        return new Tag(trimmedTag);
-    }
-
-    /**
      * Parses a {@code String tag} into a {@code Tag} object, depending on the constructor provided.
      * Leading and trailing whitespaces will be trimmed.
      *
      * @throws ParseException if the given {@code tag} is invalid.
      */
-    private static <T extends Tag> T parseTag(String tag, Function<String, T> tagConstructor) throws ParseException {
+    protected static <T extends Tag> T parseTag(String tag, Function<String, T> tagConstructor) throws ParseException {
         requireNonNull(tag);
         String trimmedTag = tag.trim();
         if (!Tag.isValidTagName(trimmedTag)) {
@@ -135,22 +119,9 @@ public class ParserUtil {
     }
 
     /**
-     * Parses {@code Collection<String> tags} into a {@code Set<Tag>}.
-     */
-    @Deprecated
-    public static Set<Tag> parseTags(Collection<String> tags) throws ParseException {
-        requireNonNull(tags);
-        final Set<Tag> tagSet = new HashSet<>();
-        for (String tagName : tags) {
-            tagSet.add(parseTag(tagName));
-        }
-        return tagSet;
-    }
-
-    /**
      * Parses {@code Collection<String> tags} into {@code Set<Tag>} based on {@code tagConstructor}.
      */
-    private static <T extends Tag> Set<T> parseTags(
+    protected static <T extends Tag> Set<T> parseTags(
             Collection<String> tags,
             Function<String, T> tagConstructor) throws ParseException {
         requireNonNull(tags);
