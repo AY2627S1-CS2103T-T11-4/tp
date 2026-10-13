@@ -15,7 +15,7 @@ import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
-import seedu.address.model.tag.Tag;
+import seedu.address.model.tag.StudentTag;
 
 /**
  * Parses input arguments and creates a new AddStudentCommand object
@@ -40,7 +40,7 @@ public class AddStudentCommandParser implements Parser<AddStudentCommand> {
         Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
         Email email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
         Address address = ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get());
-        Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
+        Set<StudentTag> tagList = ParserUtil.parseStudentTags(argMultimap.getAllValues(PREFIX_TAG));
 
         Student student = new Student(name, phone, email, address, tagList);
 
