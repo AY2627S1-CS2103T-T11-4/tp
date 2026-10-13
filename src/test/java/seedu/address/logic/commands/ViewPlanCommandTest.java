@@ -43,11 +43,11 @@ public class ViewPlanCommandTest {
         Student studentWithPlans = createStudentWithPlans();
         Model model = createModel(studentWithPlans);
         ViewPlanCommand command = new ViewPlanCommand(Index.fromOneBased(2));
-        command.setCurrentStudent(studentWithPlans);
+        model.setCurrentStudent(studentWithPlans);
 
         assertCommandSuccess(command, model,
                 String.format(ViewPlanCommand.MESSAGE_SUCCESS, SECOND_PLAN), model);
-        assertEquals(studentWithPlans, command.getCurrentStudent().orElseThrow());
+        assertEquals(studentWithPlans, model.getCurrentStudent().orElseThrow());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class ViewPlanCommandTest {
         Student studentWithPlans = createStudentWithPlans();
         Model model = createModel(studentWithPlans);
         ViewPlanCommand command = new ViewPlanCommand(Index.fromOneBased(3));
-        command.setCurrentStudent(studentWithPlans);
+        model.setCurrentStudent(studentWithPlans);
 
         assertCommandFailure(command, model, ViewPlanCommand.MESSAGE_INVALID_WORKOUT_ID);
     }

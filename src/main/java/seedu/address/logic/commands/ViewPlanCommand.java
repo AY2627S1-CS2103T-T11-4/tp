@@ -2,7 +2,6 @@ package seedu.address.logic.commands;
 
 
 import java.util.List;
-import java.util.Optional;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -26,7 +25,7 @@ public class ViewPlanCommand extends SingleIndexCommand {
     public static final String MESSAGE_INVALID_WORKOUT_ID =
             "Workout ID exceeded total number of workout plans.";
 
-    private Student currentStudent;
+
 
     /**
      * Creates a command to view the workout plan of the student at the given workoutplan index.
@@ -38,20 +37,9 @@ public class ViewPlanCommand extends SingleIndexCommand {
     }
 
     @Override
-    public void setCurrentStudent(Student currentStudent) {
-        this.currentStudent = currentStudent;
-    }
-
-    @Override
-    public Optional<Student> getCurrentStudent() {
-        return Optional.ofNullable(currentStudent);
-    }
-
-    @Override
     public CommandResult execute(Model model) throws CommandException {
-        if (currentStudent == null) {
-            throw new CommandException(MESSAGE_NO_STUDENT_SELECTED);
-        }
+        Student currentStudent = model.getCurrentStudent()
+                .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
 
         List<WorkoutPlan> workoutPlans = currentStudent.getWorkoutPlansList().getWorkoutList();
         if (targetIndex.getZeroBased() >= workoutPlans.size()) {
