@@ -76,6 +76,8 @@ public class CommandTestUtil {
 
     public static final String TITLE_PREAMBLE_LEGS = VALID_WORKOUT_TITLE_LEGS;
     public static final String TITLE_PREAMBLE_CHEST = VALID_WORKOUT_TITLE_CHEST;
+    public static final String TITLE_DESC_LEGS = " " + PREFIX_NAME + " " + VALID_WORKOUT_TITLE_LEGS;
+    public static final String TITLE_DESC_CHEST = " " + PREFIX_NAME + " " + VALID_WORKOUT_TITLE_CHEST;
     public static final String PLAN_DESC_LEGS = " " + PREFIX_PLAN + " " + VALID_WORKOUT_PLAN_LEGS;
     public static final String PLAN_DESC_CHEST = " " + PREFIX_PLAN + " " + VALID_WORKOUT_PLAN_CHEST;
     public static final String DATE_DESC_LEGS = " " + PREFIX_DATE + " "
@@ -85,6 +87,7 @@ public class CommandTestUtil {
     public static final String TAG_DESC_HIIT = " " + PREFIX_TAG + " " + VALID_TAG_HIIT;
     public static final String TAG_DESC_STRENGTH = " " + PREFIX_TAG + " " + VALID_TAG_STRENGTH;
 
+    public static final String INVALID_TITLE_DESC = " " + PREFIX_NAME; // empty string not allowed for plan titles
     public static final String INVALID_PLAN_DESC = " " + PREFIX_PLAN; // empty string not allowed for plan descriptions
     public static final String INVALID_DATE_DESC_LETTERS = " " + PREFIX_DATE + " dd102026"; // 'd' not allowed in date
     public static final String INVALID_DATE_DESC_LENGTH = " " + PREFIX_DATE + " 091026"; // date must be 8 chars long
