@@ -53,7 +53,7 @@ public class AddPlanCommand extends Command {
 
         WorkoutPlansList updatedPlans = currentStudent.getWorkoutPlansList().addWorkoutPlan(toAdd);
         Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
-                currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
+                currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getStudentTags(), updatedPlans);
         model.setStudent(currentStudent, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, toAdd));
     }

@@ -47,7 +47,7 @@ public class DeletePlanCommandTest {
         Student baseStudent = new ModelManager(getTypicalBrotherGym(), new UserPrefs())
                 .getFilteredStudentList().get(0);
         Student studentWithPlans = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
-                baseStudent.getAddress(), baseStudent.getTags(),
+                baseStudent.getAddress(), baseStudent.getStudentTags(),
                 new WorkoutPlansList(List.of(FIRST_PLAN, SECOND_PLAN)));
         BrotherGym brotherGym = new BrotherGym();
         brotherGym.addStudent(studentWithPlans);
@@ -56,7 +56,7 @@ public class DeletePlanCommandTest {
         DeletePlanCommand command = new DeletePlanCommand(Index.fromOneBased(1));
 
         Student updatedStudent = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
-                baseStudent.getAddress(), baseStudent.getTags(), new WorkoutPlansList(List.of(SECOND_PLAN)));
+                baseStudent.getAddress(), baseStudent.getStudentTags(), new WorkoutPlansList(List.of(SECOND_PLAN)));
         Model expectedModel = new ModelManager(model.getBrotherGym(), new UserPrefs());
         expectedModel.setStudent(studentWithPlans, updatedStudent);
 
@@ -78,7 +78,7 @@ public class DeletePlanCommandTest {
         Student baseStudent = new ModelManager(getTypicalBrotherGym(), new UserPrefs())
                 .getFilteredStudentList().get(0);
         Student studentWithPlan = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
-                baseStudent.getAddress(), baseStudent.getTags(), new WorkoutPlansList(List.of(FIRST_PLAN)));
+                baseStudent.getAddress(), baseStudent.getStudentTags(), new WorkoutPlansList(List.of(FIRST_PLAN)));
         BrotherGym brotherGym = new BrotherGym();
         brotherGym.addStudent(studentWithPlan);
         Model model = new ModelManager(brotherGym, new UserPrefs());
