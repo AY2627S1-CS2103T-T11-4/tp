@@ -12,6 +12,8 @@ import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_HIIT;
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_STRENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.TITLE_PREAMBLE_LEGS;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HIIT;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_STRENGTH;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
@@ -33,14 +35,14 @@ public class AddPlanCommandParserTest {
 
     @Test
     public void parse_allFieldsPresent_success() {
-        WorkoutPlan expectedPlan = new WorkoutBuilder(LEG_DAY).withTags(TAG_DESC_STRENGTH).build();
+        WorkoutPlan expectedPlan = new WorkoutBuilder(LEG_DAY).withTags(VALID_TAG_STRENGTH).build();
 
         // valid command format
         assertParseSuccess(parser, TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + DATE_DESC_LEGS + TAG_DESC_STRENGTH,
                 new AddPlanCommand(expectedPlan));
 
         // multiple tags - all accepted
-        WorkoutPlan expectedPlanMultipleTags = new WorkoutBuilder(LEG_DAY).withTags(TAG_DESC_STRENGTH, TAG_DESC_HIIT)
+        WorkoutPlan expectedPlanMultipleTags = new WorkoutBuilder(LEG_DAY).withTags(VALID_TAG_STRENGTH, VALID_TAG_HIIT)
                 .build();
         assertParseSuccess(parser,
                 TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + DATE_DESC_LEGS + TAG_DESC_STRENGTH + TAG_DESC_HIIT,

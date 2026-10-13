@@ -2,6 +2,7 @@ package seedu.address.model.util;
 
 import java.util.Arrays;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import seedu.address.model.BrotherGym;
@@ -11,7 +12,9 @@ import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
+import seedu.address.model.tag.StudentTag;
 import seedu.address.model.tag.Tag;
+import seedu.address.model.tag.WorkoutPlanTag;
 
 /**
  * Contains utility methods for populating {@code BrotherGym} with sample data.
@@ -51,10 +54,31 @@ public class SampleDataUtil {
     /**
      * Returns a tag set containing the list of strings given.
      */
-    public static Set<Tag> getTagSet(String... strings) {
+    private static <T extends Tag> Set<T> getTagSet(Function<String, T> tagConstructor, String... strings) {
         return Arrays.stream(strings)
-                .map(Tag::new)
+                .map(tagConstructor)
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * Returns a {@code Set<Tag} containing the list of strings given
+     */
+    public static Set<Tag> getTagSet(String... strings) {
+        return getTagSet(Tag::new, strings);
+    }
+
+    /**
+     * Returns a {@code Set<StudentTag>} containing the list of strings given
+     */
+    public static Set<StudentTag> getStudentTagSet(String... strings) {
+        return getTagSet(StudentTag::new, strings);
+    }
+
+    /**
+     * Returns a {@code Set<WorkoutPlanTag>} containing the list of strings given
+     */
+    public static Set<WorkoutPlanTag> getWorkoutPlanTagSet(String... strings) {
+        return getTagSet(WorkoutPlanTag::new, strings);
     }
 
 }
