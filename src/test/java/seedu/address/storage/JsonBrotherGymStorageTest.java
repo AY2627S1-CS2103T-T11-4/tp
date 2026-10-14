@@ -115,7 +115,7 @@ public class JsonBrotherGymStorageTest {
 
         assertEquals(original, new BrotherGym(readBack));
         Student restored = readBack.getStudentList().get(0);
-        assertEquals(student.getStudentTags(), restored.getStudentTags());
+        assertEquals(student.getTags(), restored.getTags());
         assertEquals(plan.getTags(), restored.getWorkoutPlansList().getWorkoutList().get(0).getTags());
     }
 

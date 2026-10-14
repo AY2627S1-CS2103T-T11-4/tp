@@ -94,7 +94,7 @@ public class ViewPlanCommandTest {
         Student baseStudent = new ModelManager(getTypicalBrotherGym(), new UserPrefs())
                 .getFilteredStudentList().get(0);
         return new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
-                baseStudent.getAddress(), baseStudent.getStudentTags(),
+                baseStudent.getAddress(), baseStudent.getTags(),
                 new WorkoutPlansList(List.of(FIRST_PLAN, SECOND_PLAN)));
     }
 

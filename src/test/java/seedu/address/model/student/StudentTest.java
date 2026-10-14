@@ -20,7 +20,6 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.tag.StudentTag;
-import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -57,20 +56,8 @@ public class StudentTest {
         Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getAddress(), tags);
 
-        Set<StudentTag> storedTags = student.getStudentTags();
+        Set<StudentTag> storedTags = student.getTags();
         assertEquals(Set.of(new StudentTag("friend")), storedTags);
-    }
-
-    @Test
-    public void constructor_legacyTags_convertsToStudentTags() {
-        Set<Tag> legacyTags = Set.of(new Tag("friend"));
-        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
-                ALICE.getAddress(), legacyTags);
-        Student studentWithPlans = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
-                ALICE.getAddress(), legacyTags, new WorkoutPlansList());
-
-        assertEquals(Set.of(new StudentTag("friend")), student.getStudentTags());
-        assertEquals(Set.of(new StudentTag("friend")), studentWithPlans.getStudentTags());
     }
 
     @Test
@@ -89,8 +76,8 @@ public class StudentTest {
                 ALICE.getAddress(), inputTags);
 
         inputTags.clear();
-        assertEquals(Set.of(new StudentTag("friend")), student.getStudentTags());
-        assertThrows(UnsupportedOperationException.class, () -> student.getStudentTags().clear());
+        assertEquals(Set.of(new StudentTag("friend")), student.getTags());
+        assertThrows(UnsupportedOperationException.class, () -> student.getTags().clear());
     }
 
     @Test

@@ -34,7 +34,7 @@ public class StudentUtil {
         sb.append(PREFIX_PHONE + " " + student.getPhone().value + " ");
         sb.append(PREFIX_EMAIL + " " + student.getEmail().value + " ");
         sb.append(PREFIX_ADDRESS + " " + student.getAddress().value + " ");
-        student.getStudentTags().stream().forEach(
+        student.getTags().stream().forEach(
             s -> sb.append(PREFIX_TAG + s.tagName + " ")
         );
         return sb.toString();
@@ -49,8 +49,8 @@ public class StudentUtil {
         descriptor.getPhone().ifPresent(phone -> sb.append(PREFIX_PHONE).append(phone.value).append(" "));
         descriptor.getEmail().ifPresent(email -> sb.append(PREFIX_EMAIL).append(email.value).append(" "));
         descriptor.getAddress().ifPresent(address -> sb.append(PREFIX_ADDRESS).append(address.value).append(" "));
-        if (descriptor.getStudentTags().isPresent()) {
-            Set<StudentTag> tags = descriptor.getStudentTags().get();
+        if (descriptor.getTags().isPresent()) {
+            Set<StudentTag> tags = descriptor.getTags().get();
             if (tags.isEmpty()) {
                 sb.append(PREFIX_TAG);
             } else {

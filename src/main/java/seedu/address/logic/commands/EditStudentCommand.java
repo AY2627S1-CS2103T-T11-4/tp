@@ -99,7 +99,7 @@ public class EditStudentCommand extends Command {
         Phone updatedPhone = editStudentDescriptor.getPhone().orElse(studentToEdit.getPhone());
         Email updatedEmail = editStudentDescriptor.getEmail().orElse(studentToEdit.getEmail());
         Address updatedAddress = editStudentDescriptor.getAddress().orElse(studentToEdit.getAddress());
-        Set<StudentTag> updatedTags = editStudentDescriptor.getStudentTags().orElse(studentToEdit.getStudentTags());
+        Set<StudentTag> updatedTags = editStudentDescriptor.getTags().orElse(studentToEdit.getTags());
 
         return new Student(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedTags,
                 studentToEdit.getWorkoutPlansList());
@@ -205,7 +205,7 @@ public class EditStudentCommand extends Command {
          * if modification is attempted.
          * Returns {@code Optional#empty()} if {@code tags} is null.
          */
-        public Optional<Set<StudentTag>> getStudentTags() {
+        public Optional<Set<StudentTag>> getTags() {
             return (tags != null) ? Optional.of(Collections.unmodifiableSet(tags)) : Optional.empty();
         }
 

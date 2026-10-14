@@ -28,7 +28,6 @@ public class WorkoutPlanTagTest {
         assertFalse(tag.equals(new WorkoutPlanTag("cardio")));
 
         // same name but different tag type -> returns false
-        assertFalse(tag.equals(new Tag("strength")));
         assertFalse(tag.equals(new StudentTag("strength")));
     }
 

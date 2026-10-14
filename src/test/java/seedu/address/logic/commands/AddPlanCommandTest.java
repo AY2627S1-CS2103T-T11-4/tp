@@ -51,7 +51,7 @@ public class AddPlanCommandTest {
         AddPlanCommand command = new AddPlanCommand(PLAN);
 
         Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
-                currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getStudentTags(),
+                currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(),
                 new WorkoutPlansList(List.of(PLAN)));
         Model expectedModel = new ModelManager(model.getBrotherGym(), new UserPrefs());
         expectedModel.setStudent(currentStudent, updatedStudent);
@@ -91,7 +91,7 @@ public class AddPlanCommandTest {
         Student baseStudent = new ModelManager(getTypicalBrotherGym(), new UserPrefs())
                 .getFilteredStudentList().get(0);
         Student studentWithPlan = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
-                baseStudent.getAddress(), baseStudent.getStudentTags(), new WorkoutPlansList(List.of(PLAN)));
+                baseStudent.getAddress(), baseStudent.getTags(), new WorkoutPlansList(List.of(PLAN)));
         BrotherGym brotherGym = new BrotherGym();
         brotherGym.addStudent(studentWithPlan);
         Model model = new ModelManager(brotherGym, new UserPrefs());
