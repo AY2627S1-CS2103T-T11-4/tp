@@ -14,6 +14,7 @@ import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.DeletePlanCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
+import seedu.address.logic.commands.EditPlanCommand;
 import seedu.address.logic.commands.EditStudentCommand;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
@@ -40,6 +41,7 @@ public class BrotherGymParser {
     private static final AddStudentCommandParser ADD_STUDENT_PARSER = new AddStudentCommandParser();
     private static final AddPlanCommandParser ADD_PLAN_PARSER = new AddPlanCommandParser();
     private static final EditStudentCommandParser EDIT_STUDENT_PARSER = new EditStudentCommandParser();
+    private static final EditPlanCommandParser EDIT_PLAN_PARSER = new EditPlanCommandParser();
     private static final SingleIndexCommandParser<ViewStudentCommand> VIEW_STUDENT_PARSER =
             new SingleIndexCommandParser<>(ViewStudentCommand::new, ViewStudentCommand.MESSAGE_USAGE);
     private static final SingleIndexCommandParser<ViewPlanCommand> VIEW_PLAN_PARSER =
@@ -76,6 +78,7 @@ public class BrotherGymParser {
             case DeleteStudentCommand.COMMAND_WORD -> DELETE_STUDENT_PARSER.parse(arguments);
             case ViewStudentCommand.COMMAND_WORD -> VIEW_STUDENT_PARSER.parse(arguments);
             case AddPlanCommand.COMMAND_WORD -> ADD_PLAN_PARSER.parse(arguments);
+            case EditPlanCommand.COMMAND_WORD -> EDIT_PLAN_PARSER.parse(arguments);
             case DeletePlanCommand.COMMAND_WORD -> DELETE_PLAN_PARSER.parse(arguments);
             case ViewPlanCommand.COMMAND_WORD -> VIEW_PLAN_PARSER.parse(arguments);
             case ClearCommand.COMMAND_WORD -> new ClearCommand();
