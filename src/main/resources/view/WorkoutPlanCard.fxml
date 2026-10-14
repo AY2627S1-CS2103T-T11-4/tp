@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
@@ -25,5 +26,6 @@
       </Label>
     </HBox>
     <Label fx:id="description" styleClass="workout-plan-description" wrapText="true" />
+    <FlowPane fx:id="tags" />
   </VBox>
 </HBox>
