@@ -43,6 +43,7 @@ The bulk of the app's work is done by the following four components:
 
 * [**`UI`**](#ui-component): The UI of the App.
 * [**`Logic`**](#logic-component): The command executor.
+  * [**`Parser`**](#parser-classes): Parsers for user inputs
 * [**`Model`**](#model-component): Holds the data of the App in memory.
 * [**`Storage`**](#storage-component): Reads data from, and writes data to, the hard disk.
 
@@ -108,13 +109,20 @@ How the `Logic` component works:
    Note that although this is shown as a single step in the diagram above for simplicity, the code can require several interactions between the command object and the `Model` to complete the operation.
 1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`.
 
+#### Parser Classes
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
 <puml src="diagrams/ParserClasses.puml" width="600"/>
 
 How the parsing works:
-* When called upon to parse a user command, the `BrotherGymParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`). The `BrotherGymParser` returns that object as a `Command` object.
-* All `XYZCommandParser` classes, such as `AddStudentCommandParser` and `DeleteStudentCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+* When called upon to parse a user command, the `BrotherGymParser` class creates either an `XYZCommandParser` or a `SingleIndexCommandParser`
+  * `addStudent`, `addPlan`, `editStudent` and `editPlan` commands each have a dedicated `XYZCommandParser`
+    (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`),
+  * `viewStudent`, `viewPlan`, `deleteStudent` and `deletePlan` commands are `SingleIndexCommand`s that only parse a single index, 
+    hence they use the same generic `SingleIndexCommandParser`
+* The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`, `DeleteStudentCommand`). 
+* The `BrotherGymParser` returns that object as a `Command` object.
+* All `XYZCommandParser` classes, including the `SingleIndexCommandParser` class, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
