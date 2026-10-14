@@ -6,8 +6,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.WorkoutPlanTag;
 
 /**
@@ -86,11 +86,15 @@ public final class WorkoutPlan {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()
                 .format(DATE_FORMATTER);
-        return new ToStringBuilder(this)
-                .add("title", title)
-                .add("workouts", workouts)
-                .add("date", formattedDate)
-                .add("tags", tags.stream().map(WorkoutPlanTag::toString).sorted().toList())
-                .toString();
+        String planDetails = title.getValue() + " - " + workouts.getValue() + " (" + formattedDate + ")";
+        if (tags.isEmpty()) {
+            return planDetails;
+        }
+
+        String formattedTags = tags.stream()
+                .map(WorkoutPlanTag::toString)
+                .sorted()
+                .collect(Collectors.joining(" "));
+        return planDetails + " Tags: " + formattedTags;
     }
 }

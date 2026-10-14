@@ -108,15 +108,12 @@ public class WorkoutPlanTest {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()
                 .format(DateTimeFormatter.ofPattern("dd MMM yyyy"));
-        String expected = WorkoutPlan.class.getCanonicalName() + "{title=" + TITLE_TEXT_VALID
-                + ", workouts=" + DESCRIPTION_TEXT_VALID + ", date=" + formattedDate + ", tags=[]}";
+        String expected = TITLE_TEXT_VALID + " - " + DESCRIPTION_TEXT_VALID + " (" + formattedDate + ")";
         assertEquals(expected, plan.toString());
 
         WorkoutPlan taggedPlan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
                 Set.of(new WorkoutPlanTag("strength"), new WorkoutPlanTag("cardio")));
-        String taggedExpected = WorkoutPlan.class.getCanonicalName() + "{title=" + TITLE_TEXT_VALID
-                + ", workouts=" + DESCRIPTION_TEXT_VALID + ", date=" + formattedDate
-                + ", tags=[[cardio], [strength]]}";
+        String taggedExpected = expected + " Tags: [cardio] [strength]";
         assertEquals(taggedExpected, taggedPlan.toString());
     }
 }
