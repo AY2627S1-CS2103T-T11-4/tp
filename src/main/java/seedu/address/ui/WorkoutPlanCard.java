@@ -2,10 +2,14 @@ package seedu.address.ui;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.List;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
+import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutPlan;
 
 /** A UI component that displays one {@link WorkoutPlan}. */
@@ -26,6 +30,9 @@ public class WorkoutPlanCard extends UiPart<Region> {
     @FXML
     private Label description;
 
+    @FXML
+    private FlowPane tags;
+
     /** Creates a card for the given workout plan and displayed index. */
     public WorkoutPlanCard(WorkoutPlan workoutPlan, int displayedIndex) {
         super(FXML);
@@ -36,5 +43,13 @@ public class WorkoutPlanCard extends UiPart<Region> {
                 .toLocalDate()
                 .format(DATE_FORMATTER));
         description.setText(workoutPlan.getWorkouts().getValue());
+        getSortedTags(workoutPlan).forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
+    }
+
+    /** Returns the workout plan's tags sorted by name for consistent display. */
+    static List<WorkoutPlanTag> getSortedTags(WorkoutPlan workoutPlan) {
+        return workoutPlan.getTags().stream()
+                .sorted(Comparator.comparing(tag -> tag.tagName))
+                .toList();
     }
 }
