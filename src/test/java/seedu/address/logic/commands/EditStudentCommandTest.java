@@ -82,7 +82,7 @@ public class EditStudentCommandTest {
     public void execute_editStudentWithWorkoutPlans_preservesWorkoutPlans() {
         Student originalStudent = model.getFilteredStudentList().get(INDEX_FIRST.getZeroBased());
         Student studentWithWorkoutPlan = new Student(originalStudent.getName(), originalStudent.getPhone(),
-                originalStudent.getEmail(), originalStudent.getAddress(), originalStudent.getStudentTags(),
+                originalStudent.getEmail(), originalStudent.getAddress(), originalStudent.getTags(),
                 new WorkoutPlansList(List.of(LEG_DAY)));
         model.setStudent(originalStudent, studentWithWorkoutPlan);
 
@@ -92,7 +92,7 @@ public class EditStudentCommandTest {
 
         Student editedStudent = new Student(studentWithWorkoutPlan.getName(), new Phone(VALID_PHONE_BOB),
                 studentWithWorkoutPlan.getEmail(), studentWithWorkoutPlan.getAddress(),
-                studentWithWorkoutPlan.getStudentTags(), studentWithWorkoutPlan.getWorkoutPlansList());
+                studentWithWorkoutPlan.getTags(), studentWithWorkoutPlan.getWorkoutPlansList());
         String expectedMessage = String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS,
                 Messages.format(editedStudent));
 

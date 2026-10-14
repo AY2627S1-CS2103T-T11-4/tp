@@ -175,7 +175,7 @@ public class EditPlanCommandTest {
 
     private static Student withPlans(Student student, WorkoutPlan... plans) {
         return new Student(student.getName(), student.getPhone(), student.getEmail(), student.getAddress(),
-                student.getStudentTags(), new WorkoutPlansList(List.of(plans)));
+                student.getTags(), new WorkoutPlansList(List.of(plans)));
     }
 
     private static Model modelWithStudent(Student student) {

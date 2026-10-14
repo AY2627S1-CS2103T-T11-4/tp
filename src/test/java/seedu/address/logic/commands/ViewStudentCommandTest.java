@@ -55,7 +55,7 @@ public class ViewStudentCommandTest {
                 new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)));
         Student baseStudent = TypicalStudents.ALICE;
         Student studentWithPlan = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
-                baseStudent.getAddress(), baseStudent.getStudentTags(), new WorkoutPlansList(List.of(plan)));
+                baseStudent.getAddress(), baseStudent.getTags(), new WorkoutPlansList(List.of(plan)));
         BrotherGym brotherGym = new BrotherGym();
         brotherGym.addStudent(studentWithPlan);
         Model modelWithPlan = new ModelManager(brotherGym, new UserPrefs());

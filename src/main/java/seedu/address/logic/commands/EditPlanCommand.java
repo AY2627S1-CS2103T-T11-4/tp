@@ -90,7 +90,7 @@ public class EditPlanCommand extends Command {
         List<WorkoutPlan> updatedWorkoutPlans = new ArrayList<>(workoutPlans);
         updatedWorkoutPlans.set(targetIndex.getZeroBased(), editedPlan);
         Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
-                currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getStudentTags(),
+                currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(),
                 new WorkoutPlansList(updatedWorkoutPlans));
         model.setStudent(currentStudent, updatedStudent);
 

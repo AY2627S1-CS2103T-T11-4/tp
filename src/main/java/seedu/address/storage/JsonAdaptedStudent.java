@@ -58,7 +58,7 @@ class JsonAdaptedStudent {
         phone = source.getPhone().value;
         email = source.getEmail().value;
         address = source.getAddress().value;
-        tags.addAll(source.getStudentTags().stream()
+        tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
         workoutPlans.addAll(source.getWorkoutPlansList().getWorkoutList().stream()

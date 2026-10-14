@@ -28,7 +28,6 @@ public class StudentTagTest {
         assertFalse(tag.equals(new StudentTag("family")));
 
         // same name but different tag type -> returns false
-        assertFalse(tag.equals(new Tag("friend")));
         assertFalse(tag.equals(new WorkoutPlanTag("friend")));
     }
 

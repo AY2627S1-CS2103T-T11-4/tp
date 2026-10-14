@@ -21,7 +21,7 @@ public class JsonAdaptedStudentTest {
                 "311, Clementi Ave 2, #02-25",
                 List.of(new JsonAdaptedTag("friends"), new JsonAdaptedTag("friends")), List.of());
 
-        assertEquals(Set.of(new StudentTag("friends")), student.toModelType().getStudentTags());
+        assertEquals(Set.of(new StudentTag("friends")), student.toModelType().getTags());
     }
 
     @Test
