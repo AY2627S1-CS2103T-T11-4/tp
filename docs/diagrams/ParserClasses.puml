@@ -11,6 +11,7 @@ package "Parser classes"{
 Class "<<interface>>\nParser" as Parser
 Class BrotherGymParser
 Class XYZCommandParser
+Class SingleIndexCommandParser
 Class CliSyntax
 Class ParserUtil
 Class ArgumentMultimap
@@ -21,18 +22,25 @@ Class Prefix
 Class HiddenOutside #FFFFFF
 HiddenOutside ..> BrotherGymParser
 
-BrotherGymParser .down.> XYZCommandParser: <<create>>
+BrotherGymParser .down.> Parser: <<use>>
 
 XYZCommandParser ..> XYZCommand : <<create>>
 BrotherGymParser ..> Command : <<use>>
 XYZCommandParser .up.|> Parser
+SingleIndexCommandParser ..> SingleIndexCommand : <<create>>
+SingleIndexCommandParser .up.|> Parser
+
 XYZCommandParser ..> ArgumentMultimap
 XYZCommandParser ..> ArgumentTokenizer
-ArgumentTokenizer .left.> ArgumentMultimap
+ArgumentTokenizer .down.> ArgumentMultimap
 XYZCommandParser ..> CliSyntax
+SingleIndexCommandParser ..> CliSyntax
 CliSyntax ..> Prefix
 XYZCommandParser ..> ParserUtil
+SingleIndexCommandParser ..> ParserUtil
 ParserUtil .down.> Prefix
 ArgumentTokenizer .down.> Prefix
+
 XYZCommand -up-|> Command
+SingleIndexCommand -up-|> Command
 @enduml
