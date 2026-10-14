@@ -1,0 +1,42 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor UI_COLOR_T4
+skinparam Participant {
+    BackgroundColor #F4F4F4
+    BorderColor #555555
+    FontColor #111111
+}
+skinparam Sequence {
+    LifeLineBorderColor #777777
+    LifeLineBackgroundColor #FFFFFF
+}
+
+actor Trainer
+participant CommandBox
+participant MainWindow
+participant Logic
+participant Model
+participant WorkoutPlanListPanel
+
+Trainer -> CommandBox: enter viewStudent 1
+CommandBox -> MainWindow: executeCommand("viewStudent 1")
+activate MainWindow
+MainWindow -> Logic: execute("viewStudent 1")
+activate Logic
+Logic -> Model: setCurrentStudent(student)
+activate Model
+Model --> Logic: current student updated
+deactivate Model
+Logic --> MainWindow: currentStudentProperty change notification
+MainWindow -> WorkoutPlanListPanel: showStudent(Optional.of(student))
+activate WorkoutPlanListPanel
+WorkoutPlanListPanel -> WorkoutPlanListPanel: display student's workout plans
+WorkoutPlanListPanel --> MainWindow
+deactivate WorkoutPlanListPanel
+Logic --> MainWindow: commandResult
+deactivate Logic
+MainWindow --> CommandBox: commandResult
+deactivate MainWindow
+
+@enduml
