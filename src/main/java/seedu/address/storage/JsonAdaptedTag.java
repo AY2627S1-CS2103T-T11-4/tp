@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import seedu.address.commons.exceptions.IllegalValueException;
+import seedu.address.model.tag.StudentTag;
 import seedu.address.model.tag.Tag;
+import seedu.address.model.tag.WorkoutPlanTag;
 
 /**
  * Jackson-friendly version of {@link Tag}.
@@ -43,15 +45,30 @@ class JsonAdaptedTag {
     }
 
     /**
-     * Converts this JSON-adapted tag into a model tag.
+     * Converts this JSON-adapted tag into a student tag.
      *
-     * @return The model tag.
+     * @return The student tag.
      * @throws IllegalValueException If the tag name is missing or invalid.
      */
-    public Tag toModelType() throws IllegalValueException {
+    public StudentTag toStudentTag() throws IllegalValueException {
+        validateTagName();
+        return new StudentTag(tagName);
+    }
+
+    /**
+     * Converts this JSON-adapted tag into a workout plan tag.
+     *
+     * @return The workout plan tag.
+     * @throws IllegalValueException If the tag name is missing or invalid.
+     */
+    public WorkoutPlanTag toWorkoutPlanTag() throws IllegalValueException {
+        validateTagName();
+        return new WorkoutPlanTag(tagName);
+    }
+
+    private void validateTagName() throws IllegalValueException {
         if (tagName == null || !Tag.isValidTagName(tagName)) {
             throw new IllegalValueException(Tag.MESSAGE_CONSTRAINTS);
         }
-        return new Tag(tagName);
     }
 }

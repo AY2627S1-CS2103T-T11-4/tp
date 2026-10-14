@@ -4,12 +4,19 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
+import seedu.address.model.tag.Tag;
+import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -26,20 +33,35 @@ class JsonAdaptedWorkoutPlan {
     private final String title;
     private final String workoutDescription;
     private final String date;
+    private final List<JsonAdaptedTag> tags = new ArrayList<>();
 
     @JsonCreator
     public JsonAdaptedWorkoutPlan(@JsonProperty("title") String title,
                                   @JsonProperty("workoutDescription") String workoutDescription,
-                                  @JsonProperty("date") String date) {
+                                  @JsonProperty("date") String date,
+                                  @JsonProperty("tags") List<JsonAdaptedTag> tags) {
         this.title = title;
         this.workoutDescription = workoutDescription;
         this.date = date;
+        if (tags != null) {
+            this.tags.addAll(tags);
+        }
+    }
+
+    /**
+     * Creates an adapted workout plan without tags.
+     */
+    public JsonAdaptedWorkoutPlan(String title, String workoutDescription, String date) {
+        this(title, workoutDescription, date, List.of());
     }
 
     public JsonAdaptedWorkoutPlan(WorkoutPlan source) {
         title = source.getTitle().getValue();
         workoutDescription = source.getWorkouts().getValue();
         date = formatDateForStorage(source.getDate().getValue());
+        tags.addAll(source.getTags().stream()
+                .map(JsonAdaptedTag::new)
+                .collect(Collectors.toList()));
     }
 
     public static String formatDateForStorage(Date modelDate) {
@@ -96,6 +118,15 @@ class JsonAdaptedWorkoutPlan {
             throw new IllegalValueException(e.getMessage());
         }
 
-        return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription(workoutDescription), modelDate);
+        Set<WorkoutPlanTag> modelTags = new HashSet<>();
+        for (JsonAdaptedTag tag : tags) {
+            if (tag == null) {
+                throw new IllegalValueException(Tag.MESSAGE_CONSTRAINTS);
+            }
+            modelTags.add(tag.toWorkoutPlanTag());
+        }
+
+        return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription(workoutDescription),
+                modelDate, modelTags);
     }
 }
