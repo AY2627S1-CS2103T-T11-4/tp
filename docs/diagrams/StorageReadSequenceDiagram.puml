@@ -1,0 +1,42 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+participant ":MainApp" as MainApp #777777
+box Storage STORAGE_COLOR_T1
+participant ":StorageManager" as StorageManager STORAGE_COLOR
+participant ":JsonBrotherGymStorage" as JsonStorage STORAGE_COLOR
+participant "data:JsonSerializableBrotherGym" as Data STORAGE_COLOR
+end box
+participant "JsonUtil" as JsonUtil #777777
+
+MainApp -> StorageManager : readBrotherGym()
+activate StorageManager
+StorageManager -> JsonStorage : readBrotherGym()
+activate JsonStorage
+JsonStorage -> JsonStorage : readBrotherGym(filePath)
+JsonStorage -> JsonUtil : readJsonFile(filePath,\nJsonSerializableBrotherGym.class)
+activate JsonUtil
+note right of JsonUtil
+Read UTF-8 JSON via FileUtil;
+deserialize with Jackson.
+end note
+JsonUtil --> JsonStorage : Optional.of(data)
+deactivate JsonUtil
+JsonStorage -> Data : toModelType()
+activate Data
+note right of Data
+Convert students, workout plans and tags.
+Validate fields and reject duplicate students.
+Build a new BrotherGym.
+end note
+Data --> JsonStorage : brotherGym
+deactivate Data
+JsonStorage --> StorageManager : Optional.of(brotherGym)
+deactivate JsonStorage
+StorageManager --> MainApp : Optional<ReadOnlyBrotherGym>
+deactivate StorageManager
+note over MainApp
+Use the loaded data to initialize ModelManager.
+end note
+@enduml
