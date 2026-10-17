@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import seedu.address.logic.Messages;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -15,11 +16,6 @@ import seedu.address.logic.parser.exceptions.ParseException;
  *    in the above example.<br>
  */
 public class ArgumentTokenizer {
-
-    public static final String MESSAGE_INVALID_PREFIX = "Invalid prefix: %1$s";
-    public static final String MESSAGE_EMPTY_PREFIX = "Empty prefix detected."
-        + " Ensure all prefixes are in the form '--prefix' and isolated by spaces";
-
     /**
      * Tokenizes an arguments string and returns an {@code ArgumentMultimap} object that maps prefixes to their
      * respective argument values. Only the given prefixes will be recognized in the arguments string.
@@ -76,7 +72,7 @@ public class ArgumentTokenizer {
         // if end index is -1, the argsString ends with the index
         prefixEndIndex = prefixEndIndex == -1 ? argsString.length() : prefixEndIndex;
         if (prefixEndIndex - prefixStartIndex == 2) { // checking for "--"
-            throw new ParseException(MESSAGE_EMPTY_PREFIX);
+            throw new ParseException(Messages.MESSAGE_EMPTY_PREFIX);
         }
         return argsString.substring(prefixStartIndex, prefixEndIndex);
     }
@@ -92,7 +88,7 @@ public class ArgumentTokenizer {
         return Arrays.stream(prefixes)
                 .filter(p -> p.getPrefix().equals(prefixString))
                 .findFirst()
-                .orElseThrow(() -> new ParseException(String.format(MESSAGE_INVALID_PREFIX, prefixString)));
+                .orElseThrow(() -> new ParseException(String.format(Messages.MESSAGE_INVALID_PREFIX, prefixString)));
     }
 
     /**

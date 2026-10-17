@@ -19,6 +19,10 @@ public class Messages {
     public static final String MESSAGE_DUPLICATE_FIELDS =
                 "Multiple values specified for the following single-valued field(s): ";
 
+    public static final String MESSAGE_INVALID_PREFIX = "Invalid prefix: %1$s";
+    public static final String MESSAGE_EMPTY_PREFIX = "Empty prefix detected."
+            + " Ensure all prefixes are in the form '--prefix' and isolated by spaces";
+
     /**
      * Returns an error message indicating the duplicate prefixes.
      */

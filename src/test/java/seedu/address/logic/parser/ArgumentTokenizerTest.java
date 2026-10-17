@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import seedu.address.logic.Messages;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.testutil.Assert;
 
@@ -58,7 +59,7 @@ public class ArgumentTokenizerTest {
 
     private void assertInvalidPrefix(Executable tryTokenise, Prefix invalidPrefix) {
         Assert.assertThrows(ParseException.class,
-                String.format(ArgumentTokenizer.MESSAGE_INVALID_PREFIX, invalidPrefix), tryTokenise);
+                String.format(Messages.MESSAGE_INVALID_PREFIX, invalidPrefix), tryTokenise);
     }
 
     @Test
