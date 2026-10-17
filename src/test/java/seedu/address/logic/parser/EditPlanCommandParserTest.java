@@ -103,7 +103,7 @@ public class EditPlanCommandParserTest {
                 WorkoutPlanTag.MESSAGE_CONSTRAINTS);
 
         // multiple invalid values, but only the first invalid value is captured
-        assertParseFailure(parser, "1" + INVALID_TITLE_DESC + INVALID_PLAN_DESC + VALID_WORKOUT_DATE_LEGS,
+        assertParseFailure(parser, "1" + INVALID_TITLE_DESC + INVALID_PLAN_DESC + DATE_DESC_LEGS,
                 WorkoutTitle.MESSAGE_CONSTRAINTS);
     }
 

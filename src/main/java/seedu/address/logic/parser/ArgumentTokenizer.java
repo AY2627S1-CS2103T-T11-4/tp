@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
  */
 public class ArgumentTokenizer {
 
+    public static final String MESSAGE_INVALID_PREFIX = "Invalid prefix: %1$s";
+
     /**
      * Tokenizes an arguments string and returns an {@code ArgumentMultimap} object that maps prefixes to their
      * respective argument values. Only the given prefixes will be recognized in the arguments string.
