@@ -1,60 +1,62 @@
 @startuml
 !include style.puml
+top to bottom direction
+skinparam linetype ortho
 skinparam arrowThickness 1.1
 skinparam arrowColor UI_COLOR_T4
 skinparam classBackgroundColor UI_COLOR
 
-package UI <<Rectangle>>{
+package UI <<Rectangle>> {
 Class "<<interface>>\nUi" as Ui
-Class "{abstract}\nUiPart" as UiPart
 Class UiManager
+Class "{abstract}\nUiPart\n(base class of all UI parts)" as UiPart
 Class MainWindow
-Class HelpWindow
+Class CommandBox
 Class ResultDisplay
 Class StudentListPanel
-Class Student
+Class WorkoutPlanListPanel
 Class StatusBarFooter
-Class CommandBox
-}
-
-package Model <<Rectangle>> {
-Class HiddenModel #FFFFFF
+Class HelpWindow
+Class StudentCard
+Class WorkoutPlanCard
 }
 
 package Logic <<Rectangle>> {
 Class HiddenLogic #FFFFFF
 }
 
+package Model <<Rectangle>> {
+Class HiddenModel #FFFFFF
+}
+
 Class HiddenOutside #FFFFFF
 HiddenOutside ..> Ui
 
-UiManager .left.|> Ui
+UiManager .up.|> Ui
 UiManager -down-> "1" MainWindow
-MainWindow *-down->  "1" CommandBox
-MainWindow *-down-> "1" ResultDisplay
-MainWindow *-down-> "1" StudentListPanel
-MainWindow *-down-> "1" StatusBarFooter
-MainWindow --> "0..1" HelpWindow
-
-StudentListPanel -down-> "*" StudentCard
 
 MainWindow -left-|> UiPart
 
-ResultDisplay --|> UiPart
-CommandBox --|> UiPart
-StudentListPanel --|> UiPart
-StudentCard --|> UiPart
-StatusBarFooter --|> UiPart
-HelpWindow --|> UiPart
+MainWindow *-down-> "1" CommandBox
+MainWindow *-down-> "1" ResultDisplay
+MainWindow *-down-> "1" StudentListPanel
+MainWindow *-down-> "1" WorkoutPlanListPanel
+MainWindow *-down-> "1" StatusBarFooter
+MainWindow --> "0..1" HelpWindow
+
+StudentListPanel *-down-> "*" StudentCard
+WorkoutPlanListPanel *-down-> "*" WorkoutPlanCard
 
 StudentCard ..> Model
+WorkoutPlanCard ..> Model
 UiManager -right-> Logic
-MainWindow -left-> Logic
+MainWindow -right-> Logic
 
-StudentListPanel -[hidden]left- HelpWindow
-HelpWindow -[hidden]left- CommandBox
-CommandBox -[hidden]left- ResultDisplay
-ResultDisplay -[hidden]left- StatusBarFooter
+CommandBox -[hidden]right- ResultDisplay
+ResultDisplay -[hidden]right- StudentListPanel
+StudentListPanel -[hidden]right- WorkoutPlanListPanel
+WorkoutPlanListPanel -[hidden]right- StatusBarFooter
+StatusBarFooter -[hidden]right- HelpWindow
+StudentCard -[hidden]right- WorkoutPlanCard
 
-MainWindow -[hidden]-|> UiPart
 @enduml
