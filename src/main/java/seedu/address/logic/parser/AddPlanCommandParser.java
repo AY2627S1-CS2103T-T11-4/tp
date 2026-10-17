@@ -32,7 +32,9 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddPlanCommand.MESSAGE_USAGE));
         }
 
+        argMultimap.verifyNoInvalidPrefixesFor(PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_PLAN, PREFIX_DATE);
+
         WorkoutTitle title = ParserUtil.parseTitle(argMultimap.getPreamble());
         WorkoutDescription desc = ParserUtil.parseDescription(argMultimap.getValue(PREFIX_PLAN).get());
         WorkoutDate date = ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get());

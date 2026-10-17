@@ -6,6 +6,7 @@ import static seedu.address.logic.commands.CommandTestUtil.DATE_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LETTERS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PLAN_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TITLE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_CHEST;
@@ -20,6 +21,7 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_DATE_LE
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_PLAN_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_TITLE_LEGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
@@ -194,6 +196,21 @@ public class EditPlanCommandParserTest {
 
         assertParseFailure(parser, userInput,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE));
+    }
+
+    @Test
+    public void parse_invalidField_failure() {
+        // invalid prefix alone
+        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+
+        // valid prefix with invalid prefix
+        assertParseFailure(parser, "1" + TITLE_DESC_LEGS + INVALID_PREFIX_DESC,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+
+        // invalid prefix with valid prefix
+        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + DATE_DESC_LEGS,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
     }
 
     @Test

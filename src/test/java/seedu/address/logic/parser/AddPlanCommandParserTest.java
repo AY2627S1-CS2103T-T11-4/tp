@@ -6,6 +6,7 @@ import static seedu.address.logic.commands.CommandTestUtil.DATE_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LETTERS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PLAN_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_CHEST;
 import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_LEGS;
@@ -15,6 +16,7 @@ import static seedu.address.logic.commands.CommandTestUtil.TITLE_PREAMBLE_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HIIT;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_STRENGTH;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -83,6 +85,13 @@ public class AddPlanCommandParserTest {
 
         // missing workout date
         assertParseFailure(parser, TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS, expectedMessage);
+    }
+
+    @Test
+    public void parse_invalidField_failure() {
+        assertParseFailure(parser,
+                TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + DATE_DESC_LEGS + TAG_DESC_STRENGTH + INVALID_PREFIX_DESC,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
     }
 
     @Test
