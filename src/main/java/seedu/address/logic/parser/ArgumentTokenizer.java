@@ -1,7 +1,6 @@
 package seedu.address.logic.parser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import seedu.address.logic.Messages;
@@ -18,30 +17,26 @@ import seedu.address.logic.parser.exceptions.ParseException;
 public class ArgumentTokenizer {
     /**
      * Tokenizes an arguments string and returns an {@code ArgumentMultimap} object that maps prefixes to their
-     * respective argument values. Only the given prefixes will be recognized in the arguments string.
+     * respective argument values.
      *
      * @param argsString Arguments string of the form: {@code preamble <prefix> value <prefix> value ...}
-     * @param prefixes   Prefixes to tokenize the arguments string with
      * @return           ArgumentMultimap object that maps prefixes to their arguments
      */
-    public static ArgumentMultimap tokenize(String argsString, Prefix... prefixes) throws ParseException {
-        List<PrefixPosition> positions = findAllPrefixPositions(argsString, prefixes);
+    public static ArgumentMultimap tokenize(String argsString) throws ParseException {
+        List<PrefixPosition> positions = findAllPrefixPositions(argsString);
         return extractArguments(argsString, positions);
     }
 
     /**
      * Find all zero-based prefix positions based on "--" in the given {@code argsString}
-     *
-     * @throws ParseException if any --prefix in {@code argsString} is not found in the list of valid {@code prefixes}
      */
-    private static List<PrefixPosition> findAllPrefixPositions(String argsString, Prefix... prefixes)
-            throws ParseException {
+    private static List<PrefixPosition> findAllPrefixPositions(String argsString) throws ParseException {
         List<PrefixPosition> positions = new ArrayList<>();
 
         int prefixPosition = findNextPrefixPosition(argsString, 0);
         while (prefixPosition != -1) {
             String prefixString = getFullPrefix(argsString, prefixPosition);
-            Prefix prefix = matchValidPrefix(prefixString, prefixes);
+            Prefix prefix = new Prefix(prefixString);
             PrefixPosition extendedPrefix = new PrefixPosition(prefix, prefixPosition);
             positions.add(extendedPrefix);
             prefixPosition = findNextPrefixPosition(argsString, prefixPosition);
@@ -75,20 +70,6 @@ public class ArgumentTokenizer {
             throw new ParseException(Messages.MESSAGE_EMPTY_PREFIX);
         }
         return argsString.substring(prefixStartIndex, prefixEndIndex);
-    }
-
-    /**
-     * Verifies the detected {@code prefixString} is part of the valid list of {@code prefixes}
-     * before extracting the corresponding {@code Prefix} object.
-     *
-     * @return {@code Prefix} object in {@code prefixes} that corresponds with {@code prefixString}
-     * @throws ParseException if none of the {@code prefixes} corresponds with {@code prefixString}
-     */
-    private static Prefix matchValidPrefix(String prefixString, Prefix... prefixes) throws ParseException {
-        return Arrays.stream(prefixes)
-                .filter(p -> p.getPrefix().equals(prefixString))
-                .findFirst()
-                .orElseThrow(() -> new ParseException(String.format(Messages.MESSAGE_INVALID_PREFIX, prefixString)));
     }
 
     /**

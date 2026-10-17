@@ -26,8 +26,7 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
      * @throws ParseException if the user input does not conform to the expected format
      */
     public AddPlanCommand parse(String args) throws ParseException {
-        ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(args, PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
         if (!argMultimap.arePrefixesPresent(PREFIX_PLAN, PREFIX_DATE) || argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddPlanCommand.MESSAGE_USAGE));
