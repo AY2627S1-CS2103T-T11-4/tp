@@ -14,6 +14,7 @@ import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.exceptions.StudentNotFoundException;
 
 /**
  * Represents the in-memory model of the address book data.
@@ -102,6 +103,21 @@ public class ModelManager implements Model {
         if (currentStudent.get() == target) {
             setCurrentStudent(editedStudent);
         }
+    }
+
+    @Override
+    public Student updateStudentWorkoutsState(Student student) {
+        requireNonNull(student);
+        int index = brotherGym.getStudentList().indexOf(student);
+        if (index < 0) {
+            throw new StudentNotFoundException();
+        }
+        Student storedStudent = brotherGym.getStudentList().get(index);
+        Student updatedStudent = storedStudent.updateWorkoutsState();
+        if (updatedStudent != storedStudent) {
+            setStudent(storedStudent, updatedStudent);
+        }
+        return updatedStudent;
     }
 
     @Override

@@ -2,6 +2,8 @@ package seedu.address.model.student;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
@@ -23,6 +25,7 @@ import seedu.address.model.tag.StudentTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.WorkoutTitle;
 import seedu.address.testutil.StudentBuilder;
@@ -31,6 +34,19 @@ public class StudentTest {
 
     private static final WorkoutPlan WORKOUT_PLAN = new WorkoutPlan(new WorkoutTitle("Strength"),
             new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+
+    @Test
+    public void updateWorkoutsState_returnsNewStudentWhenAPlanChanges() {
+        Student original = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                ALICE.getAddress(), ALICE.getTags(), new WorkoutPlansList(List.of(WORKOUT_PLAN)));
+        Student updated = original.updateWorkoutsState();
+
+        assertNotSame(original, updated);
+        assertEquals(WorkoutPlanStatus.PENDING, original.getWorkoutPlansList().getWorkoutList().get(0).getStatus());
+        assertEquals(WorkoutPlanStatus.OVERDUE, updated.getWorkoutPlansList().getWorkoutList().get(0).getStatus());
+        assertEquals(original.getName(), updated.getName());
+        assertSame(updated, updated.updateWorkoutsState());
+    }
 
     @Test
     public void constructors_workoutPlansList() {

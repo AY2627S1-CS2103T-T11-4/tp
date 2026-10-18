@@ -1,5 +1,6 @@
 package seedu.address.model.workoutplan;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -32,6 +33,34 @@ public final class WorkoutPlansList {
      */
     public List<WorkoutPlan> getWorkoutList() {
         return plans;
+    }
+
+    /** Returns a list with each plan's status refreshed. */
+    public WorkoutPlansList updateState() {
+        LocalDate today = LocalDate.now();
+        List<WorkoutPlan> updated = plans.stream().map(plan -> plan.updateState(today)).toList();
+        return updated.equals(plans) ? this : new WorkoutPlansList(updated);
+    }
+
+    /** Returns a list with the plan at {@code index} marked as completed. */
+    public WorkoutPlansList markWorkoutPlan(int index) {
+        WorkoutPlan marked = plans.get(index).mark();
+        return replaceWorkoutPlan(index, marked);
+    }
+
+    /** Returns a list with the plan at {@code index} unmarked and its status refreshed. */
+    public WorkoutPlansList unmarkWorkoutPlan(int index) {
+        WorkoutPlan unmarked = plans.get(index).unmark();
+        return replaceWorkoutPlan(index, unmarked);
+    }
+
+    private WorkoutPlansList replaceWorkoutPlan(int index, WorkoutPlan replacement) {
+        if (plans.get(index) == replacement) {
+            return this;
+        }
+        List<WorkoutPlan> updated = new ArrayList<>(plans);
+        updated.set(index, replacement);
+        return new WorkoutPlansList(updated);
     }
 
     /**

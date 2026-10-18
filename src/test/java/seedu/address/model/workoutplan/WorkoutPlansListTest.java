@@ -2,6 +2,8 @@ package seedu.address.model.workoutplan;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,6 +20,21 @@ public class WorkoutPlansListTest {
             new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
     private static final WorkoutPlan SECOND = new WorkoutPlan(
             new WorkoutTitle("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
+
+    @Test
+    public void updateState_replacesChangedPlansAndPreservesUnchangedPlans() {
+        WorkoutPlan completed = new WorkoutPlan(SECOND.getTitle(), SECOND.getWorkouts(), SECOND.getDate(),
+                java.util.Set.of(), WorkoutPlanStatus.COMPLETED);
+        WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, completed));
+
+        WorkoutPlansList updated = original.updateState();
+
+        assertNotSame(original, updated);
+        assertEquals(WorkoutPlanStatus.PENDING, FIRST.getStatus());
+        assertEquals(WorkoutPlanStatus.OVERDUE, updated.getWorkoutList().get(0).getStatus());
+        assertSame(completed, updated.getWorkoutList().get(1));
+        assertSame(updated, updated.updateState());
+    }
 
     @Test
     public void constructors_rejectNullsAndCopyInput() {
@@ -43,6 +60,23 @@ public class WorkoutPlansListTest {
         assertEquals(List.of(FIRST), original.getWorkoutList());
         assertEquals(List.of(FIRST, SECOND), updated.getWorkoutList());
         assertThrows(NullPointerException.class, () -> original.addWorkoutPlan(null));
+    }
+
+    @Test
+    public void markAndUnmarkWorkoutPlan_changeOnlySelectedPlan() {
+        WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND));
+
+        WorkoutPlansList marked = original.markWorkoutPlan(0);
+        WorkoutPlansList unmarked = marked.unmarkWorkoutPlan(0);
+
+        assertEquals(WorkoutPlanStatus.PENDING, original.getWorkoutList().get(0).getStatus());
+        assertEquals(WorkoutPlanStatus.COMPLETED, marked.getWorkoutList().get(0).getStatus());
+        assertEquals(WorkoutPlanStatus.OVERDUE, unmarked.getWorkoutList().get(0).getStatus());
+        assertSame(SECOND, marked.getWorkoutList().get(1));
+        assertSame(marked, marked.markWorkoutPlan(0));
+        assertSame(unmarked, unmarked.unmarkWorkoutPlan(0));
+        assertThrows(IndexOutOfBoundsException.class, () -> original.markWorkoutPlan(2));
+        assertThrows(IndexOutOfBoundsException.class, () -> original.unmarkWorkoutPlan(-1));
     }
 
     @Test

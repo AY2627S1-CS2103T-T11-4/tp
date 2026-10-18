@@ -136,6 +136,11 @@ public class AddStudentCommandTest {
         }
 
         @Override
+        public Student updateStudentWorkoutsState(Student student) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public ReadOnlyObjectProperty<Student> currentStudentProperty() {
             throw new AssertionError("This method should not be called.");
         }

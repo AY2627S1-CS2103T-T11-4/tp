@@ -2,6 +2,7 @@ package seedu.address.model.workoutplan;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -74,6 +75,38 @@ public final class WorkoutPlan {
 
     public WorkoutPlanStatus getStatus() {
         return status;
+    }
+
+    /** Returns this plan marked as completed. */
+    public WorkoutPlan mark() {
+        return withStatus(WorkoutPlanStatus.COMPLETED);
+    }
+
+    /**
+     * Returns this plan unmarked, with its status determined by today's date.
+     * Uses the same date rule as {@link #updateState(LocalDate)}.
+     */
+    public WorkoutPlan unmark() {
+        return withStatus(statusForDate(LocalDate.now()));
+    }
+
+    private WorkoutPlanStatus statusForDate(LocalDate today) {
+        LocalDate deadline = date.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return today.isAfter(deadline)
+                ? WorkoutPlanStatus.OVERDUE : WorkoutPlanStatus.PENDING;
+    }
+
+    private WorkoutPlan withStatus(WorkoutPlanStatus updatedStatus) {
+        return status == updatedStatus ? this : new WorkoutPlan(title, workouts, date, tags, updatedStatus);
+    }
+
+    /**
+     * Returns a plan with its status refreshed for {@code today}.
+     * Preserves plans marked by {@link #mark()}, while {@link #unmark()} clears that mark.
+     */
+    public WorkoutPlan updateState(LocalDate today) {
+        Objects.requireNonNull(today);
+        return status == WorkoutPlanStatus.COMPLETED ? this : withStatus(statusForDate(today));
     }
 
     @Override
