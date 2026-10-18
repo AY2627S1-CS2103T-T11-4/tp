@@ -63,6 +63,23 @@ public class WorkoutPlansListTest {
     }
 
     @Test
+    public void markAndUnmarkWorkoutPlan_changeOnlySelectedPlan() {
+        WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND));
+
+        WorkoutPlansList marked = original.markWorkoutPlan(0);
+        WorkoutPlansList unmarked = marked.unmarkWorkoutPlan(0);
+
+        assertEquals(WorkoutPlanStatus.PENDING, original.getWorkoutList().get(0).getStatus());
+        assertEquals(WorkoutPlanStatus.COMPLETED, marked.getWorkoutList().get(0).getStatus());
+        assertEquals(WorkoutPlanStatus.OVERDUE, unmarked.getWorkoutList().get(0).getStatus());
+        assertSame(SECOND, marked.getWorkoutList().get(1));
+        assertSame(marked, marked.markWorkoutPlan(0));
+        assertSame(unmarked, unmarked.unmarkWorkoutPlan(0));
+        assertThrows(IndexOutOfBoundsException.class, () -> original.markWorkoutPlan(2));
+        assertThrows(IndexOutOfBoundsException.class, () -> original.unmarkWorkoutPlan(-1));
+    }
+
+    @Test
     public void removeWorkoutPlan_removesSpecifiedWorkoutPlanInNewList() {
         WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND, FIRST));
         WorkoutPlan equalFirst = new WorkoutPlan(

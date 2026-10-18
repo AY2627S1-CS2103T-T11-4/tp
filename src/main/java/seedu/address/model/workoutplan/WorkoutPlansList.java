@@ -42,6 +42,27 @@ public final class WorkoutPlansList {
         return updated.equals(plans) ? this : new WorkoutPlansList(updated);
     }
 
+    /** Returns a list with the plan at {@code index} marked as completed. */
+    public WorkoutPlansList markWorkoutPlan(int index) {
+        WorkoutPlan marked = plans.get(index).mark();
+        return replaceWorkoutPlan(index, marked);
+    }
+
+    /** Returns a list with the plan at {@code index} unmarked and its status refreshed. */
+    public WorkoutPlansList unmarkWorkoutPlan(int index) {
+        WorkoutPlan unmarked = plans.get(index).unmark();
+        return replaceWorkoutPlan(index, unmarked);
+    }
+
+    private WorkoutPlansList replaceWorkoutPlan(int index, WorkoutPlan replacement) {
+        if (plans.get(index) == replacement) {
+            return this;
+        }
+        List<WorkoutPlan> updated = new ArrayList<>(plans);
+        updated.set(index, replacement);
+        return new WorkoutPlansList(updated);
+    }
+
     /**
      * Returns a new list with {@code plan} appended.
      */

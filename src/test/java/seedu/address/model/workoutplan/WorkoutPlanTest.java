@@ -96,6 +96,34 @@ public class WorkoutPlanTest {
         assertSame(future, future.updateState(todayDate));
     }
 
+    @Test
+    public void mark_completesPlanWithoutChangingOriginal() {
+        WorkoutPlan pending = planForDate(LocalDate.of(2026, 10, 18), WorkoutPlanStatus.PENDING);
+
+        WorkoutPlan marked = pending.mark();
+
+        assertEquals(WorkoutPlanStatus.COMPLETED, marked.getStatus());
+        assertEquals(WorkoutPlanStatus.PENDING, pending.getStatus());
+        assertEquals(pending.getDate(), marked.getDate());
+        assertSame(marked, marked.mark());
+    }
+
+    @Test
+    public void unmark_restoresPendingOrOverdueStatus() {
+        LocalDate today = LocalDate.now();
+        WorkoutPlan past = planForDate(today.minusDays(1), WorkoutPlanStatus.COMPLETED);
+        WorkoutPlan dueToday = planForDate(today, WorkoutPlanStatus.COMPLETED);
+        WorkoutPlan future = planForDate(today.plusDays(1), WorkoutPlanStatus.COMPLETED);
+
+        assertEquals(WorkoutPlanStatus.OVERDUE, past.unmark().getStatus());
+        assertEquals(WorkoutPlanStatus.PENDING, dueToday.unmark().getStatus());
+        assertEquals(WorkoutPlanStatus.PENDING, future.unmark().getStatus());
+        assertEquals(WorkoutPlanStatus.COMPLETED, past.getStatus());
+
+        WorkoutPlan unmarked = past.unmark();
+        assertSame(unmarked, unmarked.unmark());
+    }
+
     private static WorkoutPlan planForDate(LocalDate deadline, WorkoutPlanStatus status) {
         return new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, WorkoutDate.fromLocalDate(deadline), Set.of(), status);
     }
