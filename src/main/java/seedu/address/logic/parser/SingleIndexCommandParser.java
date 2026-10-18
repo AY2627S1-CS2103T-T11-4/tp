@@ -42,23 +42,17 @@ public class SingleIndexCommandParser<C extends SingleIndexCommand> implements P
      */
     public C parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentTokenizer.verifyNoPrefixes(args);
-        Index index = this.parseValidated(args);
-        return this.commandConstructor.apply(index);
-    }
-
-    /**
-     * Parses the validated {@code args} string to produce the parsed index,
-     * wrapping any error messages thrown with the message usage.
-     * @throws ParseException if any of the fields contain invalid contents
-     */
-    private Index parseValidated(String args) throws ParseException {
+        ArgumentValidator argValidator = new ArgumentValidator();
         Index index;
+
         try {
-            index = ParserUtil.parseIndex(args);
+            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+            argValidator.verifyArgs(argMultimap);
+            index = ParserUtil.parseIndex(argMultimap.getPreamble());
         } catch (ParseException pe) {
             throw new ParseException(Messages.formatParserError(pe.getMessage(), this.commandMessageUsage), pe);
         }
-        return index;
+
+        return this.commandConstructor.apply(index);
     }
 }

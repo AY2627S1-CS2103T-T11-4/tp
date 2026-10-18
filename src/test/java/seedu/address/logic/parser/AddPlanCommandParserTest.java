@@ -19,6 +19,7 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HIIT;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_STRENGTH;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_UNKNOWN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
@@ -69,29 +70,31 @@ public class AddPlanCommandParserTest {
 
         // repeated workout plans
         assertParseFailure(parser, validExpectePlanString + PLAN_DESC_CHEST,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN)));
 
         // repeated workout dates
         assertParseFailure(parser, validExpectePlanString + DATE_DESC_CHEST,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_DATE));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_DATE)));
 
         // multiple repeated fields
         assertParseFailure(parser, validExpectePlanString + PLAN_DESC_CHEST + DATE_DESC_CHEST,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN, PREFIX_DATE));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN, PREFIX_DATE)));
     }
 
     @Test
     public void parse_compulsoryFieldMissing_failure() {
-        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddPlanCommand.MESSAGE_USAGE);
 
         // missing workout title
-        assertParseFailure(parser, PLAN_DESC_LEGS + DATE_DESC_LEGS, expectedMessage);
+        assertParseFailure(parser, PLAN_DESC_LEGS + DATE_DESC_LEGS,
+                this.formatParserError(Messages.MESSAGE_MISSING_PREAMBLE));
 
         // missing workout description
-        assertParseFailure(parser, TITLE_PREAMBLE_LEGS + DATE_DESC_LEGS, expectedMessage);
+        assertParseFailure(parser, TITLE_PREAMBLE_LEGS + DATE_DESC_LEGS,
+                this.formatParserError(Messages.getErrorMessageForMissingPrefixes(PREFIX_PLAN)));
 
         // missing workout date
-        assertParseFailure(parser, TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS, expectedMessage);
+        assertParseFailure(parser, TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS,
+                this.formatParserError(Messages.getErrorMessageForMissingPrefixes(PREFIX_DATE)));
     }
 
     @Test
@@ -99,17 +102,17 @@ public class AddPlanCommandParserTest {
         // single invalid field
         assertParseFailure(parser,
                 TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + DATE_DESC_LEGS + TAG_DESC_STRENGTH + INVALID_PREFIX_DESC,
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
         // duplicate invalid fields
         assertParseFailure(parser,
                 TITLE_PREAMBLE_LEGS + INVALID_PREFIX_DESC + PLAN_DESC_LEGS + DATE_DESC_LEGS + INVALID_PREFIX_DESC,
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
         // multiple (different) invalid fields
         assertParseFailure(parser,
                 NAME_PREAMBLE_BOB + INVALID_PREFIX_DESC + PLAN_DESC_LEGS + DATE_DESC_LEGS + INVALID_PREFIX_DESC_UNKNOWN,
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN)));
     }
 
     @Test

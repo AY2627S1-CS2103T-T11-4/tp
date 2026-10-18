@@ -66,6 +66,13 @@ public class ArgumentMultimap {
     }
 
     /**
+     * Returns the set of prefixes captured by the ArgumentMultiMap
+     */
+    public Set<Prefix> getPrefixSet() {
+        return Set.copyOf(argMultimap.keySet());
+    }
+
+    /**
      * Returns true if none of the prefixes contains empty {@code Optional} values in the current
      * {@code ArgumentMultimap}.
      */

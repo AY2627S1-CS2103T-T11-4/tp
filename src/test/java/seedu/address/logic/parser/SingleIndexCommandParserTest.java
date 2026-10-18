@@ -85,14 +85,14 @@ public class SingleIndexCommandParserTest {
     @Test
     public void parse_invalidPrefixes_throwsParseException() {
         // empty prefix throws error message for empty prefixes
-        assertParseFailure(parser, "1 -- gibberish", MESSAGE_EMPTY_PREFIX);
+        assertParseFailure(parser, "1 -- gibberish", this.formatParserError(MESSAGE_EMPTY_PREFIX));
 
         // invalid prefix throws error message for invalid prefixes
         assertParseFailure(parser, "1 --invalid gibberish",
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
         // multiple invalid prefixes throws error message for invalid prefixes
         assertParseFailure(parser, "1 --invalid gibberish --unknown greek",
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN)));
     }
 }

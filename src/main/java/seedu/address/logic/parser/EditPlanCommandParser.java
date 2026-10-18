@@ -22,6 +22,10 @@ import seedu.address.model.tag.WorkoutPlanTag;
  */
 public class EditPlanCommandParser implements Parser<EditPlanCommand> {
 
+    private static final Set<Prefix> VALID_PREFIXES = Set.of(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
+    private static final Set<Prefix> REQUIRED_PREFIXES = Set.of();
+    private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE);
+
     /**
      * Parses the given {@code String} of arguments in the context of the EditPlanCommand
      * and returns an EditPlanCommand object for execution.
@@ -29,19 +33,48 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
      */
     public EditPlanCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
-        argMultimap.verifyNoInvalidPrefixesFor(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE);
+        ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
+        Index index;
+        EditPlanCommand.EditPlanDescriptor editPlanDescriptor;
 
-        Index index = this.parseIndex(argMultimap.getPreamble());
-        EditPlanCommand.EditPlanDescriptor editPlanDescriptor = this.parseEditArgsValidated(argMultimap);
+        try {
+            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+            argValidator.verifyArgs(argMultimap);
+            index = ParserUtil.parseIndex(argMultimap.getPreamble());
+            editPlanDescriptor = this.parseValidEditFields(argMultimap);
+        } catch (ParseException pe) {
+            throw new ParseException(Messages.formatParserError(pe.getMessage(), EditPlanCommand.MESSAGE_USAGE), pe);
+        }
 
         if (!editPlanDescriptor.isAnyFieldEdited()) {
             throw new ParseException(EditPlanCommand.MESSAGE_NOT_EDITED);
         }
 
         return new EditPlanCommand(index, editPlanDescriptor);
+    }
+
+    /**
+     * Parses the validated {@code args} string to produce the EditPlanDescriptor object,
+     * wrapping any error messages thrown with the message usage.
+     * @throws ParseException if any of the fields contain invalid contents
+     */
+    private EditPlanCommand.EditPlanDescriptor parseValidEditFields(ArgumentMultimap argMultimap)
+            throws ParseException {
+        EditPlanCommand.EditPlanDescriptor editPlanDescriptor = new EditPlanCommand.EditPlanDescriptor();
+
+        if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
+            editPlanDescriptor.setTitle(ParserUtil.parseTitle(argMultimap.getValue(PREFIX_NAME).get()));
+        }
+        if (argMultimap.getValue(PREFIX_PLAN).isPresent()) {
+            editPlanDescriptor.setDescription(ParserUtil.parseDescription(argMultimap.getValue(PREFIX_PLAN).get()));
+        }
+        if (argMultimap.getValue(PREFIX_DATE).isPresent()) {
+            editPlanDescriptor.setDate(ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get()));
+        }
+        parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editPlanDescriptor::setWorkoutPlanTags);
+
+        return editPlanDescriptor;
     }
 
     /**
@@ -57,47 +90,5 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
         }
         Collection<String> tagSet = tags.size() == 1 && tags.contains("") ? Collections.emptySet() : tags;
         return Optional.of(ParserUtil.parseWorkoutPlanTags(tagSet));
-    }
-
-    /**
-     * Parses the {@code indexString} to produce the parsed index,
-     * wrapping any error messages thrown with the message usage.
-     * @throws ParseException if any of the fields contain invalid contents
-     */
-    private Index parseIndex(String indexString) throws ParseException {
-        Index index;
-        try {
-            index = ParserUtil.parseIndex(indexString);
-        } catch (ParseException pe) {
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), EditPlanCommand.MESSAGE_USAGE), pe);
-        }
-        return index;
-    }
-
-    /**
-     * Parses the validated {@code args} string to produce the EditPlanDescriptor object,
-     * wrapping any error messages thrown with the message usage.
-     * @throws ParseException if any of the fields contain invalid contents
-     */
-    private EditPlanCommand.EditPlanDescriptor parseEditArgsValidated(ArgumentMultimap argMultimap)
-            throws ParseException {
-        EditPlanCommand.EditPlanDescriptor editPlanDescriptor = new EditPlanCommand.EditPlanDescriptor();
-
-        try {
-            if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
-                editPlanDescriptor.setTitle(ParserUtil.parseTitle(argMultimap.getValue(PREFIX_NAME).get()));
-            }
-            if (argMultimap.getValue(PREFIX_PLAN).isPresent()) {
-                editPlanDescriptor.setDescription(ParserUtil.parseDescription(argMultimap.getValue(PREFIX_PLAN).get()));
-            }
-            if (argMultimap.getValue(PREFIX_DATE).isPresent()) {
-                editPlanDescriptor.setDate(ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get()));
-            }
-            parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editPlanDescriptor::setWorkoutPlanTags);
-
-        } catch (ParseException pe) {
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), EditPlanCommand.MESSAGE_USAGE), pe);
-        }
-        return editPlanDescriptor;
     }
 }

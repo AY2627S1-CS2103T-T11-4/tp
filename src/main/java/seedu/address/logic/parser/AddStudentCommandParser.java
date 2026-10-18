@@ -1,7 +1,6 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
@@ -24,6 +23,10 @@ import seedu.address.model.tag.StudentTag;
  */
 public class AddStudentCommandParser implements Parser<AddStudentCommand> {
 
+    private static final Set<Prefix> VALID_PREFIXES = Set.of(PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG);
+    private static final Set<Prefix> REQUIRED_PREFIXES = Set.of(PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
+    private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
+
     /**
      * Parses the given {@code String} of arguments in the context of the AddStudentCommand
      * and returns an AddStudentCommand object for execution.
@@ -31,16 +34,18 @@ public class AddStudentCommandParser implements Parser<AddStudentCommand> {
      */
     public AddStudentCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
-        if (!argMultimap.arePrefixesPresent(PREFIX_ADDRESS, PREFIX_PHONE, PREFIX_EMAIL)) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddStudentCommand.MESSAGE_USAGE));
+        ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
+        Student student;
+
+        try {
+            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+            argValidator.verifyArgs(argMultimap);
+            student = this.parseValidFields(argMultimap);
+        } catch (ParseException pe) {
+            throw new ParseException(Messages.formatParserError(pe.getMessage(), AddStudentCommand.MESSAGE_USAGE), pe);
         }
 
-        argMultimap.verifyNoInvalidPrefixesFor(PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG);
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
-
-        Student student = this.parseValidated(argMultimap);
         return new AddStudentCommand(student);
     }
 
@@ -49,22 +54,13 @@ public class AddStudentCommandParser implements Parser<AddStudentCommand> {
      * wrapping any error messages thrown with the message usage.
      * @throws ParseException if any of the fields contain invalid contents
      */
-    private Student parseValidated(ArgumentMultimap argMultimap) throws ParseException {
-        Name name;
-        Phone phone;
-        Email email;
-        Address address;
-        Set<StudentTag> tagList;
+    private Student parseValidFields(ArgumentMultimap argMultimap) throws ParseException {
+        Name name = ParserUtil.parseName(argMultimap.getPreamble());
+        Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
+        Email email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
+        Address address = ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get());
+        Set<StudentTag> tagList = ParserUtil.parseStudentTags(argMultimap.getAllValues(PREFIX_TAG));
 
-        try {
-            name = ParserUtil.parseName(argMultimap.getPreamble());
-            phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
-            email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
-            address = ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get());
-            tagList = ParserUtil.parseStudentTags(argMultimap.getAllValues(PREFIX_TAG));
-        } catch (ParseException pe) {
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), AddStudentCommand.MESSAGE_USAGE), pe);
-        }
         return new Student(name, phone, email, address, tagList);
     }
 }

@@ -1,5 +1,6 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.logic.Messages.MESSAGE_MISSING_PREAMBLE;
 import static seedu.address.logic.commands.CommandTestUtil.DATE_DESC_CHEST;
 import static seedu.address.logic.commands.CommandTestUtil.DATE_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LENGTH;
@@ -64,7 +65,7 @@ public class EditPlanCommandParserTest {
         assertParseFailure(parser, "1", EditPlanCommand.MESSAGE_NOT_EDITED);
 
         // no index and no field specified
-        assertParseFailure(parser, "", this.formatParserError(MESSAGE_INVALID_INDEX));
+        assertParseFailure(parser, "", this.formatParserError(MESSAGE_MISSING_PREAMBLE));
     }
 
     @Test
@@ -179,12 +180,14 @@ public class EditPlanCommandParserTest {
         Index targetIndex = INDEX_FIRST;
         String userInput = targetIndex.getOneBased() + INVALID_PLAN_DESC + PLAN_DESC_LEGS;
 
-        assertParseFailure(parser, userInput, Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN));
+        assertParseFailure(parser, userInput,
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN)));
 
         // invalid followed by valid
         userInput = targetIndex.getOneBased() + PLAN_DESC_LEGS + INVALID_PLAN_DESC;
 
-        assertParseFailure(parser, userInput, Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN));
+        assertParseFailure(parser, userInput,
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN)));
 
         // multiple valid fields repeated
         userInput = targetIndex.getOneBased() + TITLE_DESC_LEGS + PLAN_DESC_LEGS + DATE_DESC_LEGS
@@ -192,37 +195,39 @@ public class EditPlanCommandParserTest {
                 + TITLE_DESC_CHEST + PLAN_DESC_CHEST + DATE_DESC_CHEST + TAG_DESC_HIIT;
 
         assertParseFailure(parser, userInput,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(
+                        PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE)));
 
         // multiple invalid values
         userInput = targetIndex.getOneBased() + INVALID_TITLE_DESC + INVALID_PLAN_DESC + INVALID_DATE_DESC_LETTERS
                 + INVALID_TITLE_DESC + INVALID_PLAN_DESC + INVALID_DATE_DESC_LENGTH + INVALID_TAG_DESC;
 
         assertParseFailure(parser, userInput,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(
+                        PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE)));
     }
 
     @Test
     public void parse_invalidField_failure() {
         // invalid prefix alone
         assertParseFailure(parser, "1" + INVALID_PREFIX_DESC,
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
         // valid prefix with invalid prefix
         assertParseFailure(parser, "1" + TITLE_DESC_LEGS + INVALID_PREFIX_DESC,
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
         // invalid prefix with valid prefix
         assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + DATE_DESC_LEGS,
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
         // duplicate invalid prefixes
         assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + PLAN_DESC_LEGS + INVALID_PREFIX_DESC,
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
         // multiple (different) invalid prefixes
         assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + PLAN_DESC_LEGS + INVALID_PREFIX_DESC_UNKNOWN,
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN)));
     }
 
     @Test

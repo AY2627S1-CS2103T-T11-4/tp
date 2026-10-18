@@ -23,6 +23,12 @@ import seedu.address.model.tag.StudentTag;
  */
 public class EditStudentCommandParser implements Parser<EditStudentCommand> {
 
+    private static final Set<Prefix> VALID_PREFIXES =
+            Set.of(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG);
+    private static final Set<Prefix> REQUIRED_PREFIXES = Set.of();
+    private static final Set<Prefix> NO_REPEAT_PREFIXES =
+            Set.of(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
+
     /**
      * Parses the given {@code String} of arguments in the context of the EditStudentCommand
      * and returns an EditStudentCommand object for execution.
@@ -30,13 +36,19 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
      */
     public EditStudentCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
-        argMultimap.verifyNoInvalidPrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG);
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
+        ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
+        Index index;
+        EditStudentCommand.EditStudentDescriptor editStudentDescriptor;
 
-        Index index = this.parseIndex(argMultimap.getPreamble());
-        EditStudentCommand.EditStudentDescriptor editStudentDescriptor = this.parseEditArgsValidated(argMultimap);
+        try {
+            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+            argValidator.verifyArgs(argMultimap);
+            index = ParserUtil.parseIndex(argMultimap.getPreamble());
+            editStudentDescriptor = this.parseValidEditFields(argMultimap);
+        } catch (ParseException pe) {
+            throw new ParseException(Messages.formatParserError(pe.getMessage(), EditStudentCommand.MESSAGE_USAGE), pe);
+        }
 
         if (!editStudentDescriptor.isAnyFieldEdited()) {
             throw new ParseException(EditStudentCommand.MESSAGE_NOT_EDITED);
@@ -45,48 +57,30 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
         return new EditStudentCommand(index, editStudentDescriptor);
     }
 
-    /**
-     * Parses the {@code indexString} to produce the parsed index,
-     * wrapping any error messages thrown with the message usage.
-     * @throws ParseException if any of the fields contain invalid contents
-     */
-    private Index parseIndex(String indexString) throws ParseException {
-        Index index;
-        try {
-            index = ParserUtil.parseIndex(indexString);
-        } catch (ParseException pe) {
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), EditStudentCommand.MESSAGE_USAGE), pe);
-        }
-        return index;
-    }
 
     /**
      * Parses the validated {@code args} string to produce the EditStudentDescriptor object,
      * wrapping any error messages thrown with the message usage.
      * @throws ParseException if any of the fields contain invalid contents
      */
-    private EditStudentCommand.EditStudentDescriptor parseEditArgsValidated(ArgumentMultimap argMultimap)
+    private EditStudentCommand.EditStudentDescriptor parseValidEditFields(ArgumentMultimap argMultimap)
             throws ParseException {
         EditStudentCommand.EditStudentDescriptor editStudentDescriptor = new EditStudentCommand.EditStudentDescriptor();
 
-        try {
-            if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
-                editStudentDescriptor.setName(ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get()));
-            }
-            if (argMultimap.getValue(PREFIX_PHONE).isPresent()) {
-                editStudentDescriptor.setPhone(ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get()));
-            }
-            if (argMultimap.getValue(PREFIX_EMAIL).isPresent()) {
-                editStudentDescriptor.setEmail(ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get()));
-            }
-            if (argMultimap.getValue(PREFIX_ADDRESS).isPresent()) {
-                editStudentDescriptor.setAddress(ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get()));
-            }
-            parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editStudentDescriptor::setTags);
-
-        } catch (ParseException pe) {
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), EditStudentCommand.MESSAGE_USAGE), pe);
+        if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
+            editStudentDescriptor.setName(ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get()));
         }
+        if (argMultimap.getValue(PREFIX_PHONE).isPresent()) {
+            editStudentDescriptor.setPhone(ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get()));
+        }
+        if (argMultimap.getValue(PREFIX_EMAIL).isPresent()) {
+            editStudentDescriptor.setEmail(ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get()));
+        }
+        if (argMultimap.getValue(PREFIX_ADDRESS).isPresent()) {
+            editStudentDescriptor.setAddress(ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get()));
+        }
+        parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editStudentDescriptor::setTags);
+
         return editStudentDescriptor;
     }
 

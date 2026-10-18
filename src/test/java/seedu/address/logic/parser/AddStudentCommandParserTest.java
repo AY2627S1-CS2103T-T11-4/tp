@@ -1,6 +1,5 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
@@ -79,48 +78,35 @@ public class AddStudentCommandParserTest {
 
         // multiple phones
         assertParseFailure(parser, validExpectedStudentString + PHONE_DESC_AMY,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE)));
 
         // multiple emails
         assertParseFailure(parser, validExpectedStudentString + EMAIL_DESC_AMY,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_EMAIL));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_EMAIL)));
 
         // multiple addresses
         assertParseFailure(parser, validExpectedStudentString + ADDRESS_DESC_AMY,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_ADDRESS));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_ADDRESS)));
 
         // multiple fields repeated
         assertParseFailure(parser,
                 validExpectedStudentString + PHONE_DESC_AMY + EMAIL_DESC_AMY + ADDRESS_DESC_AMY,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_ADDRESS, PREFIX_EMAIL, PREFIX_PHONE));
-
-        // invalid value followed by valid value
-
-        // invalid email
-        assertParseFailure(parser, INVALID_EMAIL_DESC + validExpectedStudentString,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_EMAIL));
-
-        // invalid phone
-        assertParseFailure(parser, INVALID_PHONE_DESC + validExpectedStudentString,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE));
-
-        // invalid address
-        assertParseFailure(parser, INVALID_ADDRESS_DESC + validExpectedStudentString,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_ADDRESS));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(
+                        PREFIX_ADDRESS, PREFIX_EMAIL, PREFIX_PHONE)));
 
         // valid value followed by invalid value
 
         // invalid email
         assertParseFailure(parser, validExpectedStudentString + INVALID_EMAIL_DESC,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_EMAIL));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_EMAIL)));
 
         // invalid phone
         assertParseFailure(parser, validExpectedStudentString + INVALID_PHONE_DESC,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE)));
 
         // invalid address
         assertParseFailure(parser, validExpectedStudentString + INVALID_ADDRESS_DESC,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_ADDRESS));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_ADDRESS)));
     }
 
     @Test
@@ -133,23 +119,27 @@ public class AddStudentCommandParserTest {
 
     @Test
     public void parse_compulsoryFieldMissing_failure() {
-        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddStudentCommand.MESSAGE_USAGE);
+
+        // missing name preamble
+        assertParseFailure(parser, PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB,
+                this.formatParserError(Messages.MESSAGE_MISSING_PREAMBLE));
 
         // missing phone prefix
         assertParseFailure(parser, NAME_PREAMBLE_BOB + VALID_PHONE_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB,
-                expectedMessage);
+                this.formatParserError(Messages.getErrorMessageForMissingPrefixes(PREFIX_PHONE)));
 
         // missing email prefix
         assertParseFailure(parser, NAME_PREAMBLE_BOB + PHONE_DESC_BOB + VALID_EMAIL_BOB + ADDRESS_DESC_BOB,
-                expectedMessage);
+                this.formatParserError(Messages.getErrorMessageForMissingPrefixes(PREFIX_EMAIL)));
 
         // missing address prefix
         assertParseFailure(parser, NAME_PREAMBLE_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + VALID_ADDRESS_BOB,
-                expectedMessage);
+                this.formatParserError(Messages.getErrorMessageForMissingPrefixes(PREFIX_ADDRESS)));
 
         // all prefixes missing
         assertParseFailure(parser, VALID_NAME_BOB + VALID_PHONE_BOB + VALID_EMAIL_BOB + VALID_ADDRESS_BOB,
-                expectedMessage);
+                this.formatParserError(Messages.getErrorMessageForMissingPrefixes(
+                        PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS)));
     }
 
     @Test
@@ -157,19 +147,19 @@ public class AddStudentCommandParserTest {
         // single invalid field
         assertParseFailure(parser,
                 NAME_PREAMBLE_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB + INVALID_PREFIX_DESC,
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
         // duplicate invalid fields
         assertParseFailure(parser,
                 NAME_PREAMBLE_BOB + INVALID_PREFIX_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
                         + INVALID_PREFIX_DESC,
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
         // multiple (different) invalid fields
         assertParseFailure(parser,
                 NAME_PREAMBLE_BOB + INVALID_PREFIX_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
                         + INVALID_PREFIX_DESC_UNKNOWN,
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN)));
     }
 
     @Test
