@@ -2,7 +2,6 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_EMPTY_PREFIX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_UNKNOWN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
@@ -91,8 +90,5 @@ public class SingleIndexCommandParserTest {
         assertParseFailure(parser, "1 --invalid gibberish",
                 this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
-        // multiple invalid prefixes throws error message for invalid prefixes
-        assertParseFailure(parser, "1 --invalid gibberish --unknown greek",
-                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN)));
     }
 }

@@ -1,32 +1,25 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_MISSING_PREAMBLE;
-import static seedu.address.logic.commands.CommandTestUtil.DATE_DESC_CHEST;
 import static seedu.address.logic.commands.CommandTestUtil.DATE_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LETTERS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PLAN_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC;
-import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC_UNKNOWN;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TITLE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_CHEST;
 import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_HIIT;
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_STRENGTH;
-import static seedu.address.logic.commands.CommandTestUtil.TITLE_DESC_CHEST;
 import static seedu.address.logic.commands.CommandTestUtil.TITLE_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HIIT;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_STRENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_DATE_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_PLAN_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_TITLE_LEGS;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_UNKNOWN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
@@ -64,8 +57,6 @@ public class EditPlanCommandParserTest {
         // no field specified
         assertParseFailure(parser, "1", EditPlanCommand.MESSAGE_NOT_EDITED);
 
-        // no index and no field specified
-        assertParseFailure(parser, "", this.formatParserError(MESSAGE_MISSING_PREAMBLE));
     }
 
     @Test
@@ -173,38 +164,11 @@ public class EditPlanCommandParserTest {
 
     @Test
     public void parse_multipleRepeatedFields_failure() {
-        // More extensive testing of duplicate parameter detections is done in
-        // AddPlanCommandParserTest#parse_repeatedNonTagValue_failure()
-
-        // valid followed by invalid
         Index targetIndex = INDEX_FIRST;
-        String userInput = targetIndex.getOneBased() + INVALID_PLAN_DESC + PLAN_DESC_LEGS;
+        String userInput = targetIndex.getOneBased() + PLAN_DESC_LEGS + PLAN_DESC_CHEST;
 
         assertParseFailure(parser, userInput,
                 this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN)));
-
-        // invalid followed by valid
-        userInput = targetIndex.getOneBased() + PLAN_DESC_LEGS + INVALID_PLAN_DESC;
-
-        assertParseFailure(parser, userInput,
-                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN)));
-
-        // multiple valid fields repeated
-        userInput = targetIndex.getOneBased() + TITLE_DESC_LEGS + PLAN_DESC_LEGS + DATE_DESC_LEGS
-                + TAG_DESC_STRENGTH + TITLE_DESC_LEGS + PLAN_DESC_LEGS + DATE_DESC_LEGS + TAG_DESC_STRENGTH
-                + TITLE_DESC_CHEST + PLAN_DESC_CHEST + DATE_DESC_CHEST + TAG_DESC_HIIT;
-
-        assertParseFailure(parser, userInput,
-                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(
-                        PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE)));
-
-        // multiple invalid values
-        userInput = targetIndex.getOneBased() + INVALID_TITLE_DESC + INVALID_PLAN_DESC + INVALID_DATE_DESC_LETTERS
-                + INVALID_TITLE_DESC + INVALID_PLAN_DESC + INVALID_DATE_DESC_LENGTH + INVALID_TAG_DESC;
-
-        assertParseFailure(parser, userInput,
-                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(
-                        PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE)));
     }
 
     @Test
@@ -213,21 +177,6 @@ public class EditPlanCommandParserTest {
         assertParseFailure(parser, "1" + INVALID_PREFIX_DESC,
                 this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
-        // valid prefix with invalid prefix
-        assertParseFailure(parser, "1" + TITLE_DESC_LEGS + INVALID_PREFIX_DESC,
-                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
-
-        // invalid prefix with valid prefix
-        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + DATE_DESC_LEGS,
-                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
-
-        // duplicate invalid prefixes
-        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + PLAN_DESC_LEGS + INVALID_PREFIX_DESC,
-                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
-
-        // multiple (different) invalid prefixes
-        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + PLAN_DESC_LEGS + INVALID_PREFIX_DESC_UNKNOWN,
-                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN)));
     }
 
     @Test

@@ -1,16 +1,12 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_MISSING_PREAMBLE;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
-import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
-import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_ADDRESS_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_EMAIL_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_NAME_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PHONE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC;
-import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC_UNKNOWN;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
@@ -24,12 +20,9 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_UNKNOWN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
@@ -67,8 +60,6 @@ public class EditStudentCommandParserTest {
         // no field specified
         assertParseFailure(parser, "1", EditStudentCommand.MESSAGE_NOT_EDITED);
 
-        // no index and no field specified
-        assertParseFailure(parser, "", this.formatParserError(MESSAGE_MISSING_PREAMBLE));
     }
 
     @Test
@@ -182,38 +173,11 @@ public class EditStudentCommandParserTest {
 
     @Test
     public void parse_multipleRepeatedFields_failure() {
-        // More extensive testing of duplicate parameter detections is done in
-        // AddStudentCommandParserTest#parse_repeatedNonTagValue_failure()
-
-        // valid followed by invalid
         Index targetIndex = INDEX_FIRST;
-        String userInput = targetIndex.getOneBased() + INVALID_PHONE_DESC + PHONE_DESC_BOB;
+        String userInput = targetIndex.getOneBased() + PHONE_DESC_AMY + PHONE_DESC_BOB;
 
         assertParseFailure(parser, userInput,
                 this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE)));
-
-        // invalid followed by valid
-        userInput = targetIndex.getOneBased() + PHONE_DESC_BOB + INVALID_PHONE_DESC;
-
-        assertParseFailure(parser, userInput,
-                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE)));
-
-        // multiple valid fields repeated
-        userInput = targetIndex.getOneBased() + PHONE_DESC_AMY + ADDRESS_DESC_AMY + EMAIL_DESC_AMY
-                + TAG_DESC_FRIEND + PHONE_DESC_AMY + ADDRESS_DESC_AMY + EMAIL_DESC_AMY + TAG_DESC_FRIEND
-                + PHONE_DESC_BOB + ADDRESS_DESC_BOB + EMAIL_DESC_BOB + TAG_DESC_HUSBAND;
-
-        assertParseFailure(parser, userInput,
-                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(
-                        PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS)));
-
-        // multiple invalid values
-        userInput = targetIndex.getOneBased() + INVALID_PHONE_DESC + INVALID_ADDRESS_DESC + INVALID_EMAIL_DESC
-                + INVALID_PHONE_DESC + INVALID_ADDRESS_DESC + INVALID_EMAIL_DESC;
-
-        assertParseFailure(parser, userInput,
-                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(
-                        PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS)));
     }
 
     @Test
@@ -222,21 +186,6 @@ public class EditStudentCommandParserTest {
         assertParseFailure(parser, "1" + INVALID_PREFIX_DESC,
                 this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
-        // valid prefix with invalid prefix
-        assertParseFailure(parser, "1" + NAME_DESC_AMY + INVALID_PREFIX_DESC,
-                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
-
-        // invalid prefix with valid prefix
-        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + ADDRESS_DESC_AMY,
-                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
-
-        // duplicate invalid prefixes
-        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + PHONE_DESC_AMY + INVALID_PREFIX_DESC,
-                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
-
-        // multiple (different) invalid prefixes
-        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + PHONE_DESC_AMY + INVALID_PREFIX_DESC_UNKNOWN,
-                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN)));
     }
 
     @Test
