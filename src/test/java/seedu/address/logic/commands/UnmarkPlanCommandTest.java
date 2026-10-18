@@ -115,6 +115,15 @@ public class UnmarkPlanCommandTest {
         assertNotEquals(command, null);
     }
 
+    @Test
+    public void toStringMethod() {
+        Index targetIndex = Index.fromOneBased(1);
+        UnmarkPlanCommand command = new UnmarkPlanCommand(targetIndex);
+        String expected = UnmarkPlanCommand.class.getCanonicalName() + "{targetIndex=" + targetIndex + "}";
+
+        assertEquals(expected, command.toString());
+    }
+
     private static Student withPlans(Student student, List<WorkoutPlan> plans) {
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getAddress(), student.getTags(), new WorkoutPlansList(plans));

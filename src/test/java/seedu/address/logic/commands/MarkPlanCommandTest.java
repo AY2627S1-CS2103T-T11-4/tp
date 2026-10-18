@@ -112,6 +112,15 @@ public class MarkPlanCommandTest {
         assertNotEquals(command, null);
     }
 
+    @Test
+    public void toStringMethod() {
+        Index targetIndex = Index.fromOneBased(1);
+        MarkPlanCommand command = new MarkPlanCommand(targetIndex);
+        String expected = MarkPlanCommand.class.getCanonicalName() + "{targetIndex=" + targetIndex + "}";
+
+        assertEquals(expected, command.toString());
+    }
+
     private static Student withPlans(Student student, List<WorkoutPlan> plans) {
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getAddress(), student.getTags(), new WorkoutPlansList(plans));

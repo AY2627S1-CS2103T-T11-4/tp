@@ -15,7 +15,7 @@ import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
- * Displays all workout plans belonging to a selected student.
+ * Refreshes workout plan statuses and displays all plans belonging to a selected student.
  */
 public class ViewStudentCommand extends SingleIndexCommand {
 
@@ -49,12 +49,13 @@ public class ViewStudentCommand extends SingleIndexCommand {
         }
 
         Student selectedStudent = students.get(targetIndex.getZeroBased());
-        model.setCurrentStudent(selectedStudent);
-        List<WorkoutPlan> workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
+        Student refreshedStudent = model.updateStudentWorkoutsState(selectedStudent);
+        model.setCurrentStudent(refreshedStudent);
+        List<WorkoutPlan> workoutPlans = refreshedStudent.getWorkoutPlansList().getWorkoutList();
 
         return new CommandResult(String.format(
                 MESSAGE_SUCCESS,
-                selectedStudent.getName(),
+                refreshedStudent.getName(),
                 formatWorkoutPlans(workoutPlans)));
     }
 
