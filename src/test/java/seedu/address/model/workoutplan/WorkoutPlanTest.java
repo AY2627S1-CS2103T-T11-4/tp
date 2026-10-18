@@ -50,16 +50,17 @@ public class WorkoutPlanTest {
         assertEquals(DESCRIPTION_VALID, plan.getWorkouts());
         assertEquals(DATE_VALID, plan.getDate());
         assertTrue(plan.getTags().isEmpty());
+        assertEquals(WorkoutPlanStatus.PENDING, plan.getStatus());
     }
 
     @Test
-    public void equals_differentTags_notEqual() {
-        WorkoutPlan strength = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
-                Set.of(new WorkoutPlanTag("strength")));
-        WorkoutPlan cardio = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
-                Set.of(new WorkoutPlanTag("cardio")));
+    public void constructor_withStatus_storesStatus() {
+        WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(), WorkoutPlanStatus.COMPLETED);
 
-        assertFalse(strength.equals(cardio));
+        assertEquals(WorkoutPlanStatus.COMPLETED, plan.getStatus());
+        assertThrows(NullPointerException.class, () -> new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
+                DATE_VALID, Set.of(), null));
     }
 
     @Test
@@ -91,6 +92,18 @@ public class WorkoutPlanTest {
         // different date -> returns false
         assertFalse(plan.equals(new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
                 new WorkoutDate(new Date(DATE_TIME_OTHER)))));
+
+        // different tags -> returns false
+        WorkoutPlan strength = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(new WorkoutPlanTag("strength")));
+        WorkoutPlan cardio = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(new WorkoutPlanTag("cardio")));
+        assertFalse(strength.equals(cardio));
+
+        // different status -> returns false
+        WorkoutPlan overdue = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(), WorkoutPlanStatus.OVERDUE);
+        assertFalse(plan.equals(overdue));
     }
 
     @Test

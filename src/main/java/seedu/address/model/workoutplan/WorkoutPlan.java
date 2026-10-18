@@ -22,6 +22,7 @@ public final class WorkoutPlan {
     private final WorkoutDescription workouts;
     private final WorkoutDate date;
     private final Set<WorkoutPlanTag> tags;
+    private final WorkoutPlanStatus status;
 
     /**
      * Constructs a workout plan with validated, non-null fields.
@@ -34,12 +35,22 @@ public final class WorkoutPlan {
     /**
      * Constructs a workout plan with validated, non-null fields.
      */
-    public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date, Set<WorkoutPlanTag> tags) {
-        requireAllNonNull(title, workouts, date, tags);
+    public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date,
+            Set<WorkoutPlanTag> tags) {
+        this(title, workouts, date, tags, WorkoutPlanStatus.PENDING);
+    }
+
+    /**
+     * Constructs a workout plan with validated, non-null fields and the given status.
+     */
+    public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date,
+            Set<WorkoutPlanTag> tags, WorkoutPlanStatus status) {
+        requireAllNonNull(title, workouts, date, tags, status);
         this.title = title;
         this.workouts = workouts;
         this.date = date;
         this.tags = Set.copyOf(tags);
+        this.status = status;
     }
 
     public WorkoutTitle getTitle() {
@@ -61,6 +72,10 @@ public final class WorkoutPlan {
         return tags;
     }
 
+    public WorkoutPlanStatus getStatus() {
+        return status;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -72,12 +87,13 @@ public final class WorkoutPlan {
         return title.equals(otherPlan.title)
                 && workouts.equals(otherPlan.workouts)
                 && date.equals(otherPlan.date)
-                && tags.equals(otherPlan.tags);
+                && tags.equals(otherPlan.tags)
+                && status == otherPlan.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, workouts, date, tags);
+        return Objects.hash(title, workouts, date, tags, status);
     }
 
     @Override
