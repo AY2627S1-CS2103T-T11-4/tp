@@ -2,17 +2,35 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<VBox spacing="12" styleClass="workout-plan-panel" xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1">
   <padding>
-    <Insets top="20" right="20" bottom="20" left="20" />
+    <Insets top="16" right="16" bottom="16" left="16" />
   </padding>
-  <Label fx:id="heading" styleClass="student-list-heading" />
-  <StackPane VBox.vgrow="ALWAYS">
-    <ListView fx:id="workoutPlanListView" />
-    <Label fx:id="emptyMessage" styleClass="label-bright" textAlignment="CENTER" wrapText="true" />
+  <HBox alignment="CENTER_LEFT" spacing="12" styleClass="selected-student-header">
+    <Label fx:id="studentAvatar" alignment="CENTER" minWidth="44" prefWidth="44" maxWidth="44"
+           minHeight="44" prefHeight="44" maxHeight="44" styleClass="selected-student-avatar" />
+    <VBox alignment="CENTER_LEFT" spacing="1">
+      <Label fx:id="heading" styleClass="selected-student-name" />
+      <Label fx:id="subtitle" styleClass="selected-student-subtitle" />
+    </VBox>
+  </HBox>
+  <StackPane alignment="CENTER" VBox.vgrow="ALWAYS">
+    <ScrollPane fx:id="workoutPlanScrollPane" fitToWidth="true" hbarPolicy="NEVER"
+                pannable="true" styleClass="workout-plan-scroll" vbarPolicy="AS_NEEDED"
+                StackPane.alignment="TOP_LEFT">
+      <content>
+        <FlowPane fx:id="workoutPlanFlowPane" alignment="TOP_LEFT" hgap="10" orientation="HORIZONTAL"
+                  prefWrapLength="600" styleClass="workout-plan-grid" vgap="10" />
+      </content>
+    </ScrollPane>
+    <Label fx:id="emptyMessage" alignment="CENTER" maxWidth="360" styleClass="empty-message"
+           textAlignment="CENTER" wrapText="true" StackPane.alignment="CENTER" />
   </StackPane>
 </VBox>

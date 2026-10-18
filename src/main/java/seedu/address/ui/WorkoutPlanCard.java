@@ -36,12 +36,12 @@ public class WorkoutPlanCard extends UiPart<Region> {
     /** Creates a card for the given workout plan and displayed index. */
     public WorkoutPlanCard(WorkoutPlan workoutPlan, int displayedIndex) {
         super(FXML);
-        id.setText(displayedIndex + ". ");
+        id.setText("#" + displayedIndex);
         title.setText(workoutPlan.getTitle().getValue());
         date.setText(workoutPlan.getDate().getValue().toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()
-                .format(DATE_FORMATTER));
+                .format(DATE_FORMATTER).toUpperCase());
         description.setText(workoutPlan.getWorkouts().getValue());
         getSortedTags(workoutPlan).forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
     }
