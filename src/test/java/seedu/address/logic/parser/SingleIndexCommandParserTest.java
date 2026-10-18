@@ -1,6 +1,9 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.logic.Messages.MESSAGE_EMPTY_PREFIX;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_PREFIX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
@@ -73,5 +76,15 @@ public class SingleIndexCommandParserTest {
     public void parse_invalidArgs_throwsParseException() {
         assertParseFailure(parser, "a",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, SingleIndexCommandStub.MESSAGE_USAGE));
+    }
+
+    @Test
+    public void parse_invalidPrefixes_throwsParseException() {
+        // empty prefix throws error message for empty prefixes
+        assertParseFailure(parser, "1 -- gibberish", MESSAGE_EMPTY_PREFIX);
+
+        // invalid prefix throws error message for invalid prefixes
+        assertParseFailure(parser, "1 --invalid gibberish",
+                String.format(MESSAGE_INVALID_PREFIX, PREFIX_INVALID));
     }
 }

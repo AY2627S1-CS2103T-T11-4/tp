@@ -39,7 +39,7 @@ public class Messages {
     /**
      * Return an error message for multiple prefixes
      */
-    public static String getErrorMessageForPrefixes(Prefix... prefixes) {
+    private static String getErrorMessageForPrefixes(Prefix... prefixes) {
         assert prefixes.length > 0;
         Set<String> fields = Stream.of(prefixes).map(Prefix::toString).collect(Collectors.toSet());
         return String.join(" ", fields);

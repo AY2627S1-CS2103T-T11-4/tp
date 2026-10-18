@@ -28,6 +28,18 @@ public class ArgumentTokenizer {
     }
 
     /**
+     * Throws a {@code ParseException} if prefixes are detected in the given {@code argsString}
+     * To be used with {@code SingleIndexCommand}
+     */
+    public static void verifyNoPrefixes(String argsString) throws ParseException {
+        List<PrefixPosition> positions = findAllPrefixPositions(argsString);
+        if (positions.size() > 0) {
+            Prefix[] prefixes = positions.stream().map(PrefixPosition::getPrefix).toArray(Prefix[]::new);
+            throw new ParseException(Messages.getErrorMessageForInvalidPrefixes(prefixes));
+        }
+    }
+
+    /**
      * Find all zero-based prefix positions based on "--" in the given {@code argsString}
      */
     private static List<PrefixPosition> findAllPrefixPositions(String argsString) throws ParseException {
