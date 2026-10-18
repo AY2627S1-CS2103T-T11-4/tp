@@ -10,6 +10,7 @@ import static seedu.address.logic.commands.CommandTestUtil.INVALID_EMAIL_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_NAME_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PHONE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC_UNKNOWN;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
@@ -28,6 +29,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_UNKNOWN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
@@ -215,6 +217,14 @@ public class EditStudentCommandParserTest {
         // invalid prefix with valid prefix
         assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + ADDRESS_DESC_AMY,
                 Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+
+        // duplicate invalid prefixes
+        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + PHONE_DESC_AMY + INVALID_PREFIX_DESC,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+
+        // multiple (different) invalid prefixes
+        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + PHONE_DESC_AMY + INVALID_PREFIX_DESC_UNKNOWN,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN));
     }
 
     @Test

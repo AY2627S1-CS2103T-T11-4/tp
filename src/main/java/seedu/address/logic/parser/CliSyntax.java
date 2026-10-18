@@ -20,4 +20,5 @@ public class CliSyntax {
 
     /* Invalid Prefixes */
     public static final Prefix PREFIX_INVALID = new Prefix("--invalid");
+    public static final Prefix PREFIX_UNKNOWN = new Prefix("--unknown");
 }
