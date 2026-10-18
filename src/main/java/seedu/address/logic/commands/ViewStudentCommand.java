@@ -23,7 +23,7 @@ public class ViewStudentCommand extends SingleIndexCommand {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Displays all workout plans belonging to a student.\n"
-            + "Parameters: STUDENT_INDEX (must be a positive integer)\n"
+            + "Parameters: STUDENT_ID (must be a positive integer)\n"
             + "Example: " + COMMAND_WORD + " 1";
 
     public static final String MESSAGE_SUCCESS = "Viewing plans for %1$s:\n%2$s";
