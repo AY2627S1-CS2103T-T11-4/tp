@@ -7,9 +7,10 @@ import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_ADDRESS_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_EMAIL_DESC;
-import static seedu.address.logic.commands.CommandTestUtil.INVALID_NAME_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_NAME_PREAMBLE;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PHONE_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC_UNKNOWN;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_PREAMBLE_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_PREAMBLE_BOB;
@@ -25,7 +26,9 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_UNKNOWN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalStudents.AMY;
@@ -145,6 +148,26 @@ public class AddStudentCommandParserTest {
     }
 
     @Test
+    public void parse_invalidField_failure() {
+        // single invalid field
+        assertParseFailure(parser,
+                NAME_PREAMBLE_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB + INVALID_PREFIX_DESC,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+
+        // duplicate invalid fields
+        assertParseFailure(parser,
+                NAME_PREAMBLE_BOB + INVALID_PREFIX_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
+                        + INVALID_PREFIX_DESC,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+
+        // multiple (different) invalid fields
+        assertParseFailure(parser,
+                NAME_PREAMBLE_BOB + INVALID_PREFIX_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
+                        + INVALID_PREFIX_DESC_UNKNOWN,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN));
+    }
+
+    @Test
     public void parse_invalidValue_failure() {
         // invalid name
         assertParseFailure(parser, INVALID_NAME_PREAMBLE + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
@@ -167,7 +190,7 @@ public class AddStudentCommandParserTest {
                 + INVALID_TAG_DESC + VALID_TAG_FRIEND, Tag.MESSAGE_CONSTRAINTS);
 
         // two invalid values, only first invalid value reported
-        assertParseFailure(parser, INVALID_NAME_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB + INVALID_ADDRESS_DESC,
+        assertParseFailure(parser, INVALID_NAME_PREAMBLE + PHONE_DESC_BOB + EMAIL_DESC_BOB + INVALID_ADDRESS_DESC,
                 Name.MESSAGE_CONSTRAINTS);
     }
 }

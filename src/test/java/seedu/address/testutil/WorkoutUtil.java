@@ -39,15 +39,18 @@ public class WorkoutUtil {
      */
     public static String getEditPlanDescriptorDetails(EditPlanCommand.EditPlanDescriptor descriptor) {
         StringBuilder sb = new StringBuilder();
-        descriptor.getTitle().ifPresent(title -> sb.append(PREFIX_NAME).append(title.getValue()).append(" "));
-        descriptor.getDescription().ifPresent(plan -> sb.append(PREFIX_PLAN).append(plan.getValue()).append(" "));
-        descriptor.getDate().ifPresent(date -> sb.append(PREFIX_DATE).append(date.toInputString()).append(" "));
+        descriptor.getTitle().ifPresent(title ->
+                sb.append(PREFIX_NAME).append(" ").append(title.getValue()).append(" "));
+        descriptor.getDescription().ifPresent(plan ->
+                sb.append(PREFIX_PLAN).append(" ").append(plan.getValue()).append(" "));
+        descriptor.getDate().ifPresent(date ->
+                sb.append(PREFIX_DATE).append(" ").append(date.toInputString()).append(" "));
         if (descriptor.getWorkoutPlanTags().isPresent()) {
             Set<WorkoutPlanTag> tags = descriptor.getWorkoutPlanTags().get();
             if (tags.isEmpty()) {
                 sb.append(PREFIX_TAG);
             } else {
-                tags.forEach(s -> sb.append(PREFIX_TAG).append(s.tagName).append(" "));
+                tags.forEach(s -> sb.append(PREFIX_TAG).append(" ").append(s.tagName).append(" "));
             }
         }
         return sb.toString();

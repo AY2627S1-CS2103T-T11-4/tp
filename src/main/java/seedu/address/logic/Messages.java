@@ -17,18 +17,32 @@ public class Messages {
     public static final String MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX = "The student index provided is invalid.";
     public static final String MESSAGE_STUDENTS_LISTED_OVERVIEW = "%1$d student(s) listed!";
     public static final String MESSAGE_DUPLICATE_FIELDS =
-                "Multiple values specified for the following single-valued field(s): ";
+                "Multiple values specified for the following single-valued field(s): %1$s";
+    public static final String MESSAGE_INVALID_PREFIX = "Invalid prefix(es) included: %1$s";
+    public static final String MESSAGE_EMPTY_PREFIX = "Empty prefix detected."
+            + " Ensure all prefixes are in the form '--prefix' and isolated by spaces";
 
     /**
      * Returns an error message indicating the duplicate prefixes.
      */
     public static String getErrorMessageForDuplicatePrefixes(Prefix... duplicatePrefixes) {
-        assert duplicatePrefixes.length > 0;
+        return String.format(MESSAGE_DUPLICATE_FIELDS, getErrorMessageForPrefixes(duplicatePrefixes));
+    }
 
-        Set<String> duplicateFields =
-                Stream.of(duplicatePrefixes).map(Prefix::toString).collect(Collectors.toSet());
+    /**
+     * Returns an error message indicating the invalid prefixes
+     */
+    public static String getErrorMessageForInvalidPrefixes(Prefix... invalidPrefixes) {
+        return String.format(MESSAGE_INVALID_PREFIX, getErrorMessageForPrefixes(invalidPrefixes));
+    }
 
-        return MESSAGE_DUPLICATE_FIELDS + String.join(" ", duplicateFields);
+    /**
+     * Return an error message for multiple prefixes
+     */
+    private static String getErrorMessageForPrefixes(Prefix... prefixes) {
+        assert prefixes.length > 0;
+        Set<String> fields = Stream.of(prefixes).map(Prefix::toString).collect(Collectors.toSet());
+        return String.join(" ", fields);
     }
 
     /**

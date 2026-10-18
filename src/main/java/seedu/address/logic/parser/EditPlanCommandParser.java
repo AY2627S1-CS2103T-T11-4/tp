@@ -29,8 +29,7 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
      */
     public EditPlanCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
         Index index;
 
@@ -43,6 +42,7 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
                     pe);
         }
 
+        argMultimap.verifyNoInvalidPrefixesFor(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE);
 
         EditPlanCommand.EditPlanDescriptor editPlanDescriptor = new EditPlanCommand.EditPlanDescriptor();

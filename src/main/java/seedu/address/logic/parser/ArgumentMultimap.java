@@ -1,10 +1,13 @@
 package seedu.address.logic.parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import seedu.address.logic.Messages;
@@ -81,6 +84,20 @@ public class ArgumentMultimap {
 
         if (duplicatedPrefixes.length > 0) {
             throw new ParseException(Messages.getErrorMessageForDuplicatePrefixes(duplicatedPrefixes));
+        }
+    }
+
+    /**
+     * Throws a {@code ParseException} if any of the arguments are not found in {@code prefixes}
+     */
+    public void verifyNoInvalidPrefixesFor(Prefix... prefixes) throws ParseException {
+        Set<Prefix> validPrefixSet = new HashSet<>(Arrays.asList(prefixes));
+        Prefix[] invalidPrefixes = argMultimap.keySet().stream()
+                .filter(argPrefix -> !argPrefix.getPrefix().isEmpty() && !validPrefixSet.contains(argPrefix))
+                .toArray(Prefix[]::new);
+
+        if (invalidPrefixes.length > 0) {
+            throw new ParseException(Messages.getErrorMessageForInvalidPrefixes(invalidPrefixes));
         }
     }
 }

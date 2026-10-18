@@ -40,6 +40,9 @@ public class SingleIndexCommandParser<C extends SingleIndexCommand> implements P
      * @throws ParseException if the user input does not conform to the expected format
      */
     public C parse(String args) throws ParseException {
+
+        ArgumentTokenizer.verifyNoPrefixes(args);
+
         try {
             Index index = ParserUtil.parseIndex(args);
             return this.commandConstructor.apply(index);

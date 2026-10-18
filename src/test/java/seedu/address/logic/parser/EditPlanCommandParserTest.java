@@ -6,6 +6,8 @@ import static seedu.address.logic.commands.CommandTestUtil.DATE_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LETTERS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PLAN_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC_UNKNOWN;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TITLE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_CHEST;
@@ -20,9 +22,11 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_DATE_LE
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_PLAN_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_TITLE_LEGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_UNKNOWN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
@@ -103,7 +107,7 @@ public class EditPlanCommandParserTest {
                 WorkoutPlanTag.MESSAGE_CONSTRAINTS);
 
         // multiple invalid values, but only the first invalid value is captured
-        assertParseFailure(parser, "1" + INVALID_TITLE_DESC + INVALID_PLAN_DESC + VALID_WORKOUT_DATE_LEGS,
+        assertParseFailure(parser, "1" + INVALID_TITLE_DESC + INVALID_PLAN_DESC + DATE_DESC_LEGS,
                 WorkoutTitle.MESSAGE_CONSTRAINTS);
     }
 
@@ -194,6 +198,29 @@ public class EditPlanCommandParserTest {
 
         assertParseFailure(parser, userInput,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE));
+    }
+
+    @Test
+    public void parse_invalidField_failure() {
+        // invalid prefix alone
+        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+
+        // valid prefix with invalid prefix
+        assertParseFailure(parser, "1" + TITLE_DESC_LEGS + INVALID_PREFIX_DESC,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+
+        // invalid prefix with valid prefix
+        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + DATE_DESC_LEGS,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+
+        // duplicate invalid prefixes
+        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + PLAN_DESC_LEGS + INVALID_PREFIX_DESC,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+
+        // multiple (different) invalid prefixes
+        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC + PLAN_DESC_LEGS + INVALID_PREFIX_DESC_UNKNOWN,
+                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN));
     }
 
     @Test

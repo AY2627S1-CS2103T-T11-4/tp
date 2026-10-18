@@ -2,6 +2,7 @@ package seedu.address.testutil;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.api.function.ThrowingSupplier;
 
 /**
  * A set of assertion methods useful for writing tests.
@@ -30,5 +31,14 @@ public class Assert {
             Executable executable) {
         Throwable thrownException = Assertions.assertThrows(expectedType, executable);
         Assertions.assertEquals(expectedMessage, thrownException.getMessage());
+    }
+
+    /**
+     * Asserts that the {@code executable} executes successfully without throwing any exceptions.
+     * To standardize API calls in this project, users should use this method instead of
+     * {@link Assertions#assertDoesNotThrow(ThrowingSupplier<T>)}.
+     */
+    public static <T> T assertDoesNotThrow(ThrowingSupplier<T> executable) {
+        return Assertions.assertDoesNotThrow(executable);
     }
 }
