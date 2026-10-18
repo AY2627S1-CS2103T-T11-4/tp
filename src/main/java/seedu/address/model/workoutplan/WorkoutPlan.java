@@ -2,6 +2,7 @@ package seedu.address.model.workoutplan;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -74,6 +75,16 @@ public final class WorkoutPlan {
 
     public WorkoutPlanStatus getStatus() {
         return status;
+    }
+
+    /** Returns a plan with its status refreshed for {@code today}. */
+    public WorkoutPlan updateState(LocalDate today) {
+        Objects.requireNonNull(today);
+        LocalDate deadline = date.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        WorkoutPlanStatus updatedStatus = status == WorkoutPlanStatus.COMPLETED
+                ? WorkoutPlanStatus.COMPLETED
+                : today.isAfter(deadline) ? WorkoutPlanStatus.OVERDUE : WorkoutPlanStatus.PENDING;
+        return status == updatedStatus ? this : new WorkoutPlan(title, workouts, date, tags, updatedStatus);
     }
 
     @Override

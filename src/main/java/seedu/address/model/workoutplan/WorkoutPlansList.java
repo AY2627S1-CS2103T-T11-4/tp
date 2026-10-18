@@ -1,5 +1,6 @@
 package seedu.address.model.workoutplan;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -32,6 +33,13 @@ public final class WorkoutPlansList {
      */
     public List<WorkoutPlan> getWorkoutList() {
         return plans;
+    }
+
+    /** Returns a list with each plan's status refreshed. */
+    public WorkoutPlansList updateState() {
+        LocalDate today = LocalDate.now();
+        List<WorkoutPlan> updated = plans.stream().map(plan -> plan.updateState(today)).toList();
+        return updated.equals(plans) ? this : new WorkoutPlansList(updated);
     }
 
     /**
