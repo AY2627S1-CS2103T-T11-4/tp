@@ -38,6 +38,10 @@ import seedu.address.testutil.WorkoutBuilder;
 public class AddPlanCommandParserTest {
     private AddPlanCommandParser parser = new AddPlanCommandParser();
 
+    private String formatParserError(String errorMessage) {
+        return Messages.formatParserError(errorMessage, AddPlanCommand.MESSAGE_USAGE);
+    }
+
     @Test
     public void parse_allFieldsPresent_success() {
         WorkoutPlan expectedPlan = new WorkoutBuilder(LEG_DAY).withTags(VALID_TAG_STRENGTH).build();
@@ -112,20 +116,20 @@ public class AddPlanCommandParserTest {
     public void parse_invalidValue_failure() {
         // invalid workout description
         assertParseFailure(parser, TITLE_PREAMBLE_LEGS + INVALID_PLAN_DESC + DATE_DESC_LEGS,
-                WorkoutDescription.MESSAGE_CONSTRAINTS);
+                this.formatParserError(WorkoutDescription.MESSAGE_CONSTRAINTS));
 
         // invalid workout date
         assertParseFailure(parser, TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + INVALID_DATE_DESC_LENGTH,
-                WorkoutDate.MESSAGE_CONSTRAINTS);
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
         assertParseFailure(parser, TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + INVALID_DATE_DESC_LETTERS,
-                WorkoutDate.MESSAGE_CONSTRAINTS);
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
 
         // invalid tag
         assertParseFailure(parser, TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + DATE_DESC_LEGS + INVALID_TAG_DESC,
-                Tag.MESSAGE_CONSTRAINTS);
+                this.formatParserError(Tag.MESSAGE_CONSTRAINTS));
 
         // both invalid values, first invalid value reported
         assertParseFailure(parser, TITLE_PREAMBLE_LEGS + INVALID_PLAN_DESC + INVALID_DATE_DESC_LENGTH,
-                WorkoutDescription.MESSAGE_CONSTRAINTS);
+                this.formatParserError(WorkoutDescription.MESSAGE_CONSTRAINTS));
     }
 }

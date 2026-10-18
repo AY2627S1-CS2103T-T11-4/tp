@@ -1,6 +1,5 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
@@ -32,6 +31,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_UNKNOWN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND;
 import static seedu.address.testutil.TypicalIndexes.INDEX_THIRD;
@@ -52,61 +52,68 @@ public class EditStudentCommandParserTest {
 
     private static final String TAG_EMPTY = " " + PREFIX_TAG;
 
-    private static final String MESSAGE_INVALID_FORMAT =
-            String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditStudentCommand.MESSAGE_USAGE);
-
     private EditStudentCommandParser parser = new EditStudentCommandParser();
+
+    private String formatParserError(String errorMessage) {
+        return Messages.formatParserError(errorMessage, EditStudentCommand.MESSAGE_USAGE);
+    }
 
     @Test
     public void parse_missingParts_failure() {
         // no index specified
-        assertParseFailure(parser, VALID_NAME_AMY, MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, VALID_NAME_AMY, this.formatParserError(MESSAGE_INVALID_INDEX));
 
         // no field specified
         assertParseFailure(parser, "1", EditStudentCommand.MESSAGE_NOT_EDITED);
 
         // no index and no field specified
-        assertParseFailure(parser, "", MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "", this.formatParserError(MESSAGE_INVALID_INDEX));
     }
 
     @Test
     public void parse_invalidPreamble_failure() {
         // negative index
-        assertParseFailure(parser, "-5" + NAME_DESC_AMY, MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "-5" + NAME_DESC_AMY, this.formatParserError(MESSAGE_INVALID_INDEX));
 
         // zero index
-        assertParseFailure(parser, "0" + NAME_DESC_AMY, MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "0" + NAME_DESC_AMY, this.formatParserError(MESSAGE_INVALID_INDEX));
 
         // invalid arguments being parsed as preamble
-        assertParseFailure(parser, "1 some random string", MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "1 some random string", this.formatParserError(MESSAGE_INVALID_INDEX));
 
         // invalid prefix being parsed as preamble
-        assertParseFailure(parser, "1 i/ string", MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "1 i/ string", this.formatParserError(MESSAGE_INVALID_INDEX));
     }
 
     @Test
     public void parse_invalidValue_failure() {
-        assertParseFailure(parser, "1" + INVALID_NAME_DESC, Name.MESSAGE_CONSTRAINTS); // invalid name
-        assertParseFailure(parser, "1" + INVALID_PHONE_DESC, Phone.MESSAGE_CONSTRAINTS); // invalid phone
-        assertParseFailure(parser, "1" + INVALID_EMAIL_DESC, Email.MESSAGE_CONSTRAINTS); // invalid email
-        assertParseFailure(parser, "1" + INVALID_ADDRESS_DESC, Address.MESSAGE_CONSTRAINTS); // invalid address
-        assertParseFailure(parser, "1" + INVALID_TAG_DESC, StudentTag.MESSAGE_CONSTRAINTS); // invalid tag
+        assertParseFailure(parser, "1" + INVALID_NAME_DESC,
+                this.formatParserError(Name.MESSAGE_CONSTRAINTS)); // invalid name
+        assertParseFailure(parser, "1" + INVALID_PHONE_DESC,
+                this.formatParserError(Phone.MESSAGE_CONSTRAINTS)); // invalid phone
+        assertParseFailure(parser, "1" + INVALID_EMAIL_DESC,
+                this.formatParserError(Email.MESSAGE_CONSTRAINTS)); // invalid email
+        assertParseFailure(parser, "1" + INVALID_ADDRESS_DESC,
+                this.formatParserError(Address.MESSAGE_CONSTRAINTS)); // invalid address
+        assertParseFailure(parser, "1" + INVALID_TAG_DESC,
+                this.formatParserError(StudentTag.MESSAGE_CONSTRAINTS)); // invalid tag
 
         // invalid phone followed by valid email
-        assertParseFailure(parser, "1" + INVALID_PHONE_DESC + EMAIL_DESC_AMY, Phone.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, "1" + INVALID_PHONE_DESC + EMAIL_DESC_AMY,
+                this.formatParserError(Phone.MESSAGE_CONSTRAINTS));
 
         // while parsing {@code PREFIX_TAG} alone will reset the tags of the {@code Student} being edited,
         // parsing it together with a valid tag results in error
         assertParseFailure(parser, "1" + TAG_DESC_FRIEND + TAG_DESC_HUSBAND + TAG_EMPTY,
-                StudentTag.MESSAGE_CONSTRAINTS);
+                this.formatParserError(StudentTag.MESSAGE_CONSTRAINTS));
         assertParseFailure(parser, "1" + TAG_DESC_FRIEND + TAG_EMPTY + TAG_DESC_HUSBAND,
-                StudentTag.MESSAGE_CONSTRAINTS);
+                this.formatParserError(StudentTag.MESSAGE_CONSTRAINTS));
         assertParseFailure(parser, "1" + TAG_EMPTY + TAG_DESC_FRIEND + TAG_DESC_HUSBAND,
-                StudentTag.MESSAGE_CONSTRAINTS);
+                this.formatParserError(StudentTag.MESSAGE_CONSTRAINTS));
 
         // multiple invalid values, but only the first invalid value is captured
         assertParseFailure(parser, "1" + INVALID_NAME_DESC + INVALID_EMAIL_DESC + VALID_ADDRESS_AMY + VALID_PHONE_AMY,
-                Name.MESSAGE_CONSTRAINTS);
+                this.formatParserError(Name.MESSAGE_CONSTRAINTS));
     }
 
     @Test

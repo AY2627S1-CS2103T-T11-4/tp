@@ -46,6 +46,19 @@ public class Messages {
     }
 
     /**
+     * Returns an error string properly formatted to
+     *
+     * <Specific errors in input String>
+     * =================================
+     * <Command usage>
+     */
+    public static String formatParserError(String errorMessage, String commandUsage) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(errorMessage).append("\n==============================\n").append(commandUsage);
+        return sb.toString();
+    }
+
+    /**
      * Formats the {@code student} for display to the user.
      */
     public static String format(Student student) {
