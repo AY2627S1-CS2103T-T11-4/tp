@@ -63,6 +63,12 @@ public interface Model {
      */
     void setStudent(Student target, Student editedStudent);
 
+    /**
+     * Refreshes and stores the given student's workout statuses, then returns the stored student object.
+     * The student must exist in the model.
+     */
+    Student updateStudentWorkoutsState(Student student);
+
     /** Returns the currently selected student as an observable, read-only property. */
     ReadOnlyObjectProperty<Student> currentStudentProperty();
 
