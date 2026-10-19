@@ -1,5 +1,6 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import static seedu.address.logic.Messages.MESSAGE_MISSING_PREAMBLE;
 
 import java.util.HashSet;
@@ -13,18 +14,18 @@ import seedu.address.logic.parser.exceptions.ParseException;
  */
 public class ArgumentValidator {
 
-    private boolean requirePreamble; // whether this command requires a preamble (almost always yes)
-    private Set<Prefix> validPrefixes; // all valid prefixes
-    private Set<Prefix> noRepeatPrefixes; // only prefixes that cannot be repeated
-    private Set<Prefix> requiredPrefixes; // only prefixes that are not optional
+    private final boolean requirePreamble; // whether this command requires a preamble (almost always yes)
+    private final Set<Prefix> validPrefixes; // all valid prefixes
+    private final Set<Prefix> noRepeatPrefixes; // only prefixes that cannot be repeated
+    private final Set<Prefix> requiredPrefixes; // only prefixes that are not optional
 
-    public ArgumentValidator() {
+    public ArgumentValidator() throws IllegalArgumentException {
         this(true, new HashSet<>(), new HashSet<>(), new HashSet<>());
     }
 
     public ArgumentValidator(Set<Prefix> validPrefixes,
                              Set<Prefix> noRepeatPrefixes,
-                             Set<Prefix> requiredPrefixes) {
+                             Set<Prefix> requiredPrefixes) throws IllegalArgumentException {
         this(true, validPrefixes, noRepeatPrefixes, requiredPrefixes);
     }
 
@@ -35,15 +36,25 @@ public class ArgumentValidator {
      * @param validPrefixes set of all valid prefixes for this command.
      * @param noRepeatPrefixes set of all prefixes that cannot be repeated.
      * @param requiredPrefixes set of all prefixes that are not optional.
+     *
+     * @throws IllegalArgumentException if validation logic provided is inconsistent
      */
     public ArgumentValidator(boolean requirePreamble,
                              Set<Prefix> validPrefixes,
                              Set<Prefix> noRepeatPrefixes,
-                             Set<Prefix> requiredPrefixes) {
+                             Set<Prefix> requiredPrefixes) throws IllegalArgumentException {
+        requireAllNonNull(requirePreamble, validPrefixes, noRepeatPrefixes, requiredPrefixes);
+        if (!validPrefixes.containsAll(noRepeatPrefixes)) {
+            throw new IllegalArgumentException("noRepeatPrefixes is not a subset of validPrefixes");
+        }
+        if (!validPrefixes.containsAll(requiredPrefixes)) {
+            throw new IllegalArgumentException("requiredPrefixes is not a subset of validPrefixes");
+        }
+
         this.requirePreamble = requirePreamble;
-        this.validPrefixes = validPrefixes;
-        this.noRepeatPrefixes = noRepeatPrefixes;
-        this.requiredPrefixes = requiredPrefixes;
+        this.validPrefixes = Set.copyOf(validPrefixes);
+        this.noRepeatPrefixes = Set.copyOf(noRepeatPrefixes);
+        this.requiredPrefixes = Set.copyOf(requiredPrefixes);
     }
 
     private boolean hasNoPreamble(ArgumentMultimap argMultimap) {

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertDoesNotThrow;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -167,6 +168,105 @@ public class ArgumentValidatorTest {
     @Test
     public void defaultValidator_acceptsPreambleWithoutPrefixes() {
         verifySuccessfully(DEFAULT_VALIDATOR, "1");
+    }
+
+    @Test
+    public void constructor_nullValidPrefixes_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () ->
+                new ArgumentValidator(true, null, Set.of(), Set.of()));
+    }
+
+    @Test
+    public void constructor_nullNoRepeatPrefixes_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () ->
+                new ArgumentValidator(true, Set.of(), null, Set.of()));
+    }
+
+    @Test
+    public void constructor_nullRequiredPrefixes_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () ->
+                new ArgumentValidator(true, Set.of(), Set.of(), null));
+    }
+
+    @Test
+    public void constructor_noRepeatPrefixNotValid_throwsIllegalArgumentException() {
+        Prefix undeclaredPrefix = new Prefix("--undeclared");
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> new ArgumentValidator(
+                        true,
+                        Set.of(REQUIRED_PREFIX),
+                        Set.of(undeclaredPrefix),
+                        Set.of()));
+
+        assertEquals(
+                "noRepeatPrefixes is not a subset of validPrefixes",
+                exception.getMessage());
+    }
+
+    @Test
+    public void constructor_requiredPrefixNotValid_throwsIllegalArgumentException() {
+        Prefix undeclaredPrefix = new Prefix("--undeclared");
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> new ArgumentValidator(
+                        true,
+                        Set.of(REQUIRED_PREFIX),
+                        Set.of(),
+                        Set.of(undeclaredPrefix)));
+
+        assertEquals(
+                "requiredPrefixes is not a subset of validPrefixes",
+                exception.getMessage());
+    }
+
+    @Test
+    public void constructor_copiesValidPrefixes() {
+        Set<Prefix> validPrefixes = new HashSet<>(Set.of(REQUIRED_PREFIX));
+        ArgumentValidator validator = new ArgumentValidator(
+                true, validPrefixes, Set.of(REQUIRED_PREFIX), Set.of(REQUIRED_PREFIX));
+
+        validPrefixes.add(INVALID_PREFIX);
+
+        String message = getValidationError(
+                validator, "John --required value --invalid value");
+
+        assertEquals(
+                Messages.getErrorMessageForInvalidPrefixes(INVALID_PREFIX),
+                message);
+    }
+
+    @Test
+    public void constructor_copiesRequiredPrefixes() {
+        Set<Prefix> requiredPrefixes = new HashSet<>(Set.of(REQUIRED_PREFIX));
+        ArgumentValidator validator = new ArgumentValidator(
+                true, Set.of(REQUIRED_PREFIX), Set.of(REQUIRED_PREFIX), requiredPrefixes);
+
+        requiredPrefixes.clear();
+
+        String message = getValidationError(validator, "John");
+
+        assertEquals(
+                Messages.getErrorMessageForMissingPrefixes(REQUIRED_PREFIX),
+                message);
+    }
+
+    @Test
+    public void constructor_copiesNoRepeatPrefixes() {
+        Set<Prefix> noRepeatPrefixes = new HashSet<>(Set.of(REQUIRED_PREFIX));
+        ArgumentValidator validator = new ArgumentValidator(
+                true, Set.of(REQUIRED_PREFIX), noRepeatPrefixes, Set.of(REQUIRED_PREFIX));
+
+        noRepeatPrefixes.clear();
+
+        String message = getValidationError(
+                validator, "John --required first --required second");
+
+        assertEquals(
+                Messages.getErrorMessageForDuplicatePrefixes(REQUIRED_PREFIX),
+                message);
     }
 
     private static ArgumentMultimap tokenize(String input) {
