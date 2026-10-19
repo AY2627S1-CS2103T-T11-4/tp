@@ -193,12 +193,8 @@ public class ArgumentValidatorTest {
         Prefix undeclaredPrefix = new Prefix("--undeclared");
 
         IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> new ArgumentValidator(
-                        true,
-                        Set.of(REQUIRED_PREFIX),
-                        Set.of(undeclaredPrefix),
-                        Set.of()));
+                IllegalArgumentException.class, () -> new ArgumentValidator(
+                        true, Set.of(REQUIRED_PREFIX), Set.of(undeclaredPrefix), Set.of()));
 
         assertEquals(
                 "noRepeatPrefixes is not a subset of validPrefixes",
@@ -210,12 +206,8 @@ public class ArgumentValidatorTest {
         Prefix undeclaredPrefix = new Prefix("--undeclared");
 
         IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> new ArgumentValidator(
-                        true,
-                        Set.of(REQUIRED_PREFIX),
-                        Set.of(),
-                        Set.of(undeclaredPrefix)));
+                IllegalArgumentException.class, () -> new ArgumentValidator(
+                        true, Set.of(REQUIRED_PREFIX), Set.of(), Set.of(undeclaredPrefix)));
 
         assertEquals(
                 "requiredPrefixes is not a subset of validPrefixes",
