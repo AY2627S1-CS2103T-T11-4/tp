@@ -9,6 +9,7 @@ import static seedu.address.testutil.TypicalStudents.IDA;
 import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.commons.exceptions.DataLoadingException;
+import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.BrotherGym;
 import seedu.address.model.ReadOnlyBrotherGym;
 import seedu.address.model.student.Student;
@@ -25,6 +27,7 @@ import seedu.address.model.tag.StudentTag;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.WorkoutTitle;
 
@@ -117,6 +120,32 @@ public class JsonBrotherGymStorageTest {
         Student restored = readBack.getStudentList().get(0);
         assertEquals(student.getTags(), restored.getTags());
         assertEquals(plan.getTags(), restored.getWorkoutPlansList().getWorkoutList().get(0).getTags());
+    }
+
+    @Test
+    public void readAndSaveBrotherGym_workoutStatuses_preservesAllStatusesWithoutRefreshing() throws Exception {
+        Path filePath = testFolder.resolve("WorkoutStatuses.json");
+        List<WorkoutPlan> plans = List.of(WorkoutPlanStatus.values()).stream()
+                .map(status -> new WorkoutPlan(new WorkoutTitle(status.name()), new WorkoutDescription("Squats"),
+                        JsonAdaptedWorkoutPlan.formatDateForModel("2023-11-15"),
+                        Set.of(new WorkoutPlanTag("legs")), status))
+                .toList();
+        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(), ALICE.getAddress(),
+                ALICE.getTags(), new WorkoutPlansList(plans));
+        BrotherGym original = new BrotherGym();
+        original.addStudent(student);
+        JsonBrotherGymStorage storage = new JsonBrotherGymStorage(filePath);
+
+        storage.saveBrotherGym(original);
+        ReadOnlyBrotherGym restored = storage.readBrotherGym().orElseThrow();
+
+        assertEquals(original, new BrotherGym(restored));
+        assertEquals(plans, restored.getStudentList().get(0).getWorkoutPlansList().getWorkoutList());
+
+        String invalidJson = JsonUtil.toJsonString(new JsonSerializableBrotherGym(original))
+                .replace("\"COMPLETED\"", "\"INVALID_STATUS\"");
+        Files.writeString(filePath, invalidJson);
+        assertThrows(DataLoadingException.class, storage::readBrotherGym);
     }
 
     @Test
