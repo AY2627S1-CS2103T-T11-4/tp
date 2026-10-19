@@ -203,6 +203,26 @@ Examples:
    to `Bicep Curls 15kg 10 reps x3` and `06072027`
 * `editPlan 3 --tag`: Clears all tags for the third workout plan of the student's list of workout plans
 
+#### Changing statuses of commands: `markPlan` and `unmarkPlan`
+
+By default, workout plans have a `PENDING` status, which will change to `OVERDUE` when the `workoutDate` has passed.
+
+`markPlan` updates the status of a workout plan to `COMPLETED`.
+
+Format: `markPlan INDEX`
+
+* Marks the workout plan at the specified `INDEX` as `COMPLETED` 
+* The index refers to the index number shown in the displayed list of workouts
+* The index **must be a positive integer** 1, 2, 3, ...
+
+`unmarkPlan` reverts the status of the workout plan to either `PENDING` or `OVERDUE`
+
+Format: `unmarkPlan INDEX`
+
+* Reverts the status of the workout plan at the specified `INDEX`
+* The index refers to the index number shown in the displayed list of workouts
+* The index **must be a positive integer** 1, 2, 3, ...
+
 #### Viewing details of a workout plan: `viewPlan`
 
 Displays the details of the workout plan of a student
@@ -297,6 +317,8 @@ Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add Workout Plan**    | `addPlan TITLE --plan DESCRIPTION --date DDMMYYYY [--tag TAG]... ` <br> e.g., `addPlan Leg Day --plan Squats 100kg 5 reps x5; Leg curls 80kg 10 reps x3 --date 20102026`
 **Edit Workout Plan**   | `editPlan INDEX [--name NAME] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... `<br> e.g.,`editPlan 2 --date 06072027`
+**Mark Workout Plan** | `markPlan INDEX` <br> e.g. `markPlan 2`
+**Unmark Workout Plan** | `unmarkPlan INDEX` <br> e.g. `unmarkPlan 2`
 **View Workout Plan** | `viewPlan INDEX`<br> e.g., `viewPlan 2`
 **Delete Workout Plan** | `deletePlan INDEX`<br> e.g., `deletePlan 3`
 
