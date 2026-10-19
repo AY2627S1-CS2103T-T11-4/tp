@@ -24,6 +24,8 @@ import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.HomeCommand;
+import seedu.address.logic.commands.MarkPlanCommand;
+import seedu.address.logic.commands.UnmarkPlanCommand;
 import seedu.address.logic.commands.ViewPlanCommand;
 import seedu.address.logic.commands.ViewStudentCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -91,6 +93,22 @@ public class BrotherGymParserTest {
         EditPlanCommand command = (EditPlanCommand) parser.parseCommand(EditPlanCommand.COMMAND_WORD + " "
                 + INDEX_FIRST.getOneBased() + " " + WorkoutUtil.getEditPlanDescriptorDetails(descriptor));
         assertEquals(new EditPlanCommand(INDEX_FIRST, descriptor), command);
+    }
+
+    @Test
+    public void parseCommand_markStudent() throws Exception {
+        WorkoutPlan plan = new WorkoutBuilder().build();
+        MarkPlanCommand command = (MarkPlanCommand) parser.parseCommand(
+                MarkPlanCommand.COMMAND_WORD + " " + INDEX_FIRST.getOneBased());
+        assertEquals(new MarkPlanCommand(INDEX_FIRST), command);
+    }
+
+    @Test
+    public void parseCommand_unmarkStudent() throws Exception {
+        WorkoutPlan plan = new WorkoutBuilder().build();
+        UnmarkPlanCommand command = (UnmarkPlanCommand) parser.parseCommand(
+                UnmarkPlanCommand.COMMAND_WORD + " " + INDEX_FIRST.getOneBased());
+        assertEquals(new UnmarkPlanCommand(INDEX_FIRST), command);
     }
 
     @Test
