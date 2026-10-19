@@ -1,5 +1,6 @@
 package seedu.address.ui;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
@@ -29,6 +30,16 @@ public class StudentListPanel extends UiPart<Region> {
         studentListView.setCellFactory(listView -> new StudentListViewCell());
     }
 
+    /** Highlights the selected student, or clears the selection when there is none. */
+    public void selectStudent(Optional<Student> student) {
+        if (student.isPresent()) {
+            studentListView.getSelectionModel().select(student.get());
+            studentListView.scrollTo(student.get());
+        } else {
+            studentListView.getSelectionModel().clearSelection();
+        }
+    }
+
     /**
      * Custom {@code ListCell} that displays the graphics of a {@code Student} using a {@code StudentCard}.
      */
@@ -41,7 +52,9 @@ public class StudentListPanel extends UiPart<Region> {
                 setGraphic(null);
                 setText(null);
             } else {
-                setGraphic(new StudentCard(student, getIndex() + 1).getRoot());
+                Region card = new StudentCard(student, getIndex() + 1).getRoot();
+                card.prefWidthProperty().bind(studentListView.widthProperty().subtract(24));
+                setGraphic(card);
             }
         }
     }

@@ -1,12 +1,12 @@
 package seedu.address.ui;
 
+import java.util.List;
 import java.util.Optional;
 
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -20,15 +20,20 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
     private Label heading;
 
     @FXML
+    private Label subtitle;
+
+    @FXML
     private Label emptyMessage;
 
     @FXML
-    private ListView<WorkoutPlan> workoutPlanListView;
+    private ScrollPane workoutPlanScrollPane;
+
+    @FXML
+    private FlowPane workoutPlanFlowPane;
 
     /** Creates a panel in its initial state, before a student has been selected. */
     public WorkoutPlanListPanel() {
         super(FXML);
-        workoutPlanListView.setCellFactory(listView -> new WorkoutPlanListViewCell());
         showStudent(Optional.empty());
     }
 
@@ -36,23 +41,33 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
     public void showStudent(Optional<Student> student) {
         if (student.isEmpty()) {
             heading.setText("Workout Plans");
-            workoutPlanListView.setItems(FXCollections.emptyObservableList());
+            subtitle.setManaged(false);
+            subtitle.setVisible(false);
+            workoutPlanFlowPane.getChildren().clear();
             showEmptyMessage("Select a student to view workout plans.");
             return;
         }
 
         Student selectedStudent = student.get();
-        heading.setText(selectedStudent.getName() + "'s Workout Plans");
-        var workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
-        workoutPlanListView.setItems(FXCollections.observableArrayList(workoutPlans));
+        String studentName = selectedStudent.getName().toString();
+        heading.setText(studentName);
+        subtitle.setText("Workout plans");
+        subtitle.setManaged(true);
+        subtitle.setVisible(true);
+        List<WorkoutPlan> workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
+        workoutPlanFlowPane.getChildren().clear();
+        for (int index = 0; index < workoutPlans.size(); index++) {
+            WorkoutPlan workoutPlan = workoutPlans.get(index);
+            workoutPlanFlowPane.getChildren().add(new WorkoutPlanCard(workoutPlan, index + 1).getRoot());
+        }
 
         if (workoutPlans.isEmpty()) {
             showEmptyMessage("No workout plans assigned.");
         } else {
             emptyMessage.setManaged(false);
             emptyMessage.setVisible(false);
-            workoutPlanListView.setManaged(true);
-            workoutPlanListView.setVisible(true);
+            workoutPlanScrollPane.setManaged(true);
+            workoutPlanScrollPane.setVisible(true);
         }
     }
 
@@ -60,22 +75,7 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
         emptyMessage.setText(message);
         emptyMessage.setManaged(true);
         emptyMessage.setVisible(true);
-        workoutPlanListView.setManaged(false);
-        workoutPlanListView.setVisible(false);
-    }
-
-    /** Custom list cell that renders a workout plan using {@link WorkoutPlanCard}. */
-    private static class WorkoutPlanListViewCell extends ListCell<WorkoutPlan> {
-        @Override
-        protected void updateItem(WorkoutPlan workoutPlan, boolean empty) {
-            super.updateItem(workoutPlan, empty);
-
-            if (empty || workoutPlan == null) {
-                setGraphic(null);
-                setText(null);
-            } else {
-                setGraphic(new WorkoutPlanCard(workoutPlan, getIndex() + 1).getRoot());
-            }
-        }
+        workoutPlanScrollPane.setManaged(false);
+        workoutPlanScrollPane.setVisible(false);
     }
 }
