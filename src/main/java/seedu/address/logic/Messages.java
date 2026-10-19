@@ -1,16 +1,22 @@
 package seedu.address.logic;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import seedu.address.logic.parser.Prefix;
 import seedu.address.model.student.Student;
+import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.tag.WorkoutPlanTag;
 
 /**
  * Container for user visible messages.
  */
 public class Messages {
+
+    private static final DateTimeFormatter WORKOUT_PLAN_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     public static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command.";
     public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format!\n%1$s";
@@ -59,6 +65,32 @@ public class Messages {
                 .append(student.getAddress())
                 .append("; Tags: ");
         student.getTags().forEach(builder::append);
+        return builder.toString();
+    }
+
+    /**
+     * Formats the {@code workoutPlan} for display to the user.
+     */
+    public static String format(WorkoutPlan workoutPlan) {
+        String formattedDate = workoutPlan.getDate().getValue().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+                .format(WORKOUT_PLAN_DATE_FORMATTER);
+        StringBuilder builder = new StringBuilder()
+                .append(workoutPlan.getTitle().getValue())
+                .append(" - ")
+                .append(workoutPlan.getWorkouts().getValue())
+                .append(" (")
+                .append(formattedDate)
+                .append(")");
+
+        if (!workoutPlan.getTags().isEmpty()) {
+            String formattedTags = workoutPlan.getTags().stream()
+                    .map(WorkoutPlanTag::toString)
+                    .sorted()
+                    .collect(Collectors.joining(" "));
+            builder.append(" Tags: ").append(formattedTags);
+        }
         return builder.toString();
     }
 

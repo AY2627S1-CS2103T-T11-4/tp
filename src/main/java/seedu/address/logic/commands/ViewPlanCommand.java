@@ -5,6 +5,7 @@ import java.util.List;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
@@ -47,7 +48,7 @@ public class ViewPlanCommand extends SingleIndexCommand {
         }
 
         WorkoutPlan workoutPlan = workoutPlans.get(targetIndex.getZeroBased());
-        return new CommandResult(String.format(MESSAGE_SUCCESS, workoutPlan));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(workoutPlan)));
     }
 
     @Override
