@@ -17,6 +17,7 @@ package "BrotherGym Storage" #F4F6F6{
 Class JsonBrotherGymStorage
 Class JsonSerializableBrotherGym
 Class JsonAdaptedStudent
+Class JsonAdaptedWorkoutPlan
 Class JsonAdaptedTag
 }
 
@@ -32,5 +33,7 @@ StorageManager -down-> "1" JsonBrotherGymStorage
 JsonBrotherGymStorage ..> JsonSerializableBrotherGym
 JsonSerializableBrotherGym --> "*" JsonAdaptedStudent
 JsonAdaptedStudent --> "*" JsonAdaptedTag
+JsonAdaptedStudent --> "*" JsonAdaptedWorkoutPlan
+JsonAdaptedWorkoutPlan --> "*" JsonAdaptedTag
 
 @enduml
