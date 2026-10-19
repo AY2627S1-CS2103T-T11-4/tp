@@ -8,15 +8,13 @@ import java.util.stream.Stream;
 
 import seedu.address.logic.parser.Prefix;
 import seedu.address.model.student.Student;
-import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.tag.WorkoutPlanTag;
+import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
  * Container for user visible messages.
  */
 public class Messages {
-
-    private static final DateTimeFormatter WORKOUT_PLAN_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     public static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command.";
     public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format!\n%1$s";
@@ -27,6 +25,8 @@ public class Messages {
     public static final String MESSAGE_INVALID_PREFIX = "Invalid prefix(es) included: %1$s";
     public static final String MESSAGE_EMPTY_PREFIX = "Empty prefix detected."
             + " Ensure all prefixes are in the form '--prefix' and isolated by spaces";
+
+    private static final DateTimeFormatter WORKOUT_PLAN_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     /**
      * Returns an error message indicating the duplicate prefixes.
