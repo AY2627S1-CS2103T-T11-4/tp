@@ -113,9 +113,9 @@ Format: `home`
 
 Edits an existing student in the BrotherGym student list.
 
-Format: `editStudent INDEX [--name NAME] [--hp PHONE] [--email EMAIL] [--addr ADDRESS] [--tag TAG]... `
+Format: `editStudent STUDENT_ID [--name NAME] [--hp PHONE] [--email EMAIL] [--addr ADDRESS] [--tag TAG]... `
 
-* Edits the student at the specified `INDEX`. The index refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, ...
+* Edits the student at the specified `STUDENT_ID`. The student id refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, ...
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
 * When editing tags, all of the student's existing tags are removed; adding tags is not cumulative.
@@ -146,22 +146,22 @@ Examples:
 
 Displays all the workout plans saved for the specified student.
 
-Format: `viewStudent INDEX`
+Format: `viewStudent STUDENT_ID`
 
 * Displays the list of workout plans for the student at the specified `INDEX`,
   which can now be edited through [workout plan commands](#workout-plan-related-commands)
-* The index refers to the index number shown in the displayed student list.
-* The index **must be a positive integer** 1, 2, 3, ...
+* The student id refers to the index number shown in the displayed student list.
+* The student id **must be a positive integer** 1, 2, 3, ...
 
 #### Deleting a student: `deleteStudent`
 
 Deletes the specified student from the BrotherGym student list.
 
-Format: `deleteStudent INDEX`
+Format: `deleteStudent STUDENT_ID`
 
-* Deletes the student at the specified `INDEX`.
-* The index refers to the index number shown in the displayed student list.
-* The index **must be a positive integer** 1, 2, 3, ...
+* Deletes the student at the specified `STUDENT_ID`.
+* The student id refers to the index number shown in the displayed student list.
+* The student id **must be a positive integer** 1, 2, 3, ...
 
 Examples:
 * `home` followed by `deleteStudent 2` deletes the 2nd student in the BrotherGym student list.
@@ -188,10 +188,11 @@ Examples:
 
 Edits an existing workout plan from the student's list of workout plans
 
-Format: `editPlan INDEX [--name TITLE] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... `
+Format: `editPlan PLAN_ID [--name TITLE] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... `
 
-* Edits the plan at the specified `INDEX`. The index refers to the index number shown in the displayed list of workouts. 
-  The index **must be a positive integer** 1, 2, 3, ...
+* Edits the plan at the specified `PLAN_ID`. 
+  The plan id refers to the index number shown in the displayed list of workout plans. 
+  The plan id **must be a positive integer** 1, 2, 3, ...
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
 * When editing tags, all of the workout plan's existing tags are removed; adding tags is not cumulative.
@@ -207,21 +208,21 @@ Examples:
 
 Displays the details of the workout plan of a student
 
-Format: `viewPlan INDEX`
+Format: `viewPlan PLAN_ID`
 
-* Displays the description of the workout plan at the specified `INDEX`.
-* The index refers to the index number shown in the displayed list of workouts.
-* The index **must be a positive integer** 1, 2, 3, ...
+* Displays the description of the workout plan at the specified `PLAN_ID`.
+* The plan id refers to the index number shown in the displayed list of workout plans of the student.
+* The plan id **must be a positive integer** 1, 2, 3, ...
 
 #### Deleting a workout plan: `deletePlan`
 
 Deletes the specified workout plan from the list of workouts of the selected student.
 
-Format: `deletePlan INDEX`
+Format: `deletePlan PLAN_ID`
 
-* Deletes the workout plan at the specified `INDEX`.
-* The index refers to the index number shown in the displayed list of workouts of the student.
-* The index **must be a positive integer** 1, 2, 3, ...
+* Deletes the workout plan at the specified `PLAN_ID`.
+* The plan id refers to the index number shown in the displayed list of workout plans of the student.
+* The plan id **must be a positive integer** 1, 2, 3, ...
 
 ### Clearing all entries: `clear`
 
@@ -285,18 +286,18 @@ Student-related commands
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add Student**    | `addStudent NAME --hp PHONE_NUMBER --email EMAIL --addr ADDRESS [--tag TAG]... ` <br> e.g., `addStudent James Ho --hp 22224444 --email jamesho@example.com --addr 123, Clementi Rd, 1234665 --tag friend --tag colleague`
-**Edit Student**   | `editStudent INDEX [--name NAME] [--hp PHONE_NUMBER] [--email EMAIL] [--addr ADDRESS] [--tag TAG]... `<br> e.g.,`editStudent 2 --name James Lee --email jameslee@example.com`
-**View Student** | `viewStudent INDEX`<br> e.g., `viewStudent 2`
+**Edit Student**   | `editStudent STUDENT_ID [--name NAME] [--hp PHONE_NUMBER] [--email EMAIL] [--addr ADDRESS] [--tag TAG]... `<br> e.g.,`editStudent 2 --name James Lee --email jameslee@example.com`
+**View Student** | `viewStudent STUDENT_ID`<br> e.g., `viewStudent 2`
 **Find Student**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
-**Delete Student** | `deleteStudent INDEX`<br> e.g., `deleteStudent 3`
-**Clear all Students**  | `clear`
+**Delete Student** | `deleteStudent STUDENT_ID`<br> e.g., `deleteStudent 3`
+**Clear all Students**  | `clear`git
 
 Workout plan-related commands
 
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add Workout Plan**    | `addPlan TITLE --plan DESCRIPTION --date DDMMYYYY [--tag TAG]... ` <br> e.g., `addPlan Leg Day --plan Squats 100kg 5 reps x5; Leg curls 80kg 10 reps x3 --date 20102026`
-**Edit Workout Plan**   | `editPlan INDEX [--name NAME] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... `<br> e.g.,`editPlan 2 --date 06072027`
-**View Workout Plan** | `viewPlan INDEX`<br> e.g., `viewPlan 2`
-**Delete Workout Plan** | `deletePlan INDEX`<br> e.g., `deletePlan 3`
+**Edit Workout Plan**   | `editPlan PLAN_ID [--name NAME] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... `<br> e.g.,`editPlan 2 --date 06072027`
+**View Workout Plan** | `viewPlan PLAN_ID`<br> e.g., `viewPlan 2`
+**Delete Workout Plan** | `deletePlan PLAN_ID`<br> e.g., `deletePlan 3`
 

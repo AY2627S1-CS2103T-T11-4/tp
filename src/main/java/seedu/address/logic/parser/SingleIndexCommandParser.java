@@ -1,10 +1,11 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static java.util.Objects.requireNonNull;
 
 import java.util.function.Function;
 
 import seedu.address.commons.core.index.Index;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.SingleIndexCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
@@ -40,15 +41,18 @@ public class SingleIndexCommandParser<C extends SingleIndexCommand> implements P
      * @throws ParseException if the user input does not conform to the expected format
      */
     public C parse(String args) throws ParseException {
-
-        ArgumentTokenizer.verifyNoPrefixes(args);
+        requireNonNull(args);
+        ArgumentValidator argValidator = new ArgumentValidator();
+        Index index;
 
         try {
-            Index index = ParserUtil.parseIndex(args);
-            return this.commandConstructor.apply(index);
+            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+            argValidator.verifyArgs(argMultimap);
+            index = ParserUtil.parseIndex(argMultimap.getPreamble());
         } catch (ParseException pe) {
-            throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, this.commandMessageUsage), pe);
+            throw new ParseException(Messages.formatParserError(pe.getMessage(), this.commandMessageUsage), pe);
         }
+
+        return this.commandConstructor.apply(index);
     }
 }

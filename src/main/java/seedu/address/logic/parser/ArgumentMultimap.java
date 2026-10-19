@@ -1,17 +1,11 @@
 package seedu.address.logic.parser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
-
-import seedu.address.logic.Messages;
-import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
  * Stores mapping of prefixes to their respective arguments.
@@ -66,38 +60,9 @@ public class ArgumentMultimap {
     }
 
     /**
-     * Returns true if none of the prefixes contains empty {@code Optional} values in the current
-     * {@code ArgumentMultimap}.
+     * Returns the set of prefixes captured by the ArgumentMultiMap
      */
-    public boolean arePrefixesPresent(Prefix... prefixes) {
-        return Stream.of(prefixes).allMatch(prefix -> this.getValue(prefix).isPresent());
-    }
-
-    /**
-     * Throws a {@code ParseException} if any of the prefixes given in {@code prefixes} appeared more than
-     * once among the arguments.
-     */
-    public void verifyNoDuplicatePrefixesFor(Prefix... prefixes) throws ParseException {
-        Prefix[] duplicatedPrefixes = Stream.of(prefixes).distinct()
-                .filter(prefix -> argMultimap.containsKey(prefix) && argMultimap.get(prefix).size() > 1)
-                .toArray(Prefix[]::new);
-
-        if (duplicatedPrefixes.length > 0) {
-            throw new ParseException(Messages.getErrorMessageForDuplicatePrefixes(duplicatedPrefixes));
-        }
-    }
-
-    /**
-     * Throws a {@code ParseException} if any of the arguments are not found in {@code prefixes}
-     */
-    public void verifyNoInvalidPrefixesFor(Prefix... prefixes) throws ParseException {
-        Set<Prefix> validPrefixSet = new HashSet<>(Arrays.asList(prefixes));
-        Prefix[] invalidPrefixes = argMultimap.keySet().stream()
-                .filter(argPrefix -> !argPrefix.getPrefix().isEmpty() && !validPrefixSet.contains(argPrefix))
-                .toArray(Prefix[]::new);
-
-        if (invalidPrefixes.length > 0) {
-            throw new ParseException(Messages.getErrorMessageForInvalidPrefixes(invalidPrefixes));
-        }
+    public Set<Prefix> getPrefixSet() {
+        return Set.copyOf(argMultimap.keySet());
     }
 }
