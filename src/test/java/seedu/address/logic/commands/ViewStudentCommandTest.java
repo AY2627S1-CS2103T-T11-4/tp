@@ -65,7 +65,10 @@ public class ViewStudentCommandTest {
         Model modelWithPlan = new ModelManager(brotherGym, new UserPrefs());
 
         ViewStudentCommand command = new ViewStudentCommand(INDEX_FIRST);
-        String expectedMessage = "Viewing plans for Alice Pauline:\n1. " + plan;
+        String expectedMessage = "Viewing plans for Alice Pauline:\n"
+                + "Done:\n  (none)\n"
+                + "Overdue:\n1. " + plan + "\n"
+                + "Pending:\n  (none)";
         Model expectedModel = new ModelManager(modelWithPlan.getBrotherGym(), new UserPrefs());
         WorkoutPlan overduePlan = new WorkoutPlan(plan.getTitle(), plan.getWorkouts(), plan.getDate(),
                 plan.getTags(), WorkoutPlanStatus.OVERDUE);
@@ -107,8 +110,9 @@ public class ViewStudentCommandTest {
         assertSame(completed, refreshedPlans.get(1));
         assertEquals(WorkoutPlanStatus.PENDING, past.getStatus());
         assertEquals(String.format(ViewStudentCommand.MESSAGE_SUCCESS, refreshed.getName(),
-                "1. " + refreshedPlans.get(0) + "\n2. " + refreshedPlans.get(1)
-                        + "\n3. " + refreshedPlans.get(2) + "\n4. " + refreshedPlans.get(3)),
+                "Done:\n2. " + refreshedPlans.get(1) + "\n"
+                        + "Overdue:\n1. " + refreshedPlans.get(0) + "\n"
+                        + "Pending:\n3. " + refreshedPlans.get(2) + "\n4. " + refreshedPlans.get(3)),
                 result.getFeedbackToUser());
 
         command.execute(refreshModel);
