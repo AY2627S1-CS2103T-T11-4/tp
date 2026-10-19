@@ -62,8 +62,8 @@
           </VBox.margin>
         </StackPane>
 
-        <SplitPane dividerPositions="0.34" styleClass="content-split" VBox.vgrow="ALWAYS">
-          <VBox fx:id="studentList" minWidth="230" prefWidth="320" maxWidth="440" styleClass="student-column">
+        <SplitPane dividerPositions="0.30" styleClass="content-split" VBox.vgrow="ALWAYS">
+          <VBox fx:id="studentList" minWidth="230" prefWidth="360" styleClass="student-column">
             <StackPane fx:id="studentListPanelPlaceholder" VBox.vgrow="ALWAYS" />
           </VBox>
 

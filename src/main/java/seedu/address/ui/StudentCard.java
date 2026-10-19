@@ -1,7 +1,6 @@
 package seedu.address.ui;
 
 import java.util.Comparator;
-import java.util.Locale;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -32,9 +31,7 @@ public class StudentCard extends UiPart<Region> {
     @FXML
     private Label name;
     @FXML
-    private Label id;
-    @FXML
-    private Label avatar;
+    private Label idBadge;
     @FXML
     private Label phone;
     @FXML
@@ -50,23 +47,13 @@ public class StudentCard extends UiPart<Region> {
     public StudentCard(Student student, int displayedIndex) {
         super(FXML);
         this.student = student;
-        id.setText("#" + displayedIndex);
+        idBadge.setText("#" + displayedIndex);
         name.setText(student.getName().fullName);
-        avatar.setText(getInitials(student.getName().fullName));
         phone.setText(student.getPhone().value);
         email.setText(student.getEmail().value);
         address.setText(student.getAddress().value);
         student.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
-    }
-
-    private String getInitials(String fullName) {
-        String[] nameParts = fullName.trim().split("\\s+");
-        StringBuilder initials = new StringBuilder(nameParts[0].substring(0, 1));
-        if (nameParts.length > 1) {
-            initials.append(nameParts[nameParts.length - 1].charAt(0));
-        }
-        return initials.toString().toUpperCase(Locale.ROOT);
     }
 }

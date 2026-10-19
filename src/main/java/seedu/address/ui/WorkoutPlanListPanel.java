@@ -1,6 +1,6 @@
 package seedu.address.ui;
 
-import java.util.Locale;
+import java.util.List;
 import java.util.Optional;
 
 import javafx.fxml.FXML;
@@ -18,9 +18,6 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
 
     @FXML
     private Label heading;
-
-    @FXML
-    private Label studentAvatar;
 
     @FXML
     private Label subtitle;
@@ -46,8 +43,6 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
             heading.setText("Workout Plans");
             subtitle.setManaged(false);
             subtitle.setVisible(false);
-            studentAvatar.setManaged(false);
-            studentAvatar.setVisible(false);
             workoutPlanFlowPane.getChildren().clear();
             showEmptyMessage("Select a student to view workout plans.");
             return;
@@ -59,10 +54,7 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
         subtitle.setText("Workout plans");
         subtitle.setManaged(true);
         subtitle.setVisible(true);
-        studentAvatar.setText(getInitials(studentName));
-        studentAvatar.setManaged(true);
-        studentAvatar.setVisible(true);
-        var workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
+        List<WorkoutPlan> workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
         workoutPlanFlowPane.getChildren().clear();
         for (int index = 0; index < workoutPlans.size(); index++) {
             WorkoutPlan workoutPlan = workoutPlans.get(index);
@@ -77,15 +69,6 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
             workoutPlanScrollPane.setManaged(true);
             workoutPlanScrollPane.setVisible(true);
         }
-    }
-
-    private String getInitials(String fullName) {
-        String[] nameParts = fullName.trim().split("\\s+");
-        StringBuilder initials = new StringBuilder(nameParts[0].substring(0, 1));
-        if (nameParts.length > 1) {
-            initials.append(nameParts[nameParts.length - 1].charAt(0));
-        }
-        return initials.toString().toUpperCase(Locale.ROOT);
     }
 
     private void showEmptyMessage(String message) {

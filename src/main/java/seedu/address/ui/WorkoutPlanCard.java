@@ -4,6 +4,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -41,7 +42,7 @@ public class WorkoutPlanCard extends UiPart<Region> {
         date.setText(workoutPlan.getDate().getValue().toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()
-                .format(DATE_FORMATTER).toUpperCase());
+                .format(DATE_FORMATTER).toUpperCase(Locale.ROOT));
         description.setText(workoutPlan.getWorkouts().getValue());
         getSortedTags(workoutPlan).forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
     }

@@ -13,9 +13,9 @@
     <Insets top="11" right="12" bottom="11" left="12" />
   </padding>
   <HBox alignment="CENTER_LEFT" spacing="8">
-    <Label text="▰" styleClass="plan-icon" />
-    <Label fx:id="title" maxWidth="110" styleClass="workout-plan-title" textOverrun="ELLIPSIS" />
-    <Label fx:id="id" styleClass="plan-index" />
+    <Label fx:id="id" alignment="CENTER" minWidth="38" prefWidth="38" maxWidth="38"
+           minHeight="38" prefHeight="38" maxHeight="38" styleClass="plan-id-badge" />
+    <Label fx:id="title" maxWidth="112" styleClass="workout-plan-title" textOverrun="ELLIPSIS" />
   </HBox>
   <FlowPane fx:id="tags" hgap="5" vgap="4" styleClass="workout-plan-tags" />
   <Label fx:id="date" styleClass="workout-plan-date" />

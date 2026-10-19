@@ -11,12 +11,11 @@
   <padding>
     <Insets top="9" right="10" bottom="9" left="10" />
   </padding>
-  <Label fx:id="avatar" alignment="CENTER" minWidth="42" prefWidth="42" maxWidth="42"
-         minHeight="42" prefHeight="42" maxHeight="42" styleClass="student-avatar" />
+  <Label fx:id="idBadge" alignment="CENTER" minWidth="42" prefWidth="42" maxWidth="42"
+         minHeight="42" prefHeight="42" maxHeight="42" styleClass="student-id-badge" />
   <VBox alignment="CENTER_LEFT" spacing="3" HBox.hgrow="ALWAYS">
     <HBox alignment="CENTER_LEFT" spacing="6">
       <Label fx:id="name" styleClass="student-name" HBox.hgrow="ALWAYS" />
-      <Label fx:id="id" styleClass="student-index" />
     </HBox>
     <Label fx:id="phone" styleClass="student-detail" />
     <Label fx:id="email" styleClass="student-detail" textOverrun="ELLIPSIS" />
