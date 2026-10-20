@@ -100,11 +100,7 @@ How the `Logic` component works:
 2. `LogicManager` executes the command with the `Model`. Commands can read or update model data and return a `CommandResult`.
 3. After a command executes successfully, `LogicManager` saves the BrotherGym data through `Storage` and returns the `CommandResult` to the UI. `MainWindow` displays the result's feedback; parsing, command, and storage errors are also displayed there.
 
-`Logic` exposes the filtered student list, the current student, its read-only observable property, and GUI settings to the UI. The UI observes the filtered list so it reflects changes to the student filter. `MainWindow` observes the current-student property and updates the student selection and workout-plan panel when it changes. It reads GUI settings when initializing the window and updates them through `Logic` when exiting. The `viewStudent` command validates the student index against the filtered student list, refreshes that student's workout-plan statuses in the `Model`, selects the student, and displays plans grouped under Done, Overdue, and Pending. A marked plan is Done; an unmarked plan with a deadline before today is Overdue; other unmarked plans, including plans due today, are Pending. Each displayed plan keeps its original list index so plan commands refer to the correct plan. Deadline-based statuses refresh when `viewStudent` runs; they do not change automatically while the view remains open. The `home` command shows all students and clears the current selection. Plan commands operate on the currently selected student.
-
-The following sequence diagram shows how `viewStudent` refreshes plan statuses and updates the current-student selection:
-
-<puml src="diagrams/ViewStudentSequenceDiagram.puml" alt="Logic component interactions for the `viewStudent 1` command" />
+`Logic` exposes the filtered student list, the current student, its read-only observable property, and GUI settings to the UI. The UI observes the filtered list so it reflects changes to the student filter. `MainWindow` observes the current-student property and updates the student selection and workout-plan panel when it changes. It reads GUI settings when initializing the window and updates them through `Logic` when exiting. The `home` command shows all students and clears the current selection. Plan commands operate on the currently selected student.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
