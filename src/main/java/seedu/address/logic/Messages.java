@@ -16,8 +16,9 @@ public class Messages {
     public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format!\n%1$s";
     public static final String MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX = "The student index provided is invalid.";
     public static final String MESSAGE_STUDENTS_LISTED_OVERVIEW = "%1$d student(s) listed!";
-    public static final String MESSAGE_DUPLICATE_FIELDS =
-                "Multiple values specified for the following single-valued field(s): %1$s";
+    public static final String MESSAGE_MISSING_PREAMBLE = "No preamble specified";
+    public static final String MESSAGE_MISSING_PREFIXES = "Missing required field(s): %1$s";
+    public static final String MESSAGE_DUPLICATE_FIELDS = "Multiple values specified for single-valued field(s): %1$s";
     public static final String MESSAGE_INVALID_PREFIX = "Invalid prefix(es) included: %1$s";
     public static final String MESSAGE_EMPTY_PREFIX = "Empty prefix detected."
             + " Ensure all prefixes are in the form '--prefix' and isolated by spaces";
@@ -37,12 +38,32 @@ public class Messages {
     }
 
     /**
+     * Retuns an error message indicating the missing prefixes
+     */
+    public static String getErrorMessageForMissingPrefixes(Prefix... missingPrefixes) {
+        return String.format(MESSAGE_MISSING_PREFIXES, getErrorMessageForPrefixes(missingPrefixes));
+    }
+
+    /**
      * Return an error message for multiple prefixes
      */
     private static String getErrorMessageForPrefixes(Prefix... prefixes) {
         assert prefixes.length > 0;
         Set<String> fields = Stream.of(prefixes).map(Prefix::toString).collect(Collectors.toSet());
         return String.join(" ", fields);
+    }
+
+    /**
+     * Returns an error string properly formatted to
+     *
+     * <Specific errors in input String>
+     * =================================
+     * <Command usage>
+     */
+    public static String formatParserError(String errorMessage, String commandUsage) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(errorMessage).append("\n==========COMMAND USAGE==========\n").append(commandUsage);
+        return sb.toString();
     }
 
     /**

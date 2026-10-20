@@ -8,10 +8,10 @@ import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
  * Tokenizes arguments string of the form: {@code preamble <prefix>value <prefix>value ...}<br>
- *     e.g. {@code some preamble text t/ 11.00 t/12.00 k/ m/ July}  where prefixes are {@code t/ k/ m/}.<br>
- * 1. An argument's value can be an empty string e.g. the value of {@code k/} in the above example.<br>
+ *     e.g. {@code some preamble text --t 11.00 --t 12.00 --k --m July}  where prefixes are {@code --t --k --m}.<br>
+ * 1. An argument's value can be an empty string e.g. the value of {@code --k} in the above example.<br>
  * 2. Leading and trailing whitespaces of an argument value will be discarded.<br>
- * 3. An argument may be repeated and all its values will be accumulated e.g. the value of {@code t/}
+ * 3. An argument may be repeated and all its values will be accumulated e.g. the value of {@code --t}
  *    in the above example.<br>
  */
 public class ArgumentTokenizer {
@@ -25,18 +25,6 @@ public class ArgumentTokenizer {
     public static ArgumentMultimap tokenize(String argsString) throws ParseException {
         List<PrefixPosition> positions = findAllPrefixPositions(argsString);
         return extractArguments(argsString, positions);
-    }
-
-    /**
-     * Throws a {@code ParseException} if prefixes are detected in the given {@code argsString}
-     * To be used with {@code SingleIndexCommand}
-     */
-    public static void verifyNoPrefixes(String argsString) throws ParseException {
-        List<PrefixPosition> positions = findAllPrefixPositions(argsString);
-        if (positions.size() > 0) {
-            Prefix[] prefixes = positions.stream().map(PrefixPosition::getPrefix).toArray(Prefix[]::new);
-            throw new ParseException(Messages.getErrorMessageForInvalidPrefixes(prefixes));
-        }
     }
 
     /**
