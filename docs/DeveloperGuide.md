@@ -88,26 +88,34 @@ The `UI` component,
 
 Here's a (partial) class diagram of the `Logic` component:
 
-<puml src="diagrams/LogicClassDiagram.puml" width="550"/>
+<puml src="diagrams/LogicClassDiagram.puml" width="650"/>
 
-The sequence diagram below shows how Logic executes `DeleteStudentCommand`:
+The sequence diagram below illustrates the interactions within the `Logic` component, using `execute("deleteStudent 1")` as an example:
 
 <puml src="diagrams/DeleteSequenceDiagram.puml" alt="Logic component interactions for the `deleteStudent 1` command" />
 
 How the `Logic` component works:
 
-1. `LogicManager` executes a command with the `Model`. The command may read or update model data and returns a `CommandResult`.
-2. After a command executes successfully, `LogicManager` saves the BrotherGym data through `Storage` and returns the result to the UI.
+1. The UI calls `Logic.execute(commandText)`. `LogicManager` passes the command text to `BrotherGymParser`, which returns the corresponding `Command` object.
+2. `LogicManager` executes the command with the `Model`. Commands can read or update model data and return a `CommandResult`.
+3. After a command executes successfully, `LogicManager` saves the BrotherGym data through `Storage` and returns the `CommandResult` to the UI. `MainWindow` displays the result's feedback; parsing, command, and storage errors are also displayed there.
 
-`Logic` also exposes the filtered student list and the currently selected student to the UI. `viewStudent` refreshes a student's workout-plan statuses and selects that student; plan commands then operate on the selected student. `home` clears the selection. The current-student property is read-only so the UI can observe changes.
+`Logic` exposes the filtered student list, the current student, its read-only observable property, and GUI settings to the UI. The UI observes the filtered list so it reflects changes to the student filter. `MainWindow` observes the current-student property and updates the student selection and workout-plan panel when it changes. It reads GUI settings when initializing the window and updates them through `Logic` when exiting. The `viewStudent` command validates the student index against the filtered student list, refreshes that student's workout-plan statuses in the `Model`, selects the student, and displays plans grouped under Done, Overdue, and Pending. A marked plan is Done; an unmarked plan with a deadline before today is Overdue; other unmarked plans, including plans due today, are Pending. Each displayed plan keeps its original list index so plan commands refer to the correct plan. Deadline-based statuses refresh when `viewStudent` runs; they do not change automatically while the view remains open. The `home` command shows all students and clears the current selection. Plan commands operate on the currently selected student.
+
+The following sequence diagram shows how `viewStudent` refreshes plan statuses and updates the current-student selection:
+
+<puml src="diagrams/ViewStudentSequenceDiagram.puml" alt="Logic component interactions for the `viewStudent 1` command" />
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
-<puml src="diagrams/ParserClasses.puml" width="600"/>
+<puml src="diagrams/ParserClasses.puml" width="1000"/>
 
-How the parsing works:
-* When called upon to parse a user command, the `BrotherGymParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`). The `BrotherGymParser` returns that object as a `Command` object.
-* All `XYZCommandParser` classes, such as `AddStudentCommandParser` and `DeleteStudentCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+How command parsing works:
+
+* `BrotherGymParser` separates the command word from its arguments and dispatches to the corresponding parser. Commands without arguments, such as `home`, are constructed directly.
+* Commands with one index, such as `viewStudent` and `deleteStudent`, use `SingleIndexCommandParser`. It tokenizes the arguments, validates them, converts the index, and constructs the command.
+* Other commands use dedicated parsers. Parsers for prefix-based commands use helpers such as `ArgumentTokenizer`, `ArgumentValidator`, `CliSyntax`, and `ParserUtil` to validate and convert their arguments before creating a command. `FindCommandParser` splits its search keywords directly.
+* The parsers implement the `Parser` interface and return a `Command` for `LogicManager` to execute.
 
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)

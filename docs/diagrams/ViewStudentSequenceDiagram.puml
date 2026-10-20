@@ -1,0 +1,72 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+participant ":UI" as UI LOGIC_COLOR
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":BrotherGymParser" as BrotherGymParser LOGIC_COLOR
+participant "p:SingleIndexCommandParser" as SingleIndexCommandParser LOGIC_COLOR
+participant "c:ViewStudentCommand" as ViewStudentCommand LOGIC_COLOR
+participant "r:CommandResult" as CommandResult LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "m:Model" as Model MODEL_COLOR
+end box
+box Storage LOGIC_COLOR_T1
+participant ":Storage" as Storage LOGIC_COLOR
+end box
+
+UI -> LogicManager : execute("viewStudent 1")
+activate LogicManager
+LogicManager -> BrotherGymParser : parseCommand(commandText)
+activate BrotherGymParser
+BrotherGymParser -> SingleIndexCommandParser : parse(arguments)
+activate SingleIndexCommandParser
+create ViewStudentCommand
+SingleIndexCommandParser -> ViewStudentCommand : construct(index)
+activate ViewStudentCommand
+ViewStudentCommand --> SingleIndexCommandParser : command
+deactivate ViewStudentCommand
+SingleIndexCommandParser --> BrotherGymParser : command
+deactivate SingleIndexCommandParser
+BrotherGymParser --> LogicManager : command
+deactivate BrotherGymParser
+
+LogicManager -> ViewStudentCommand : execute(model)
+activate ViewStudentCommand
+ViewStudentCommand -> Model : getFilteredStudentList()
+activate Model
+Model --> ViewStudentCommand : students
+deactivate Model
+ViewStudentCommand -> Model : updateStudentWorkoutsState(student)
+activate Model
+Model --> ViewStudentCommand : refreshedStudent
+deactivate Model
+ViewStudentCommand -> Model : setCurrentStudent(refreshedStudent)
+activate Model
+Model --> UI : currentStudentProperty changes
+activate UI
+UI -> UI : update student selection\nand workout-plan panel
+deactivate UI
+Model --> ViewStudentCommand
+deactivate Model
+
+ViewStudentCommand -> ViewStudentCommand : group plans by status\nand preserve their original indexes
+create CommandResult
+ViewStudentCommand -> CommandResult : create grouped-plan feedback
+activate CommandResult
+CommandResult --> ViewStudentCommand : result
+deactivate CommandResult
+ViewStudentCommand --> LogicManager : result
+deactivate ViewStudentCommand
+
+LogicManager -> Storage : saveBrotherGym(model.getBrotherGym())
+activate Storage
+Storage --> LogicManager
+deactivate Storage
+LogicManager --> UI : CommandResult
+deactivate LogicManager
+@enduml

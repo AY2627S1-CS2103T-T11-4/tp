@@ -1,41 +1,36 @@
 @startuml
 !include style.puml
+top to bottom direction
+skinparam linetype polyline
+skinparam nodesep 35
+skinparam ranksep 45
 skinparam arrowThickness 1.1
 skinparam arrowColor LOGIC_COLOR_T4
 skinparam classBackgroundColor LOGIC_COLOR
 
-package Logic as LogicPackage {
+class UI
 
-Class "<<interface>>\nLogic" as Logic
-Class LogicManager
-Class "{abstract}\nCommand" as Command
-Class XYZCommand
-Class CommandResult
+package Logic {
+    interface Logic
+    class LogicManager
+    class BrotherGymParser
+    abstract class Command
+    class ViewStudentCommand
+    class CommandResult
 }
 
-package Model {
-Class "Model" as ModelApi <<interface>>
-}
+interface Model
+interface Storage
 
-package Storage {
-Class "Storage" as StorageApi <<interface>>
-}
-
-Class UI
-UI ..> Logic : executes commands and observes state
-
-LogicManager .right.|> Logic
-XYZCommand -up-|> Command
-LogicManager .left.> Command : executes
-
-LogicManager --> ModelApi : reads/writes
-LogicManager --> StorageApi : saves after success
-StorageApi -[hidden]--> ModelApi
-Command .[hidden]up.> StorageApi
-Command .right.> ModelApi : reads/writes
-note right of XYZCommand: XYZCommand = AddStudentCommand,\nDeleteStudentCommand, etc.
-
+UI ..> Logic
+LogicManager .up.|> Logic
+LogicManager --> BrotherGymParser
+BrotherGymParser ..> Command
+LogicManager --> Command
+ViewStudentCommand --|> Command
+Command --> Model
+LogicManager --> Model
+LogicManager --> Storage
+Command ..> CommandResult
 Logic ..> CommandResult
-LogicManager .down.> CommandResult
-Command .up.> CommandResult : <<create>>
 @enduml

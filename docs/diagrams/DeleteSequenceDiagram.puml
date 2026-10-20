@@ -6,6 +6,8 @@ participant ":UI" as UI LOGIC_COLOR
 
 box Logic LOGIC_COLOR_T1
 participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":BrotherGymParser" as BrotherGymParser LOGIC_COLOR
+participant ":SingleIndexCommandParser" as SingleIndexCommandParser LOGIC_COLOR
 participant "d:DeleteStudentCommand" as DeleteStudentCommand LOGIC_COLOR
 participant "r:CommandResult" as CommandResult LOGIC_COLOR
 end box
@@ -17,35 +19,45 @@ box Storage LOGIC_COLOR_T1
 participant ":Storage" as Storage LOGIC_COLOR
 end box
 
-UI -> LogicManager : execute(commandText)
+UI -> LogicManager : execute("deleteStudent 1")
 activate LogicManager
+LogicManager -> BrotherGymParser : parseCommand(commandText)
+activate BrotherGymParser
+BrotherGymParser -> SingleIndexCommandParser : parse(arguments)
+activate SingleIndexCommandParser
+create DeleteStudentCommand
+SingleIndexCommandParser -> DeleteStudentCommand : construct(index)
+activate DeleteStudentCommand
+DeleteStudentCommand --> SingleIndexCommandParser : command
+deactivate DeleteStudentCommand
+SingleIndexCommandParser --> BrotherGymParser : command
+deactivate SingleIndexCommandParser
+BrotherGymParser --> LogicManager : command
+deactivate BrotherGymParser
+
 LogicManager -> DeleteStudentCommand : execute(model)
 activate DeleteStudentCommand
-
 DeleteStudentCommand -> Model : getFilteredStudentList()
 activate Model
 Model --> DeleteStudentCommand : students
 deactivate Model
-
 DeleteStudentCommand -> Model : deleteStudent(studentToDelete)
 activate Model
 Model --> DeleteStudentCommand
 deactivate Model
 
 create CommandResult
-DeleteStudentCommand -> CommandResult
+DeleteStudentCommand -> CommandResult : create(feedback)
 activate CommandResult
-CommandResult --> DeleteStudentCommand
+CommandResult --> DeleteStudentCommand : result
 deactivate CommandResult
-
-DeleteStudentCommand --> LogicManager : CommandResult
+DeleteStudentCommand --> LogicManager : result
 deactivate DeleteStudentCommand
 
 LogicManager -> Storage : saveBrotherGym(model.getBrotherGym())
 activate Storage
 Storage --> LogicManager
 deactivate Storage
-
 LogicManager --> UI : CommandResult
 deactivate LogicManager
 @enduml

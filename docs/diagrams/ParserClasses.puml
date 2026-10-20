@@ -1,38 +1,44 @@
 @startuml
 !include style.puml
+top to bottom direction
+skinparam linetype polyline
+skinparam nodesep 35
+skinparam ranksep 45
 skinparam arrowThickness 1.1
 skinparam arrowColor LOGIC_COLOR_T4
 skinparam classBackgroundColor LOGIC_COLOR
 
-Class "{abstract}\nCommand" as Command
-Class XYZCommand
-
-package "Parser classes"{
-Class "<<interface>>\nParser" as Parser
-Class BrotherGymParser
-Class XYZCommandParser
-Class CliSyntax
-Class ParserUtil
-Class ArgumentMultimap
-Class ArgumentTokenizer
-Class Prefix
+package "Command selection" as Selection {
+    class BrotherGymParser
 }
 
-Class HiddenOutside #FFFFFF
-HiddenOutside ..> BrotherGymParser
+package "Parser implementations" as Parsers {
+    interface Parser
+    class SingleIndexCommandParser
+    class AddStudentCommandParser
+    class FindCommandParser
+}
 
-BrotherGymParser .down.> XYZCommandParser: <<create>>
+package "Parser helpers" as Helpers {
+    class ArgumentTokenizer
+    class ArgumentMultimap
+    class ArgumentValidator
+    class ParserUtil
+    class CliSyntax
+    class Prefix
+}
 
-XYZCommandParser ..> XYZCommand : <<create>>
-BrotherGymParser ..> Command : <<use>>
-XYZCommandParser .up.|> Parser
-XYZCommandParser ..> ArgumentMultimap
-XYZCommandParser ..> ArgumentTokenizer
-ArgumentTokenizer .left.> ArgumentMultimap
-XYZCommandParser ..> CliSyntax
-CliSyntax ..> Prefix
-XYZCommandParser ..> ParserUtil
-ParserUtil .down.> Prefix
-ArgumentTokenizer .down.> Prefix
-XYZCommand -up-|> Command
+package Commands {
+    abstract class Command
+}
+
+Selection --> Parsers : selects parser
+Parsers ..> Helpers : used where needed
+Parsers ..> Commands : returns commands
+SingleIndexCommandParser ..|> Parser
+AddStudentCommandParser ..|> Parser
+FindCommandParser ..|> Parser
+ArgumentTokenizer --> ArgumentMultimap
+ArgumentValidator --> ArgumentMultimap
+CliSyntax --> Prefix
 @enduml
