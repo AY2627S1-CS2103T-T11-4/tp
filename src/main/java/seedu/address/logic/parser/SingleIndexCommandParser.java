@@ -1,6 +1,7 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.function.Function;
 
@@ -30,6 +31,7 @@ public class SingleIndexCommandParser<C extends SingleIndexCommand> implements P
     public SingleIndexCommandParser(
             Function<Index, C> commandConstructor,
             String commandMessageUsage) {
+        requireAllNonNull(commandConstructor, commandMessageUsage);
         this.commandConstructor = commandConstructor;
         this.commandMessageUsage = commandMessageUsage;
     }

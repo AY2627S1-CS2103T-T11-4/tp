@@ -1,13 +1,19 @@
 package seedu.address.logic.parser;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * A prefix that marks the beginning of an argument in an arguments string.
- * E.g. 't/' in 'add James t/ friend'.
+ * E.g. '--t' in 'add James --t friend'.
  */
 public class Prefix {
     private final String prefix;
 
+    /**
+     * Creates a prefix object from a "--prefix" string
+     */
     public Prefix(String prefix) {
+        requireNonNull(prefix);
         this.prefix = prefix;
     }
 
