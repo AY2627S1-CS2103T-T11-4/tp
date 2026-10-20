@@ -21,14 +21,14 @@ public class UnmarkPlanCommand extends SingleIndexCommand {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Unmarks a workout plan belonging to the student currently being viewed.\n"
-            + "Parameters: WORKOUT_ID (must be a positive integer)\n"
+            + "Parameters: PLAN_ID (must be a positive integer)\n"
             + "Example: " + COMMAND_WORD + " 1";
 
     public static final String MESSAGE_SUCCESS = "Unmarked workout: %1$s";
     public static final String MESSAGE_NO_STUDENT_SELECTED =
             "No student is currently selected. Use viewStudent first.";
     public static final String MESSAGE_INVALID_WORKOUT_ID =
-            "Workout ID exceeded total number of workout plans.";
+            "Workout Plan ID exceeded total number of workout plans.";
 
     /**
      * Creates a command to unmark the workout plan at the given index.
