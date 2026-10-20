@@ -108,14 +108,11 @@ The following sequence diagram shows how `viewStudent` refreshes plan statuses a
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
-<puml src="diagrams/ParserClasses.puml" width="1000"/>
+<puml src="diagrams/ParserClasses.puml" width="600"/>
 
-How command parsing works:
-
-* `BrotherGymParser` separates the command word from its arguments and dispatches to the corresponding parser. Commands without arguments, such as `home`, are constructed directly.
-* Commands with one index, such as `viewStudent` and `deleteStudent`, use `SingleIndexCommandParser`. It tokenizes the arguments, validates them, converts the index, and constructs the command.
-* Other commands use dedicated parsers. Parsers for prefix-based commands use helpers such as `ArgumentTokenizer`, `ArgumentValidator`, `CliSyntax`, and `ParserUtil` to validate and convert their arguments before creating a command. `FindCommandParser` splits its search keywords directly.
-* The parsers implement the `Parser` interface and return a `Command` for `LogicManager` to execute.
+How the parsing works:
+* When called upon to parse a user command, the `BrotherGymParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`). The `BrotherGymParser` returns that object as a `Command` object.
+* All `XYZCommandParser` classes, such as `AddStudentCommandParser` and `DeleteStudentCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
