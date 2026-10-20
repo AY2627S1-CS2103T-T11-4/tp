@@ -1,10 +1,10 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 
 import java.util.List;
 
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
@@ -22,15 +22,26 @@ public class FindCommandParser implements Parser<FindCommand> {
     public FindCommand parse(String args) throws ParseException {
         requireNonNull(args);
 
-        String trimmedArgs = args.trim();
-        if (trimmedArgs.isEmpty()) {
-            throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        ArgumentValidator argValidator = new ArgumentValidator();
+        NameContainsKeywordsPredicate nckp;
+        try {
+            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+            argValidator.verifyArgs(argMultimap);
+            nckp = this.parseValidFields(argMultimap.getPreamble());
+        } catch (ParseException pe) {
+            throw new ParseException(Messages.formatParserError(pe.getMessage(), FindCommand.MESSAGE_USAGE), pe);
         }
 
-        String[] nameKeywords = trimmedArgs.split("\\s+");
+        return new FindCommand(nckp);
+    }
 
-        return new FindCommand(new NameContainsKeywordsPredicate(List.of(nameKeywords)));
+    /**
+     * Parses the validated {@code args} string to produce the FindCommand object.
+     */
+    private NameContainsKeywordsPredicate parseValidFields(String queries) {
+        String[] nameKeywords = queries.split("\\s+");
+
+        return new NameContainsKeywordsPredicate(List.of(nameKeywords));
     }
 
 }
