@@ -6,40 +6,34 @@ skinparam classBackgroundColor LOGIC_COLOR
 
 package Logic as LogicPackage {
 
-package "Parser Classes" as ParserClasses{
-}
-Class XYZCommand
-Class CommandResult
-Class "{abstract}\nCommand" as Command
-
-
 Class "<<interface>>\nLogic" as Logic
 Class LogicManager
+Class "{abstract}\nCommand" as Command
+Class XYZCommand
+Class CommandResult
 }
 
 package Model {
-Class HiddenModel #FFFFFF
+Class "Model" as ModelApi <<interface>>
 }
 
 package Storage {
+Class "Storage" as StorageApi <<interface>>
 }
 
-Class HiddenOutside #FFFFFF
-HiddenOutside ..> Logic
+Class UI
+UI ..> Logic : executes commands and observes state
 
 LogicManager .right.|> Logic
-LogicManager -right->"1" ParserClasses
-ParserClasses ..> XYZCommand : <<create>>
-
 XYZCommand -up-|> Command
-LogicManager .left.> Command : <<call>>
+LogicManager .left.> Command : executes
 
-LogicManager --> Model
-LogicManager --> Storage
-Storage --[hidden] Model
-Command .[hidden]up.> Storage
-Command .right.> Model
-note right of XYZCommand: XYZCommand = AddStudentCommand, \nFindCommand, etc
+LogicManager --> ModelApi : reads/writes
+LogicManager --> StorageApi : saves after success
+StorageApi -[hidden]--> ModelApi
+Command .[hidden]up.> StorageApi
+Command .right.> ModelApi : reads/writes
+note right of XYZCommand: XYZCommand = AddStudentCommand,\nDeleteStudentCommand, etc.
 
 Logic ..> CommandResult
 LogicManager .down.> CommandResult
