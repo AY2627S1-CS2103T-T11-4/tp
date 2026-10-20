@@ -8,10 +8,12 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -35,6 +37,7 @@ public class ParserUtilTest {
     private static final String INVALID_DESC = "";
     private static final String INVALID_DATE_CHARS = "dd102026";
     private static final String INVALID_DATE_LENGTH = "091026";
+    private static final String INVALID_DATE_CALENDAR_VALUE = "31132026";
 
     private static final String VALID_NAME = "Rachel Walker";
     private static final String VALID_PHONE = "123456";
@@ -264,6 +267,13 @@ public class ParserUtilTest {
     @Test
     public void parseDate_invalidValueLength_throwsParseException() {
         assertThrows(ParseException.class, () -> ParserUtil.parseDate(INVALID_DATE_LENGTH));
+    }
+
+    @Test
+    public void parseDate_invalidCalendarValue_throwsParseExceptionWithCause() {
+        ParseException exception =
+                Assertions.assertThrows(ParseException.class, () -> ParserUtil.parseDate(INVALID_DATE_CALENDAR_VALUE));
+        assertTrue(exception.getCause() instanceof DateTimeParseException);
     }
 
     @Test

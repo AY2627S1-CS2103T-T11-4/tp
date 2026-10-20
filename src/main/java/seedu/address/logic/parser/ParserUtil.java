@@ -188,7 +188,7 @@ public class ParserUtil {
         try {
             dateObject = LocalDate.parse(date, WorkoutDate.INPUT_DATE_FORMAT);
         } catch (DateTimeParseException e) {
-            throw new ParseException(WorkoutDate.MESSAGE_CONSTRAINTS);
+            throw new ParseException(WorkoutDate.MESSAGE_CONSTRAINTS, e);
         }
         return WorkoutDate.fromLocalDate(dateObject);
     }
