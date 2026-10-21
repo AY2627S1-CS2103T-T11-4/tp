@@ -10,7 +10,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.EditPlanCommand;
@@ -26,6 +28,8 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
     private static final Set<Prefix> REQUIRED_PREFIXES = Set.of();
     private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE);
 
+    private static final Logger logger = LogsCenter.getLogger(EditPlanCommandParser.class);
+
     /**
      * Parses the given {@code String} of arguments in the context of the EditPlanCommand
      * and returns an EditPlanCommand object for execution.
@@ -38,12 +42,19 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
         Index index;
         EditPlanCommand.EditPlanDescriptor editPlanDescriptor;
 
+        ParsingStage stage = ParsingStage.TOKENIZATION;
         try {
             ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+
+            stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
+
+            stage = ParsingStage.FIELD_PARSING;
             index = ParserUtil.parseIndex(argMultimap.getPreamble());
             editPlanDescriptor = this.parseValidEditFields(argMultimap);
+
         } catch (ParseException pe) {
+            logger.finer("Parsing of editPlan command failed at " + stage.getMessage());
             throw new ParseException(Messages.formatParserError(pe.getMessage(), EditPlanCommand.MESSAGE_USAGE), pe);
         }
 
