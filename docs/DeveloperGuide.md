@@ -149,6 +149,10 @@ The `Storage` component,
 * is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonBrotherGymStorage` and `JsonUserPrefsStorage` (one class per data file).
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
 
+Workout plans store their `status` as `PENDING`, `COMPLETED`, or `OVERDUE`. Reading a file preserves the saved status
+without recalculating deadlines. Older files with a missing or null status default to `PENDING`; invalid status values
+cause a data-loading error. Date-based statuses are refreshed when the user runs `viewStudent`.
+
 ### Common classes
 
 Classes used by multiple components are in the `seedu.address.commons` package.
