@@ -39,7 +39,11 @@ public class ArgumentTokenizer {
             Prefix prefix = new Prefix(prefixString);
             PrefixPosition extendedPrefix = new PrefixPosition(prefix, prefixPosition);
             positions.add(extendedPrefix);
-            prefixPosition = findNextPrefixPosition(argsString, prefixPosition);
+
+            int nextPrefixPosition = findNextPrefixPosition(argsString, prefixPosition);
+            assert nextPrefixPosition == -1 || nextPrefixPosition > prefixPosition
+                    : "Prefix scanning should always progress";
+            prefixPosition = nextPrefixPosition;
         }
 
         return positions;
@@ -116,7 +120,14 @@ public class ArgumentTokenizer {
         Prefix prefix = currentPrefixPosition.getPrefix();
 
         int valueStartPos = currentPrefixPosition.getStartPosition() + prefix.getPrefix().length();
-        String value = argsString.substring(valueStartPos, nextPrefixPosition.getStartPosition());
+        assert valueStartPos >= 0 : "Current prefix position should be non-negative";
+
+        int valueEndPos = nextPrefixPosition.getStartPosition();
+        assert valueEndPos <= argsString.length() : "Next prefix position should be before end of string";
+
+        assert valueStartPos <= valueEndPos : "Prefix positions should define a valid substring range";
+
+        String value = argsString.substring(valueStartPos, valueEndPos);
 
         return value.trim();
     }
