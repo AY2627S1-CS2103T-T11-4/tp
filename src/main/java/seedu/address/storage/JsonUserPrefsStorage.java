@@ -1,5 +1,7 @@
 package seedu.address.storage;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -14,10 +16,10 @@ import seedu.address.model.UserPrefs;
  */
 public class JsonUserPrefsStorage {
 
-    private Path filePath;
+    private final Path filePath;
 
     public JsonUserPrefsStorage(Path filePath) {
-        this.filePath = filePath;
+        this.filePath = requireNonNull(filePath);
     }
 
     public Path getUserPrefsFilePath() {
