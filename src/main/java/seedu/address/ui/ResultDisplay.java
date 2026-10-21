@@ -32,6 +32,7 @@ public class ResultDisplay extends UiPart<Region> {
     /** Displays the entered command together with its feedback. */
     public void setCommandResult(String commandText, String feedbackToUser) {
         requireNonNull(commandText);
+        requireNonNull(feedbackToUser);
         lastCommand.setText(">  " + commandText);
         setFeedbackToUser(feedbackToUser);
     }
