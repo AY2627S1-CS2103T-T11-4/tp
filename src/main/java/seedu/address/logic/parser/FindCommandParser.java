@@ -40,7 +40,7 @@ public class FindCommandParser implements Parser<FindCommand> {
 
         } catch (ParseException pe) {
             logger.finer("Parsing of find command failed at " + stage.getMessage());
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), FindCommand.MESSAGE_USAGE), pe);
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), FindCommand.MESSAGE_USAGE));
         }
 
         return new FindCommand(nckp);

@@ -54,7 +54,7 @@ public class AddStudentCommandParser implements Parser<AddStudentCommand> {
 
         } catch (ParseException pe) {
             logger.finer("Parsing of addStudent command failed at " + stage.getMessage());
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), AddStudentCommand.MESSAGE_USAGE), pe);
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), AddStudentCommand.MESSAGE_USAGE));
         }
 
         return new AddStudentCommand(student);

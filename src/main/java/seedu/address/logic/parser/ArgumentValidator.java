@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import seedu.address.logic.Messages;
+import seedu.address.logic.parser.exceptions.InputFormatInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -120,7 +121,7 @@ public class ArgumentValidator {
 
         if (throwError) {
             errorMessage.setLength(errorMessage.length() - 1); // remove last newline
-            throw new ParseException(errorMessage.toString());
+            throw new InputFormatInvalidException(errorMessage.toString());
         }
     }
 }

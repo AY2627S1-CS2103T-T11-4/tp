@@ -25,6 +25,7 @@ import seedu.address.logic.commands.MarkPlanCommand;
 import seedu.address.logic.commands.UnmarkPlanCommand;
 import seedu.address.logic.commands.ViewPlanCommand;
 import seedu.address.logic.commands.ViewStudentCommand;
+import seedu.address.logic.parser.exceptions.InputFormatInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -76,7 +77,8 @@ public class BrotherGymParser {
 
         final Matcher matcher = BASIC_COMMAND_FORMAT.matcher(userInput.trim());
         if (!matcher.matches()) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE));
+            throw new InputFormatInvalidException(
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE));
         }
 
         final String commandWord = matcher.group("commandWord");
@@ -105,7 +107,7 @@ public class BrotherGymParser {
             case HelpCommand.COMMAND_WORD -> new HelpCommand();
             default -> {
                 logger.finer("Unknown command word for input: " + userInput);
-                throw new ParseException(MESSAGE_UNKNOWN_COMMAND);
+                throw new InputFormatInvalidException(MESSAGE_UNKNOWN_COMMAND);
             }
         };
     }

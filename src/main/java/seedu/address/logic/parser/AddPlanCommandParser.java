@@ -52,7 +52,7 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
 
         } catch (ParseException pe) {
             logger.finer("Parsing of addPlan command failed at " + stage.getMessage());
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), AddPlanCommand.MESSAGE_USAGE), pe);
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), AddPlanCommand.MESSAGE_USAGE));
         }
 
         return new AddPlanCommand(workout);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import seedu.address.logic.Messages;
+import seedu.address.logic.parser.exceptions.InputFormatInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -71,7 +72,7 @@ public class ArgumentTokenizer {
         // if end index is -1, the argsString ends with the index
         prefixEndIndex = prefixEndIndex == -1 ? argsString.length() : prefixEndIndex;
         if (prefixEndIndex - prefixStartIndex == 2) { // checking for "--"
-            throw new ParseException(Messages.MESSAGE_EMPTY_PREFIX);
+            throw new InputFormatInvalidException(Messages.MESSAGE_EMPTY_PREFIX);
         }
         return argsString.substring(prefixStartIndex, prefixEndIndex);
     }

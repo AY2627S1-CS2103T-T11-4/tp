@@ -65,7 +65,7 @@ public class SingleIndexCommandParser<C extends SingleIndexCommand> implements P
             index = ParserUtil.parseIndex(argMultimap.getPreamble());
         } catch (ParseException pe) {
             logger.finer("Parsing of " + this.commandWord + " failed at " + stage.getMessage());
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), this.commandMessageUsage), pe);
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), this.commandMessageUsage));
         }
 
         return this.commandConstructor.apply(index);

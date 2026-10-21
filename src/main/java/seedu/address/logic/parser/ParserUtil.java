@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
+import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
@@ -40,7 +41,7 @@ public class ParserUtil {
 
         String trimmedIndex = oneBasedIndex.trim();
         if (!StringUtil.isNonZeroUnsignedInteger(trimmedIndex)) {
-            throw new ParseException(MESSAGE_INVALID_INDEX);
+            throw new FieldValueInvalidException(MESSAGE_INVALID_INDEX);
         }
         return Index.fromOneBased(Integer.parseInt(trimmedIndex));
     }
@@ -55,7 +56,7 @@ public class ParserUtil {
         requireNonNull(name);
         String trimmedName = name.trim();
         if (!Name.isValidName(trimmedName)) {
-            throw new ParseException(Name.MESSAGE_CONSTRAINTS);
+            throw new FieldValueInvalidException(Name.MESSAGE_CONSTRAINTS);
         }
         return new Name(trimmedName);
     }
@@ -70,7 +71,7 @@ public class ParserUtil {
         requireNonNull(phone);
         String trimmedPhone = phone.trim();
         if (!Phone.isValidPhone(trimmedPhone)) {
-            throw new ParseException(Phone.MESSAGE_CONSTRAINTS);
+            throw new FieldValueInvalidException(Phone.MESSAGE_CONSTRAINTS);
         }
         return new Phone(trimmedPhone);
     }
@@ -85,7 +86,7 @@ public class ParserUtil {
         requireNonNull(address);
         String trimmedAddress = address.trim();
         if (!Address.isValidAddress(trimmedAddress)) {
-            throw new ParseException(Address.MESSAGE_CONSTRAINTS);
+            throw new FieldValueInvalidException(Address.MESSAGE_CONSTRAINTS);
         }
         return new Address(trimmedAddress);
     }
@@ -100,7 +101,7 @@ public class ParserUtil {
         requireNonNull(email);
         String trimmedEmail = email.trim();
         if (!Email.isValidEmail(trimmedEmail)) {
-            throw new ParseException(Email.MESSAGE_CONSTRAINTS);
+            throw new FieldValueInvalidException(Email.MESSAGE_CONSTRAINTS);
         }
         return new Email(trimmedEmail);
     }
@@ -115,7 +116,7 @@ public class ParserUtil {
         requireNonNull(tag);
         String trimmedTag = tag.trim();
         if (!Tag.isValidTagName(trimmedTag)) {
-            throw new ParseException(Tag.MESSAGE_CONSTRAINTS);
+            throw new FieldValueInvalidException(Tag.MESSAGE_CONSTRAINTS);
         }
         return tagConstructor.apply(trimmedTag);
     }
@@ -156,7 +157,7 @@ public class ParserUtil {
     public static WorkoutTitle parseTitle(String title) throws ParseException {
         requireNonNull(title);
         if (!WorkoutTitle.isValidWorkoutTitle(title)) {
-            throw new ParseException(WorkoutTitle.MESSAGE_CONSTRAINTS);
+            throw new FieldValueInvalidException(WorkoutTitle.MESSAGE_CONSTRAINTS);
         }
         return new WorkoutTitle(title);
     }
@@ -169,7 +170,7 @@ public class ParserUtil {
     public static WorkoutDescription parseDescription(String desc) throws ParseException {
         requireNonNull(desc);
         if (!WorkoutDescription.isValidWorkoutDescription(desc)) {
-            throw new ParseException(WorkoutDescription.MESSAGE_CONSTRAINTS);
+            throw new FieldValueInvalidException(WorkoutDescription.MESSAGE_CONSTRAINTS);
         }
         return new WorkoutDescription(desc);
     }
@@ -182,13 +183,13 @@ public class ParserUtil {
     public static WorkoutDate parseDate(String date) throws ParseException {
         requireNonNull(date);
         if (!WorkoutDate.isValidDateString(date)) {
-            throw new ParseException(WorkoutDate.MESSAGE_CONSTRAINTS);
+            throw new FieldValueInvalidException(WorkoutDate.MESSAGE_CONSTRAINTS);
         }
         LocalDate dateObject;
         try {
             dateObject = LocalDate.parse(date, WorkoutDate.INPUT_DATE_FORMAT);
         } catch (DateTimeParseException e) {
-            throw new ParseException(WorkoutDate.MESSAGE_CONSTRAINTS, e);
+            throw new FieldValueInvalidException(WorkoutDate.MESSAGE_CONSTRAINTS, e);
         }
         return WorkoutDate.fromLocalDate(dateObject);
     }

@@ -16,6 +16,7 @@ import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.EditPlanCommand;
+import seedu.address.logic.parser.exceptions.NoFieldsToEditException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.tag.WorkoutPlanTag;
 
@@ -55,11 +56,11 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
 
         } catch (ParseException pe) {
             logger.finer("Parsing of editPlan command failed at " + stage.getMessage());
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), EditPlanCommand.MESSAGE_USAGE), pe);
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), EditPlanCommand.MESSAGE_USAGE));
         }
 
         if (!editPlanDescriptor.isAnyFieldEdited()) {
-            throw new ParseException(EditPlanCommand.MESSAGE_NOT_EDITED);
+            throw new NoFieldsToEditException(EditPlanCommand.MESSAGE_NOT_EDITED);
         }
 
         return new EditPlanCommand(index, editPlanDescriptor);

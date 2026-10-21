@@ -17,6 +17,7 @@ import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.EditStudentCommand;
+import seedu.address.logic.parser.exceptions.NoFieldsToEditException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.tag.StudentTag;
 
@@ -58,11 +59,11 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
 
         } catch (ParseException pe) {
             logger.finer("Parsing of editStudent failed at " + stage.getMessage());
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), EditStudentCommand.MESSAGE_USAGE), pe);
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), EditStudentCommand.MESSAGE_USAGE));
         }
 
         if (!editStudentDescriptor.isAnyFieldEdited()) {
-            throw new ParseException(EditStudentCommand.MESSAGE_NOT_EDITED);
+            throw new NoFieldsToEditException(EditStudentCommand.MESSAGE_NOT_EDITED);
         }
 
         return new EditStudentCommand(index, editStudentDescriptor);
