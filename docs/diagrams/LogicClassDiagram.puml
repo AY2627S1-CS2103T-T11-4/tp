@@ -15,7 +15,9 @@ package Logic {
     class LogicManager
     class BrotherGymParser
     abstract class Command
+    abstract class SingleIndexCommand
     class ViewStudentCommand
+    class DeleteStudentCommand
     class CommandResult
 }
 
@@ -27,7 +29,9 @@ LogicManager .up.|> Logic
 LogicManager --> BrotherGymParser
 BrotherGymParser ..> Command
 LogicManager --> Command
-ViewStudentCommand --|> Command
+SingleIndexCommand --|> Command
+ViewStudentCommand --|> SingleIndexCommand
+DeleteStudentCommand --|> SingleIndexCommand
 Command --> Model
 LogicManager --> Model
 LogicManager --> Storage
