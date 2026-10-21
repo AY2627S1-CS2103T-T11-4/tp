@@ -18,6 +18,7 @@ import seedu.address.logic.Logic;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.student.Student;
 
 /**
  * The Main Window. Provides the basic application layout containing
@@ -124,9 +125,14 @@ public class MainWindow extends UiPart<Stage> {
 
         workoutPlanListPanel = new WorkoutPlanListPanel();
         workoutPlanPanelPlaceholder.getChildren().add(workoutPlanListPanel.getRoot());
-        workoutPlanListPanel.showStudent(Optional.ofNullable(logic.currentStudentProperty().get()));
-        logic.currentStudentProperty().addListener((observable, oldStudent, newStudent) ->
-                workoutPlanListPanel.showStudent(Optional.ofNullable(newStudent)));
+        Optional<Student> initialStudent = Optional.ofNullable(logic.currentStudentProperty().get());
+        workoutPlanListPanel.showStudent(initialStudent);
+        studentListPanel.selectStudent(initialStudent);
+        logic.currentStudentProperty().addListener((observable, oldStudent, newStudent) -> {
+            Optional<Student> selectedStudent = Optional.ofNullable(newStudent);
+            workoutPlanListPanel.showStudent(selectedStudent);
+            studentListPanel.selectStudent(selectedStudent);
+        });
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
@@ -191,7 +197,7 @@ public class MainWindow extends UiPart<Stage> {
         try {
             CommandResult commandResult = logic.execute(commandText);
             logger.info("Result: " + commandResult.getFeedbackToUser());
-            resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
+            resultDisplay.setCommandResult(commandText, commandResult.getFeedbackToUser());
 
             if (commandResult.isShowHelp()) {
                 handleHelp();
@@ -204,7 +210,7 @@ public class MainWindow extends UiPart<Stage> {
             return commandResult;
         } catch (CommandException | ParseException e) {
             logger.info("An error occurred while executing command: " + commandText);
-            resultDisplay.setFeedbackToUser(e.getMessage());
+            resultDisplay.setCommandResult(commandText, e.getMessage());
             throw e;
         }
     }

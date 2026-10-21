@@ -13,9 +13,10 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanStatus;
 
 /**
- * Displays all workout plans belonging to a selected student.
+ * Refreshes workout plan statuses and displays all plans belonging to a selected student.
  */
 public class ViewStudentCommand extends SingleIndexCommand {
 
@@ -23,7 +24,7 @@ public class ViewStudentCommand extends SingleIndexCommand {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Displays all workout plans belonging to a student.\n"
-            + "Parameters: STUDENT_INDEX (must be a positive integer)\n"
+            + "Parameters: STUDENT_ID (must be a positive integer)\n"
             + "Example: " + COMMAND_WORD + " 1";
 
     public static final String MESSAGE_SUCCESS = "Viewing plans for %1$s:\n%2$s";
@@ -49,12 +50,13 @@ public class ViewStudentCommand extends SingleIndexCommand {
         }
 
         Student selectedStudent = students.get(targetIndex.getZeroBased());
-        model.setCurrentStudent(selectedStudent);
-        List<WorkoutPlan> workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
+        Student refreshedStudent = model.updateStudentWorkoutsState(selectedStudent);
+        model.setCurrentStudent(refreshedStudent);
+        List<WorkoutPlan> workoutPlans = refreshedStudent.getWorkoutPlansList().getWorkoutList();
 
         return new CommandResult(String.format(
                 MESSAGE_SUCCESS,
-                selectedStudent.getName(),
+                refreshedStudent.getName(),
                 formatWorkoutPlans(workoutPlans)));
     }
 
@@ -63,9 +65,18 @@ public class ViewStudentCommand extends SingleIndexCommand {
             return MESSAGE_NO_WORKOUTS;
         }
 
-        return IntStream.range(0, workoutPlans.size())
+        return formatWorkoutPlansByStatus(workoutPlans, WorkoutPlanStatus.COMPLETED, "Done") + "\n"
+                + formatWorkoutPlansByStatus(workoutPlans, WorkoutPlanStatus.OVERDUE, "Overdue") + "\n"
+                + formatWorkoutPlansByStatus(workoutPlans, WorkoutPlanStatus.PENDING, "Pending");
+    }
+
+    private static String formatWorkoutPlansByStatus(List<WorkoutPlan> workoutPlans,
+            WorkoutPlanStatus status, String heading) {
+        String plans = IntStream.range(0, workoutPlans.size())
+                .filter(index -> workoutPlans.get(index).getStatus() == status)
                 .mapToObj(index -> String.format("%d. %s", index + 1, workoutPlans.get(index)))
                 .collect(Collectors.joining("\n"));
+        return heading + ":\n" + (plans.isEmpty() ? "  (none)" : plans);
     }
 
     @Override

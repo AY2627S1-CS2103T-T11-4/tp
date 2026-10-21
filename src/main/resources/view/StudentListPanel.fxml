@@ -5,10 +5,11 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<VBox spacing="8" styleClass="student-list-panel" xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1">
   <padding>
-    <Insets top="10" right="10" bottom="10" left="10" />
+    <Insets top="13" right="8" bottom="10" left="8" />
   </padding>
-  <Label text="Students" styleClass="student-list-heading" />
-  <ListView fx:id="studentListView" VBox.vgrow="ALWAYS" />
+  <Label text="Students" styleClass="section-heading" />
+  <ListView fx:id="studentListView" styleClass="student-list-view" VBox.vgrow="ALWAYS" />
 </VBox>

@@ -1,7 +1,6 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
@@ -13,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.EditPlanCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.tag.WorkoutPlanTag;
@@ -22,6 +22,10 @@ import seedu.address.model.tag.WorkoutPlanTag;
  */
 public class EditPlanCommandParser implements Parser<EditPlanCommand> {
 
+    private static final Set<Prefix> VALID_PREFIXES = Set.of(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
+    private static final Set<Prefix> REQUIRED_PREFIXES = Set.of();
+    private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE);
+
     /**
      * Parses the given {@code String} of arguments in the context of the EditPlanCommand
      * and returns an EditPlanCommand object for execution.
@@ -29,22 +33,34 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
      */
     public EditPlanCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
+        ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
         Index index;
+        EditPlanCommand.EditPlanDescriptor editPlanDescriptor;
 
         try {
+            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+            argValidator.verifyArgs(argMultimap);
             index = ParserUtil.parseIndex(argMultimap.getPreamble());
+            editPlanDescriptor = this.parseValidEditFields(argMultimap);
         } catch (ParseException pe) {
-            throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                            EditPlanCommand.MESSAGE_USAGE),
-                    pe);
+            throw new ParseException(Messages.formatParserError(pe.getMessage(), EditPlanCommand.MESSAGE_USAGE), pe);
         }
 
-        argMultimap.verifyNoInvalidPrefixesFor(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE);
+        if (!editPlanDescriptor.isAnyFieldEdited()) {
+            throw new ParseException(EditPlanCommand.MESSAGE_NOT_EDITED);
+        }
 
+        return new EditPlanCommand(index, editPlanDescriptor);
+    }
+
+    /**
+     * Parses the validated {@code args} string to produce the EditPlanDescriptor object,
+     * wrapping any error messages thrown with the message usage.
+     * @throws ParseException if any of the fields contain invalid contents
+     */
+    private EditPlanCommand.EditPlanDescriptor parseValidEditFields(ArgumentMultimap argMultimap)
+            throws ParseException {
         EditPlanCommand.EditPlanDescriptor editPlanDescriptor = new EditPlanCommand.EditPlanDescriptor();
 
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
@@ -58,11 +74,7 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
         }
         parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editPlanDescriptor::setWorkoutPlanTags);
 
-        if (!editPlanDescriptor.isAnyFieldEdited()) {
-            throw new ParseException(EditPlanCommand.MESSAGE_NOT_EDITED);
-        }
-
-        return new EditPlanCommand(index, editPlanDescriptor);
+        return editPlanDescriptor;
     }
 
     /**
@@ -79,5 +91,4 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
         Collection<String> tagSet = tags.size() == 1 && tags.contains("") ? Collections.emptySet() : tags;
         return Optional.of(ParserUtil.parseWorkoutPlanTags(tagSet));
     }
-
 }

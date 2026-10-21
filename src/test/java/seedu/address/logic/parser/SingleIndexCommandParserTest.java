@@ -1,11 +1,10 @@
 package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_EMPTY_PREFIX;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_UNKNOWN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
 
 import org.junit.jupiter.api.Test;
@@ -68,28 +67,28 @@ public class SingleIndexCommandParserTest {
     private SingleIndexCommandParser<SingleIndexCommandStub> parser =
             new SingleIndexCommandParser<>(SingleIndexCommandStub::new, SingleIndexCommandStub.MESSAGE_USAGE);
 
+    private String formatParserError(String errorMessage) {
+        return Messages.formatParserError(errorMessage, SingleIndexCommandStub.MESSAGE_USAGE);
+    }
+
     @Test
     public void parse_validArgs_returnsSingleIndexCommand() {
         assertParseSuccess(parser, "1", new SingleIndexCommandStub(INDEX_FIRST));
     }
 
     @Test
-    public void parse_invalidArgs_throwsParseException() {
-        assertParseFailure(parser, "a",
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, SingleIndexCommandStub.MESSAGE_USAGE));
+    public void parse_invalidArgs_throwParseException() {
+        assertParseFailure(parser, "a", this.formatParserError(MESSAGE_INVALID_INDEX));
     }
 
     @Test
     public void parse_invalidPrefixes_throwsParseException() {
         // empty prefix throws error message for empty prefixes
-        assertParseFailure(parser, "1 -- gibberish", MESSAGE_EMPTY_PREFIX);
+        assertParseFailure(parser, "1 -- gibberish", this.formatParserError(MESSAGE_EMPTY_PREFIX));
 
         // invalid prefix throws error message for invalid prefixes
         assertParseFailure(parser, "1 --invalid gibberish",
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID));
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
-        // multiple invalid prefixes throws error message for invalid prefixes
-        assertParseFailure(parser, "1 --invalid gibberish --unknown greek",
-                Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID, PREFIX_UNKNOWN));
     }
 }

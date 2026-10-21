@@ -20,6 +20,7 @@ import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutTitle;
 
 /**
@@ -28,24 +29,34 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 class JsonAdaptedWorkoutPlan {
 
     public static final String MISSING_FIELD_MESSAGE_FORMAT = "Workout plan's %s field is missing!";
+    public static final String INVALID_STATUS_MESSAGE =
+            "Workout plan status must be PENDING, COMPLETED, or OVERDUE.";
     private static final DateTimeFormatter STORAGE_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
 
     private final String title;
     private final String workoutDescription;
     private final String date;
+    private final String status;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
 
     @JsonCreator
     public JsonAdaptedWorkoutPlan(@JsonProperty("title") String title,
                                   @JsonProperty("workoutDescription") String workoutDescription,
                                   @JsonProperty("date") String date,
-                                  @JsonProperty("tags") List<JsonAdaptedTag> tags) {
+                                  @JsonProperty("tags") List<JsonAdaptedTag> tags,
+                                  @JsonProperty("status") String status) {
         this.title = title;
         this.workoutDescription = workoutDescription;
         this.date = date;
+        this.status = status;
         if (tags != null) {
             this.tags.addAll(tags);
         }
+    }
+
+    /** Creates an adapted workout plan without a stored status, for legacy data. */
+    public JsonAdaptedWorkoutPlan(String title, String workoutDescription, String date, List<JsonAdaptedTag> tags) {
+        this(title, workoutDescription, date, tags, null);
     }
 
     /**
@@ -59,6 +70,7 @@ class JsonAdaptedWorkoutPlan {
         title = source.getTitle().getValue();
         workoutDescription = source.getWorkouts().getValue();
         date = formatDateForStorage(source.getDate().getValue());
+        status = source.getStatus().name();
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
@@ -97,6 +109,11 @@ class JsonAdaptedWorkoutPlan {
         return date;
     }
 
+    @JsonProperty("status")
+    public String getStatus() {
+        return status;
+    }
+
     public WorkoutPlan toModelType() throws IllegalValueException {
         if (title == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT,
@@ -126,7 +143,15 @@ class JsonAdaptedWorkoutPlan {
             modelTags.add(tag.toWorkoutPlanTag());
         }
 
+        // Older files have no status. Preserve the model's default without refreshing dates on load.
+        final WorkoutPlanStatus modelStatus;
+        try {
+            modelStatus = status == null ? WorkoutPlanStatus.PENDING : WorkoutPlanStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalValueException(INVALID_STATUS_MESSAGE);
+        }
+
         return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription(workoutDescription),
-                modelDate, modelTags);
+                modelDate, modelTags, modelStatus);
     }
 }

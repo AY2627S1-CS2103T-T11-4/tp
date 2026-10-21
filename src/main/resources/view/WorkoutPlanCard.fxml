@@ -4,28 +4,21 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox styleClass="workout-plan-card" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-  <VBox HBox.hgrow="ALWAYS">
-    <padding>
-      <Insets top="10" right="12" bottom="10" left="12" />
-    </padding>
-    <HBox alignment="CENTER_LEFT">
-      <Label fx:id="id" styleClass="workout-plan-title">
-        <minWidth>
-          <Region fx:constant="USE_PREF_SIZE" />
-        </minWidth>
-      </Label>
-      <Label fx:id="title" styleClass="workout-plan-title" HBox.hgrow="ALWAYS" />
-      <Label fx:id="date" styleClass="workout-plan-date">
-        <HBox.margin>
-          <Insets left="12" />
-        </HBox.margin>
-      </Label>
-    </HBox>
-    <Label fx:id="description" styleClass="workout-plan-description" wrapText="true" />
-    <FlowPane fx:id="tags" />
-  </VBox>
-</HBox>
+<VBox minWidth="190" prefWidth="190" maxWidth="190" minHeight="136" prefHeight="136" maxHeight="170"
+      spacing="7" styleClass="workout-plan-card" xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1">
+  <padding>
+    <Insets top="11" right="12" bottom="11" left="12" />
+  </padding>
+  <HBox alignment="CENTER_LEFT" spacing="8">
+    <Label fx:id="id" alignment="CENTER" minWidth="38" prefWidth="38" maxWidth="38"
+           minHeight="38" prefHeight="38" maxHeight="38" styleClass="plan-id-badge" />
+    <Label fx:id="title" maxWidth="112" styleClass="workout-plan-title" textOverrun="ELLIPSIS" />
+  </HBox>
+  <FlowPane fx:id="tags" hgap="5" vgap="4" styleClass="workout-plan-tags" />
+  <Label fx:id="date" styleClass="workout-plan-date" />
+  <Label fx:id="description" maxHeight="38" styleClass="workout-plan-description"
+         textOverrun="ELLIPSIS" wrapText="true" />
+</VBox>
