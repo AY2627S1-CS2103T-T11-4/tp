@@ -28,7 +28,7 @@ public class DeletePlanCommand extends SingleIndexCommand {
     public static final String MESSAGE_NO_STUDENT_SELECTED =
             "No student is currently selected. Use viewStudent first.";
     public static final String MESSAGE_INVALID_WORKOUT_ID =
-            "Workout ID exceeded total number of workout plans.";
+            "Workout Plan ID exceeded total number of workout plans.";
 
     /**
      * Creates a command to delete the workout plan at the given index.

@@ -42,7 +42,7 @@ public class EditPlanCommand extends Command {
     public static final String MESSAGE_NO_STUDENT_SELECTED =
             "No student is currently selected. Use viewStudent first.";
     public static final String MESSAGE_INVALID_WORKOUT_ID =
-            "Workout ID exceeded total number of workout plans.";
+            "Workout Plan ID exceeded total number of workout plans.";
     public static final String MESSAGE_NOT_EDITED = "At least one workout-plan field must be provided.";
     public static final String MESSAGE_DUPLICATE_PLAN = "This workout plan already exists.";
 

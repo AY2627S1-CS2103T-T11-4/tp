@@ -20,6 +20,8 @@ import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.HomeCommand;
+import seedu.address.logic.commands.MarkPlanCommand;
+import seedu.address.logic.commands.UnmarkPlanCommand;
 import seedu.address.logic.commands.ViewPlanCommand;
 import seedu.address.logic.commands.ViewStudentCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -42,6 +44,10 @@ public class BrotherGymParser {
     private static final AddPlanCommandParser ADD_PLAN_PARSER = new AddPlanCommandParser();
     private static final EditStudentCommandParser EDIT_STUDENT_PARSER = new EditStudentCommandParser();
     private static final EditPlanCommandParser EDIT_PLAN_PARSER = new EditPlanCommandParser();
+    private static final SingleIndexCommandParser<MarkPlanCommand> MARK_PLAN_PARSER =
+            new SingleIndexCommandParser<>(MarkPlanCommand::new, MarkPlanCommand.MESSAGE_USAGE);
+    private static final SingleIndexCommandParser<UnmarkPlanCommand> UNMARK_PLAN_PARSER =
+            new SingleIndexCommandParser<>(UnmarkPlanCommand::new, UnmarkPlanCommand.MESSAGE_USAGE);
     private static final SingleIndexCommandParser<ViewStudentCommand> VIEW_STUDENT_PARSER =
             new SingleIndexCommandParser<>(ViewStudentCommand::new, ViewStudentCommand.MESSAGE_USAGE);
     private static final SingleIndexCommandParser<ViewPlanCommand> VIEW_PLAN_PARSER =
@@ -79,6 +85,8 @@ public class BrotherGymParser {
             case ViewStudentCommand.COMMAND_WORD -> VIEW_STUDENT_PARSER.parse(arguments);
             case AddPlanCommand.COMMAND_WORD -> ADD_PLAN_PARSER.parse(arguments);
             case EditPlanCommand.COMMAND_WORD -> EDIT_PLAN_PARSER.parse(arguments);
+            case MarkPlanCommand.COMMAND_WORD -> MARK_PLAN_PARSER.parse(arguments);
+            case UnmarkPlanCommand.COMMAND_WORD -> UNMARK_PLAN_PARSER.parse(arguments);
             case DeletePlanCommand.COMMAND_WORD -> DELETE_PLAN_PARSER.parse(arguments);
             case ViewPlanCommand.COMMAND_WORD -> VIEW_PLAN_PARSER.parse(arguments);
             case ClearCommand.COMMAND_WORD -> new ClearCommand();
