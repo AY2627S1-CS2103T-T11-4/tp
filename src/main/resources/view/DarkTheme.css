@@ -410,6 +410,34 @@
     -fx-text-fill: #93a6af;
 }
 
+.workout-status-badge {
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+    -fx-border-width: 1px;
+    -fx-font-family: "Cascadia Mono", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 6 2 6;
+}
+
+.workout-status-completed {
+    -fx-background-color: #24371d;
+    -fx-border-color: #5f7f32;
+    -fx-text-fill: #a8ff20;
+}
+
+.workout-status-overdue {
+    -fx-background-color: #3a2020;
+    -fx-border-color: #8c3b3b;
+    -fx-text-fill: #ff7b72;
+}
+
+.workout-status-pending {
+    -fx-background-color: #2d261f;
+    -fx-border-color: #6f4a27;
+    -fx-text-fill: #ffb86b;
+}
+
 .workout-plan-description {
     -fx-font-size: 12px;
     -fx-text-fill: #c7d3d8;
