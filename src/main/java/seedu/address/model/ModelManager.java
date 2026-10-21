@@ -33,11 +33,13 @@ public class ModelManager implements Model {
     public ModelManager(ReadOnlyBrotherGym brotherGym, ReadOnlyUserPrefs userPrefs) {
         requireAllNonNull(brotherGym, userPrefs);
 
-        logger.fine("Initializing with address book: " + brotherGym + " and user prefs " + userPrefs);
+        logger.fine(() -> "Initializing with address book: " + brotherGym + " and user prefs " + userPrefs);
 
         this.brotherGym = new BrotherGym(brotherGym);
         this.userPrefs = new UserPrefs(userPrefs);
         filteredStudents = new FilteredList<>(this.brotherGym.getStudentList());
+
+        logger.fine(() -> "Initialization completed");
     }
 
     public ModelManager() {
@@ -59,15 +61,25 @@ public class ModelManager implements Model {
     @Override
     public void setGuiSettings(GuiSettings guiSettings) {
         requireNonNull(guiSettings);
+        logger.fine(() -> "Attempting to set GUI settings: " + guiSettings);
+
         userPrefs.setGuiSettings(guiSettings);
+
+        logger.fine(() -> "GUI settings set: " + guiSettings);
     }
 
     //=========== BrotherGym ================================================================================
 
     @Override
     public void setBrotherGym(ReadOnlyBrotherGym brotherGym) {
+        requireNonNull(brotherGym);
+        logger.fine(() -> "Attempting to set BrotherGym model; current number of students: "
+                + this.brotherGym.getStudentList().size()
+                + "; replacement number of students: " + brotherGym.getStudentList().size());
         this.brotherGym.resetData(brotherGym);
         clearCurrentStudent();
+        logger.info(() -> "BrotherGym model set; Total number of students: "
+                + this.brotherGym.getStudentList().size());
     }
 
     @Override
@@ -83,26 +95,35 @@ public class ModelManager implements Model {
 
     @Override
     public void deleteStudent(Student target) {
+        requireNonNull(target);
+        logger.fine(() -> "Attempting to remove student from model: " + target);
         brotherGym.removeStudent(target);
         if (currentStudent.get() == target) {
             clearCurrentStudent();
         }
+        logger.info(() -> "Student removed from model: " + target.getName()
+                + "; Total number of students: " + brotherGym.getStudentList().size());
     }
 
     @Override
     public void addStudent(Student student) {
+        requireNonNull(student);
+        logger.fine(() -> "Attempting to add student to model: " + student);
         brotherGym.addStudent(student);
         updateFilteredStudentList(PREDICATE_SHOW_ALL_STUDENTS);
+        logger.info(() -> "Student added to model: " + student.getName()
+                + "; Total number of students: " + brotherGym.getStudentList().size());
     }
 
     @Override
     public void setStudent(Student target, Student editedStudent) {
         requireAllNonNull(target, editedStudent);
-
+        logger.fine(() -> "Attempting to set student in model: " + target + " -> " + editedStudent);
         brotherGym.setStudent(target, editedStudent);
         if (currentStudent.get() == target) {
             setCurrentStudent(editedStudent);
         }
+        logger.info(() -> "Student set in model: " + target.getName() + " -> " + editedStudent.getName());
     }
 
     @Override
@@ -132,12 +153,22 @@ public class ModelManager implements Model {
 
     @Override
     public void setCurrentStudent(Student student) {
-        currentStudent.set(requireNonNull(student));
+        requireNonNull(student);
+        logger.fine(() -> "Attempting to set selected student: " + student.getName());
+        currentStudent.set(student);
+        logger.info(() -> "Selected student set: " + student.getName());
     }
 
     @Override
     public void clearCurrentStudent() {
+        Student selectedStudent = currentStudent.get();
+        if (selectedStudent != null) {
+            logger.fine(() -> "Attempting to clear selected student: " + selectedStudent.getName());
+        }
         currentStudent.set(null);
+        if (selectedStudent != null) {
+            logger.info(() -> "Selected student removed: " + selectedStudent.getName());
+        }
     }
 
     //=========== Filtered Student List Accessors =============================================================
