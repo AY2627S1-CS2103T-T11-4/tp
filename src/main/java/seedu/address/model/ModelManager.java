@@ -67,7 +67,7 @@ public class ModelManager implements Model {
 
         userPrefs.setGuiSettings(guiSettings);
 
-        logger.fine(() -> "GUI settings set: " + guiSettings);
+        logger.info(() -> "GUI settings set: " + guiSettings);
     }
 
     //=========== BrotherGym ================================================================================
