@@ -245,6 +245,10 @@ If saving BrotherGym data throws an `IOException`, `LogicManager` reports a `Com
 **Persistence limitations:** Writes currently go directly to the destination file, without an atomic file replacement or automatic backup. A write failure can leave the file incomplete. After startup falls back to an empty BrotherGym, the next successful command attempts to overwrite the existing data file with the current in-memory data.
 </box>
 
+Workout plans store their `status` as `PENDING`, `COMPLETED`, or `OVERDUE`. Reading a file preserves the saved status
+without recalculating deadlines. Older files with a missing or null status default to `PENDING`; invalid status values
+cause a data-loading error. Date-based statuses are refreshed when the user runs `viewStudent`.
+
 ### Common classes
 
 Classes used by multiple components are in the `seedu.address.commons` package.
