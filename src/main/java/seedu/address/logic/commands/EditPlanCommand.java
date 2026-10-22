@@ -6,10 +6,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -24,8 +22,9 @@ import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.WorkoutTitle;
+import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 
 /** Edits a workout plan belonging to the currently selected student. */
 public class EditPlanCommand extends Command {
@@ -74,26 +73,19 @@ public class EditPlanCommand extends Command {
             throw new CommandException(MESSAGE_NOT_EDITED);
         }
 
-        List<WorkoutPlan> workoutPlans = currentStudent.getWorkoutPlansList().getWorkoutList();
-        if (targetIndex.getZeroBased() >= workoutPlans.size()) {
-            throw new CommandException(MESSAGE_INVALID_WORKOUT_ID);
+        final WorkoutPlan planToEdit;
+        try {
+            planToEdit = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
+        } catch (WorkoutPlanIndexOutOfBoundsException e) {
+            throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
 
-        WorkoutPlan planToEdit = workoutPlans.get(targetIndex.getZeroBased());
         WorkoutPlan editedPlan = createEditedPlan(planToEdit, editPlanDescriptor);
-
-        boolean duplicatesAnotherPlan = workoutPlans.stream()
-                .anyMatch(plan -> !plan.equals(planToEdit) && plan.equals(editedPlan));
-        if (duplicatesAnotherPlan) {
-            throw new CommandException(MESSAGE_DUPLICATE_PLAN);
+        try {
+            model.setWorkoutPlanForStudent(currentStudent, planToEdit, editedPlan);
+        } catch (DuplicateWorkoutPlanException e) {
+            throw new CommandException(MESSAGE_DUPLICATE_PLAN, e);
         }
-
-        List<WorkoutPlan> updatedWorkoutPlans = new ArrayList<>(workoutPlans);
-        updatedWorkoutPlans.set(targetIndex.getZeroBased(), editedPlan);
-        Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
-                currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(),
-                new WorkoutPlansList(updatedWorkoutPlans));
-        model.setStudent(currentStudent, updatedStudent);
 
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(editedPlan)));
     }

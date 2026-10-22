@@ -2,11 +2,13 @@ package seedu.address.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalStudents.ALICE;
+import static seedu.address.testutil.TypicalStudents.BENSON;
 import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
 import java.util.Collection;
@@ -18,6 +20,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.exceptions.DuplicateStudentException;
+import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.testutil.StudentBuilder;
 
 public class BrotherGymTest {
@@ -75,6 +78,29 @@ public class BrotherGymTest {
         Student editedAlice = new StudentBuilder(ALICE).withAddress(VALID_ADDRESS_BOB).withTags(VALID_TAG_HUSBAND)
                 .build();
         assertTrue(brotherGym.hasStudent(editedAlice));
+    }
+
+    @Test
+    public void validateStudentInBrotherGym_storedStudent_returnsStoredInstance() {
+        brotherGym.addStudent(ALICE);
+        Student equalAlice = new StudentBuilder(ALICE).build();
+
+        assertSame(ALICE, brotherGym.validateStudentInBrotherGym(ALICE));
+        assertSame(ALICE, brotherGym.validateStudentInBrotherGym(equalAlice));
+    }
+
+    @Test
+    public void validateStudentInBrotherGym_studentNotInList_throwsStudentNotFoundException() {
+        brotherGym.addStudent(ALICE);
+        Student editedAlice = new StudentBuilder(ALICE).withAddress(VALID_ADDRESS_BOB).build();
+
+        assertThrows(StudentNotFoundException.class, () -> brotherGym.validateStudentInBrotherGym(BENSON));
+        assertThrows(StudentNotFoundException.class, () -> brotherGym.validateStudentInBrotherGym(editedAlice));
+    }
+
+    @Test
+    public void validateStudentInBrotherGym_nullStudent_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> brotherGym.validateStudentInBrotherGym(null));
     }
 
     @Test

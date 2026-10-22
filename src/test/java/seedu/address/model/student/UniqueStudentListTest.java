@@ -9,11 +9,13 @@ import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalStudents.ALICE;
 import static seedu.address.testutil.TypicalStudents.BOB;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.student.exceptions.DuplicateStudentException;
+import seedu.address.model.student.exceptions.InvalidStudentListException;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.testutil.StudentBuilder;
 
@@ -158,6 +160,13 @@ public class UniqueStudentListTest {
     public void setStudents_listWithDuplicateStudents_throwsDuplicateStudentException() {
         List<Student> listWithDuplicateStudents = List.of(ALICE, ALICE);
         assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudents(listWithDuplicateStudents));
+    }
+
+    @Test
+    public void setStudents_listWithNullStudent_throwsInvalidStudentListException() {
+        List<Student> students = new ArrayList<>(List.of(ALICE));
+        students.add(null);
+        assertThrows(InvalidStudentListException.class, () -> uniqueStudentList.setStudents(students));
     }
 
     @Test

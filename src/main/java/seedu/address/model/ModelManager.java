@@ -14,7 +14,6 @@ import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.student.Student;
-import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 
@@ -110,38 +109,36 @@ public class ModelManager implements Model {
     @Override
     public void addWorkoutPlanForStudent(Student student, WorkoutPlan plan) {
         requireAllNonNull(student, plan);
-        WorkoutPlansList updatedPlans = student.getWorkoutPlansList().addWorkoutPlan(plan);
-        Student updatedStudent = new Student(student.getName(), student.getPhone(),
-                student.getEmail(), student.getAddress(), student.getTags(), updatedPlans);
-        setStudent(student, updatedStudent);
+        Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().addWorkoutPlan(plan);
+        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
+                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        setStudent(storedStudent, updatedStudent);
     }
 
     @Override
     public void removeWorkoutPlanForStudent(Student student, WorkoutPlan plan) {
         requireAllNonNull(student, plan);
-        WorkoutPlansList updatedPlans = student.getWorkoutPlansList().removeWorkoutPlan(plan);
-        Student updatedStudent = new Student(student.getName(), student.getPhone(),
-                student.getEmail(), student.getAddress(), student.getTags(), updatedPlans);
-        setStudent(student, updatedStudent);
+        Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().removeWorkoutPlan(plan);
+        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
+                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        setStudent(storedStudent, updatedStudent);
     }
 
     @Override
     public void setWorkoutPlanForStudent(Student student, WorkoutPlan target, WorkoutPlan editedPlan) {
         requireAllNonNull(student, target, editedPlan);
-        WorkoutPlansList updatedPlans = student.getWorkoutPlansList().setWorkoutPlan(target, editedPlan);
-        Student updatedStudent = new Student(student.getName(), student.getPhone(),
-                student.getEmail(), student.getAddress(), student.getTags(), updatedPlans);
-        setStudent(student, updatedStudent);
+        Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().setWorkoutPlan(target, editedPlan);
+        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
+                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        setStudent(storedStudent, updatedStudent);
     }
 
     @Override
     public Student updateStudentWorkoutsState(Student student) {
-        requireNonNull(student);
-        int index = brotherGym.getStudentList().indexOf(student);
-        if (index < 0) {
-            throw new StudentNotFoundException();
-        }
-        Student storedStudent = brotherGym.getStudentList().get(index);
+        Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         Student updatedStudent = storedStudent.updateWorkoutsState();
         if (updatedStudent != storedStudent) {
             setStudent(storedStudent, updatedStudent);
@@ -161,7 +158,7 @@ public class ModelManager implements Model {
 
     @Override
     public void setCurrentStudent(Student student) {
-        currentStudent.set(requireNonNull(student));
+        currentStudent.set(brotherGym.validateStudentInBrotherGym(student));
     }
 
     @Override
