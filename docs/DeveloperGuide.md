@@ -94,13 +94,21 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 <puml src="diagrams/DeleteSequenceDiagram.puml" alt="Logic component interactions for the `deleteStudent 1` command" />
 
-How the `Logic` component works:
+#### How the `Logic` component works
+
+##### Command execution
 
 1. The UI calls `Logic.execute(commandText)`. `LogicManager` passes the command text to `BrotherGymParser`, which returns the corresponding `Command` object.
 2. `LogicManager` executes the command with the `Model`. Commands can read or update model data and return a `CommandResult`.
 3. After a command executes successfully, `LogicManager` saves the BrotherGym data through `Storage` and returns the `CommandResult` to the UI. `MainWindow` displays the result's feedback; parsing, command, and storage errors are also displayed there.
 
-`Logic` exposes the filtered student list, the current student, its read-only observable property, and GUI settings to the UI. The UI observes the filtered list so it reflects changes to the student filter. `MainWindow` observes the current-student property and updates the student selection and workout-plan panel when it changes. It reads GUI settings when initializing the window and updates them through `Logic` when exiting. The `home` command shows all students and clears the current selection. Plan commands operate on the currently selected student.
+##### Interaction with the UI
+
+`Logic` exposes the filtered student list, the current student and its read-only observable property, and GUI settings to the UI.
+
+* **Student list and selection:** The UI observes the filtered student list so it reflects changes to the student filter. `MainWindow` observes the current-student property and updates the student selection and workout-plan panel when it changes.
+* **GUI settings:** The UI reads these settings when initializing the window and updates them through `Logic` when exiting.
+* **Workout plans:** The `home` command shows all students and clears the current selection. Plan commands operate on the currently selected student.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
@@ -236,6 +244,10 @@ If saving BrotherGym data throws an `IOException`, `LogicManager` reports a `Com
 
 **Persistence limitations:** Writes currently go directly to the destination file, without an atomic file replacement or automatic backup. A write failure can leave the file incomplete. After startup falls back to an empty BrotherGym, the next successful command attempts to overwrite the existing data file with the current in-memory data.
 </box>
+
+Workout plans store their `status` as `PENDING`, `COMPLETED`, or `OVERDUE`. Reading a file preserves the saved status
+without recalculating deadlines. Older files with a missing or null status default to `PENDING`; invalid status values
+cause a data-loading error. Date-based statuses are refreshed when the user runs `viewStudent`.
 
 ### Common classes
 

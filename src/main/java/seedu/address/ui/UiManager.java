@@ -1,5 +1,7 @@
 package seedu.address.ui;
 
+import static java.util.Objects.requireNonNull;
+
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
@@ -23,8 +25,8 @@ public class UiManager implements Ui {
     private static final Logger logger = LogsCenter.getLogger(UiManager.class);
     private static final String ICON_APPLICATION = "/images/address_book_32.png";
 
-    private Logic logic;
-    private Path dataFilePath;
+    private final Logic logic;
+    private final Path dataFilePath;
     private MainWindow mainWindow;
 
     /**
@@ -32,12 +34,13 @@ public class UiManager implements Ui {
      * to show in the status bar.
      */
     public UiManager(Logic logic, Path dataFilePath) {
-        this.logic = logic;
-        this.dataFilePath = dataFilePath;
+        this.logic = requireNonNull(logic);
+        this.dataFilePath = requireNonNull(dataFilePath);
     }
 
     @Override
     public void start(Stage primaryStage) {
+        requireNonNull(primaryStage);
         logger.info("Starting UI...");
 
         //Set the application icon.

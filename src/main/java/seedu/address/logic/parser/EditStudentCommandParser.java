@@ -11,10 +11,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.EditStudentCommand;
+import seedu.address.logic.parser.exceptions.NoFieldsToEditException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.tag.StudentTag;
 
@@ -29,6 +32,8 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
     private static final Set<Prefix> NO_REPEAT_PREFIXES =
             Set.of(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
 
+    private static final Logger logger = LogsCenter.getLogger(EditStudentCommandParser.class);
+
     /**
      * Parses the given {@code String} of arguments in the context of the EditStudentCommand
      * and returns an EditStudentCommand object for execution.
@@ -41,17 +46,24 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
         Index index;
         EditStudentCommand.EditStudentDescriptor editStudentDescriptor;
 
+        ParsingStage stage = ParsingStage.TOKENIZATION;
         try {
             ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+
+            stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
+
+            stage = ParsingStage.FIELD_PARSING;
             index = ParserUtil.parseIndex(argMultimap.getPreamble());
             editStudentDescriptor = this.parseValidEditFields(argMultimap);
+
         } catch (ParseException pe) {
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), EditStudentCommand.MESSAGE_USAGE), pe);
+            logger.finer("Parsing of editStudent failed at " + stage.getMessage());
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), EditStudentCommand.MESSAGE_USAGE));
         }
 
         if (!editStudentDescriptor.isAnyFieldEdited()) {
-            throw new ParseException(EditStudentCommand.MESSAGE_NOT_EDITED);
+            throw new NoFieldsToEditException(EditStudentCommand.MESSAGE_NOT_EDITED);
         }
 
         return new EditStudentCommand(index, editStudentDescriptor);

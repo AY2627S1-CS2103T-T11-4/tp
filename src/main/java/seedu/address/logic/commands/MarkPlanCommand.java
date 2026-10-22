@@ -2,15 +2,15 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
-
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 
 /**
  * Marks a workout plan belonging to the student currently being viewed as completed.
@@ -46,19 +46,18 @@ public class MarkPlanCommand extends SingleIndexCommand {
         Student currentStudent = model.getCurrentStudent()
                 .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
 
-        List<WorkoutPlan> workoutPlans = currentStudent.getWorkoutPlansList().getWorkoutList();
-        if (targetIndex.getZeroBased() >= workoutPlans.size()) {
-            throw new CommandException(MESSAGE_INVALID_WORKOUT_ID);
+        final WorkoutPlansList updatedPlans;
+        try {
+            updatedPlans = currentStudent.getWorkoutPlansList().markWorkoutPlan(targetIndex.getZeroBased());
+        } catch (WorkoutPlanIndexOutOfBoundsException e) {
+            throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
-
-        WorkoutPlansList updatedPlans = currentStudent.getWorkoutPlansList()
-                .markWorkoutPlan(targetIndex.getZeroBased());
         Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
         model.setStudent(currentStudent, updatedStudent);
 
-        WorkoutPlan markedPlan = updatedPlans.getWorkoutList().get(targetIndex.getZeroBased());
-        return new CommandResult(String.format(MESSAGE_SUCCESS, markedPlan));
+        WorkoutPlan markedPlan = updatedPlans.getWorkoutPlan(targetIndex.getZeroBased());
+        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(markedPlan)));
     }
 
     @Override

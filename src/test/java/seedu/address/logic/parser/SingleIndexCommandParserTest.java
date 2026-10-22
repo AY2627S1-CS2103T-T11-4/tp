@@ -20,7 +20,7 @@ import seedu.address.model.Model;
 public class SingleIndexCommandParserTest {
     private class SingleIndexCommandStub extends SingleIndexCommand {
 
-        public static final String COMMAND_WORD = "deletePlan";
+        public static final String COMMAND_WORD = "stub";
 
         public static final String MESSAGE_USAGE = COMMAND_WORD
                 + ": A dummy SingleIndexCommand\n"
@@ -65,7 +65,8 @@ public class SingleIndexCommandParserTest {
     }
 
     private SingleIndexCommandParser<SingleIndexCommandStub> parser =
-            new SingleIndexCommandParser<>(SingleIndexCommandStub::new, SingleIndexCommandStub.MESSAGE_USAGE);
+            new SingleIndexCommandParser<>(SingleIndexCommandStub::new,
+                    SingleIndexCommandStub.MESSAGE_USAGE, SingleIndexCommandStub.COMMAND_WORD);
 
     private String formatParserError(String errorMessage) {
         return Messages.formatParserError(errorMessage, SingleIndexCommandStub.MESSAGE_USAGE);

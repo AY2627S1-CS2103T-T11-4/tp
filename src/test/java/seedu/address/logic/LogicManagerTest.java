@@ -14,6 +14,7 @@ import static seedu.address.testutil.TypicalStudents.AMY;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,13 +44,14 @@ public class LogicManagerTest {
 
     private Model model = new ModelManager();
     private Logic logic;
+    private StorageManager storage;
 
     @BeforeEach
     public void setUp() {
         JsonBrotherGymStorage brotherGymStorage =
                 new JsonBrotherGymStorage(temporaryFolder.resolve("brotherGym.json"));
         JsonUserPrefsStorage userPrefsStorage = new JsonUserPrefsStorage(temporaryFolder.resolve("userPrefs.json"));
-        StorageManager storage = new StorageManager(brotherGymStorage, userPrefsStorage);
+        storage = new StorageManager(brotherGymStorage, userPrefsStorage);
         logic = new LogicManager(model, storage);
     }
 
@@ -95,10 +97,16 @@ public class LogicManagerTest {
 
     @Test
     public void getCurrentStudent_delegatesToModel() {
-        Student selectedStudent = AMY;
-        model.setCurrentStudent(selectedStudent);
+        Optional<Student> selectedStudent = Optional.of(AMY);
+        Model modelStub = new ModelManager() {
+            @Override
+            public Optional<Student> getCurrentStudent() {
+                return selectedStudent;
+            }
+        };
+        Logic logicWithStubModel = new LogicManager(modelStub, storage);
 
-        assertSame(selectedStudent, logic.getCurrentStudent().orElseThrow());
+        assertSame(selectedStudent, logicWithStubModel.getCurrentStudent());
     }
 
     /**

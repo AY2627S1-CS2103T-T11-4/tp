@@ -22,6 +22,7 @@ import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.WorkoutTitle;
 
@@ -60,6 +61,28 @@ public class EditPlanCommandTest {
         CommandTestUtil.assertCommandSuccess(new EditPlanCommand(Index.fromOneBased(1), descriptor), model,
                 String.format(EditPlanCommand.MESSAGE_SUCCESS, expectedPlan), expectedModel);
         assertEquals(expectedStudent, model.getCurrentStudent().orElseThrow());
+    }
+
+    @Test
+    public void execute_fieldSpecified_preservesCompletedStatus() throws Exception {
+        WorkoutPlan completedPlan = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getWorkouts(),
+                FIRST_PLAN.getDate(), FIRST_PLAN.getTags(), WorkoutPlanStatus.COMPLETED);
+        Model model = createModelWithPlans(completedPlan);
+        Student currentStudent = model.getFilteredStudentList().get(0);
+        model.setCurrentStudent(currentStudent);
+        EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
+        WorkoutTitle updatedTitle = new WorkoutTitle("Updated strength");
+        descriptor.setTitle(updatedTitle);
+
+        WorkoutPlan expectedPlan = new WorkoutPlan(updatedTitle, completedPlan.getWorkouts(),
+                completedPlan.getDate(), completedPlan.getTags(), WorkoutPlanStatus.COMPLETED);
+        Student expectedStudent = withPlans(currentStudent, expectedPlan);
+        Model expectedModel = modelWithStudent(expectedStudent);
+
+        CommandTestUtil.assertCommandSuccess(new EditPlanCommand(Index.fromOneBased(1), descriptor), model,
+                String.format(EditPlanCommand.MESSAGE_SUCCESS, expectedPlan), expectedModel);
+        assertEquals(WorkoutPlanStatus.COMPLETED,
+                model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutList().get(0).getStatus());
     }
 
     @Test

@@ -38,8 +38,31 @@ public class JsonBrotherGymStorageTest {
     public Path testFolder;
 
     @Test
+    public void constructor_nullFilePath_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> new JsonBrotherGymStorage(null));
+    }
+
+    @Test
+    public void readBrotherGym_invalidWorkoutPlans_throwsDataLoadingException() throws IOException {
+        Path filePath = testFolder.resolve("InvalidWorkoutPlans.json");
+        JsonBrotherGymStorage storage = new JsonBrotherGymStorage(filePath);
+        for (String plans : List.of("[null]",
+                "[{\"title\":\" \",\"workoutDescription\":\"Squats\",\"date\":\"2023-11-15\"}]",
+                "[{\"title\":\"Strength\",\"workoutDescription\":\"\",\"date\":\"2023-11-15\"}]")) {
+            Files.writeString(filePath, """
+                    {"students":[{
+                      "name":"Benson Meier","phone":"98765432","email":"johnd@example.com",
+                      "address":"311, Clementi Ave 2, #02-25","tags":[],"workoutPlans":%s
+                    }]}
+                    """.formatted(plans));
+            assertThrows(DataLoadingException.class, storage::readBrotherGym);
+        }
+    }
+
+    @Test
     public void readBrotherGym_nullFilePath_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> readBrotherGym(null));
+        JsonBrotherGymStorage storage = new JsonBrotherGymStorage(testFolder.resolve("brothergym.json"));
+        assertThrows(NullPointerException.class, () -> storage.readBrotherGym(null));
     }
 
     private java.util.Optional<ReadOnlyBrotherGym> readBrotherGym(String filePath) throws Exception {

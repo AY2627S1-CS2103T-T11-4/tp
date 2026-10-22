@@ -410,6 +410,57 @@
     -fx-text-fill: #93a6af;
 }
 
+.workout-status-badge {
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+    -fx-border-width: 1px;
+    -fx-font-family: "Cascadia Mono", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 6 2 6;
+}
+
+.workout-status-completed {
+    -fx-background-color: #1d3a26;
+    -fx-border-color: #4f8f5f;
+    -fx-text-fill: #9df5ad;
+}
+
+.workout-status-overdue {
+    -fx-background-color: #4a2025;
+    -fx-border-color: #c25560;
+    -fx-text-fill: #ff9ba4;
+}
+
+.workout-status-pending {
+    -fx-background-color: #2d261f;
+    -fx-border-color: #6f4a27;
+    -fx-text-fill: #ffb86b;
+}
+
+.workout-plan-card.workout-plan-overdue {
+    -fx-background-color: #32191e;
+    -fx-border-color: #b64955;
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(gaussian, rgba(218, 76, 89, 0.32), 12, 0.30, 0, 2);
+}
+
+.workout-plan-card.workout-plan-overdue:hover {
+    -fx-background-color: #3b1d23;
+    -fx-border-color: #e05c69;
+}
+
+.workout-plan-card.workout-plan-completed {
+    -fx-background-color: #14251c;
+    -fx-border-color: #4c8a5a;
+    -fx-effect: dropshadow(gaussian, rgba(100, 210, 125, 0.30), 12, 0.30, 0, 2);
+}
+
+.workout-plan-card.workout-plan-completed:hover {
+    -fx-background-color: #183022;
+    -fx-border-color: #6fbd7f;
+}
+
 .workout-plan-description {
     -fx-font-size: 12px;
     -fx-text-fill: #c7d3d8;

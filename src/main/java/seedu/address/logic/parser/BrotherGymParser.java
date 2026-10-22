@@ -1,5 +1,6 @@
 package seedu.address.logic.parser;
 
+import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 
@@ -24,6 +25,7 @@ import seedu.address.logic.commands.MarkPlanCommand;
 import seedu.address.logic.commands.UnmarkPlanCommand;
 import seedu.address.logic.commands.ViewPlanCommand;
 import seedu.address.logic.commands.ViewStudentCommand;
+import seedu.address.logic.parser.exceptions.InputFormatInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -45,17 +47,23 @@ public class BrotherGymParser {
     private static final EditStudentCommandParser EDIT_STUDENT_PARSER = new EditStudentCommandParser();
     private static final EditPlanCommandParser EDIT_PLAN_PARSER = new EditPlanCommandParser();
     private static final SingleIndexCommandParser<MarkPlanCommand> MARK_PLAN_PARSER =
-            new SingleIndexCommandParser<>(MarkPlanCommand::new, MarkPlanCommand.MESSAGE_USAGE);
+            new SingleIndexCommandParser<>(
+                    MarkPlanCommand::new, MarkPlanCommand.MESSAGE_USAGE, MarkPlanCommand.COMMAND_WORD);
     private static final SingleIndexCommandParser<UnmarkPlanCommand> UNMARK_PLAN_PARSER =
-            new SingleIndexCommandParser<>(UnmarkPlanCommand::new, UnmarkPlanCommand.MESSAGE_USAGE);
+            new SingleIndexCommandParser<>(
+                    UnmarkPlanCommand::new, UnmarkPlanCommand.MESSAGE_USAGE, UnmarkPlanCommand.COMMAND_WORD);
     private static final SingleIndexCommandParser<ViewStudentCommand> VIEW_STUDENT_PARSER =
-            new SingleIndexCommandParser<>(ViewStudentCommand::new, ViewStudentCommand.MESSAGE_USAGE);
+            new SingleIndexCommandParser<>(
+                    ViewStudentCommand::new, ViewStudentCommand.MESSAGE_USAGE, ViewStudentCommand.COMMAND_WORD);
     private static final SingleIndexCommandParser<ViewPlanCommand> VIEW_PLAN_PARSER =
-            new SingleIndexCommandParser<>(ViewPlanCommand::new, ViewPlanCommand.MESSAGE_USAGE);
+            new SingleIndexCommandParser<>(
+                    ViewPlanCommand::new, ViewPlanCommand.MESSAGE_USAGE, ViewPlanCommand.COMMAND_WORD);
     private static final SingleIndexCommandParser<DeleteStudentCommand> DELETE_STUDENT_PARSER =
-            new SingleIndexCommandParser<>(DeleteStudentCommand::new, DeleteStudentCommand.MESSAGE_USAGE);
+            new SingleIndexCommandParser<>(
+                    DeleteStudentCommand::new, DeleteStudentCommand.MESSAGE_USAGE, DeleteStudentCommand.COMMAND_WORD);
     private static final SingleIndexCommandParser<DeletePlanCommand> DELETE_PLAN_PARSER =
-            new SingleIndexCommandParser<>(DeletePlanCommand::new, DeletePlanCommand.MESSAGE_USAGE);
+            new SingleIndexCommandParser<>(
+                    DeletePlanCommand::new, DeletePlanCommand.MESSAGE_USAGE, DeletePlanCommand.COMMAND_WORD);
 
     /**
      * Parses user input into command for execution.
@@ -65,9 +73,12 @@ public class BrotherGymParser {
      * @throws ParseException if the user input does not conform to the expected format
      */
     public Command parseCommand(String userInput) throws ParseException {
+        requireNonNull(userInput);
+
         final Matcher matcher = BASIC_COMMAND_FORMAT.matcher(userInput.trim());
         if (!matcher.matches()) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE));
+            throw new InputFormatInvalidException(
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE));
         }
 
         final String commandWord = matcher.group("commandWord");
@@ -76,9 +87,9 @@ public class BrotherGymParser {
         // Note to developers: Change LOG_LEVEL in LogsCenter to enable lower level (i.e., FINE, FINER and lower)
         // log messages such as the one below.
         // Lower level log messages are used sparingly to minimize noise in the code.
-        logger.fine("Command word: " + commandWord + "; Arguments: " + arguments);
+        logger.fine("Parsing command with command word: " + commandWord + "; Arguments: " + arguments);
 
-        return switch (commandWord) {
+        Command parsedCommand = switch (commandWord) {
             case AddStudentCommand.COMMAND_WORD -> ADD_STUDENT_PARSER.parse(arguments);
             case EditStudentCommand.COMMAND_WORD -> EDIT_STUDENT_PARSER.parse(arguments);
             case DeleteStudentCommand.COMMAND_WORD -> DELETE_STUDENT_PARSER.parse(arguments);
@@ -95,10 +106,14 @@ public class BrotherGymParser {
             case ExitCommand.COMMAND_WORD -> new ExitCommand();
             case HelpCommand.COMMAND_WORD -> new HelpCommand();
             default -> {
-                logger.finer("This user input caused a ParseException: " + userInput);
-                throw new ParseException(MESSAGE_UNKNOWN_COMMAND);
+                logger.finer("Unknown command word for input: " + userInput);
+                throw new InputFormatInvalidException(MESSAGE_UNKNOWN_COMMAND);
             }
         };
+
+        logger.info("Parsed user input to generate: " + parsedCommand);
+
+        return parsedCommand;
     }
 
 }
