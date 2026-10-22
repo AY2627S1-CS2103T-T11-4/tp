@@ -87,9 +87,9 @@ public class BrotherGymParser {
         // Note to developers: Change LOG_LEVEL in LogsCenter to enable lower level (i.e., FINE, FINER and lower)
         // log messages such as the one below.
         // Lower level log messages are used sparingly to minimize noise in the code.
-        logger.fine("Command word: " + commandWord + "; Arguments: " + arguments);
+        logger.fine("Parsing command with command word: " + commandWord + "; Arguments: " + arguments);
 
-        return switch (commandWord) {
+        Command parsedCommand = switch (commandWord) {
             case AddStudentCommand.COMMAND_WORD -> ADD_STUDENT_PARSER.parse(arguments);
             case EditStudentCommand.COMMAND_WORD -> EDIT_STUDENT_PARSER.parse(arguments);
             case DeleteStudentCommand.COMMAND_WORD -> DELETE_STUDENT_PARSER.parse(arguments);
@@ -110,6 +110,10 @@ public class BrotherGymParser {
                 throw new InputFormatInvalidException(MESSAGE_UNKNOWN_COMMAND);
             }
         };
+
+        logger.info("Parsed user input to generate: " + parsedCommand);
+
+        return parsedCommand;
     }
 
 }
