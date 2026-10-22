@@ -31,7 +31,7 @@ jobs:
         if: env.AI_BASE_URL != '' && env.AI_TOKEN != ''
         with:
           persist-credentials: false
-      - name: Summarize changes and reference matching issues
+      - name: Summarize changes, link issues, and review Java style
         if: env.AI_BASE_URL != '' && env.AI_TOKEN != ''
         run: python3 .github/scripts/pr_summary.py
       - name: Report missing AI configuration
