@@ -15,7 +15,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.student.exceptions.DuplicateStudentException;
-import seedu.address.model.student.exceptions.InvalidStudentListException;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.testutil.StudentBuilder;
 
@@ -143,7 +142,9 @@ public class UniqueStudentListTest {
 
     @Test
     public void setStudents_nullList_throwsNullPointerException() {
+        uniqueStudentList.add(ALICE);
         assertThrows(NullPointerException.class, () -> uniqueStudentList.setStudents((List<Student>) null));
+        assertEquals(List.of(ALICE), uniqueStudentList.asUnmodifiableObservableList());
     }
 
     @Test
@@ -158,15 +159,30 @@ public class UniqueStudentListTest {
 
     @Test
     public void setStudents_listWithDuplicateStudents_throwsDuplicateStudentException() {
+        uniqueStudentList.add(BOB);
         List<Student> listWithDuplicateStudents = List.of(ALICE, ALICE);
         assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudents(listWithDuplicateStudents));
+        assertEquals(List.of(BOB), uniqueStudentList.asUnmodifiableObservableList());
     }
 
     @Test
-    public void setStudents_listWithNullStudent_throwsInvalidStudentListException() {
-        List<Student> students = new ArrayList<>(List.of(ALICE));
+    public void setStudents_singleNullStudent_throwsNullPointerException() {
+        uniqueStudentList.add(ALICE);
+        List<Student> students = new ArrayList<>();
         students.add(null);
-        assertThrows(InvalidStudentListException.class, () -> uniqueStudentList.setStudents(students));
+
+        assertThrows(NullPointerException.class, () -> uniqueStudentList.setStudents(students));
+        assertEquals(List.of(ALICE), uniqueStudentList.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void setStudents_multipleStudentsWithNull_throwsNullPointerException() {
+        uniqueStudentList.add(ALICE);
+        List<Student> students = new ArrayList<>(List.of(BOB, ALICE));
+        students.add(1, null);
+
+        assertThrows(NullPointerException.class, () -> uniqueStudentList.setStudents(students));
+        assertEquals(List.of(ALICE), uniqueStudentList.asUnmodifiableObservableList());
     }
 
     @Test

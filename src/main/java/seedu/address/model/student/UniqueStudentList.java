@@ -5,12 +5,10 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seedu.address.model.student.exceptions.DuplicateStudentException;
-import seedu.address.model.student.exceptions.InvalidStudentListException;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
 
 /**
@@ -92,10 +90,7 @@ public class UniqueStudentList implements Iterable<Student> {
      * {@code students} must not contain duplicate students.
      */
     public void setStudents(List<Student> students) {
-        requireNonNull(students);
-        if (students.stream().anyMatch(Objects::isNull)) {
-            throw new InvalidStudentListException();
-        }
+        requireAllNonNull(students);
         if (!studentsAreUnique(students)) {
             throw new DuplicateStudentException();
         }
