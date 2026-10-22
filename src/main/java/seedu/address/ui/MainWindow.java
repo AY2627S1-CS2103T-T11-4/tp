@@ -1,5 +1,7 @@
 package seedu.address.ui;
 
+import static java.util.Objects.requireNonNull;
+
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -30,9 +32,9 @@ public class MainWindow extends UiPart<Stage> {
 
     private final Logger logger = LogsCenter.getLogger(getClass());
 
-    private Stage primaryStage;
-    private Logic logic;
-    private Path dataFilePath;
+    private final Stage primaryStage;
+    private final Logic logic;
+    private final Path dataFilePath;
 
     // Independent Ui parts residing in this Ui container
     private StudentListPanel studentListPanel;
@@ -63,12 +65,12 @@ public class MainWindow extends UiPart<Stage> {
      * and the data file path to show in the status bar.
      */
     public MainWindow(Stage primaryStage, Logic logic, Path dataFilePath) {
-        super(FXML, primaryStage);
+        super(FXML, requireNonNull(primaryStage));
 
         // Set dependencies
         this.primaryStage = primaryStage;
-        this.logic = logic;
-        this.dataFilePath = dataFilePath;
+        this.logic = requireNonNull(logic);
+        this.dataFilePath = requireNonNull(dataFilePath);
 
         // Configure the UI
         setWindowDefaultSize(logic.getGuiSettings());
@@ -148,6 +150,7 @@ public class MainWindow extends UiPart<Stage> {
      * Sets the default size based on {@code guiSettings}.
      */
     private void setWindowDefaultSize(GuiSettings guiSettings) {
+        requireNonNull(guiSettings);
         primaryStage.setHeight(guiSettings.getWindowHeight());
         primaryStage.setWidth(guiSettings.getWindowWidth());
         if (guiSettings.getWindowCoordinates() != null) {

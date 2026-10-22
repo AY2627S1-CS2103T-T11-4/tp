@@ -1,5 +1,7 @@
 package seedu.address.ui;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Comparator;
 
 import javafx.fxml.FXML;
@@ -46,6 +48,8 @@ public class StudentCard extends UiPart<Region> {
      */
     public StudentCard(Student student, int displayedIndex) {
         super(FXML);
+        requireNonNull(student);
+        assert displayedIndex > 0 : "displayed index must be positive";
         this.student = student;
         idBadge.setText("#" + displayedIndex);
         name.setText(student.getName().fullName);

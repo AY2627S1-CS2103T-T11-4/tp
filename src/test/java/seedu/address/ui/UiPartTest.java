@@ -58,6 +58,14 @@ public class UiPartTest {
     }
 
     @Test
+    public void constructor_nullRoot_throwsNullPointerException() {
+        URL validFileUrl = getTestFileUrl(VALID_FILE_WITH_FX_ROOT_PATH);
+        assertThrows(NullPointerException.class, () -> new TestUiPart<Object>(validFileUrl, null));
+        assertThrows(NullPointerException.class, () ->
+                new TestUiPart<Object>(VALID_FILE_WITH_FX_ROOT_PATH, null));
+    }
+
+    @Test
     public void constructor_nullFileName_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new TestUiPart<Object>((String) null));
         assertThrows(NullPointerException.class, () -> new TestUiPart<Object>((String) null, new Object()));

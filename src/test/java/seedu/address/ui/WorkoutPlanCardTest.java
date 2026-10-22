@@ -1,6 +1,7 @@
 package seedu.address.ui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
@@ -30,4 +31,10 @@ public class WorkoutPlanCardTest {
 
         assertEquals(List.of(), WorkoutPlanCard.getSortedTags(workoutPlan));
     }
+
+    @Test
+    public void getSortedTags_nullWorkoutPlan_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> WorkoutPlanCard.getSortedTags(null));
+    }
+
 }

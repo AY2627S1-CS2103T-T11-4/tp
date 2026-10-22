@@ -1,5 +1,7 @@
 package seedu.address.ui;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -26,12 +28,14 @@ public class StudentListPanel extends UiPart<Region> {
      */
     public StudentListPanel(ObservableList<Student> studentList) {
         super(FXML);
+        requireNonNull(studentList);
         studentListView.setItems(studentList);
         studentListView.setCellFactory(listView -> new StudentListViewCell());
     }
 
     /** Highlights the selected student, or clears the selection when there is none. */
     public void selectStudent(Optional<Student> student) {
+        requireNonNull(student);
         if (student.isPresent()) {
             studentListView.getSelectionModel().select(student.get());
             studentListView.scrollTo(student.get());
