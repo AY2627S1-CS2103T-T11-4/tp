@@ -27,9 +27,23 @@ def request_json(url, *, token, method="GET", body=None):
     if data is not None:
         headers["Content-Type"] = "application/json"
     request = urllib.request.Request(url, data=data, headers=headers, method=method)
-    with urllib.request.urlopen(request, timeout=60) as response:
-        content = response.read()
-        return json.loads(content) if content else None
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            content = response.read()
+            return json.loads(content) if content else None
+    except urllib.error.HTTPError as error:
+        raw_detail = error.read(1024).decode("utf-8", errors="replace").strip()
+        try:
+            detail = json.loads(raw_detail)
+        except ValueError:
+            detail = raw_detail
+        if isinstance(detail, dict):
+            detail = detail.get("error", detail.get("message", detail))
+        if isinstance(detail, dict):
+            detail = detail.get("message", detail)
+        safe_detail = str(detail).replace(token, "[redacted]")[:300]
+        host = urllib.parse.urlsplit(url).hostname
+        raise RuntimeError(f"{host} returned HTTP {error.code}: {safe_detail}") from error
 
 
 def github(path, *, method="GET", body=None):
@@ -207,6 +221,6 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except (KeyError, ValueError, urllib.error.HTTPError) as error:
+    except (KeyError, ValueError, RuntimeError) as error:
         print(f"PR summarization failed: {error}", file=sys.stderr)
         sys.exit(1)
