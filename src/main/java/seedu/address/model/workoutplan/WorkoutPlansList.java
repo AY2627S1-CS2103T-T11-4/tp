@@ -61,7 +61,10 @@ public final class WorkoutPlansList {
         }
         List<WorkoutPlan> updated = new ArrayList<>(plans);
         updated.set(index, replacement);
-        return new WorkoutPlansList(updated);
+        WorkoutPlansList result = new WorkoutPlansList(updated);
+        assert result.plans.size() == plans.size() : "Replacing a plan changed the list size";
+        assert result.plans.get(index) == replacement : "Plan was not replaced at the requested index";
+        return result;
     }
 
     /**

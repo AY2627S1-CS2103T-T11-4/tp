@@ -47,6 +47,7 @@ public class UniqueStudentList implements Iterable<Student> {
             throw new DuplicateStudentException();
         }
         internalList.add(toAdd);
+        assert studentsAreUnique(internalList) : "Student list contains duplicate identities";
     }
 
     /**
@@ -67,6 +68,7 @@ public class UniqueStudentList implements Iterable<Student> {
         }
 
         internalList.set(index, editedStudent);
+        assert studentsAreUnique(internalList) : "Student list contains duplicate identities";
     }
 
     /**
