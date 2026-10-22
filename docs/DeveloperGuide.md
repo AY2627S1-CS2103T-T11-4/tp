@@ -51,7 +51,7 @@ The bulk of the app's work is done by the following four components:
 
 **How the architecture components interact with each other**
 
-The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `delete 1`.
+The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `deleteStudent 1`.
 
 <puml src="diagrams/ArchitectureSequenceDiagram.puml" width="574" />
 
@@ -126,12 +126,17 @@ How the parsing works:
     (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`),
   * `viewStudent`, `viewPlan`, `deleteStudent` and `deletePlan` commands are `SingleIndexCommand`s that only parse a single index, 
     hence they use the same generic `SingleIndexCommandParser`
+  * both types of parsers implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 * The parser class uses a few dependencies to parse the user input into a valid command object (e.g. `AddStudentCommand`, `DeleteStudentCommand`):
   1. The user input string is passed into `ArgumentTokenizer` to create a `ArgumentMultimap` object to store the entered arguments.
   2. The `ArgumentValidator` ensures that the `ArgumentMultimap` contains the correct arguments for the command.
   3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the `Command` object
 * The `BrotherGymParser` returns that object as a `Command` object.
-* All `XYZCommandParser` classes, including the `SingleIndexCommandParser` class, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+
+The sequence diagram shows how the parser classes create the `DeleteStudentCommand` object 
+when `BrotherGymParser#parseCommand("deleteStudent 1")` is called from `LogicManager`:
+
+<puml src="diagrams/AddPlanParserSequenceDiagram.puml">
 
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
