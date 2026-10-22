@@ -6,6 +6,7 @@ import java.util.List;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
@@ -57,7 +58,7 @@ public class DeletePlanCommand extends SingleIndexCommand {
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
         model.setStudent(currentStudent, updatedStudent);
 
-        return new CommandResult(String.format(MESSAGE_SUCCESS, planToDelete));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(planToDelete)));
     }
 
     @Override

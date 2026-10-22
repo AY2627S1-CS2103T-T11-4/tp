@@ -16,6 +16,7 @@ import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
@@ -94,7 +95,7 @@ public class EditPlanCommand extends Command {
                 new WorkoutPlansList(updatedWorkoutPlans));
         model.setStudent(currentStudent, updatedStudent);
 
-        return new CommandResult(String.format(MESSAGE_SUCCESS, editedPlan));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(editedPlan)));
     }
 
     private static WorkoutPlan createEditedPlan(WorkoutPlan planToEdit, EditPlanDescriptor descriptor) {

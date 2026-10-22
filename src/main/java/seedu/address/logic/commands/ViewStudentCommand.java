@@ -74,7 +74,8 @@ public class ViewStudentCommand extends SingleIndexCommand {
             WorkoutPlanStatus status, String heading) {
         String plans = IntStream.range(0, workoutPlans.size())
                 .filter(index -> workoutPlans.get(index).getStatus() == status)
-                .mapToObj(index -> String.format("%d. %s", index + 1, workoutPlans.get(index)))
+                .mapToObj(index -> String.format("%d. %s", index + 1,
+                        Messages.format(workoutPlans.get(index))))
                 .collect(Collectors.joining("\n"));
         return heading + ":\n" + (plans.isEmpty() ? "  (none)" : plans);
     }
