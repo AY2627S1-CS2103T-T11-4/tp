@@ -1,5 +1,9 @@
 package seedu.address.logic.commands;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.List;
+
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
@@ -35,6 +39,7 @@ public class ViewPlanCommand extends SingleIndexCommand {
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
+        requireNonNull(model);
         Student currentStudent = model.getCurrentStudent()
                 .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
 
