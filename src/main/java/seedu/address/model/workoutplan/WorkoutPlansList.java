@@ -158,4 +158,9 @@ public final class WorkoutPlansList {
     public int hashCode() {
         return plans.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "{" + String.join(", ", plans.stream().map(plan -> "[" + plan + "]").toList()) + "}";
+    }
 }
