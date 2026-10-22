@@ -10,9 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.Test;
+
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
 
 public class WorkoutPlansListTest {
 
@@ -90,7 +91,35 @@ public class WorkoutPlansListTest {
         assertEquals(List.of(FIRST, SECOND, FIRST), original.getWorkoutList());
         assertEquals(List.of(SECOND, FIRST), updated.getWorkoutList());
         assertThrows(NullPointerException.class, () -> original.removeWorkoutPlan(null));
-        assertThrows(NoSuchElementException.class, () -> new WorkoutPlansList().removeWorkoutPlan(FIRST));
+        assertThrows(WorkoutPlanNotFoundException.class, () -> new WorkoutPlansList().removeWorkoutPlan(FIRST));
+    }
+
+    @Test
+    public void setWorkoutPlan_replacesExactTargetAndPreservesOrder() {
+        WorkoutPlan equalFirst = new WorkoutPlan(
+                new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+        WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND, equalFirst));
+
+        WorkoutPlansList updated = original.setWorkoutPlan(equalFirst, SECOND);
+
+        assertEquals(List.of(FIRST, SECOND, equalFirst), original.getWorkoutList());
+        assertEquals(List.of(FIRST, SECOND, SECOND), updated.getWorkoutList());
+        assertSame(FIRST, updated.getWorkoutList().get(0));
+        assertThrows(NullPointerException.class, () -> original.setWorkoutPlan(null, SECOND));
+        assertThrows(NullPointerException.class, () -> original.setWorkoutPlan(FIRST, null));
+        assertThrows(WorkoutPlanNotFoundException.class, () -> new WorkoutPlansList().setWorkoutPlan(FIRST, SECOND));
+    }
+
+    @Test
+    public void setWorkoutPlan_equalTargetReplacesFirstMatchingPlan() {
+        WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND));
+        WorkoutPlan equalFirst = new WorkoutPlan(
+                new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+
+        WorkoutPlansList updated = original.setWorkoutPlan(equalFirst, SECOND);
+
+        assertEquals(List.of(SECOND, SECOND), updated.getWorkoutList());
+        assertEquals(List.of(FIRST, SECOND), original.getWorkoutList());
     }
 
     @Test

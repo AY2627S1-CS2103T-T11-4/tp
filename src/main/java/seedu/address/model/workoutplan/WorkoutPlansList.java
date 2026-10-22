@@ -3,8 +3,9 @@ package seedu.address.model.workoutplan;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
+
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
 
 /**
  * Represents an immutable, ordered list of workout plans.
@@ -64,6 +65,31 @@ public final class WorkoutPlansList {
     }
 
     /**
+     * Returns a list with {@code target} replaced by {@code editedPlan} at the same position.
+     * Prefers the exact target instance when equal-valued plans are present.
+     *
+     * @throws WorkoutPlanNotFoundException If no matching plan is present.
+     */
+    public WorkoutPlansList setWorkoutPlan(WorkoutPlan target, WorkoutPlan editedPlan) {
+        Objects.requireNonNull(target);
+        Objects.requireNonNull(editedPlan);
+        int index = -1;
+        for (int i = 0; i < plans.size(); i++) {
+            if (plans.get(i) == target) {
+                index = i;
+                break;
+            }
+        }
+        if (index < 0) {
+            index = plans.indexOf(target);
+        }
+        if (index < 0) {
+            throw new WorkoutPlanNotFoundException(target);
+        }
+        return replaceWorkoutPlan(index, editedPlan);
+    }
+
+    /**
      * Returns a new list with {@code plan} appended.
      */
     public WorkoutPlansList addWorkoutPlan(WorkoutPlan plan) {
@@ -76,13 +102,13 @@ public final class WorkoutPlansList {
     /**
      * Returns a new list with one plan equal to {@code plan} removed.
      *
-     * @throws NoSuchElementException If no matching plan is present.
+     * @throws WorkoutPlanNotFoundException If no matching plan is present.
      */
     public WorkoutPlansList removeWorkoutPlan(WorkoutPlan plan) {
         Objects.requireNonNull(plan);
         List<WorkoutPlan> updated = new ArrayList<>(plans);
         if (!updated.remove(plan)) {
-            throw new NoSuchElementException("Workout plan not found: " + plan);
+            throw new WorkoutPlanNotFoundException(plan);
         }
         return new WorkoutPlansList(updated);
     }

@@ -15,6 +15,8 @@ import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
+import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlansList;
 
 /**
  * Represents the in-memory model of the address book data.
@@ -103,6 +105,33 @@ public class ModelManager implements Model {
         if (currentStudent.get() == target) {
             setCurrentStudent(editedStudent);
         }
+    }
+
+    @Override
+    public void addWorkoutPlanForStudent(Student student, WorkoutPlan plan) {
+        requireAllNonNull(student, plan);
+        WorkoutPlansList updatedPlans = student.getWorkoutPlansList().addWorkoutPlan(plan);
+        Student updatedStudent = new Student(student.getName(), student.getPhone(),
+                student.getEmail(), student.getAddress(), student.getTags(), updatedPlans);
+        setStudent(student, updatedStudent);
+    }
+
+    @Override
+    public void removeWorkoutPlanForStudent(Student student, WorkoutPlan plan) {
+        requireAllNonNull(student, plan);
+        WorkoutPlansList updatedPlans = student.getWorkoutPlansList().removeWorkoutPlan(plan);
+        Student updatedStudent = new Student(student.getName(), student.getPhone(),
+                student.getEmail(), student.getAddress(), student.getTags(), updatedPlans);
+        setStudent(student, updatedStudent);
+    }
+
+    @Override
+    public void setWorkoutPlanForStudent(Student student, WorkoutPlan target, WorkoutPlan editedPlan) {
+        requireAllNonNull(student, target, editedPlan);
+        WorkoutPlansList updatedPlans = student.getWorkoutPlansList().setWorkoutPlan(target, editedPlan);
+        Student updatedStudent = new Student(student.getName(), student.getPhone(),
+                student.getEmail(), student.getAddress(), student.getTags(), updatedPlans);
+        setStudent(student, updatedStudent);
     }
 
     @Override
