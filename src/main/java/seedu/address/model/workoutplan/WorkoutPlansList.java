@@ -3,8 +3,11 @@ package seedu.address.model.workoutplan;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
+
+import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
 
 /**
  * Represents an immutable, ordered list of workout plans.
@@ -35,6 +38,18 @@ public final class WorkoutPlansList {
         return plans;
     }
 
+    /** Returns the plan at {@code index}. */
+    public WorkoutPlan getWorkoutPlan(int index) {
+        checkIndex(index);
+        return plans.get(index);
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index >= plans.size()) {
+            throw new WorkoutPlanIndexOutOfBoundsException(index);
+        }
+    }
+
     /** Returns a list with each plan's status refreshed. */
     public WorkoutPlansList updateState() {
         LocalDate today = LocalDate.now();
@@ -44,18 +59,18 @@ public final class WorkoutPlansList {
 
     /** Returns a list with the plan at {@code index} marked as completed. */
     public WorkoutPlansList markWorkoutPlan(int index) {
-        WorkoutPlan marked = plans.get(index).mark();
+        WorkoutPlan marked = getWorkoutPlan(index).mark();
         return replaceWorkoutPlan(index, marked);
     }
 
     /** Returns a list with the plan at {@code index} unmarked and its status refreshed. */
     public WorkoutPlansList unmarkWorkoutPlan(int index) {
-        WorkoutPlan unmarked = plans.get(index).unmark();
+        WorkoutPlan unmarked = getWorkoutPlan(index).unmark();
         return replaceWorkoutPlan(index, unmarked);
     }
 
     private WorkoutPlansList replaceWorkoutPlan(int index, WorkoutPlan replacement) {
-        if (plans.get(index) == replacement) {
+        if (getWorkoutPlan(index) == replacement) {
             return this;
         }
         List<WorkoutPlan> updated = new ArrayList<>(plans);
@@ -64,10 +79,43 @@ public final class WorkoutPlansList {
     }
 
     /**
+     * Returns a list with {@code target} replaced by {@code editedPlan} at the same position.
+     * Prefers the exact target instance when equal-valued plans are present.
+     *
+     * @throws WorkoutPlanNotFoundException If no matching plan is present.
+     */
+    public WorkoutPlansList setWorkoutPlan(WorkoutPlan target, WorkoutPlan editedPlan) {
+        Objects.requireNonNull(target);
+        Objects.requireNonNull(editedPlan);
+        int index = -1;
+        for (int i = 0; i < plans.size(); i++) {
+            if (plans.get(i) == target) {
+                index = i;
+                break;
+            }
+        }
+        if (index < 0) {
+            index = plans.indexOf(target);
+        }
+        if (index < 0) {
+            throw new WorkoutPlanNotFoundException(target);
+        }
+        for (int i = 0; i < plans.size(); i++) {
+            if (i != index && plans.get(i).equals(editedPlan)) {
+                throw new DuplicateWorkoutPlanException();
+            }
+        }
+        return replaceWorkoutPlan(index, editedPlan);
+    }
+
+    /**
      * Returns a new list with {@code plan} appended.
      */
     public WorkoutPlansList addWorkoutPlan(WorkoutPlan plan) {
         Objects.requireNonNull(plan);
+        if (plans.contains(plan)) {
+            throw new DuplicateWorkoutPlanException();
+        }
         List<WorkoutPlan> updated = new ArrayList<>(plans);
         updated.add(plan);
         return new WorkoutPlansList(updated);
@@ -76,14 +124,22 @@ public final class WorkoutPlansList {
     /**
      * Returns a new list with one plan equal to {@code plan} removed.
      *
-     * @throws NoSuchElementException If no matching plan is present.
+     * @throws WorkoutPlanNotFoundException If no matching plan is present.
      */
     public WorkoutPlansList removeWorkoutPlan(WorkoutPlan plan) {
         Objects.requireNonNull(plan);
         List<WorkoutPlan> updated = new ArrayList<>(plans);
         if (!updated.remove(plan)) {
-            throw new NoSuchElementException("Workout plan not found: " + plan);
+            throw new WorkoutPlanNotFoundException(plan);
         }
+        return new WorkoutPlansList(updated);
+    }
+
+    /** Returns a new list without the plan at {@code index}. */
+    public WorkoutPlansList removeWorkoutPlan(int index) {
+        checkIndex(index);
+        List<WorkoutPlan> updated = new ArrayList<>(plans);
+        updated.remove(index);
         return new WorkoutPlansList(updated);
     }
 
@@ -101,5 +157,10 @@ public final class WorkoutPlansList {
     @Override
     public int hashCode() {
         return plans.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "{" + String.join(", ", plans.stream().map(plan -> "[" + plan + "]").toList()) + "}";
     }
 }

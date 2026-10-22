@@ -1,5 +1,7 @@
 package seedu.address.ui;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +41,7 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
 
     /** Displays the selected student's workout plans, or the initial prompt when no student is selected. */
     public void showStudent(Optional<Student> student) {
+        requireNonNull(student);
         if (student.isEmpty()) {
             heading.setText("Workout Plans");
             subtitle.setManaged(false);

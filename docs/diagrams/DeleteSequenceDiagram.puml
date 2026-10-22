@@ -2,10 +2,12 @@
 !include style.puml
 skinparam ArrowFontStyle plain
 
+participant ":UI" as UI LOGIC_COLOR
+
 box Logic LOGIC_COLOR_T1
 participant ":LogicManager" as LogicManager LOGIC_COLOR
 participant ":BrotherGymParser" as BrotherGymParser LOGIC_COLOR
-participant ":DeleteStudentCommandParser" as DeleteStudentCommandParser LOGIC_COLOR
+participant ":SingleIndexCommandParser" as SingleIndexCommandParser LOGIC_COLOR
 participant "d:DeleteStudentCommand" as DeleteStudentCommand LOGIC_COLOR
 participant "r:CommandResult" as CommandResult LOGIC_COLOR
 end box
@@ -13,58 +15,49 @@ end box
 box Model MODEL_COLOR_T1
 participant "m:Model" as Model MODEL_COLOR
 end box
+box Storage LOGIC_COLOR_T1
+participant ":Storage" as Storage LOGIC_COLOR
+end box
 
-[-> LogicManager : execute("delete 1")
+UI -> LogicManager : execute("deleteStudent 1")
 activate LogicManager
-
-LogicManager -> BrotherGymParser : parseCommand("delete 1")
+LogicManager -> BrotherGymParser : parseCommand(commandText)
 activate BrotherGymParser
-
-create DeleteStudentCommandParser
-BrotherGymParser -> DeleteStudentCommandParser
-activate DeleteStudentCommandParser
-
-DeleteStudentCommandParser --> BrotherGymParser
-deactivate DeleteStudentCommandParser
-
-BrotherGymParser -> DeleteStudentCommandParser : parse("1")
-activate DeleteStudentCommandParser
-
+BrotherGymParser -> SingleIndexCommandParser : parse(arguments)
+activate SingleIndexCommandParser
 create DeleteStudentCommand
-DeleteStudentCommandParser -> DeleteStudentCommand
+SingleIndexCommandParser -> DeleteStudentCommand : construct(index)
 activate DeleteStudentCommand
-
-DeleteStudentCommand --> DeleteStudentCommandParser :
+DeleteStudentCommand --> SingleIndexCommandParser : command
 deactivate DeleteStudentCommand
-
-DeleteStudentCommandParser --> BrotherGymParser : d
-deactivate DeleteStudentCommandParser
-'Hidden arrow to position the destroy marker below the end of the activation bar.
-DeleteStudentCommandParser -[hidden]-> BrotherGymParser
-destroy DeleteStudentCommandParser
-
-BrotherGymParser --> LogicManager : d
+SingleIndexCommandParser --> BrotherGymParser : command
+deactivate SingleIndexCommandParser
+BrotherGymParser --> LogicManager : command
 deactivate BrotherGymParser
 
-LogicManager -> DeleteStudentCommand : execute(m)
+LogicManager -> DeleteStudentCommand : execute(model)
 activate DeleteStudentCommand
-
-DeleteStudentCommand -> Model : deleteStudent(1)
+DeleteStudentCommand -> Model : getFilteredStudentList()
 activate Model
-
+Model --> DeleteStudentCommand : students
+deactivate Model
+DeleteStudentCommand -> Model : deleteStudent(studentToDelete)
+activate Model
 Model --> DeleteStudentCommand
 deactivate Model
 
 create CommandResult
-DeleteStudentCommand -> CommandResult
+DeleteStudentCommand -> CommandResult : create(feedback)
 activate CommandResult
-
-CommandResult --> DeleteStudentCommand
+CommandResult --> DeleteStudentCommand : result
 deactivate CommandResult
-
-DeleteStudentCommand --> LogicManager : r
+DeleteStudentCommand --> LogicManager : result
 deactivate DeleteStudentCommand
 
-[<--LogicManager
+LogicManager -> Storage : saveBrotherGym(model.getBrotherGym())
+activate Storage
+Storage --> LogicManager
+deactivate Storage
+LogicManager --> UI : CommandResult
 deactivate LogicManager
 @enduml

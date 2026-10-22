@@ -6,7 +6,9 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -25,6 +27,8 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
     private static final Set<Prefix> REQUIRED_PREFIXES = Set.of(PREFIX_PLAN, PREFIX_DATE);
     private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_PLAN, PREFIX_DATE);
 
+    private static final Logger logger = LogsCenter.getLogger(AddPlanCommandParser.class);
+
     /**
      * Parses the given {@code String} of arguments in the context of the AddPlanCommand
      * and returns an AddPlanCommand object for execution.
@@ -36,12 +40,19 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
         ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
         WorkoutPlan workout;
 
+        ParsingStage stage = ParsingStage.TOKENIZATION;
         try {
             ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+
+            stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
+
+            stage = ParsingStage.FIELD_PARSING;
             workout = this.parseValidFields(argMultimap);
+
         } catch (ParseException pe) {
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), AddPlanCommand.MESSAGE_USAGE), pe);
+            logger.finer("Parsing of addPlan command failed at " + stage.getMessage());
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), AddPlanCommand.MESSAGE_USAGE));
         }
 
         return new AddPlanCommand(workout);

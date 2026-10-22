@@ -1,9 +1,12 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.function.Function;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.SingleIndexCommand;
@@ -17,8 +20,11 @@ import seedu.address.logic.parser.exceptions.ParseException;
  */
 public class SingleIndexCommandParser<C extends SingleIndexCommand> implements Parser<C> {
 
+    private static final Logger logger = LogsCenter.getLogger(SingleIndexCommandParser.class);
+
     private final Function<Index, C> commandConstructor;
     private final String commandMessageUsage;
+    private final String commandWord;
 
     /**
      * Initiates a SingleIndexCommandParser object
@@ -29,9 +35,12 @@ public class SingleIndexCommandParser<C extends SingleIndexCommand> implements P
      */
     public SingleIndexCommandParser(
             Function<Index, C> commandConstructor,
-            String commandMessageUsage) {
+            String commandMessageUsage,
+            String commandWord) {
+        requireAllNonNull(commandConstructor, commandMessageUsage, commandWord);
         this.commandConstructor = commandConstructor;
         this.commandMessageUsage = commandMessageUsage;
+        this.commandWord = commandWord;
     }
 
     /**
@@ -45,12 +54,18 @@ public class SingleIndexCommandParser<C extends SingleIndexCommand> implements P
         ArgumentValidator argValidator = new ArgumentValidator();
         Index index;
 
+        ParsingStage stage = ParsingStage.TOKENIZATION;
         try {
             ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+
+            stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
+
+            stage = ParsingStage.FIELD_PARSING;
             index = ParserUtil.parseIndex(argMultimap.getPreamble());
         } catch (ParseException pe) {
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), this.commandMessageUsage), pe);
+            logger.finer("Parsing of " + this.commandWord + " failed at " + stage.getMessage());
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), this.commandMessageUsage));
         }
 
         return this.commandConstructor.apply(index);

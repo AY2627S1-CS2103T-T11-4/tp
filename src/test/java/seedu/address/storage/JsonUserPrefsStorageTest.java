@@ -24,8 +24,14 @@ public class JsonUserPrefsStorageTest {
     public Path testFolder;
 
     @Test
+    public void constructor_nullFilePath_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> new JsonUserPrefsStorage(null));
+    }
+
+    @Test
     public void readUserPrefs_nullFilePath_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> readUserPrefs(null));
+        JsonUserPrefsStorage storage = new JsonUserPrefsStorage(testFolder.resolve("prefs.json"));
+        assertThrows(NullPointerException.class, () -> storage.readUserPrefs(null));
     }
 
     private Optional<UserPrefs> readUserPrefs(String userPrefsFileInTestDataFolder) throws DataLoadingException {

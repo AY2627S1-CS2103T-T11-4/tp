@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.testutil.Assert;
 
 public class ArgumentValidatorTest {
     private static final Prefix REQUIRED_PREFIX = new Prefix("--required");
@@ -27,6 +28,11 @@ public class ArgumentValidatorTest {
             Set.of(REQUIRED_PREFIX, SECOND_REQUIRED_PREFIX));
 
     private static final ArgumentValidator DEFAULT_VALIDATOR = new ArgumentValidator();
+
+    @Test
+    public void verifyArgs_null_throwsNullPointerException() {
+        Assert.assertThrows(NullPointerException.class, () -> VALIDATOR.verifyArgs(null));
+    }
 
     @Test
     public void verifyArgs_validInput_success() {

@@ -84,29 +84,31 @@ The `UI` component,
 
 ### Logic component
 
-**API** : [`Logic.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/logic/Logic.java)
+**API**: [`Logic.java`](https://github.com/AY2627S1-CS2103T-T11-4/tp/blob/master/src/main/java/seedu/address/logic/Logic.java)
 
 Here's a (partial) class diagram of the `Logic` component:
 
-<puml src="diagrams/LogicClassDiagram.puml" width="550"/>
+<puml src="diagrams/LogicClassDiagram.puml" width="650"/>
 
-The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delete 1")` API call as an example.
+The sequence diagram below illustrates the interactions within the `Logic` component, using `execute("deleteStudent 1")` as an example:
 
-<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delete 1` Command" />
+<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Logic component interactions for the `deleteStudent 1` command" />
 
-<box type="info" seamless>
+#### How the `Logic` component works
 
-**Note:** The lifeline for `DeleteStudentCommandParser` should end at the destroy marker (X), but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
-</box>
+##### Command execution
 
+1. The UI calls `Logic.execute(commandText)`. `LogicManager` passes the command text to `BrotherGymParser`, which returns the corresponding `Command` object.
+2. `LogicManager` executes the command with the `Model`. Commands can read or update model data and return a `CommandResult`.
+3. After a command executes successfully, `LogicManager` saves the BrotherGym data through `Storage` and returns the `CommandResult` to the UI. `MainWindow` displays the result's feedback; parsing, command, and storage errors are also displayed there.
 
-How the `Logic` component works:
+##### Interaction with the UI
 
-1. When `Logic` is called upon to execute a command, the command is passed to an `BrotherGymParser` object, which in turn creates a parser that matches the command (e.g., `DeleteStudentCommandParser`) and uses it to parse the command.
-1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteStudentCommand`) which is executed by the `LogicManager`.
-1. The command can communicate with the `Model` when it is executed (e.g. to delete a student).<br>
-   Note that although this is shown as a single step in the diagram above for simplicity, the code can require several interactions between the command object and the `Model` to complete the operation.
-1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`.
+`Logic` exposes the filtered student list, the current student and its read-only observable property, and GUI settings to the UI.
+
+* **Student list and selection:** The UI observes the filtered student list so it reflects changes to the student filter. `MainWindow` observes the current-student property and updates the student selection and workout-plan panel when it changes.
+* **GUI settings:** The UI reads these settings when initializing the window and updates them through `Logic` when exiting.
+* **Workout plans:** The `home` command shows all students and clears the current selection. Plan commands operate on the currently selected student.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
@@ -242,6 +244,10 @@ If saving BrotherGym data throws an `IOException`, `LogicManager` reports a `Com
 
 **Persistence limitations:** Writes currently go directly to the destination file, without an atomic file replacement or automatic backup. A write failure can leave the file incomplete. After startup falls back to an empty BrotherGym, the next successful command attempts to overwrite the existing data file with the current in-memory data.
 </box>
+
+Workout plans store their `status` as `PENDING`, `COMPLETED`, or `OVERDUE`. Reading a file preserves the saved status
+without recalculating deadlines. Older files with a missing or null status default to `PENDING`; invalid status values
+cause a data-loading error. Date-based statuses are refreshed when the user runs `viewStudent`.
 
 ### Common classes
 

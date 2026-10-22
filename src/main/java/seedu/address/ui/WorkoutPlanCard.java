@@ -1,5 +1,7 @@
 package seedu.address.ui;
 
+import static java.util.Objects.requireNonNull;
+
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -41,6 +43,8 @@ public class WorkoutPlanCard extends UiPart<Region> {
     /** Creates a card for the given workout plan and displayed index. */
     public WorkoutPlanCard(WorkoutPlan workoutPlan, int displayedIndex) {
         super(FXML);
+        requireNonNull(workoutPlan);
+        assert displayedIndex > 0 : "displayed index must be positive";
         id.setText("#" + displayedIndex);
         title.setText(workoutPlan.getTitle().getValue());
         date.setText(workoutPlan.getDate().getValue().toInstant()
@@ -83,6 +87,7 @@ public class WorkoutPlanCard extends UiPart<Region> {
 
     /** Returns the workout plan's tags sorted by name for consistent display. */
     static List<WorkoutPlanTag> getSortedTags(WorkoutPlan workoutPlan) {
+        requireNonNull(workoutPlan);
         return workoutPlan.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .toList();

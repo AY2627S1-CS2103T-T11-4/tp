@@ -7,7 +7,9 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -27,6 +29,8 @@ public class AddStudentCommandParser implements Parser<AddStudentCommand> {
     private static final Set<Prefix> REQUIRED_PREFIXES = Set.of(PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
     private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
 
+    private static final Logger logger = LogsCenter.getLogger(AddStudentCommandParser.class);
+
     /**
      * Parses the given {@code String} of arguments in the context of the AddStudentCommand
      * and returns an AddStudentCommand object for execution.
@@ -38,12 +42,19 @@ public class AddStudentCommandParser implements Parser<AddStudentCommand> {
         ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
         Student student;
 
+        ParsingStage stage = ParsingStage.TOKENIZATION;
         try {
             ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+
+            stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
+
+            stage = ParsingStage.FIELD_PARSING;
             student = this.parseValidFields(argMultimap);
+
         } catch (ParseException pe) {
-            throw new ParseException(Messages.formatParserError(pe.getMessage(), AddStudentCommand.MESSAGE_USAGE), pe);
+            logger.finer("Parsing of addStudent command failed at " + stage.getMessage());
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), AddStudentCommand.MESSAGE_USAGE));
         }
 
         return new AddStudentCommand(student);

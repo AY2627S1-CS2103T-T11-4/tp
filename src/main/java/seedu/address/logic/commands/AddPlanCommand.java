@@ -6,11 +6,12 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlansList;
+import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
 
 /**
  * Adds a workout plan to the Student currently being viewed.
@@ -50,15 +51,12 @@ public class AddPlanCommand extends Command {
         Student currentStudent = model.getCurrentStudent()
                 .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
 
-        if (currentStudent.getWorkoutPlansList().getWorkoutList().contains(toAdd)) {
-            throw new CommandException(MESSAGE_DUPLICATE_PLAN);
+        try {
+            model.addWorkoutPlanForStudent(currentStudent, toAdd);
+        } catch (DuplicateWorkoutPlanException e) {
+            throw new CommandException(MESSAGE_DUPLICATE_PLAN, e);
         }
-
-        WorkoutPlansList updatedPlans = currentStudent.getWorkoutPlansList().addWorkoutPlan(toAdd);
-        Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
-                currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
-        model.setStudent(currentStudent, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, toAdd));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
     }
 
     @Override

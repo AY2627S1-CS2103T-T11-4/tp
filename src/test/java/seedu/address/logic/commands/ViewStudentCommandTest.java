@@ -38,6 +38,11 @@ import seedu.address.testutil.TypicalStudents;
  */
 public class ViewStudentCommandTest {
 
+    private static final String DONE_HEADING = "Done:\n";
+    private static final String OVERDUE_HEADING = "Overdue:\n";
+    private static final String PENDING_HEADING = "Pending:\n";
+    private static final String EMPTY_STATUS_PLANS = "  (none)";
+
     private final Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
 
     @Test
@@ -66,9 +71,9 @@ public class ViewStudentCommandTest {
 
         ViewStudentCommand command = new ViewStudentCommand(INDEX_FIRST);
         String expectedMessage = "Viewing plans for Alice Pauline:\n"
-                + "Done:\n  (none)\n"
-                + "Overdue:\n1. " + plan + "\n"
-                + "Pending:\n  (none)";
+                + DONE_HEADING + EMPTY_STATUS_PLANS + "\n"
+                + OVERDUE_HEADING + "1. " + plan + "\n"
+                + PENDING_HEADING + EMPTY_STATUS_PLANS;
         Model expectedModel = new ModelManager(modelWithPlan.getBrotherGym(), new UserPrefs());
         WorkoutPlan overduePlan = new WorkoutPlan(plan.getTitle(), plan.getWorkouts(), plan.getDate(),
                 plan.getTags(), WorkoutPlanStatus.OVERDUE);
@@ -110,9 +115,9 @@ public class ViewStudentCommandTest {
         assertSame(completed, refreshedPlans.get(1));
         assertEquals(WorkoutPlanStatus.PENDING, past.getStatus());
         assertEquals(String.format(ViewStudentCommand.MESSAGE_SUCCESS, refreshed.getName(),
-                "Done:\n2. " + refreshedPlans.get(1) + "\n"
-                        + "Overdue:\n1. " + refreshedPlans.get(0) + "\n"
-                        + "Pending:\n3. " + refreshedPlans.get(2) + "\n4. " + refreshedPlans.get(3)),
+                DONE_HEADING + "2. " + refreshedPlans.get(1) + "\n"
+                        + OVERDUE_HEADING + "1. " + refreshedPlans.get(0) + "\n"
+                        + PENDING_HEADING + "3. " + refreshedPlans.get(2) + "\n4. " + refreshedPlans.get(3)),
                 result.getFeedbackToUser());
 
         command.execute(refreshModel);
