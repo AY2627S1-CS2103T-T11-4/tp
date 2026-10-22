@@ -131,28 +131,44 @@ public class ModelManager implements Model {
     @Override
     public void addWorkoutPlanForStudent(Student student, WorkoutPlan plan) {
         requireAllNonNull(student, plan);
+        logger.fine(() -> "Attempting to add workout plan for student " + student.getName() + ": " + plan);
+
         WorkoutPlansList updatedPlans = student.getWorkoutPlansList().addWorkoutPlan(plan);
         Student updatedStudent = new Student(student.getName(), student.getPhone(),
                 student.getEmail(), student.getAddress(), student.getTags(), updatedPlans);
         setStudent(student, updatedStudent);
+
+        logger.info(() -> "Workout plan added for student " + student.getName() + ": " + plan.getTitle()
+                + "; Total number of workout plans: " + updatedPlans.getWorkoutList().size());
     }
 
     @Override
     public void removeWorkoutPlanForStudent(Student student, WorkoutPlan plan) {
         requireAllNonNull(student, plan);
+        logger.fine(() -> "Attempting to remove workout plan for student " + student.getName() + ": " + plan);
+
         WorkoutPlansList updatedPlans = student.getWorkoutPlansList().removeWorkoutPlan(plan);
         Student updatedStudent = new Student(student.getName(), student.getPhone(),
                 student.getEmail(), student.getAddress(), student.getTags(), updatedPlans);
         setStudent(student, updatedStudent);
+
+        logger.info(() -> "Workout plan removed for student " + student.getName() + ": " + plan.getTitle()
+                + "; Total number of workout plans: " + updatedPlans.getWorkoutList().size());
     }
 
     @Override
     public void setWorkoutPlanForStudent(Student student, WorkoutPlan target, WorkoutPlan editedPlan) {
         requireAllNonNull(student, target, editedPlan);
+        logger.fine(() -> "Attempting to set workout plan for student " + student.getName()
+                + ": " + target + " -> " + editedPlan);
+
         WorkoutPlansList updatedPlans = student.getWorkoutPlansList().setWorkoutPlan(target, editedPlan);
         Student updatedStudent = new Student(student.getName(), student.getPhone(),
                 student.getEmail(), student.getAddress(), student.getTags(), updatedPlans);
         setStudent(student, updatedStudent);
+
+        logger.info(() -> "Workout plan set for student " + student.getName() + ": "
+                + target.getTitle() + " -> " + editedPlan.getTitle());
     }
 
     @Override
