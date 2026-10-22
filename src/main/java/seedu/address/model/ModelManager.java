@@ -66,7 +66,7 @@ public class ModelManager implements Model {
 
         userPrefs.setGuiSettings(guiSettings);
 
-        logger.fine(() -> "GUI settings set: " + guiSettings);
+        logger.info(() -> "GUI settings set: " + guiSettings);
     }
 
     //=========== BrotherGym ================================================================================
@@ -130,31 +130,47 @@ public class ModelManager implements Model {
     @Override
     public void addWorkoutPlanForStudent(Student student, WorkoutPlan plan) {
         requireAllNonNull(student, plan);
+        logger.fine(() -> "Attempting to add workout plan for student " + student.getName() + ": " + plan);
+
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().addWorkoutPlan(plan);
         Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
                 storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
         setStudent(storedStudent, updatedStudent);
+
+        logger.info(() -> "Workout plan added for student " + student.getName() + ": " + plan.getTitle()
+                + "; Total number of workout plans: " + updatedPlans.getWorkoutList().size());
     }
 
     @Override
     public void removeWorkoutPlanForStudent(Student student, WorkoutPlan plan) {
         requireAllNonNull(student, plan);
+        logger.fine(() -> "Attempting to remove workout plan for student " + student.getName() + ": " + plan);
+
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().removeWorkoutPlan(plan);
         Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
                 storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
         setStudent(storedStudent, updatedStudent);
+
+        logger.info(() -> "Workout plan removed for student " + student.getName() + ": " + plan.getTitle()
+                + "; Total number of workout plans: " + updatedPlans.getWorkoutList().size());
     }
 
     @Override
     public void setWorkoutPlanForStudent(Student student, WorkoutPlan target, WorkoutPlan editedPlan) {
         requireAllNonNull(student, target, editedPlan);
+        logger.fine(() -> "Attempting to set workout plan for student " + student.getName()
+                + ": " + target + " -> " + editedPlan);
+
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().setWorkoutPlan(target, editedPlan);
         Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
                 storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
         setStudent(storedStudent, updatedStudent);
+
+        logger.info(() -> "Workout plan set for student " + student.getName() + ": "
+                + target.getTitle() + " -> " + editedPlan.getTitle());
     }
 
     @Override
