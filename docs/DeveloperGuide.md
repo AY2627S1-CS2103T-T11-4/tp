@@ -116,13 +116,20 @@ Here are the other classes in `Logic` (omitted from the class diagram above) tha
 
 <puml src="diagrams/ParserClasses.puml" width="600"/>
 
+Here are the classes dedicated to parsing the arguments of the command strings:
+
+<puml src="diagrams/ArgumentProcessors.puml" width="600"/>
+
 How the parsing works:
 * When called upon to parse a user command, the `BrotherGymParser` class creates either an `XYZCommandParser` or a `SingleIndexCommandParser`
   * `addStudent`, `addPlan`, `editStudent` and `editPlan` commands each have a dedicated `XYZCommandParser`
     (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`),
   * `viewStudent`, `viewPlan`, `deleteStudent` and `deletePlan` commands are `SingleIndexCommand`s that only parse a single index, 
     hence they use the same generic `SingleIndexCommandParser`
-* The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`, `DeleteStudentCommand`). 
+* The parser class uses a few dependencies to parse the user input into a valid command object (e.g. `AddStudentCommand`, `DeleteStudentCommand`):
+  1. The user input string is passed into `ArgumentTokenizer` to create a `ArgumentMultimap` object to store the entered arguments.
+  2. The `ArgumentValidator` ensures that the `ArgumentMultimap` contains the correct arguments for the command.
+  3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the `Command` object
 * The `BrotherGymParser` returns that object as a `Command` object.
 * All `XYZCommandParser` classes, including the `SingleIndexCommandParser` class, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 
