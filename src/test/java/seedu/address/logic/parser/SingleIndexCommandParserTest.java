@@ -1,14 +1,17 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_EMPTY_PREFIX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.SingleIndexCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -17,7 +20,7 @@ import seedu.address.model.Model;
 public class SingleIndexCommandParserTest {
     private class SingleIndexCommandStub extends SingleIndexCommand {
 
-        public static final String COMMAND_WORD = "deletePlan";
+        public static final String COMMAND_WORD = "stub";
 
         public static final String MESSAGE_USAGE = COMMAND_WORD
                 + ": A dummy SingleIndexCommand\n"
@@ -62,7 +65,12 @@ public class SingleIndexCommandParserTest {
     }
 
     private SingleIndexCommandParser<SingleIndexCommandStub> parser =
-            new SingleIndexCommandParser<>(SingleIndexCommandStub::new, SingleIndexCommandStub.MESSAGE_USAGE);
+            new SingleIndexCommandParser<>(SingleIndexCommandStub::new,
+                    SingleIndexCommandStub.MESSAGE_USAGE, SingleIndexCommandStub.COMMAND_WORD);
+
+    private String formatParserError(String errorMessage) {
+        return Messages.formatParserError(errorMessage, SingleIndexCommandStub.MESSAGE_USAGE);
+    }
 
     @Test
     public void parse_validArgs_returnsSingleIndexCommand() {
@@ -70,8 +78,18 @@ public class SingleIndexCommandParserTest {
     }
 
     @Test
-    public void parse_invalidArgs_throwsParseException() {
-        assertParseFailure(parser, "a",
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, SingleIndexCommandStub.MESSAGE_USAGE));
+    public void parse_invalidArgs_throwParseException() {
+        assertParseFailure(parser, "a", this.formatParserError(MESSAGE_INVALID_INDEX));
+    }
+
+    @Test
+    public void parse_invalidPrefixes_throwsParseException() {
+        // empty prefix throws error message for empty prefixes
+        assertParseFailure(parser, "1 -- gibberish", this.formatParserError(MESSAGE_EMPTY_PREFIX));
+
+        // invalid prefix throws error message for invalid prefixes
+        assertParseFailure(parser, "1 --invalid gibberish",
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
+
     }
 }

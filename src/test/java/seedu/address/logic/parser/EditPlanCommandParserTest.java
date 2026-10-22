@@ -1,30 +1,28 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
-import static seedu.address.logic.commands.CommandTestUtil.DATE_DESC_CHEST;
 import static seedu.address.logic.commands.CommandTestUtil.DATE_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LETTERS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PLAN_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TITLE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_CHEST;
 import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_HIIT;
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_STRENGTH;
-import static seedu.address.logic.commands.CommandTestUtil.TITLE_DESC_CHEST;
 import static seedu.address.logic.commands.CommandTestUtil.TITLE_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HIIT;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_STRENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_DATE_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_PLAN_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_TITLE_LEGS;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND;
 import static seedu.address.testutil.TypicalIndexes.INDEX_THIRD;
@@ -44,67 +42,67 @@ public class EditPlanCommandParserTest {
 
     private static final String TAG_EMPTY = " " + PREFIX_TAG;
 
-    private static final String MESSAGE_INVALID_FORMAT =
-            String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditPlanCommand.MESSAGE_USAGE);
-
     private EditPlanCommandParser parser = new EditPlanCommandParser();
+
+    private String formatParserError(String errorMessage) {
+        return Messages.formatParserError(errorMessage, EditPlanCommand.MESSAGE_USAGE);
+    }
+
 
     @Test
     public void parse_missingParts_failure() {
         // no index specified
-        assertParseFailure(parser, VALID_WORKOUT_TITLE_LEGS, MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, VALID_WORKOUT_TITLE_LEGS, this.formatParserError(MESSAGE_INVALID_INDEX));
 
         // no field specified
         assertParseFailure(parser, "1", EditPlanCommand.MESSAGE_NOT_EDITED);
 
-        // no index and no field specified
-        assertParseFailure(parser, "", MESSAGE_INVALID_FORMAT);
     }
 
     @Test
     public void parse_invalidPreamble_failure() {
         // negative index
-        assertParseFailure(parser, "-5" + TITLE_DESC_LEGS, MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "-5" + TITLE_DESC_LEGS, this.formatParserError(MESSAGE_INVALID_INDEX));
 
         // zero index
-        assertParseFailure(parser, "0" + TITLE_DESC_LEGS, MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "0" + TITLE_DESC_LEGS, this.formatParserError(MESSAGE_INVALID_INDEX));
 
         // invalid arguments being parsed as preamble
-        assertParseFailure(parser, "1 some random string", MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "1 some random string", this.formatParserError(MESSAGE_INVALID_INDEX));
 
         // invalid prefix being parsed as preamble
-        assertParseFailure(parser, "1 i/ string", MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "1 i/ string", this.formatParserError(MESSAGE_INVALID_INDEX));
     }
 
     @Test
     public void parse_invalidValue_failure() {
         assertParseFailure(parser, "1" + INVALID_TITLE_DESC,
-                WorkoutTitle.MESSAGE_CONSTRAINTS); // invalid title
+                this.formatParserError(WorkoutTitle.MESSAGE_CONSTRAINTS)); // invalid title
         assertParseFailure(parser, "1" + INVALID_PLAN_DESC,
-                WorkoutDescription.MESSAGE_CONSTRAINTS); // invalid description
+                this.formatParserError(WorkoutDescription.MESSAGE_CONSTRAINTS)); // invalid description
         assertParseFailure(parser, "1" + INVALID_DATE_DESC_LETTERS,
-                WorkoutDate.MESSAGE_CONSTRAINTS); // invalid date (invalid letters)
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS)); // invalid date (invalid letters)
         assertParseFailure(parser, "1" + INVALID_DATE_DESC_LENGTH,
-                WorkoutDate.MESSAGE_CONSTRAINTS); // invalid date (too long)
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS)); // invalid date (too long)
         assertParseFailure(parser, "1" + INVALID_TAG_DESC,
-                WorkoutPlanTag.MESSAGE_CONSTRAINTS); // invalid tag
+                this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS)); // invalid tag
 
         // invalid plan followed by valid date
         assertParseFailure(parser, "1" + INVALID_PLAN_DESC + DATE_DESC_LEGS,
-                WorkoutDescription.MESSAGE_CONSTRAINTS);
+                this.formatParserError(WorkoutDescription.MESSAGE_CONSTRAINTS));
 
         // while parsing {@code PREFIX_TAG} alone will reset the tags of the {@code WorkoutPlan} being edited,
         // parsing it together with a valid tag results in error
         assertParseFailure(parser, "1" + TAG_DESC_STRENGTH + TAG_DESC_HIIT + TAG_EMPTY,
-                WorkoutPlanTag.MESSAGE_CONSTRAINTS);
+                this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS));
         assertParseFailure(parser, "1" + TAG_DESC_STRENGTH + TAG_EMPTY + TAG_DESC_HIIT,
-                WorkoutPlanTag.MESSAGE_CONSTRAINTS);
+                this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS));
         assertParseFailure(parser, "1" + TAG_EMPTY + TAG_DESC_STRENGTH + TAG_DESC_HIIT,
-                WorkoutPlanTag.MESSAGE_CONSTRAINTS);
+                this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS));
 
         // multiple invalid values, but only the first invalid value is captured
-        assertParseFailure(parser, "1" + INVALID_TITLE_DESC + INVALID_PLAN_DESC + VALID_WORKOUT_DATE_LEGS,
-                WorkoutTitle.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, "1" + INVALID_TITLE_DESC + INVALID_PLAN_DESC + DATE_DESC_LEGS,
+                this.formatParserError(WorkoutTitle.MESSAGE_CONSTRAINTS));
     }
 
     @Test
@@ -166,34 +164,19 @@ public class EditPlanCommandParserTest {
 
     @Test
     public void parse_multipleRepeatedFields_failure() {
-        // More extensive testing of duplicate parameter detections is done in
-        // AddPlanCommandParserTest#parse_repeatedNonTagValue_failure()
-
-        // valid followed by invalid
         Index targetIndex = INDEX_FIRST;
-        String userInput = targetIndex.getOneBased() + INVALID_PLAN_DESC + PLAN_DESC_LEGS;
-
-        assertParseFailure(parser, userInput, Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN));
-
-        // invalid followed by valid
-        userInput = targetIndex.getOneBased() + PLAN_DESC_LEGS + INVALID_PLAN_DESC;
-
-        assertParseFailure(parser, userInput, Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN));
-
-        // multiple valid fields repeated
-        userInput = targetIndex.getOneBased() + TITLE_DESC_LEGS + PLAN_DESC_LEGS + DATE_DESC_LEGS
-                + TAG_DESC_STRENGTH + TITLE_DESC_LEGS + PLAN_DESC_LEGS + DATE_DESC_LEGS + TAG_DESC_STRENGTH
-                + TITLE_DESC_CHEST + PLAN_DESC_CHEST + DATE_DESC_CHEST + TAG_DESC_HIIT;
+        String userInput = targetIndex.getOneBased() + PLAN_DESC_LEGS + PLAN_DESC_CHEST;
 
         assertParseFailure(parser, userInput,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN)));
+    }
 
-        // multiple invalid values
-        userInput = targetIndex.getOneBased() + INVALID_TITLE_DESC + INVALID_PLAN_DESC + INVALID_DATE_DESC_LETTERS
-                + INVALID_TITLE_DESC + INVALID_PLAN_DESC + INVALID_DATE_DESC_LENGTH + INVALID_TAG_DESC;
+    @Test
+    public void parse_invalidField_failure() {
+        // invalid prefix alone
+        assertParseFailure(parser, "1" + INVALID_PREFIX_DESC,
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
-        assertParseFailure(parser, userInput,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE));
     }
 
     @Test

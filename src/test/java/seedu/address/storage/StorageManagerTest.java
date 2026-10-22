@@ -2,6 +2,7 @@ package seedu.address.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
 import java.nio.file.Path;
@@ -31,6 +32,14 @@ public class StorageManagerTest {
 
     private Path getTempFilePath(String fileName) {
         return testFolder.resolve(fileName);
+    }
+
+    @Test
+    public void constructor_nullStorage_throwsNullPointerException() {
+        JsonBrotherGymStorage brotherGymStorage = new JsonBrotherGymStorage(getTempFilePath("ab"));
+        JsonUserPrefsStorage userPrefsStorage = new JsonUserPrefsStorage(getTempFilePath("prefs"));
+        assertThrows(NullPointerException.class, () -> new StorageManager(null, userPrefsStorage));
+        assertThrows(NullPointerException.class, () -> new StorageManager(brotherGymStorage, null));
     }
 
     @Test

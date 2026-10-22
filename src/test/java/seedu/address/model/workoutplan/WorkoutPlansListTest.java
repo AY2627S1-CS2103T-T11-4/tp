@@ -2,15 +2,20 @@ package seedu.address.model.workoutplan;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.Test;
+
+import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
 
 public class WorkoutPlansListTest {
 
@@ -18,6 +23,21 @@ public class WorkoutPlansListTest {
             new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
     private static final WorkoutPlan SECOND = new WorkoutPlan(
             new WorkoutTitle("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
+
+    @Test
+    public void updateState_replacesChangedPlansAndPreservesUnchangedPlans() {
+        WorkoutPlan completed = new WorkoutPlan(SECOND.getTitle(), SECOND.getWorkouts(), SECOND.getDate(),
+                java.util.Set.of(), WorkoutPlanStatus.COMPLETED);
+        WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, completed));
+
+        WorkoutPlansList updated = original.updateState();
+
+        assertNotSame(original, updated);
+        assertEquals(WorkoutPlanStatus.PENDING, FIRST.getStatus());
+        assertEquals(WorkoutPlanStatus.OVERDUE, updated.getWorkoutList().get(0).getStatus());
+        assertSame(completed, updated.getWorkoutList().get(1));
+        assertSame(updated, updated.updateState());
+    }
 
     @Test
     public void constructors_rejectNullsAndCopyInput() {
@@ -43,6 +63,24 @@ public class WorkoutPlansListTest {
         assertEquals(List.of(FIRST), original.getWorkoutList());
         assertEquals(List.of(FIRST, SECOND), updated.getWorkoutList());
         assertThrows(NullPointerException.class, () -> original.addWorkoutPlan(null));
+        assertThrows(DuplicateWorkoutPlanException.class, () -> original.addWorkoutPlan(FIRST));
+    }
+
+    @Test
+    public void markAndUnmarkWorkoutPlan_changeOnlySelectedPlan() {
+        WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND));
+
+        WorkoutPlansList marked = original.markWorkoutPlan(0);
+        WorkoutPlansList unmarked = marked.unmarkWorkoutPlan(0);
+
+        assertEquals(WorkoutPlanStatus.PENDING, original.getWorkoutList().get(0).getStatus());
+        assertEquals(WorkoutPlanStatus.COMPLETED, marked.getWorkoutList().get(0).getStatus());
+        assertEquals(WorkoutPlanStatus.OVERDUE, unmarked.getWorkoutList().get(0).getStatus());
+        assertSame(SECOND, marked.getWorkoutList().get(1));
+        assertSame(marked, marked.markWorkoutPlan(0));
+        assertSame(unmarked, unmarked.unmarkWorkoutPlan(0));
+        assertThrows(WorkoutPlanIndexOutOfBoundsException.class, () -> original.markWorkoutPlan(2));
+        assertThrows(WorkoutPlanIndexOutOfBoundsException.class, () -> original.unmarkWorkoutPlan(-1));
     }
 
     @Test
@@ -56,7 +94,49 @@ public class WorkoutPlansListTest {
         assertEquals(List.of(FIRST, SECOND, FIRST), original.getWorkoutList());
         assertEquals(List.of(SECOND, FIRST), updated.getWorkoutList());
         assertThrows(NullPointerException.class, () -> original.removeWorkoutPlan(null));
-        assertThrows(NoSuchElementException.class, () -> new WorkoutPlansList().removeWorkoutPlan(FIRST));
+        assertThrows(WorkoutPlanNotFoundException.class, () -> new WorkoutPlansList().removeWorkoutPlan(FIRST));
+    }
+
+    @Test
+    public void setWorkoutPlan_replacesExactTargetAndPreservesOrder() {
+        WorkoutPlan equalFirst = new WorkoutPlan(
+                new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+        WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND, equalFirst));
+
+        WorkoutPlan replacement = new WorkoutPlan(
+                new WorkoutTitle("Mobility"), new WorkoutDescription("Stretching"), new WorkoutDate(new Date(2)));
+        WorkoutPlansList updated = original.setWorkoutPlan(equalFirst, replacement);
+
+        assertEquals(List.of(FIRST, SECOND, equalFirst), original.getWorkoutList());
+        assertEquals(List.of(FIRST, SECOND, replacement), updated.getWorkoutList());
+        assertSame(FIRST, updated.getWorkoutList().get(0));
+        assertThrows(DuplicateWorkoutPlanException.class, () -> original.setWorkoutPlan(equalFirst, SECOND));
+        assertThrows(NullPointerException.class, () -> original.setWorkoutPlan(null, SECOND));
+        assertThrows(NullPointerException.class, () -> original.setWorkoutPlan(FIRST, null));
+        assertThrows(WorkoutPlanNotFoundException.class, () -> new WorkoutPlansList().setWorkoutPlan(FIRST, SECOND));
+    }
+
+    @Test
+    public void setWorkoutPlan_equalTargetReplacesFirstMatchingPlan() {
+        WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND));
+        WorkoutPlan equalFirst = new WorkoutPlan(
+                new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+
+        WorkoutPlan replacement = new WorkoutPlan(
+                new WorkoutTitle("Mobility"), new WorkoutDescription("Stretching"), new WorkoutDate(new Date(2)));
+        WorkoutPlansList updated = original.setWorkoutPlan(equalFirst, replacement);
+
+        assertEquals(List.of(replacement, SECOND), updated.getWorkoutList());
+        assertEquals(List.of(FIRST, SECOND), original.getWorkoutList());
+    }
+
+    @Test
+    public void indexedAccessAndRemoval_invalidIndex_throwsWorkoutPlanIndexOutOfBoundsException() {
+        WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND));
+        assertSame(SECOND, original.getWorkoutPlan(1));
+        assertEquals(List.of(FIRST), original.removeWorkoutPlan(1).getWorkoutList());
+        assertThrows(WorkoutPlanIndexOutOfBoundsException.class, () -> original.getWorkoutPlan(2));
+        assertThrows(WorkoutPlanIndexOutOfBoundsException.class, () -> original.removeWorkoutPlan(-1));
     }
 
     @Test

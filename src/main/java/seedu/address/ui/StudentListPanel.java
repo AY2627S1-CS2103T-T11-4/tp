@@ -1,5 +1,8 @@
 package seedu.address.ui;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
@@ -25,8 +28,20 @@ public class StudentListPanel extends UiPart<Region> {
      */
     public StudentListPanel(ObservableList<Student> studentList) {
         super(FXML);
+        requireNonNull(studentList);
         studentListView.setItems(studentList);
         studentListView.setCellFactory(listView -> new StudentListViewCell());
+    }
+
+    /** Highlights the selected student, or clears the selection when there is none. */
+    public void selectStudent(Optional<Student> student) {
+        requireNonNull(student);
+        if (student.isPresent()) {
+            studentListView.getSelectionModel().select(student.get());
+            studentListView.scrollTo(student.get());
+        } else {
+            studentListView.getSelectionModel().clearSelection();
+        }
     }
 
     /**
@@ -41,7 +56,9 @@ public class StudentListPanel extends UiPart<Region> {
                 setGraphic(null);
                 setText(null);
             } else {
-                setGraphic(new StudentCard(student, getIndex() + 1).getRoot());
+                Region card = new StudentCard(student, getIndex() + 1).getRoot();
+                card.prefWidthProperty().bind(studentListView.widthProperty().subtract(24));
+                setGraphic(card);
             }
         }
     }

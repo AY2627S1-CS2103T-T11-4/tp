@@ -81,6 +81,13 @@ public class Student {
         return workoutPlansList;
     }
 
+    /** Returns a student whose workout plans have refreshed statuses. */
+    public Student updateWorkoutsState() {
+        WorkoutPlansList updatedPlans = workoutPlansList.updateState();
+        return updatedPlans == workoutPlansList ? this
+                : new Student(name, phone, email, address, tags, updatedPlans);
+    }
+
     /**
      * Returns true if both students have the same name.
      * This defines a weaker notion of equality between two students.

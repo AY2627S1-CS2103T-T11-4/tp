@@ -1,0 +1,49 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+participant ":LogicManager" as Logic LOGIC_COLOR
+participant "model:Model" as Model MODEL_COLOR
+box Storage STORAGE_COLOR_T1
+participant ":StorageManager" as StorageManager STORAGE_COLOR
+participant ":JsonBrotherGymStorage" as JsonStorage STORAGE_COLOR
+participant "data:JsonSerializableBrotherGym" as Data STORAGE_COLOR
+end box
+participant "JsonUtil" as JsonUtil #777777
+
+note over Logic
+Command execution has succeeded.
+end note
+Logic -> Model : getBrotherGym()
+Model --> Logic : brotherGym
+Logic -> StorageManager : saveBrotherGym(brotherGym)
+activate StorageManager
+StorageManager -> JsonStorage : saveBrotherGym(brotherGym)
+activate JsonStorage
+JsonStorage -> JsonStorage : saveBrotherGym(brotherGym, filePath)
+note over JsonStorage
+FileUtil.createIfMissing(filePath)
+creates the file and missing parent directories.
+end note
+create Data
+JsonStorage -> Data : new JsonSerializableBrotherGym(brotherGym)
+note over Data
+Copy students and their nested
+workout plans and tags into adapters.
+end note
+JsonStorage -> JsonUtil : saveJsonFile(data, filePath)
+activate JsonUtil
+note right of JsonUtil
+Serialize with Jackson;
+overwrite the UTF-8 file via FileUtil.
+end note
+JsonUtil --> JsonStorage
+deactivate JsonUtil
+JsonStorage --> StorageManager
+deactivate JsonStorage
+StorageManager --> Logic
+deactivate StorageManager
+note over Logic
+Return CommandResult after saving succeeds.
+end note
+@enduml

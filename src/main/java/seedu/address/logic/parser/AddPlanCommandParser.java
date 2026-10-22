@@ -1,13 +1,15 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.tag.WorkoutPlanTag;
@@ -20,35 +22,53 @@ import seedu.address.model.workoutplan.WorkoutTitle;
  * Parses input arguments and creates a new AddPlanCommand object
  */
 public class AddPlanCommandParser implements Parser<AddPlanCommand> {
+
+    private static final Set<Prefix> VALID_PREFIXES = Set.of(PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
+    private static final Set<Prefix> REQUIRED_PREFIXES = Set.of(PREFIX_PLAN, PREFIX_DATE);
+    private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_PLAN, PREFIX_DATE);
+
+    private static final Logger logger = LogsCenter.getLogger(AddPlanCommandParser.class);
+
     /**
      * Parses the given {@code String} of arguments in the context of the AddPlanCommand
      * and returns an AddPlanCommand object for execution.
      * @throws ParseException if the user input does not conform to the expected format
      */
     public AddPlanCommand parse(String args) throws ParseException {
-        ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(args, PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
+        requireNonNull(args);
 
-        if (!argMultimap.arePrefixesPresent(PREFIX_PLAN, PREFIX_DATE) || argMultimap.getPreamble().isEmpty()) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddPlanCommand.MESSAGE_USAGE));
+        ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
+        WorkoutPlan workout;
+
+        ParsingStage stage = ParsingStage.TOKENIZATION;
+        try {
+            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+
+            stage = ParsingStage.ARGUMENT_VALIDATION;
+            argValidator.verifyArgs(argMultimap);
+
+            stage = ParsingStage.FIELD_PARSING;
+            workout = this.parseValidFields(argMultimap);
+
+        } catch (ParseException pe) {
+            logger.finer("Parsing of addPlan command failed at " + stage.getMessage());
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), AddPlanCommand.MESSAGE_USAGE));
         }
-
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_PLAN, PREFIX_DATE);
-        WorkoutTitle title = ParserUtil.parseTitle(argMultimap.getPreamble());
-        WorkoutDescription desc = ParserUtil.parseDescription(argMultimap.getValue(PREFIX_PLAN).get());
-        WorkoutDate date = ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get());
-        Set<WorkoutPlanTag> tagList = ParserUtil.parseWorkoutPlanTags(argMultimap.getAllValues(PREFIX_TAG));
-
-        WorkoutPlan workout = new WorkoutPlan(title, desc, date, tagList);
 
         return new AddPlanCommand(workout);
     }
 
     /**
-     * Returns true if none of the prefixes contains empty {@code Optional} values in the given
-     * {@code ArgumentMultimap}.
+     * Parses the validated {@code args} string to produce the WorkoutPlan object to be added,
+     * wrapping any error messages thrown with the message usage.
+     * @throws ParseException if any of the fields contain invalid contents
      */
-    private static boolean arePrefixesPresent(ArgumentMultimap argumentMultimap, Prefix... prefixes) {
-        return Stream.of(prefixes).allMatch(prefix -> argumentMultimap.getValue(prefix).isPresent());
+    private WorkoutPlan parseValidFields(ArgumentMultimap argMultimap) throws ParseException {
+        WorkoutTitle title = ParserUtil.parseTitle(argMultimap.getPreamble());
+        WorkoutDescription desc = ParserUtil.parseDescription(argMultimap.getValue(PREFIX_PLAN).get());
+        WorkoutDate date = ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get());
+        Set<WorkoutPlanTag> tagList = ParserUtil.parseWorkoutPlanTags(argMultimap.getAllValues(PREFIX_TAG));
+
+        return new WorkoutPlan(title, desc, date, tagList);
     }
 }

@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.UniqueStudentList;
+import seedu.address.model.student.exceptions.StudentNotFoundException;
 
 /**
  * Wraps all data at the BrotherGym level.
@@ -54,6 +55,22 @@ public class BrotherGym implements ReadOnlyBrotherGym {
     public boolean hasStudent(Student student) {
         requireNonNull(student);
         return students.contains(student);
+    }
+
+    /**
+     * Validates that {@code student} is stored and returns the stored instance.
+     * A matching name alone does not make a student valid.
+     *
+     * @throws StudentNotFoundException If the student is not stored.
+     */
+    public Student validateStudentInBrotherGym(Student student) {
+        requireNonNull(student);
+        ObservableList<Student> studentList = getStudentList();
+        int index = studentList.indexOf(student);
+        if (index < 0) {
+            throw new StudentNotFoundException();
+        }
+        return studentList.get(index);
     }
 
     /**

@@ -1,8 +1,11 @@
 package seedu.address.logic;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -36,25 +39,28 @@ public class LogicManager implements Logic {
      * Constructs a {@code LogicManager} with the given {@code Model} and {@code Storage}.
      */
     public LogicManager(Model model, Storage storage) {
-        this.model = model;
-        this.storage = storage;
+        this.model = requireNonNull(model);
+        this.storage = requireNonNull(storage);
         brotherGymParser = new BrotherGymParser();
     }
 
     @Override
     public CommandResult execute(String commandText) throws CommandException, ParseException {
-        logger.info("----------------[USER COMMAND][" + commandText + "]");
+        requireNonNull(commandText);
+        logger.info("----------------[USER COMMAND]");
 
         CommandResult commandResult;
-        Command command = brotherGymParser.parseCommand(commandText);
+        Command command = requireNonNull(brotherGymParser.parseCommand(commandText));
 
-        commandResult = command.execute(model);
+        commandResult = requireNonNull(command.execute(model));
 
         try {
             storage.saveBrotherGym(model.getBrotherGym());
         } catch (AccessDeniedException e) {
+            logger.log(Level.WARNING, "Insufficient permissions while saving application data", e);
             throw new CommandException(String.format(FILE_OPS_PERMISSION_ERROR_FORMAT, e.getMessage()), e);
         } catch (IOException ioe) {
+            logger.log(Level.WARNING, "Failed to save application data", ioe);
             throw new CommandException(String.format(FILE_OPS_ERROR_FORMAT, ioe.getMessage()), ioe);
         }
 

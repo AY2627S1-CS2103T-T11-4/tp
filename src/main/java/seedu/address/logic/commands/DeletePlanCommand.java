@@ -2,15 +2,15 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
-
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 
 /**
  * Deletes a workout plan from the Student currently being viewed.
@@ -21,14 +21,14 @@ public class DeletePlanCommand extends SingleIndexCommand {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Deletes a workout plan from the Student currently being viewed.\n"
-            + "Parameters: WORKOUT_ID (must be a positive integer)\n"
+            + "Parameters: PLAN_ID (must be a positive integer)\n"
             + "Example: " + COMMAND_WORD + " 1";
 
     public static final String MESSAGE_SUCCESS = "Deleted workout: %1$s";
     public static final String MESSAGE_NO_STUDENT_SELECTED =
             "No student is currently selected. Use viewStudent first.";
     public static final String MESSAGE_INVALID_WORKOUT_ID =
-            "Workout ID exceeded total number of workout plans.";
+            "Workout Plan ID exceeded total number of workout plans.";
 
     /**
      * Creates a command to delete the workout plan at the given index.
@@ -46,18 +46,19 @@ public class DeletePlanCommand extends SingleIndexCommand {
         Student currentStudent = model.getCurrentStudent()
                 .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
 
-        List<WorkoutPlan> workoutPlans = currentStudent.getWorkoutPlansList().getWorkoutList();
-        if (targetIndex.getZeroBased() >= workoutPlans.size()) {
-            throw new CommandException(MESSAGE_INVALID_WORKOUT_ID);
+        final WorkoutPlan planToDelete;
+        final WorkoutPlansList updatedPlans;
+        try {
+            planToDelete = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
+            updatedPlans = currentStudent.getWorkoutPlansList().removeWorkoutPlan(targetIndex.getZeroBased());
+        } catch (WorkoutPlanIndexOutOfBoundsException e) {
+            throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
-
-        WorkoutPlan planToDelete = workoutPlans.get(targetIndex.getZeroBased());
-        WorkoutPlansList updatedPlans = currentStudent.getWorkoutPlansList().removeWorkoutPlan(planToDelete);
         Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
         model.setStudent(currentStudent, updatedStudent);
 
-        return new CommandResult(String.format(MESSAGE_SUCCESS, planToDelete));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(planToDelete)));
     }
 
     @Override

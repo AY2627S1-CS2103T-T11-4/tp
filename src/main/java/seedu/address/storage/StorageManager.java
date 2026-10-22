@@ -1,5 +1,7 @@
 package seedu.address.storage;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -17,15 +19,15 @@ import seedu.address.model.UserPrefs;
 public class StorageManager implements Storage {
 
     private static final Logger logger = LogsCenter.getLogger(StorageManager.class);
-    private JsonBrotherGymStorage brotherGymStorage;
-    private JsonUserPrefsStorage userPrefsStorage;
+    private final JsonBrotherGymStorage brotherGymStorage;
+    private final JsonUserPrefsStorage userPrefsStorage;
 
     /**
-     * Creates a {@code StorageManager} with the given BrotherGym and user prefs storage.
+     * Creates a {@code StorageManager} with non-null BrotherGym and user prefs storage.
      */
     public StorageManager(JsonBrotherGymStorage brotherGymStorage, JsonUserPrefsStorage userPrefsStorage) {
-        this.brotherGymStorage = brotherGymStorage;
-        this.userPrefsStorage = userPrefsStorage;
+        this.brotherGymStorage = requireNonNull(brotherGymStorage);
+        this.userPrefsStorage = requireNonNull(userPrefsStorage);
     }
 
     // ================ UserPrefs methods ==============================
