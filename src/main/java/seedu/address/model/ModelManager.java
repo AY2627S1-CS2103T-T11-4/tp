@@ -14,7 +14,6 @@ import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.student.Student;
-import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 
@@ -133,10 +132,11 @@ public class ModelManager implements Model {
         requireAllNonNull(student, plan);
         logger.fine(() -> "Attempting to add workout plan for student " + student.getName() + ": " + plan);
 
-        WorkoutPlansList updatedPlans = student.getWorkoutPlansList().addWorkoutPlan(plan);
-        Student updatedStudent = new Student(student.getName(), student.getPhone(),
-                student.getEmail(), student.getAddress(), student.getTags(), updatedPlans);
-        setStudent(student, updatedStudent);
+        Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().addWorkoutPlan(plan);
+        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
+                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        setStudent(storedStudent, updatedStudent);
 
         logger.info(() -> "Workout plan added for student " + student.getName() + ": " + plan.getTitle()
                 + "; Total number of workout plans: " + updatedPlans.getWorkoutList().size());
@@ -147,10 +147,11 @@ public class ModelManager implements Model {
         requireAllNonNull(student, plan);
         logger.fine(() -> "Attempting to remove workout plan for student " + student.getName() + ": " + plan);
 
-        WorkoutPlansList updatedPlans = student.getWorkoutPlansList().removeWorkoutPlan(plan);
-        Student updatedStudent = new Student(student.getName(), student.getPhone(),
-                student.getEmail(), student.getAddress(), student.getTags(), updatedPlans);
-        setStudent(student, updatedStudent);
+        Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().removeWorkoutPlan(plan);
+        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
+                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        setStudent(storedStudent, updatedStudent);
 
         logger.info(() -> "Workout plan removed for student " + student.getName() + ": " + plan.getTitle()
                 + "; Total number of workout plans: " + updatedPlans.getWorkoutList().size());
@@ -162,10 +163,11 @@ public class ModelManager implements Model {
         logger.fine(() -> "Attempting to set workout plan for student " + student.getName()
                 + ": " + target + " -> " + editedPlan);
 
-        WorkoutPlansList updatedPlans = student.getWorkoutPlansList().setWorkoutPlan(target, editedPlan);
-        Student updatedStudent = new Student(student.getName(), student.getPhone(),
-                student.getEmail(), student.getAddress(), student.getTags(), updatedPlans);
-        setStudent(student, updatedStudent);
+        Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().setWorkoutPlan(target, editedPlan);
+        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
+                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        setStudent(storedStudent, updatedStudent);
 
         logger.info(() -> "Workout plan set for student " + student.getName() + ": "
                 + target.getTitle() + " -> " + editedPlan.getTitle());
@@ -173,12 +175,7 @@ public class ModelManager implements Model {
 
     @Override
     public Student updateStudentWorkoutsState(Student student) {
-        requireNonNull(student);
-        int index = brotherGym.getStudentList().indexOf(student);
-        if (index < 0) {
-            throw new StudentNotFoundException();
-        }
-        Student storedStudent = brotherGym.getStudentList().get(index);
+        Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         Student updatedStudent = storedStudent.updateWorkoutsState();
         if (updatedStudent != storedStudent) {
             setStudent(storedStudent, updatedStudent);
@@ -200,7 +197,7 @@ public class ModelManager implements Model {
     public void setCurrentStudent(Student student) {
         requireNonNull(student);
         logger.fine(() -> "Attempting to set selected student: " + student.getName());
-        currentStudent.set(student);
+        currentStudent.set(brotherGym.validateStudentInBrotherGym(student));
         logger.info(() -> "Selected student set: " + student.getName());
     }
 

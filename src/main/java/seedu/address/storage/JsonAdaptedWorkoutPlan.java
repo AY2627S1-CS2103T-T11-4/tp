@@ -119,9 +119,15 @@ class JsonAdaptedWorkoutPlan {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT,
                     WorkoutTitle.class.getSimpleName()));
         }
+        if (!WorkoutTitle.isValidWorkoutTitle(title)) {
+            throw new IllegalValueException(WorkoutTitle.MESSAGE_CONSTRAINTS);
+        }
         if (workoutDescription == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT,
                     WorkoutDescription.class.getSimpleName()));
+        }
+        if (!WorkoutDescription.isValidWorkoutDescription(workoutDescription)) {
+            throw new IllegalValueException(WorkoutDescription.MESSAGE_CONSTRAINTS);
         }
         if (date == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT,

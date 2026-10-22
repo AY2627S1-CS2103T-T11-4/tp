@@ -125,6 +125,24 @@ public class JsonAdaptedWorkoutPlanTest {
     }
 
     @Test
+    public void toModelType_blankTitle_throwsIllegalValueException() {
+        for (String title : List.of("", " ", "\t\n")) {
+            JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan(title, "Squats", "2023-11-15");
+            IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
+            assertEquals(WorkoutTitle.MESSAGE_CONSTRAINTS, exception.getMessage());
+        }
+    }
+
+    @Test
+    public void toModelType_blankDescription_throwsIllegalValueException() {
+        for (String description : List.of("", " ", "\t\n")) {
+            JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan("Strength", description, "2023-11-15");
+            IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
+            assertEquals(WorkoutDescription.MESSAGE_CONSTRAINTS, exception.getMessage());
+        }
+    }
+
+    @Test
     public void toModelType_missingFields_throwsIllegalValueException() {
         assertThrows(IllegalValueException.class, () -> new JsonAdaptedWorkoutPlan(null, "Squats", "2023-11-15")
                 .toModelType());

@@ -102,6 +102,9 @@ class JsonAdaptedStudent {
 
         List<WorkoutPlan> modelPlans = new ArrayList<>();
         for (JsonAdaptedWorkoutPlan plan : workoutPlans) {
+            if (plan == null) {
+                throw new IllegalValueException("Workout plans list contains a null workout plan.");
+            }
             modelPlans.add(plan.toModelType());
         }
 

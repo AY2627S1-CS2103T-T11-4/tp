@@ -21,10 +21,10 @@ public class JsonBrotherGymStorage {
 
     private static final Logger logger = LogsCenter.getLogger(JsonBrotherGymStorage.class);
 
-    private Path filePath;
+    private final Path filePath;
 
     public JsonBrotherGymStorage(Path filePath) {
-        this.filePath = filePath;
+        this.filePath = requireNonNull(filePath);
     }
 
     public Path getBrotherGymFilePath() {

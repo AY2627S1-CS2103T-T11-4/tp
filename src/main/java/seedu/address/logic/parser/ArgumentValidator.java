@@ -1,5 +1,6 @@
 package seedu.address.logic.parser;
 
+import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import static seedu.address.logic.Messages.MESSAGE_MISSING_PREAMBLE;
 
@@ -7,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import seedu.address.logic.Messages;
+import seedu.address.logic.parser.exceptions.InputFormatInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -89,6 +91,8 @@ public class ArgumentValidator {
      * @throws ParseException if any of the above tests fail
      */
     public void verifyArgs(ArgumentMultimap argMultimap) throws ParseException {
+        requireNonNull(argMultimap);
+
         boolean throwError = false;
         StringBuilder errorMessage = new StringBuilder();
 
@@ -117,7 +121,7 @@ public class ArgumentValidator {
 
         if (throwError) {
             errorMessage.setLength(errorMessage.length() - 1); // remove last newline
-            throw new ParseException(errorMessage.toString());
+            throw new InputFormatInvalidException(errorMessage.toString());
         }
     }
 }

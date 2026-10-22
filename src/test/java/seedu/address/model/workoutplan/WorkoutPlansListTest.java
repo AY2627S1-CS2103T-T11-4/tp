@@ -13,6 +13,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
 
 public class WorkoutPlansListTest {
@@ -61,6 +63,7 @@ public class WorkoutPlansListTest {
         assertEquals(List.of(FIRST), original.getWorkoutList());
         assertEquals(List.of(FIRST, SECOND), updated.getWorkoutList());
         assertThrows(NullPointerException.class, () -> original.addWorkoutPlan(null));
+        assertThrows(DuplicateWorkoutPlanException.class, () -> original.addWorkoutPlan(FIRST));
     }
 
     @Test
@@ -76,8 +79,8 @@ public class WorkoutPlansListTest {
         assertSame(SECOND, marked.getWorkoutList().get(1));
         assertSame(marked, marked.markWorkoutPlan(0));
         assertSame(unmarked, unmarked.unmarkWorkoutPlan(0));
-        assertThrows(IndexOutOfBoundsException.class, () -> original.markWorkoutPlan(2));
-        assertThrows(IndexOutOfBoundsException.class, () -> original.unmarkWorkoutPlan(-1));
+        assertThrows(WorkoutPlanIndexOutOfBoundsException.class, () -> original.markWorkoutPlan(2));
+        assertThrows(WorkoutPlanIndexOutOfBoundsException.class, () -> original.unmarkWorkoutPlan(-1));
     }
 
     @Test
@@ -100,11 +103,14 @@ public class WorkoutPlansListTest {
                 new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
         WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND, equalFirst));
 
-        WorkoutPlansList updated = original.setWorkoutPlan(equalFirst, SECOND);
+        WorkoutPlan replacement = new WorkoutPlan(
+                new WorkoutTitle("Mobility"), new WorkoutDescription("Stretching"), new WorkoutDate(new Date(2)));
+        WorkoutPlansList updated = original.setWorkoutPlan(equalFirst, replacement);
 
         assertEquals(List.of(FIRST, SECOND, equalFirst), original.getWorkoutList());
-        assertEquals(List.of(FIRST, SECOND, SECOND), updated.getWorkoutList());
+        assertEquals(List.of(FIRST, SECOND, replacement), updated.getWorkoutList());
         assertSame(FIRST, updated.getWorkoutList().get(0));
+        assertThrows(DuplicateWorkoutPlanException.class, () -> original.setWorkoutPlan(equalFirst, SECOND));
         assertThrows(NullPointerException.class, () -> original.setWorkoutPlan(null, SECOND));
         assertThrows(NullPointerException.class, () -> original.setWorkoutPlan(FIRST, null));
         assertThrows(WorkoutPlanNotFoundException.class, () -> new WorkoutPlansList().setWorkoutPlan(FIRST, SECOND));
@@ -116,10 +122,21 @@ public class WorkoutPlansListTest {
         WorkoutPlan equalFirst = new WorkoutPlan(
                 new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
 
-        WorkoutPlansList updated = original.setWorkoutPlan(equalFirst, SECOND);
+        WorkoutPlan replacement = new WorkoutPlan(
+                new WorkoutTitle("Mobility"), new WorkoutDescription("Stretching"), new WorkoutDate(new Date(2)));
+        WorkoutPlansList updated = original.setWorkoutPlan(equalFirst, replacement);
 
-        assertEquals(List.of(SECOND, SECOND), updated.getWorkoutList());
+        assertEquals(List.of(replacement, SECOND), updated.getWorkoutList());
         assertEquals(List.of(FIRST, SECOND), original.getWorkoutList());
+    }
+
+    @Test
+    public void indexedAccessAndRemoval_invalidIndex_throwsWorkoutPlanIndexOutOfBoundsException() {
+        WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND));
+        assertSame(SECOND, original.getWorkoutPlan(1));
+        assertEquals(List.of(FIRST), original.removeWorkoutPlan(1).getWorkoutList());
+        assertThrows(WorkoutPlanIndexOutOfBoundsException.class, () -> original.getWorkoutPlan(2));
+        assertThrows(WorkoutPlanIndexOutOfBoundsException.class, () -> original.removeWorkoutPlan(-1));
     }
 
     @Test

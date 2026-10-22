@@ -1,0 +1,39 @@
+name: Summarize PR and link issues
+
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: pr-summary-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  summarize:
+    runs-on: ubuntu-latest
+    env:
+      # Leave these unset until an AI endpoint and token are available.
+      AI_BASE_URL: ${{ vars.AI_BASE_URL }}
+      AI_TOKEN: ${{ secrets.AI_TOKEN }}
+      AI_MODEL: ${{ vars.AI_MODEL || 'gpt-4o-mini' }}
+      GITHUB_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      REPOSITORY: ${{ github.repository }}
+    steps:
+      # pull_request_target checks out the trusted base branch, never the PR head.
+      - uses: actions/checkout@v4
+        if: env.AI_BASE_URL != '' && env.AI_TOKEN != ''
+        with:
+          persist-credentials: false
+      - name: Summarize changes, link issues, and review Java style
+        if: env.AI_BASE_URL != '' && env.AI_TOKEN != ''
+        run: python3 .github/scripts/pr_summary.py
+      - name: Report missing AI configuration
+        if: env.AI_BASE_URL == '' || env.AI_TOKEN == ''
+        run: echo '::notice::Set the AI_BASE_URL repository variable and AI_TOKEN repository secret to enable PR summaries.'
