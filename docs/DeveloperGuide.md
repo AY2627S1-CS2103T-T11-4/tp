@@ -121,6 +121,8 @@ How the parsing works:
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
 
+The class diagram below shows the high-level structure of the `Model` component.
+
 <puml src="diagrams/ModelClassDiagram.puml" width="450" />
 
 
@@ -131,6 +133,10 @@ The `Model` component,
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
+
+The entity diagram expands `UniqueStudentList` and `Student` to show student details, tags, and workout plans:
+
+<puml src="diagrams/ModelEntitiesClassDiagram.puml" alt="Model entities and their internal relationships" width="700" />
 
 <box type="info" seamless>
 
