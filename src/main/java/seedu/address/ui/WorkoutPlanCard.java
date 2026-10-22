@@ -49,6 +49,7 @@ public class WorkoutPlanCard extends UiPart<Region> {
                 .format(DATE_FORMATTER).toUpperCase(Locale.ROOT));
         status.setText(getStatusText(workoutPlan.getStatus()));
         status.getStyleClass().add(getStatusStyleClass(workoutPlan.getStatus()));
+        getRoot().getStyleClass().add(getCardStyleClass(workoutPlan.getStatus()));
         description.setText(workoutPlan.getWorkouts().getValue());
         getSortedTags(workoutPlan).forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
     }
@@ -62,12 +63,21 @@ public class WorkoutPlanCard extends UiPart<Region> {
         };
     }
 
-    /** Returns the CSS class for a workout plan status. */
+    /** Returns the badge-level CSS class for a workout plan status. */
     static String getStatusStyleClass(WorkoutPlanStatus status) {
         return switch (status) {
             case COMPLETED -> "workout-status-completed";
             case OVERDUE -> "workout-status-overdue";
             case PENDING -> "workout-status-pending";
+        };
+    }
+
+    /** Returns the card-level CSS class for a workout plan status. */
+    static String getCardStyleClass(WorkoutPlanStatus status) {
+        return switch (status) {
+            case COMPLETED -> "workout-plan-completed";
+            case OVERDUE -> "workout-plan-overdue";
+            case PENDING -> "workout-plan-pending";
         };
     }
 

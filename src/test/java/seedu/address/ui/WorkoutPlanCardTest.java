@@ -46,4 +46,12 @@ public class WorkoutPlanCardTest {
         assertEquals("workout-status-overdue", WorkoutPlanCard.getStatusStyleClass(WorkoutPlanStatus.OVERDUE));
         assertEquals("workout-status-pending", WorkoutPlanCard.getStatusStyleClass(WorkoutPlanStatus.PENDING));
     }
+
+    @Test
+    public void getCardStyleClass_allStatuses_returnsMatchingStyleClass() {
+        assertEquals("workout-plan-completed",
+                WorkoutPlanCard.getCardStyleClass(WorkoutPlanStatus.COMPLETED));
+        assertEquals("workout-plan-overdue", WorkoutPlanCard.getCardStyleClass(WorkoutPlanStatus.OVERDUE));
+        assertEquals("workout-plan-pending", WorkoutPlanCard.getCardStyleClass(WorkoutPlanStatus.PENDING));
+    }
 }
