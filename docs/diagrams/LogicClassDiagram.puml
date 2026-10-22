@@ -1,47 +1,40 @@
 @startuml
 !include style.puml
+top to bottom direction
+skinparam linetype polyline
+skinparam nodesep 35
+skinparam ranksep 45
 skinparam arrowThickness 1.1
 skinparam arrowColor LOGIC_COLOR_T4
 skinparam classBackgroundColor LOGIC_COLOR
 
-package Logic as LogicPackage {
+class UI
 
-package "Parser Classes" as ParserClasses{
-}
-Class XYZCommand
-Class CommandResult
-Class "{abstract}\nCommand" as Command
-
-
-Class "<<interface>>\nLogic" as Logic
-Class LogicManager
-}
-
-package Model {
-Class HiddenModel #FFFFFF
+package Logic {
+    interface Logic
+    class LogicManager
+    class BrotherGymParser
+    abstract class Command
+    abstract class SingleIndexCommand
+    class ViewStudentCommand
+    class DeleteStudentCommand
+    class CommandResult
 }
 
-package Storage {
-}
+interface Model
+interface Storage
 
-Class HiddenOutside #FFFFFF
-HiddenOutside ..> Logic
-
-LogicManager .right.|> Logic
-LogicManager -right->"1" ParserClasses
-ParserClasses ..> XYZCommand : <<create>>
-
-XYZCommand -up-|> Command
-LogicManager .left.> Command : <<call>>
-
+UI ..> Logic
+LogicManager .up.|> Logic
+LogicManager --> BrotherGymParser
+BrotherGymParser ..> Command
+LogicManager --> Command
+SingleIndexCommand --|> Command
+ViewStudentCommand --|> SingleIndexCommand
+DeleteStudentCommand --|> SingleIndexCommand
+Command --> Model
 LogicManager --> Model
 LogicManager --> Storage
-Storage --[hidden] Model
-Command .[hidden]up.> Storage
-Command .right.> Model
-note right of XYZCommand: XYZCommand = AddStudentCommand, \nFindCommand, etc
-
+Command ..> CommandResult
 Logic ..> CommandResult
-LogicManager .down.> CommandResult
-Command .up.> CommandResult : <<create>>
 @enduml
