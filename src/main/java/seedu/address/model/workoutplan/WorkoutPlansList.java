@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
 
 /**
@@ -36,6 +38,18 @@ public final class WorkoutPlansList {
         return plans;
     }
 
+    /** Returns the plan at {@code index}. */
+    public WorkoutPlan getWorkoutPlan(int index) {
+        checkIndex(index);
+        return plans.get(index);
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index >= plans.size()) {
+            throw new WorkoutPlanIndexOutOfBoundsException(index);
+        }
+    }
+
     /** Returns a list with each plan's status refreshed. */
     public WorkoutPlansList updateState() {
         LocalDate today = LocalDate.now();
@@ -45,18 +59,18 @@ public final class WorkoutPlansList {
 
     /** Returns a list with the plan at {@code index} marked as completed. */
     public WorkoutPlansList markWorkoutPlan(int index) {
-        WorkoutPlan marked = plans.get(index).mark();
+        WorkoutPlan marked = getWorkoutPlan(index).mark();
         return replaceWorkoutPlan(index, marked);
     }
 
     /** Returns a list with the plan at {@code index} unmarked and its status refreshed. */
     public WorkoutPlansList unmarkWorkoutPlan(int index) {
-        WorkoutPlan unmarked = plans.get(index).unmark();
+        WorkoutPlan unmarked = getWorkoutPlan(index).unmark();
         return replaceWorkoutPlan(index, unmarked);
     }
 
     private WorkoutPlansList replaceWorkoutPlan(int index, WorkoutPlan replacement) {
-        if (plans.get(index) == replacement) {
+        if (getWorkoutPlan(index) == replacement) {
             return this;
         }
         List<WorkoutPlan> updated = new ArrayList<>(plans);
@@ -86,6 +100,11 @@ public final class WorkoutPlansList {
         if (index < 0) {
             throw new WorkoutPlanNotFoundException(target);
         }
+        for (int i = 0; i < plans.size(); i++) {
+            if (i != index && plans.get(i).equals(editedPlan)) {
+                throw new DuplicateWorkoutPlanException();
+            }
+        }
         return replaceWorkoutPlan(index, editedPlan);
     }
 
@@ -94,6 +113,9 @@ public final class WorkoutPlansList {
      */
     public WorkoutPlansList addWorkoutPlan(WorkoutPlan plan) {
         Objects.requireNonNull(plan);
+        if (plans.contains(plan)) {
+            throw new DuplicateWorkoutPlanException();
+        }
         List<WorkoutPlan> updated = new ArrayList<>(plans);
         updated.add(plan);
         return new WorkoutPlansList(updated);
@@ -110,6 +132,14 @@ public final class WorkoutPlansList {
         if (!updated.remove(plan)) {
             throw new WorkoutPlanNotFoundException(plan);
         }
+        return new WorkoutPlansList(updated);
+    }
+
+    /** Returns a new list without the plan at {@code index}. */
+    public WorkoutPlansList removeWorkoutPlan(int index) {
+        checkIndex(index);
+        List<WorkoutPlan> updated = new ArrayList<>(plans);
+        updated.remove(index);
         return new WorkoutPlansList(updated);
     }
 

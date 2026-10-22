@@ -235,6 +235,12 @@ public class ModelManagerTest {
     }
 
     @Test
+    public void setCurrentStudent_missingStudent_throwsStudentNotFoundException() {
+        assertThrows(StudentNotFoundException.class, () -> modelManager.setCurrentStudent(ALICE));
+        assertTrue(modelManager.getCurrentStudent().isEmpty());
+    }
+
+    @Test
     public void setStudent_selectedStudentReplaced_updatesCurrentStudent() {
         modelManager.addStudent(ALICE);
         modelManager.setCurrentStudent(ALICE);
