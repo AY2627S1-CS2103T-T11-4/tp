@@ -6,33 +6,43 @@ skinparam classBackgroundColor LOGIC_COLOR
 
 Class "{abstract}\nCommand" as Command
 Class XYZCommand
+Class "{abstract}\nSingleIndexCommand" as SingleIndexCommand
 
 package "Parser classes"{
-Class "<<interface>>\nParser" as Parser
-Class BrotherGymParser
-Class XYZCommandParser
-Class CliSyntax
-Class ParserUtil
-Class ArgumentMultimap
-Class ArgumentTokenizer
-Class Prefix
+    Class "<<interface>>\nParser" as Parser
+    Class BrotherGymParser
+    Class XYZCommandParser
+    Class SingleIndexCommandParser
+
+    package "Argument Processors" {}
+    Class ParserUtil
+    Class CliSyntax
+    Class Prefix
 }
 
 Class HiddenOutside #FFFFFF
 HiddenOutside ..> BrotherGymParser
 
-BrotherGymParser .down.> XYZCommandParser: <<create>>
-
-XYZCommandParser ..> XYZCommand : <<create>>
-BrotherGymParser ..> Command : <<use>>
+BrotherGymParser ..> Parser : <<create>>
 XYZCommandParser .up.|> Parser
-XYZCommandParser ..> ArgumentMultimap
-XYZCommandParser ..> ArgumentTokenizer
-ArgumentTokenizer .left.> ArgumentMultimap
-XYZCommandParser ..> CliSyntax
-CliSyntax ..> Prefix
-XYZCommandParser ..> ParserUtil
-ParserUtil .down.> Prefix
-ArgumentTokenizer .down.> Prefix
+SingleIndexCommandParser .up.|> Parser
+
+XYZCommandParser .up.> XYZCommand : <<create>>
+SingleIndexCommandParser .up.> SingleIndexCommand : <<create>>
+
+BrotherGymParser ..> Command : <<create>>
 XYZCommand -up-|> Command
+SingleIndexCommand -up-|> Command
+
+XYZCommandParser ..> "Argument Processors"
+SingleIndexCommandParser ..> "Argument Processors"
+XYZCommandParser ..> ParserUtil
+SingleIndexCommandParser ..> ParserUtil
+XYZCommandParser ..> CliSyntax
+SingleIndexCommandParser ..> CliSyntax
+
+"Argument Processors" ..> Prefix
+CliSyntax ..> Prefix
+ParserUtil ..> Prefix
+
 @enduml

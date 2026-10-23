@@ -1,0 +1,30 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor LOGIC_COLOR_T4
+skinparam classBackgroundColor LOGIC_COLOR
+
+Class HiddenOutside1 #FFFFFF
+Class HiddenOutside2 #FFFFFF
+Class HiddenOutside3 #FFFFFF
+
+package "Argument Processors" {
+    Class ArgumentTokenizer
+    Class ArgumentMultiMap
+    Class ArgumentValidator
+}
+
+Class Prefix
+
+HiddenOutside1 ..> ArgumentTokenizer
+HiddenOutside2 ..> ArgumentMultiMap
+HiddenOutside3 ..> ArgumentValidator
+
+ArgumentTokenizer .left.> ArgumentMultiMap : <<create>>
+ArgumentValidator .right.> ArgumentMultiMap : <<validate>>
+
+ArgumentTokenizer ..> Prefix : <<create>>
+ArgumentMultiMap ..> Prefix : <<store>>
+ArgumentValidator ..> Prefix : <<validate>>
+
+@enduml
