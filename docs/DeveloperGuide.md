@@ -263,42 +263,38 @@ This section describes some noteworthy details on how certain features are imple
 
 #### Proposed Implementation
 
-The proposed undo/redo mechanism is facilitated by `VersionedBrotherGym`. It extends `BrotherGym` with an undo/redo history, stored internally as an `brotherGymStateList` and `currentStatePointer`. Additionally, it implements the following operations:
+Undo/redo allows the user to move through complete application states. Each state contains the BrotherGym data, including students and their workout plans, together with the current student-list view. Undoing or redoing a command therefore restores both the data and where the user was working.
 
-* `VersionedBrotherGym#commit()` -- Saves the current BrotherGym state in its history.
-* `VersionedBrotherGym#undo()` -- Restores the previous BrotherGym state from its history.
-* `VersionedBrotherGym#redo()` -- Restores a previously undone BrotherGym state from its history.
+The following example shows how undo/redo behaves when the user searches for a student and manages a workout plan. Assume that Alice is already in the BrotherGym and has no workout plans initially.
 
-These operations are exposed in the `Model` interface as `Model#commitBrotherGym()`, `Model#undoBrotherGym()` and `Model#redoBrotherGym()` respectively.
-
-Given below is an example usage scenario and how the undo/redo mechanism behaves at each step.
-
-Step 1. The user launches the application for the first time. The `VersionedBrotherGym` will be initialized with the initial BrotherGym state, and the `currentStatePointer` pointing to that single BrotherGym state.
+Step 1. The user launches the application. The initial state shows all students and no student is selected.
 
 <puml src="diagrams/UndoRedoState0.puml" alt="UndoRedoState0" />
 
-Step 2. The user executes `deleteStudent 5` command to delete the 5th student in the BrotherGym. The `deleteStudent` command calls `Model#commitBrotherGym()`, causing the modified state of the BrotherGym after the `deleteStudent 5` command executes to be saved in the `brotherGymStateList`, and the `currentStatePointer` is shifted to the newly inserted BrotherGym state.
+Step 2. The user executes `find Alice`. The BrotherGym data is unchanged, but the filtered student list changes, so the new view can be restored by undo/redo.
 
 <puml src="diagrams/UndoRedoState1.puml" alt="UndoRedoState1" />
 
-Step 3. The user executes `addStudent David …` to add a new student. The `addStudent` command also calls `Model#commitBrotherGym()`, causing another modified BrotherGym state to be saved into the `brotherGymStateList`.
+Step 3. The user executes `viewStudent 1` to select Alice and display her workout plans. This creates another restorable view state.
 
 <puml src="diagrams/UndoRedoState2.puml" alt="UndoRedoState2" />
 
 <box type="info" seamless>
 
-**Note:** If a command fails its execution, it will not call `Model#commitBrotherGym()`, so the BrotherGym state will not be saved into the `brotherGymStateList`.
+**Note:** If a command fails its execution, it does not create a history entry. The current data, view, and available redo states remain unchanged.
 </box>
 
-Step 4. The user now decides that adding the student was a mistake, and decides to undo that action by executing the `undo` command. The `undo` command will call `Model#undoBrotherGym()`, which will shift the `currentStatePointer` once to the left, pointing it to the previous BrotherGym state, and restores the BrotherGym to that state.
+Step 4. The user executes `addPlan Strength --plan Upper body --date 31122099`. The plan is added to Alice and Alice remains selected.
 
 <puml src="diagrams/UndoRedoState3.puml" alt="UndoRedoState3" />
 
+Step 5. The user executes `undo`. The workout plan disappears, but Alice remains selected because the previous state was Alice's student view.
+
+<puml src="diagrams/UndoRedoState4.puml" alt="UndoRedoState4" />
 
 <box type="info" seamless>
 
-**Note:** If the `currentStatePointer` is at index 0, pointing to the initial BrotherGym state, then there are no previous BrotherGym states to restore. The `undo` command uses `Model#canUndoBrotherGym()` to check if this is the case. If so, it will return an error to the user rather
-than attempting to perform the undo.
+**Note:** If there is no previous state, the `undo` command returns an error rather than changing the data or view. The `redo` command behaves similarly when there is no previously undone state.
 </box>
 
 The following sequence diagram shows how an undo operation goes through the `Logic` component:
@@ -314,20 +310,20 @@ Similarly, how an undo operation goes through the `Model` component is shown bel
 
 <puml src="diagrams/UndoSequenceDiagram-Model.puml" alt="UndoSequenceDiagram-Model" />
 
-The `redo` command does the opposite — it calls `Model#redoBrotherGym()`, which shifts the `currentStatePointer` once to the right, pointing to the previously undone state, and restores the BrotherGym to that state.
+Step 6. The user executes `undo` again. The application returns to the filtered Alice list, with no student selected.
+
+<puml src="diagrams/UndoRedoState5.puml" alt="UndoRedoState5" />
+
+The user can now execute `redo` twice. The first `redo` restores Alice's selected-student view, and the second `redo` restores the workout plan. The same process works for student mutations such as `addStudent`, `editStudent`, `deleteStudent`, and `clear`, and for the other workout-plan mutations `editPlan`, `deletePlan`, `markPlan`, and `unmarkPlan`.
+
+If the user executes `undo` once more and then executes `home`, the application creates a new view state. This discards the available redo branch, so a subsequent `redo` returns an error. A new successful data or view change after an undo behaves in the same way.
 
 <box type="info" seamless>
 
-**Note:** If the `currentStatePointer` is at index `brotherGymStateList.size() - 1`, pointing to the latest BrotherGym state, then there are no undone BrotherGym states to restore. The `redo` command uses `Model#canRedoBrotherGym()` to check if this is the case. If so, it will return an error to the user rather than attempting to perform the redo.
+**Note:** Repeating an identical `home`, `find`, or `viewStudent` operation does not create an extra history entry. A view-only command such as `viewPlan`, `help`, or `exit` also leaves the undo/redo history unchanged.
 </box>
 
-Step 5. The user then decides to execute the command `home`. Commands that do not modify the BrotherGym, such as `home`, will usually not call `Model#commitBrotherGym()`, `Model#undoBrotherGym()` or `Model#redoBrotherGym()`. Thus, the `brotherGymStateList` remains unchanged.
-
-<puml src="diagrams/UndoRedoState4.puml" alt="UndoRedoState4" />
-
-Step 6. The user executes `clear`, which calls `Model#commitBrotherGym()`. Since the `currentStatePointer` is not pointing at the end of the `brotherGymStateList`, all BrotherGym states after the `currentStatePointer` will be purged. Reason: It no longer makes sense to redo the `addStudent David …` command. This is the behavior that most modern desktop applications follow.
-
-<puml src="diagrams/UndoRedoState5.puml" alt="UndoRedoState5" />
+`viewStudent` is a special case because it may refresh date-based workout-plan statuses. If the refresh changes a status, that data change and the new selected-student view are restored as one undoable step.
 
 The following activity diagram summarizes what happens when a user executes a new command:
 
@@ -338,7 +334,7 @@ The following activity diagram summarizes what happens when a user executes a ne
 **Aspect: How undo & redo execute:**
 
 * **Alternative 1 (current choice):** Saves the entire BrotherGym.
-  * Pros: Easy to implement.
+  * Pros: Easy to implement and restores students together with their workout plans.
   * Cons: May have performance issues in terms of memory usage.
 
 * **Alternative 2:** Individual command knows how to undo/redo by
@@ -346,7 +342,7 @@ The following activity diagram summarizes what happens when a user executes a ne
   * Pros: Will use less memory (e.g. for `deleteStudent`, just save the student being deleted).
   * Cons: We must ensure that the implementation of each individual command is correct.
 
-_{more aspects and alternatives to be added}_
+The active BrotherGym data is saved after every successful command, including successful undo and redo. The undo/redo history and the current view are kept in memory only. After restarting the application, the latest saved data remains, but previous undo/redo steps are no longer available and the application starts at its default home view.
 
 ### \[Proposed\] Data archiving
 

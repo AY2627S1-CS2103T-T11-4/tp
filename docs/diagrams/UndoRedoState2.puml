@@ -4,12 +4,12 @@ skinparam ClassFontColor #000000
 skinparam ClassBorderColor #000000
 skinparam ClassBackgroundColor #FFFFAA
 
-title After command "addStudent David ..."
+title After command "viewStudent 1"
 
 package States <<rectangle>> {
-    class State1 as "<u>state0:BrotherGym</u>"
-    class State2 as "<u>state1:BrotherGym</u>"
-    class State3 as "<u>state2:BrotherGym</u>"
+    class State1 as "<u>state0</u>\nall students / no selection"
+    class State2 as "<u>state1</u>\nfiltered Alice / no selection"
+    class State3 as "<u>state2</u>\nAlice selected"
 }
 
 State1 -[hidden]right-> State2

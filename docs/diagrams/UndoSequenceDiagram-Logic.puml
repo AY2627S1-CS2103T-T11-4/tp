@@ -11,6 +11,7 @@ end box
 box Model MODEL_COLOR_T1
 participant ":Model" as Model MODEL_COLOR
 end box
+participant ":Storage" as Storage
 [-> LogicManager : execute(undo)
 activate LogicManager
 
@@ -30,13 +31,23 @@ deactivate BrotherGymParser
 LogicManager -> UndoCommand : execute()
 activate UndoCommand
 
-UndoCommand -> Model : undoBrotherGym()
+UndoCommand -> Model : canUndoBrotherGym()
 activate Model
-
-Model --> UndoCommand
+Model --> UndoCommand : available
 deactivate Model
 
-UndoCommand --> LogicManager : result
+alt undo unavailable
+    UndoCommand --> LogicManager : boundary error
+else undo available
+    UndoCommand -> Model : undoBrotherGym()
+    activate Model
+    Model --> UndoCommand : restored data and view
+    deactivate Model
+
+    UndoCommand --> LogicManager : result
+    LogicManager -> Storage : save active BrotherGym
+    Storage --> LogicManager
+end
 deactivate UndoCommand
 UndoCommand -[hidden]-> LogicManager : result
 destroy UndoCommand
