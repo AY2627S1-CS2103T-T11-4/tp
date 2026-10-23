@@ -2,9 +2,12 @@ package seedu.address.model.workoutplan;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -50,16 +53,79 @@ public class WorkoutPlanTest {
         assertEquals(DESCRIPTION_VALID, plan.getWorkouts());
         assertEquals(DATE_VALID, plan.getDate());
         assertTrue(plan.getTags().isEmpty());
+        assertEquals(WorkoutPlanStatus.PENDING, plan.getStatus());
     }
 
     @Test
-    public void equals_differentTags_notEqual() {
-        WorkoutPlan strength = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
-                Set.of(new WorkoutPlanTag("strength")));
-        WorkoutPlan cardio = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
-                Set.of(new WorkoutPlanTag("cardio")));
+    public void constructor_withStatus_storesStatus() {
+        WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(), WorkoutPlanStatus.COMPLETED);
 
-        assertFalse(strength.equals(cardio));
+        assertEquals(WorkoutPlanStatus.COMPLETED, plan.getStatus());
+        assertThrows(NullPointerException.class, () -> new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
+                DATE_VALID, Set.of(), null));
+    }
+
+    @Test
+    public void updateState_completedRemainsCompletedRegardlessOfDate() {
+        WorkoutPlan completed = planForDate(LocalDate.of(2026, 10, 17), WorkoutPlanStatus.COMPLETED);
+
+        assertSame(completed, completed.updateState(LocalDate.of(2026, 10, 18)));
+    }
+
+    @Test
+    public void updateState_pastDateBecomesOverdueWithoutMutatingOriginal() {
+        WorkoutPlan pending = planForDate(LocalDate.of(2026, 10, 17), WorkoutPlanStatus.PENDING);
+
+        WorkoutPlan updated = pending.updateState(LocalDate.of(2026, 10, 18));
+
+        assertNotSame(pending, updated);
+        assertEquals(WorkoutPlanStatus.OVERDUE, updated.getStatus());
+        assertEquals(WorkoutPlanStatus.PENDING, pending.getStatus());
+        assertEquals(pending.getTitle(), updated.getTitle());
+        assertEquals(pending.getDate(), updated.getDate());
+    }
+
+    @Test
+    public void updateState_exactDateAndFutureDateRemainPending() {
+        WorkoutPlan today = planForDate(LocalDate.of(2026, 10, 18), WorkoutPlanStatus.OVERDUE);
+        WorkoutPlan future = planForDate(LocalDate.of(2026, 10, 19), WorkoutPlanStatus.PENDING);
+        LocalDate todayDate = LocalDate.of(2026, 10, 18);
+
+        assertEquals(WorkoutPlanStatus.PENDING, today.updateState(todayDate).getStatus());
+        assertSame(future, future.updateState(todayDate));
+    }
+
+    @Test
+    public void mark_completesPlanWithoutChangingOriginal() {
+        WorkoutPlan pending = planForDate(LocalDate.of(2026, 10, 18), WorkoutPlanStatus.PENDING);
+
+        WorkoutPlan marked = pending.mark();
+
+        assertEquals(WorkoutPlanStatus.COMPLETED, marked.getStatus());
+        assertEquals(WorkoutPlanStatus.PENDING, pending.getStatus());
+        assertEquals(pending.getDate(), marked.getDate());
+        assertSame(marked, marked.mark());
+    }
+
+    @Test
+    public void unmark_restoresPendingOrOverdueStatus() {
+        LocalDate today = LocalDate.now();
+        WorkoutPlan past = planForDate(today.minusDays(1), WorkoutPlanStatus.COMPLETED);
+        WorkoutPlan dueToday = planForDate(today, WorkoutPlanStatus.COMPLETED);
+        WorkoutPlan future = planForDate(today.plusDays(1), WorkoutPlanStatus.COMPLETED);
+
+        assertEquals(WorkoutPlanStatus.OVERDUE, past.unmark().getStatus());
+        assertEquals(WorkoutPlanStatus.PENDING, dueToday.unmark().getStatus());
+        assertEquals(WorkoutPlanStatus.PENDING, future.unmark().getStatus());
+        assertEquals(WorkoutPlanStatus.COMPLETED, past.getStatus());
+
+        WorkoutPlan unmarked = past.unmark();
+        assertSame(unmarked, unmarked.unmark());
+    }
+
+    private static WorkoutPlan planForDate(LocalDate deadline, WorkoutPlanStatus status) {
+        return new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, WorkoutDate.fromLocalDate(deadline), Set.of(), status);
     }
 
     @Test
@@ -91,6 +157,18 @@ public class WorkoutPlanTest {
         // different date -> returns false
         assertFalse(plan.equals(new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
                 new WorkoutDate(new Date(DATE_TIME_OTHER)))));
+
+        // different tags -> returns false
+        WorkoutPlan strength = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(new WorkoutPlanTag("strength")));
+        WorkoutPlan cardio = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(new WorkoutPlanTag("cardio")));
+        assertFalse(strength.equals(cardio));
+
+        // different status -> returns false
+        WorkoutPlan overdue = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(), WorkoutPlanStatus.OVERDUE);
+        assertFalse(plan.equals(overdue));
     }
 
     @Test

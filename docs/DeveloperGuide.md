@@ -43,6 +43,7 @@ The bulk of the app's work is done by the following four components:
 
 * [**`UI`**](#ui-component): The UI of the App.
 * [**`Logic`**](#logic-component): The command executor.
+  * [**`Parser`**](#parser-classes): Parsers for user inputs
 * [**`Model`**](#model-component): Holds the data of the App in memory.
 * [**`Storage`**](#storage-component): Reads data from, and writes data to, the hard disk.
 
@@ -50,7 +51,7 @@ The bulk of the app's work is done by the following four components:
 
 **How the architecture components interact with each other**
 
-The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `delete 1`.
+The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `deleteStudent 1`.
 
 <puml src="diagrams/ArchitectureSequenceDiagram.puml" width="574" />
 
@@ -84,51 +85,79 @@ The `UI` component,
 
 ### Logic component
 
-**API** : [`Logic.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/logic/Logic.java)
+**API**: [`Logic.java`](https://github.com/AY2627S1-CS2103T-T11-4/tp/blob/master/src/main/java/seedu/address/logic/Logic.java)
 
 Here's a (partial) class diagram of the `Logic` component:
 
-<puml src="diagrams/LogicClassDiagram.puml" width="550"/>
+<puml src="diagrams/LogicClassDiagram.puml" width="650"/>
 
-The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delete 1")` API call as an example.
+The sequence diagram below illustrates the interactions within the `Logic` component, using `execute("deleteStudent 1")` as an example:
 
-<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delete 1` Command" />
+<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Logic component interactions for the `deleteStudent 1` command" />
 
-<box type="info" seamless>
+#### How the `Logic` component works
 
-**Note:** The lifeline for `DeleteStudentCommandParser` should end at the destroy marker (X), but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
-</box>
+##### Command execution
 
+1. The UI calls `Logic.execute(commandText)`. `LogicManager` passes the command text to `BrotherGymParser`, which returns the corresponding `Command` object.
+2. `LogicManager` executes the command with the `Model`. Commands can read or update model data and return a `CommandResult`.
+3. After a command executes successfully, `LogicManager` saves the BrotherGym data through `Storage` and returns the `CommandResult` to the UI. `MainWindow` displays the result's feedback; parsing, command, and storage errors are also displayed there.
 
-How the `Logic` component works:
+##### Interaction with the UI
 
-1. When `Logic` is called upon to execute a command, the command is passed to an `BrotherGymParser` object, which in turn creates a parser that matches the command (e.g., `DeleteStudentCommandParser`) and uses it to parse the command.
-1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteStudentCommand`) which is executed by the `LogicManager`.
-1. The command can communicate with the `Model` when it is executed (e.g. to delete a student).<br>
-   Note that although this is shown as a single step in the diagram above for simplicity, the code can require several interactions between the command object and the `Model` to complete the operation.
-1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`.
+`Logic` exposes the filtered student list, the current student and its read-only observable property, and GUI settings to the UI.
 
+* **Student list and selection:** The UI observes the filtered student list so it reflects changes to the student filter. `MainWindow` observes the current-student property and updates the student selection and workout-plan panel when it changes.
+* **GUI settings:** The UI reads these settings when initializing the window and updates them through `Logic` when exiting.
+* **Workout plans:** The `home` command shows all students and clears the current selection. Plan commands operate on the currently selected student.
+
+#### Parser Classes
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
 <puml src="diagrams/ParserClasses.puml" width="600"/>
 
+Here are the classes dedicated to parsing the arguments of the command strings:
+
+<puml src="diagrams/ArgumentProcessors.puml" width="600"/>
+
 How the parsing works:
-* When called upon to parse a user command, the `BrotherGymParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`). The `BrotherGymParser` returns that object as a `Command` object.
-* All `XYZCommandParser` classes, such as `AddStudentCommandParser` and `DeleteStudentCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+* When called upon to parse a user command, the `BrotherGymParser` class creates either an `XYZCommandParser` or a `SingleIndexCommandParser`
+  * `addStudent`, `addPlan`, `editStudent` and `editPlan` commands each have a dedicated `XYZCommandParser`
+    (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`),
+  * `viewStudent`, `viewPlan`, `deleteStudent` and `deletePlan` commands are `SingleIndexCommand`s that only parse a single index, 
+    hence they use the same generic `SingleIndexCommandParser`
+  * both types of parsers implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+* The parser class uses a few dependencies to parse the user input into a valid command object (e.g. `AddStudentCommand`, `DeleteStudentCommand`):
+  1. The user input string is passed into `ArgumentTokenizer` to create a `ArgumentMultimap` object to store the entered arguments.
+  2. The `ArgumentValidator` ensures that the `ArgumentMultimap` contains the correct arguments for the command.
+  3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the `Command` object
+* The `BrotherGymParser` returns that object as a `Command` object.
+
+The sequence diagram shows how the parser classes create the `DeleteStudentCommand` object 
+when `BrotherGymParser#parseCommand("deleteStudent 1")` is called from `LogicManager`:
+
+<puml src="diagrams/DeleteParserSequenceDiagram.puml" alt="Sequence Diagram for parsing 'delete 1'"/>
 
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
+
+The class diagram below shows the high-level structure of the `Model` component.
 
 <puml src="diagrams/ModelClassDiagram.puml" width="450" />
 
 
 The `Model` component,
 
-* stores the BrotherGym data i.e., all `Student` objects (which are contained in a `UniqueStudentList` object).
-* stores the `Student` objects selected by the current filter, such as search results, in a separate _filtered_ list. It exposes this list as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
+* stores all `Student` objects in a `UniqueStudentList`. Each `Student` contains a `WorkoutPlansList` of `WorkoutPlan` objects.
+* exposes students matching the current filter, such as search results, as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to.
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
+* tracks `currentStudent`, the `Student` whose workout plans the user has chosen to view or edit.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
+
+The entity diagram expands `UniqueStudentList` and `Student` to show student details, tags, and workout plans:
+
+<puml src="diagrams/ModelEntitiesClassDiagram.puml" alt="Model entities and their internal relationships" width="700" />
 
 <box type="info" seamless>
 
@@ -140,14 +169,112 @@ The `Model` component,
 
 ### Storage component
 
-**API** : [`Storage.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/storage/Storage.java)
+**API**: `seedu.address.storage.Storage` (defined in `src/main/java/seedu/address/storage/Storage.java`).
 
-<puml src="diagrams/StorageClassDiagram.puml" width="550" />
+The `Storage` component persists BrotherGym data and user preferences as local JSON files. It converts stored data into model objects when the application starts and writes model data back to disk when requested by `LogicManager` or `MainApp`.
 
-The `Storage` component,
-* can save both BrotherGym data and user preference data in JSON format, and read them back into corresponding objects.
-* is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonBrotherGymStorage` and `JsonUserPrefsStorage` (one class per data file).
-* depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
+#### Structure and responsibilities
+
+<puml src="diagrams/StorageClassDiagram.puml" alt="Storage classes and their JSON adapters, including nested workout plans" width="700" />
+
+* `Storage` exposes methods to read and save BrotherGym data and user preferences, and to retrieve their file paths. Callers use this interface without handling JSON conversion themselves.
+* `StorageManager` implements `Storage` and delegates operations to `JsonBrotherGymStorage` and `JsonUserPrefsStorage`, with one storage object per file.
+* `JsonBrotherGymStorage` handles the BrotherGym data file, using JSON adapters to keep its stored representation separate from the model.
+* `JsonUserPrefsStorage` reads and writes `UserPrefs` directly, without a separate JSON adapter.
+
+Both file storage classes use `JsonUtil` from the `Commons` component for JSON file access. Storage depends on the model types it persists; the model does not depend on Storage.
+
+#### Stored data and file locations
+
+`MainApp` supplies the following paths when constructing the storage objects. Both paths are relative to the application's working directory.
+
+| File | Contents | Representation |
+|------|----------|----------------|
+| `data/brothergym.json` | All students, their contact details, tags, and workout plans | `JsonSerializableBrotherGym` and its nested adapters |
+| `preferences.json` | GUI settings, including window size and position | `UserPrefs` |
+
+BrotherGym data is stored as a top-level `students` array. The following example shows one student with one workout plan:
+
+```json
+{
+  "students": [
+    {
+      "name": "Alex Tan",
+      "phone": "91234567",
+      "email": "alex@example.com",
+      "address": "123 Gym Road",
+      "tags": ["beginner"],
+      "workoutPlans": [
+        {
+          "title": "Leg day",
+          "workoutDescription": "Squats: 3 sets of 10 reps",
+          "date": "2026-10-15",
+          "tags": ["strength"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+Workout dates use ISO local-date format (`yyyy-MM-dd`). `JsonAdaptedWorkoutPlan` converts between this string and the model's `WorkoutDate` using the system's default time zone. Tags are JSON strings; their type is determined by whether they belong to a student or a workout plan.
+
+Missing or `null` tag lists and student workout-plan lists are treated as empty lists. Jackson ignores unknown JSON properties. These choices allow older files without the optional lists to load, but required student fields and workout-plan fields must still be present.
+
+#### Loading and validation
+
+During startup, `MainApp` first loads preferences through `JsonUserPrefsStorage`, then constructs `StorageManager` and reads BrotherGym data through the `Storage` interface. The sequence below shows a successful BrotherGym read; nested adapter conversions are summarized in the note.
+
+<puml src="diagrams/StorageReadSequenceDiagram.puml" alt="Successful startup read from JSON through adapters into the model" width="800" />
+
+1. `StorageManager` delegates `readBrotherGym()` to `JsonBrotherGymStorage`.
+1. `JsonUtil.readJsonFile()` reads the file and deserializes it into `JsonSerializableBrotherGym`.
+1. `JsonSerializableBrotherGym.toModelType()` creates an empty `BrotherGym` and calls `JsonAdaptedStudent.toModelType()` for each stored student. Each student adapter validates its contact fields, converts its tags using `JsonAdaptedTag.toStudentTag()`, and calls `JsonAdaptedWorkoutPlan.toModelType()` for each stored workout plan. Each workout-plan adapter checks required fields, parses its date, and converts its tags using `JsonAdaptedTag.toWorkoutPlanTag()` before constructing a `WorkoutPlan`. The student adapter then collects these plans into a `WorkoutPlansList` and constructs a `Student` using the converted contact fields, tags, and plans. Finally, `JsonSerializableBrotherGym.toModelType()` adds each reconstructed student to the `BrotherGym`. This chain assembles smaller model objects into larger ones: tags and workout fields form workout plans; contact fields, student tags, and workout plans form students; students form the complete `BrotherGym`. Model constructors also enforce their own constraints.
+1. `JsonSerializableBrotherGym` rejects duplicate students using the model's `hasStudent()` check. Only a completed conversion is returned as `Optional<ReadOnlyBrotherGym>`; a failed conversion does not return a partially loaded model.
+
+The caller decides what to use when data cannot be loaded:
+
+| Read outcome | Storage behavior | Startup behavior in `MainApp` |
+|--------------|------------------|-------------------------------|
+| BrotherGym file is missing | Returns `Optional.empty()` | Initializes the model with sample data |
+| BrotherGym file cannot be read or deserialized | Throws `DataLoadingException` | Logs a warning and initializes an empty BrotherGym |
+| An adapter reports an `IllegalValueException`, such as an invalid phone number or duplicate student | Wraps it in `DataLoadingException` | Logs a warning and initializes an empty BrotherGym |
+| Preferences are missing or loading throws `DataLoadingException` | Returns `Optional.empty()` or propagates the exception | Uses default preferences |
+
+The fallback above applies to `DataLoadingException`. Unchecked exceptions from model constructors or malformed nested values are not all translated into this exception by the current adapters.
+
+After initializing preferences, `MainApp` attempts to save them, including defaults if a fallback was used. Loading BrotherGym data itself does not write a data file; sample or empty data is saved on the next successful command.
+
+#### Writing data: from model objects to JSON
+
+Writing proceeds from the complete `BrotherGym` down to its nested objects. `JsonBrotherGymStorage.saveBrotherGym()` accepts the model through its `ReadOnlyBrotherGym` interface and constructs a separate tree of JSON adapters. This conversion uses constructors that accept model objects:
+
+1. **BrotherGym:** `new JsonSerializableBrotherGym(brotherGym)` reads `brotherGym.getStudentList()` and creates a `JsonAdaptedStudent` for each student. These adapters form its `students` list.
+1. **Students:** `new JsonAdaptedStudent(student)` extracts the student's name, phone, email, and address as strings. It converts each student tag into a `JsonAdaptedTag` and each plan in the student's `WorkoutPlansList` into a `JsonAdaptedWorkoutPlan`, collecting them into its `tags` and `workoutPlans` lists.
+1. **Workout plans:** `new JsonAdaptedWorkoutPlan(plan)` extracts the title and workout description as strings, formats the date using `formatDateForStorage()`, and creates a `JsonAdaptedTag` for each workout-plan tag.
+1. **Tags:** `new JsonAdaptedTag(tag)` copies the tag's name. The same adapter accepts both `StudentTag` and `WorkoutPlanTag`; its position in the adapter tree preserves which object owns the tag.
+1. **JSON output:** Once the adapter tree is complete, `JsonUtil.saveJsonFile(data, filePath)` uses Jackson to serialize it into formatted JSON. The adapter lists become JSON arrays, and `JsonAdaptedTag` uses `@JsonValue` to serialize each tag as a string. `FileUtil` then writes the JSON text to the destination file in UTF-8.
+
+The resulting structure matches the example under **Stored data and file locations**: the top-level `students` array contains student objects, each student's `workoutPlans` array contains workout-plan objects, and both students and workout plans have their own `tags` arrays. The adapters copy values from the model without modifying it.
+
+#### Automatic saving and write failures
+
+`LogicManager.execute()` calls `storage.saveBrotherGym(model.getBrotherGym())` after a command executes successfully and before returning its `CommandResult`. This happens for every successful command, including commands that only change the view. Parsing errors and command execution errors prevent this save step from being reached.
+
+<puml src="diagrams/StorageSaveSequenceDiagram.puml" alt="Successful automatic save after a command, from the model through JSON adapters to disk" width="800" />
+
+Before conversion, `JsonBrotherGymStorage` creates the data file and any missing parent directories. Each save replaces the existing file contents with the entire BrotherGym rather than appending an individual change. `MainApp.stop()` separately saves the current user preferences on shutdown.
+
+If saving BrotherGym data throws an `IOException`, `LogicManager` reports a `CommandException`; an `AccessDeniedException` produces a message about insufficient write permissions. The command has already executed at this point, so a failed save does not roll back its changes in memory. Preference save failures are logged by `MainApp`.
+
+<box type="info" seamless>
+
+**Persistence limitations:** Writes currently go directly to the destination file, without an atomic file replacement or automatic backup. A write failure can leave the file incomplete. After startup falls back to an empty BrotherGym, the next successful command attempts to overwrite the existing data file with the current in-memory data.
+</box>
+
+Workout plans store their `status` as `PENDING`, `COMPLETED`, or `OVERDUE`. Reading a file preserves the saved status
+without recalculating deadlines. Older files with a missing or null status default to `PENDING`; invalid status values
+cause a data-loading error. Date-based statuses are refreshed when the user runs `viewStudent`.
 
 ### Common classes
 

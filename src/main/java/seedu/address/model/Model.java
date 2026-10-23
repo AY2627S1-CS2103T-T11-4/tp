@@ -7,6 +7,9 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.exceptions.StudentNotFoundException;
+import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
 
 /**
  * The API of the Model component.
@@ -62,6 +65,35 @@ public interface Model {
      * another existing student in the student list.
      */
     void setStudent(Student target, Student editedStudent);
+
+    /**
+     * Appends a workout plan to the student and stores an updated student value.
+     *
+     * @throws StudentNotFoundException If the student is not in the model.
+     */
+    void addWorkoutPlanForStudent(Student student, WorkoutPlan plan);
+
+    /**
+     * Removes the first plan equal to {@code plan} and stores an updated student value.
+     *
+     * @throws StudentNotFoundException If the student is not in the model.
+     * @throws WorkoutPlanNotFoundException If the student has no matching plan.
+     */
+    void removeWorkoutPlanForStudent(Student student, WorkoutPlan plan);
+
+    /**
+     * Replaces {@code target} with {@code editedPlan} at the same position and stores an updated student value.
+     *
+     * @throws StudentNotFoundException If the student is not in the model.
+     * @throws WorkoutPlanNotFoundException If the student has no matching plan.
+     */
+    void setWorkoutPlanForStudent(Student student, WorkoutPlan target, WorkoutPlan editedPlan);
+
+    /**
+     * Refreshes and stores the given student's workout statuses, then returns the stored student object.
+     * The student must exist in the model.
+     */
+    Student updateStudentWorkoutsState(Student student);
 
     /** Returns the currently selected student as an observable, read-only property. */
     ReadOnlyObjectProperty<Student> currentStudentProperty();

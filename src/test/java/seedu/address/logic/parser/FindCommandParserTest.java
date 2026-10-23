@@ -1,6 +1,8 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_EMPTY_PREFIX;
+import static seedu.address.logic.Messages.MESSAGE_MISSING_PREAMBLE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 
@@ -8,6 +10,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 
@@ -15,9 +18,24 @@ public class FindCommandParserTest {
 
     private FindCommandParser parser = new FindCommandParser();
 
+    private String formatParserError(String errorMessage) {
+        return Messages.formatParserError(errorMessage, FindCommand.MESSAGE_USAGE);
+    }
+
     @Test
     public void parse_emptyArg_throwsParseException() {
-        assertParseFailure(parser, "     ", String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, "     ", this.formatParserError(MESSAGE_MISSING_PREAMBLE));
+    }
+
+    @Test
+    public void parse_invalidPrefix_throwsParseException() {
+        assertParseFailure(parser, "Alice --invalid Bob",
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
+    }
+
+    @Test
+    public void parse_emptyPrefix_throwsParseException() {
+        assertParseFailure(parser, "Alice -- Bob", this.formatParserError(MESSAGE_EMPTY_PREFIX));
     }
 
     @Test

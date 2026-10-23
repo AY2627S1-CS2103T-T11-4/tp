@@ -24,6 +24,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ReadOnlyBrotherGym;
 import seedu.address.model.ReadOnlyUserPrefs;
 import seedu.address.model.student.Student;
+import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.testutil.StudentBuilder;
 
 public class AddStudentCommandTest {
@@ -132,6 +133,26 @@ public class AddStudentCommandTest {
 
         @Override
         public void setStudent(Student target, Student editedStudent) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void addWorkoutPlanForStudent(Student student, WorkoutPlan plan) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void removeWorkoutPlanForStudent(Student student, WorkoutPlan plan) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void setWorkoutPlanForStudent(Student student, WorkoutPlan target, WorkoutPlan editedPlan) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public Student updateStudentWorkoutsState(Student student) {
             throw new AssertionError("This method should not be called.");
         }
 

@@ -2,6 +2,7 @@ package seedu.address.model.workoutplan;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -22,6 +23,7 @@ public final class WorkoutPlan {
     private final WorkoutDescription workouts;
     private final WorkoutDate date;
     private final Set<WorkoutPlanTag> tags;
+    private final WorkoutPlanStatus status;
 
     /**
      * Constructs a workout plan with validated, non-null fields.
@@ -34,12 +36,22 @@ public final class WorkoutPlan {
     /**
      * Constructs a workout plan with validated, non-null fields.
      */
-    public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date, Set<WorkoutPlanTag> tags) {
-        requireAllNonNull(title, workouts, date, tags);
+    public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date,
+            Set<WorkoutPlanTag> tags) {
+        this(title, workouts, date, tags, WorkoutPlanStatus.PENDING);
+    }
+
+    /**
+     * Constructs a workout plan with validated, non-null fields and the given status.
+     */
+    public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date,
+            Set<WorkoutPlanTag> tags, WorkoutPlanStatus status) {
+        requireAllNonNull(title, workouts, date, tags, status);
         this.title = title;
         this.workouts = workouts;
         this.date = date;
         this.tags = Set.copyOf(tags);
+        this.status = status;
     }
 
     public WorkoutTitle getTitle() {
@@ -61,6 +73,42 @@ public final class WorkoutPlan {
         return tags;
     }
 
+    public WorkoutPlanStatus getStatus() {
+        return status;
+    }
+
+    /** Returns this plan marked as completed. */
+    public WorkoutPlan mark() {
+        return withStatus(WorkoutPlanStatus.COMPLETED);
+    }
+
+    /**
+     * Returns this plan unmarked, with its status determined by today's date.
+     * Uses the same date rule as {@link #updateState(LocalDate)}.
+     */
+    public WorkoutPlan unmark() {
+        return withStatus(statusForDate(LocalDate.now()));
+    }
+
+    private WorkoutPlanStatus statusForDate(LocalDate today) {
+        LocalDate deadline = date.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return today.isAfter(deadline)
+                ? WorkoutPlanStatus.OVERDUE : WorkoutPlanStatus.PENDING;
+    }
+
+    private WorkoutPlan withStatus(WorkoutPlanStatus updatedStatus) {
+        return status == updatedStatus ? this : new WorkoutPlan(title, workouts, date, tags, updatedStatus);
+    }
+
+    /**
+     * Returns a plan with its status refreshed for {@code today}.
+     * Preserves plans marked by {@link #mark()}, while {@link #unmark()} clears that mark.
+     */
+    public WorkoutPlan updateState(LocalDate today) {
+        Objects.requireNonNull(today);
+        return status == WorkoutPlanStatus.COMPLETED ? this : withStatus(statusForDate(today));
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -72,12 +120,13 @@ public final class WorkoutPlan {
         return title.equals(otherPlan.title)
                 && workouts.equals(otherPlan.workouts)
                 && date.equals(otherPlan.date)
-                && tags.equals(otherPlan.tags);
+                && tags.equals(otherPlan.tags)
+                && status == otherPlan.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, workouts, date, tags);
+        return Objects.hash(title, workouts, date, tags, status);
     }
 
     @Override

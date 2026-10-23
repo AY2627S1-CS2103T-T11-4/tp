@@ -18,9 +18,50 @@ import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutTitle;
 
 public class JsonAdaptedWorkoutPlanTest {
+
+    @Test
+    public void modelToJsonAndBack_preservesEveryStatusAndTags() throws Exception {
+        for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
+            WorkoutPlan original = new WorkoutPlan(new WorkoutTitle("Strength"), new WorkoutDescription("Squats"),
+                    WorkoutDate.fromLocalDate(LocalDate.of(2023, 11, 15)), Set.of(new WorkoutPlanTag("legs")), status);
+            JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan(original);
+
+            String json = JsonUtil.toJsonString(adapted);
+            JsonAdaptedWorkoutPlan restored = JsonUtil.fromJsonString(json, JsonAdaptedWorkoutPlan.class);
+
+            assertEquals(status.name(), adapted.getStatus());
+            assertEquals(status.name(), restored.getStatus());
+            assertEquals(original, restored.toModelType());
+        }
+    }
+
+    @Test
+    public void fromJson_missingOrNullStatus_defaultsToPendingWithoutRefreshingDeadline() throws Exception {
+        for (String statusField : List.of("", ",\"status\":null")) {
+            JsonAdaptedWorkoutPlan adapted = JsonUtil.fromJsonString(
+                    "{\"title\":\"Strength\",\"workoutDescription\":\"Squats\",\"date\":\"2023-11-15\","
+                            + "\"tags\":[\"legs\"]" + statusField + "}", JsonAdaptedWorkoutPlan.class);
+
+            assertEquals(WorkoutPlanStatus.PENDING, adapted.toModelType().getStatus());
+            assertEquals(Set.of(new WorkoutPlanTag("legs")), adapted.toModelType().getTags());
+        }
+    }
+
+    @Test
+    public void fromJson_invalidStatus_throwsIllegalValueException() throws Exception {
+        for (String status : List.of("", "DONE", "completed", " COMPLETED ")) {
+            JsonAdaptedWorkoutPlan adapted = JsonUtil.fromJsonString(
+                    "{\"title\":\"Strength\",\"workoutDescription\":\"Squats\",\"date\":\"2023-11-15\","
+                            + "\"status\":\"" + status + "\"}", JsonAdaptedWorkoutPlan.class);
+
+            IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
+            assertEquals(JsonAdaptedWorkoutPlan.INVALID_STATUS_MESSAGE, exception.getMessage());
+        }
+    }
 
     @Test
     public void fromJson_missingTags_loadsLegacyPlanWithEmptyTags() throws Exception {
@@ -29,6 +70,7 @@ public class JsonAdaptedWorkoutPlanTest {
                 JsonAdaptedWorkoutPlan.class);
 
         assertEquals(Set.of(), adapted.toModelType().getTags());
+        assertEquals(WorkoutPlanStatus.PENDING, adapted.toModelType().getStatus());
     }
 
     @Test
@@ -80,6 +122,24 @@ public class JsonAdaptedWorkoutPlanTest {
                 "Strength", "Squats", "15-11-2023");
 
         assertThrows(IllegalValueException.class, adapted::toModelType);
+    }
+
+    @Test
+    public void toModelType_blankTitle_throwsIllegalValueException() {
+        for (String title : List.of("", " ", "\t\n")) {
+            JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan(title, "Squats", "2023-11-15");
+            IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
+            assertEquals(WorkoutTitle.MESSAGE_CONSTRAINTS, exception.getMessage());
+        }
+    }
+
+    @Test
+    public void toModelType_blankDescription_throwsIllegalValueException() {
+        for (String description : List.of("", " ", "\t\n")) {
+            JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan("Strength", description, "2023-11-15");
+            IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
+            assertEquals(WorkoutDescription.MESSAGE_CONSTRAINTS, exception.getMessage());
+        }
     }
 
     @Test
