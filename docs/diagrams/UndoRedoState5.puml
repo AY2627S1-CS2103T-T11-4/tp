@@ -20,5 +20,5 @@ State3 -[hidden]right-> State4
 class Pointer as "Current State" #FFFFFF
 
 Pointer -up-> State2
-note right on link: Home view restored; David remains in the list.
+note right on link: David is no longer selected, but remains in the students list
 @end

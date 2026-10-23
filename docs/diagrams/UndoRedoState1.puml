@@ -22,5 +22,5 @@ hide State4
 class Pointer as "Current State" #FFFFFF
 
 Pointer -up-> State2
-note right on link: Data changed; the home view is retained.
+note right on link: David is added, no student selected.
 @end

@@ -21,4 +21,5 @@ hide State4
 class Pointer as "Current State" #FFFFFF
 
 Pointer -up-> State3
+note left on link: David is selected, workout plan list empty.
 @end

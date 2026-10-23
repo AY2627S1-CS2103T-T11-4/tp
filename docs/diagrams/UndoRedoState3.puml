@@ -20,4 +20,5 @@ State3 -[hidden]right-> State4
 class Pointer as "Current State" #FFFFFF
 
 Pointer -up-> State4
+note left on link: David is selected,\n"Upper body" workout plan added.
 @end
