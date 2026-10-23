@@ -9,9 +9,15 @@ title After command "addStudent David ..."
 package States <<rectangle>> {
     class State1 as "<u>state0:BrotherGym</u>"
     class State2 as "<u>state1:BrotherGym</u>"
+    class State3 as "<u>state2:BrotherGym</u>"
+    class State4 as "<u>state3:BrotherGym</u>"
 }
 
 State1 -[hidden]right-> State2
+State2 -[hidden]right-> State3
+State3 -[hidden]right-> State4
+hide State3
+hide State4
 
 class Pointer as "Current State" #FFFFFF
 
