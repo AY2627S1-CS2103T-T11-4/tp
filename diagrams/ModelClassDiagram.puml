@@ -14,13 +14,11 @@ Class UserPrefs
 
 Class UniqueStudentList
 Class Student
-Class Address
-Class Email
-Class Name
-Class Phone
-Class Tag
 
 Class I #FFFFFF
+
+note "Details of Student Class \n are omitted for clarity." as N1
+
 }
 
 Class HiddenOutside #FFFFFF
@@ -37,18 +35,12 @@ UserPrefs .up.|> ReadOnlyUserPrefs
 
 BrotherGym *--> "1" UniqueStudentList
 UniqueStudentList --> "~* all" Student
-Student *--> Name
-Student *--> Phone
-Student *--> Email
-Student *--> Address
-Student *--> "*" Tag
 
 Student -[hidden]up--> I
 UniqueStudentList -[hidden]right-> I
 
-Name -[hidden]right-> Phone
-Phone -[hidden]right-> Address
-Address -[hidden]right-> Email
+Student -right- N1
 
 ModelManager --> "~* filtered" Student
+ModelManager --> "1 selected" Student
 @enduml
