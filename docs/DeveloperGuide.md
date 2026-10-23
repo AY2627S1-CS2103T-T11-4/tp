@@ -281,7 +281,7 @@ Step 2. The user executes `deleteStudent 5` command to delete the 5th student in
 
 <puml src="diagrams/UndoRedoState1.puml" alt="UndoRedoState1" />
 
-Step 3. The user executes `addStudent David …​` to add a new student. The `add` command also calls `Model#commitBrotherGym()`, causing another modified BrotherGym state to be saved into the `brotherGymStateList`.
+Step 3. The user executes `addStudent David …` to add a new student. The `addStudent` command also calls `Model#commitBrotherGym()`, causing another modified BrotherGym state to be saved into the `brotherGymStateList`.
 
 <puml src="diagrams/UndoRedoState2.puml" alt="UndoRedoState2" />
 
@@ -321,7 +321,7 @@ The `redo` command does the opposite — it calls `Model#redoBrotherGym()`, whic
 **Note:** If the `currentStatePointer` is at index `brotherGymStateList.size() - 1`, pointing to the latest BrotherGym state, then there are no undone BrotherGym states to restore. The `redo` command uses `Model#canRedoBrotherGym()` to check if this is the case. If so, it will return an error to the user rather than attempting to perform the redo.
 </box>
 
-Step 5. The user then decides to execute the command `list`. Commands that do not modify the BrotherGym, such as `list`, will usually not call `Model#commitBrotherGym()`, `Model#undoBrotherGym()` or `Model#redoBrotherGym()`. Thus, the `brotherGymStateList` remains unchanged.
+Step 5. The user then decides to execute the command `home`. Commands that do not modify the BrotherGym, such as `home`, will usually not call `Model#commitBrotherGym()`, `Model#undoBrotherGym()` or `Model#redoBrotherGym()`. Thus, the `brotherGymStateList` remains unchanged.
 
 <puml src="diagrams/UndoRedoState4.puml" alt="UndoRedoState4" />
 
