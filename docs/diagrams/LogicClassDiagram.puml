@@ -1,40 +1,62 @@
 @startuml
 !include style.puml
 top to bottom direction
-skinparam linetype polyline
-skinparam nodesep 35
-skinparam ranksep 45
+skinparam linetype ortho
+skinparam nodesep 65
+skinparam ranksep 70
 skinparam arrowThickness 1.1
 skinparam arrowColor LOGIC_COLOR_T4
 skinparam classBackgroundColor LOGIC_COLOR
 
-class UI
+class HiddenOutside #FFFFFF
 
-package Logic {
-    interface Logic
+package "Logic" as LogicComponent {
     class LogicManager
-    class BrotherGymParser
-    abstract class Command
-    abstract class SingleIndexCommand
-    class ViewStudentCommand
-    class DeleteStudentCommand
+    class "<<interface>>\nLogic" as LogicApi
+
+    package "Parser Classes" as ParserClasses {}
+
     class CommandResult
+    class "{abstract}\nCommand" as Command
+    class "{abstract}\nSingleIndexCommand" as SingleIndexCommand
+    class XYZCommand
+    class DeleteStudentCommand
 }
 
-interface Model
-interface Storage
+package "Storage" as StorageComponent {}
 
-UI ..> Logic
-LogicManager .up.|> Logic
-LogicManager --> BrotherGymParser
-BrotherGymParser ..> Command
-LogicManager --> Command
-SingleIndexCommand --|> Command
-ViewStudentCommand --|> SingleIndexCommand
-DeleteStudentCommand --|> SingleIndexCommand
-Command --> Model
-LogicManager --> Model
-LogicManager --> Storage
-Command ..> CommandResult
-Logic ..> CommandResult
+package "Model" as ModelComponent {}
+
+HiddenOutside ..> LogicApi
+LogicManager .right.|> LogicApi
+LogicManager --> "1" ParserClasses
+LogicManager --> "1" StorageComponent
+LogicManager --> "1" ModelComponent
+LogicManager ..> Command : executes
+LogicManager ..> CommandResult : returns
+ParserClasses ..> Command : creates
+LogicApi ..> CommandResult : returns
+Command ..> ModelComponent
+Command ..> CommandResult : returns
+
+SingleIndexCommand -up-|> Command
+XYZCommand -up-|> Command
+DeleteStudentCommand -up-|> SingleIndexCommand
+
+note right of XYZCommand
+    Represents direct command subclasses,
+    such as AddStudentCommand and FindCommand.
+end note
+
+HiddenOutside -[hidden]down-> LogicApi
+LogicManager -[hidden]right-> LogicApi
+LogicManager -[hidden]down-> ParserClasses
+ParserClasses -[hidden]down-> CommandResult
+CommandResult -[hidden]down-> Command
+Command -[hidden]down-> XYZCommand
+XYZCommand -[hidden]right-> SingleIndexCommand
+SingleIndexCommand -[hidden]down-> DeleteStudentCommand
+LogicComponent -[hidden]right-> StorageComponent
+StorageComponent -[hidden]down-> ModelComponent
+
 @enduml

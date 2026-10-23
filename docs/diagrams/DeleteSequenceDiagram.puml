@@ -28,14 +28,14 @@ activate SingleIndexCommandParser
 create DeleteStudentCommand
 SingleIndexCommandParser -> DeleteStudentCommand : construct(index)
 activate DeleteStudentCommand
-DeleteStudentCommand --> SingleIndexCommandParser : command
+DeleteStudentCommand --> SingleIndexCommandParser : d
 deactivate DeleteStudentCommand
-SingleIndexCommandParser --> BrotherGymParser : command
+SingleIndexCommandParser --> BrotherGymParser : d
 deactivate SingleIndexCommandParser
-BrotherGymParser --> LogicManager : command
+BrotherGymParser --> LogicManager : d
 deactivate BrotherGymParser
 
-LogicManager -> DeleteStudentCommand : execute(model)
+LogicManager -> DeleteStudentCommand : execute(m)
 activate DeleteStudentCommand
 DeleteStudentCommand -> Model : getFilteredStudentList()
 activate Model
@@ -49,15 +49,15 @@ deactivate Model
 create CommandResult
 DeleteStudentCommand -> CommandResult : create(feedback)
 activate CommandResult
-CommandResult --> DeleteStudentCommand : result
+CommandResult --> DeleteStudentCommand : r
 deactivate CommandResult
-DeleteStudentCommand --> LogicManager : result
+DeleteStudentCommand --> LogicManager : r
 deactivate DeleteStudentCommand
 
-LogicManager -> Storage : saveBrotherGym(model.getBrotherGym())
+LogicManager -> Storage : saveBrotherGym(m.getBrotherGym())
 activate Storage
 Storage --> LogicManager
 deactivate Storage
-LogicManager --> UI : CommandResult
+LogicManager --> UI : r
 deactivate LogicManager
 @enduml
