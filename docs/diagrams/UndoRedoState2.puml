@@ -7,9 +7,9 @@ skinparam ClassBackgroundColor #FFFFAA
 title After command "viewStudent 1"
 
 package States <<rectangle>> {
-    class State1 as "<u>state0</u>\nhome / no selection"
-    class State2 as "<u>state1</u>\nhome with David / no selection"
-    class State3 as "<u>state2</u>\nAlice selected / no plan"
+    class State1 as "<u>state0:BrotherGym</u>"
+    class State2 as "<u>state1:BrotherGym</u>"
+    class State3 as "<u>state2:BrotherGym</u>"
 }
 
 State1 -[hidden]right-> State2
