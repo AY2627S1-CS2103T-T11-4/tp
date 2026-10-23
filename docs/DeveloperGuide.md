@@ -277,11 +277,11 @@ Step 1. The user launches the application for the first time. The `VersionedBrot
 
 <puml src="diagrams/UndoRedoState0.puml" alt="UndoRedoState0" />
 
-Step 2. The user executes `delete 5` command to delete the 5th student in the BrotherGym. The `delete` command calls `Model#commitBrotherGym()`, causing the modified state of the BrotherGym after the `delete 5` command executes to be saved in the `brotherGymStateList`, and the `currentStatePointer` is shifted to the newly inserted BrotherGym state.
+Step 2. The user executes `deleteStudent 5` command to delete the 5th student in the BrotherGym. The `deleteStudent` command calls `Model#commitBrotherGym()`, causing the modified state of the BrotherGym after the `deleteStudent 5` command executes to be saved in the `brotherGymStateList`, and the `currentStatePointer` is shifted to the newly inserted BrotherGym state.
 
 <puml src="diagrams/UndoRedoState1.puml" alt="UndoRedoState1" />
 
-Step 3. The user executes `add n/David …​` to add a new student. The `add` command also calls `Model#commitBrotherGym()`, causing another modified BrotherGym state to be saved into the `brotherGymStateList`.
+Step 3. The user executes `addStudent David …​` to add a new student. The `add` command also calls `Model#commitBrotherGym()`, causing another modified BrotherGym state to be saved into the `brotherGymStateList`.
 
 <puml src="diagrams/UndoRedoState2.puml" alt="UndoRedoState2" />
 
@@ -325,7 +325,7 @@ Step 5. The user then decides to execute the command `list`. Commands that do no
 
 <puml src="diagrams/UndoRedoState4.puml" alt="UndoRedoState4" />
 
-Step 6. The user executes `clear`, which calls `Model#commitBrotherGym()`. Since the `currentStatePointer` is not pointing at the end of the `brotherGymStateList`, all BrotherGym states after the `currentStatePointer` will be purged. Reason: It no longer makes sense to redo the `add n/David …` command. This is the behavior that most modern desktop applications follow.
+Step 6. The user executes `clear`, which calls `Model#commitBrotherGym()`. Since the `currentStatePointer` is not pointing at the end of the `brotherGymStateList`, all BrotherGym states after the `currentStatePointer` will be purged. Reason: It no longer makes sense to redo the `addStudent David …` command. This is the behavior that most modern desktop applications follow.
 
 <puml src="diagrams/UndoRedoState5.puml" alt="UndoRedoState5" />
 
@@ -343,7 +343,7 @@ The following activity diagram summarizes what happens when a user executes a ne
 
 * **Alternative 2:** Individual command knows how to undo/redo by
   itself.
-  * Pros: Will use less memory (e.g. for `delete`, just save the student being deleted).
+  * Pros: Will use less memory (e.g. for `deleteStudent`, just save the student being deleted).
   * Cons: We must ensure that the implementation of each individual command is correct.
 
 _{more aspects and alternatives to be added}_
