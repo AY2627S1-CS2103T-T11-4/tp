@@ -1,0 +1,60 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor UI_COLOR_T4
+skinparam Participant {
+    BackgroundColor #F4F4F4
+    BorderColor #555555
+    FontColor #111111
+}
+skinparam Sequence {
+    LifeLineBorderColor #777777
+    LifeLineBackgroundColor #FFFFFF
+}
+
+actor Trainer
+participant CommandBox
+participant MainWindow
+participant Logic
+participant ViewStudentCommand
+participant Model
+participant WorkoutPlanListPanel
+participant WorkoutPlanCard
+
+Trainer -> CommandBox: enter viewStudent 1
+CommandBox -> MainWindow: executeCommand("viewStudent 1")
+activate MainWindow
+MainWindow -> Logic: execute("viewStudent 1")
+activate Logic
+Logic -> ViewStudentCommand: execute(model)
+activate ViewStudentCommand
+ViewStudentCommand -> Model: updateStudentWorkoutsState(student)
+activate Model
+Model --> ViewStudentCommand: refreshedStudent
+deactivate Model
+ViewStudentCommand -> Model: setCurrentStudent(refreshedStudent)
+activate Model
+Model --> MainWindow: currentStudentProperty change notification
+MainWindow -> WorkoutPlanListPanel: showStudent(Optional.of(refreshedStudent))
+activate WorkoutPlanListPanel
+WorkoutPlanListPanel -> WorkoutPlanListPanel: clear FlowPane
+loop for each workout plan
+    WorkoutPlanListPanel -> WorkoutPlanCard: create card
+    activate WorkoutPlanCard
+    WorkoutPlanCard -> WorkoutPlanCard: sort and render tags
+    WorkoutPlanCard -> WorkoutPlanCard: render status text and styles
+    WorkoutPlanCard --> WorkoutPlanListPanel: card root
+    deactivate WorkoutPlanCard
+end
+WorkoutPlanListPanel --> MainWindow
+deactivate WorkoutPlanListPanel
+Model --> ViewStudentCommand
+deactivate Model
+ViewStudentCommand --> Logic: commandResult
+deactivate ViewStudentCommand
+Logic --> MainWindow: commandResult
+deactivate Logic
+MainWindow --> CommandBox: commandResult
+deactivate MainWindow
+
+@enduml
