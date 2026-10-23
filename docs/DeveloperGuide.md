@@ -141,16 +141,23 @@ when `BrotherGymParser#parseCommand("deleteStudent 1")` is called from `LogicMan
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
 
+The class diagram below shows the high-level structure of the `Model` component.
+
 <puml src="diagrams/ModelClassDiagram.puml" width="450" />
 
 
 The `Model` component,
 
-* stores the BrotherGym data i.e., all `Student` objects (which are contained in a `UniqueStudentList` object).
-* stores the `Student` objects selected by the current filter, such as search results, in a separate _filtered_ list. It exposes this list as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
+* stores all `Student` objects in a `UniqueStudentList`. Each `Student` contains a `WorkoutPlansList` of `WorkoutPlan` objects.
+* exposes students matching the current filter, such as search results, as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to.
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
+* tracks `currentStudent`, the `Student` whose workout plans the user has chosen to view or edit.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
+
+The entity diagram expands `UniqueStudentList` and `Student` to show student details, tags, and workout plans:
+
+<puml src="diagrams/ModelEntitiesClassDiagram.puml" alt="Model entities and their internal relationships" width="700" />
 
 <box type="info" seamless>
 
