@@ -136,7 +136,7 @@ How the parsing works:
 The sequence diagram shows how the parser classes create the `DeleteStudentCommand` object 
 when `BrotherGymParser#parseCommand("deleteStudent 1")` is called from `LogicManager`:
 
-<puml src="diagrams/DeleteParserSequenceDiagram.puml" />
+<puml src="diagrams/DeleteParserSequenceDiagram.puml" alt="Sequence Diagram for parsing 'delete 1'"/>
 
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
