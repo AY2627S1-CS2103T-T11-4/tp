@@ -7,9 +7,9 @@ skinparam ClassBackgroundColor #FFFFAA
 title After command "addPlan Strength ..."
 
 package States <<rectangle>> {
-    class State1 as "<u>state1</u>\nfiltered Alice / no selection"
+    class State1 as "<u>state1</u>\nhome with David / no selection"
     class State2 as "<u>state2</u>\nAlice selected / no plan"
-    class State3 as "<u>state3</u>\nAlice selected / plan restored"
+    class State3 as "<u>state3</u>\nAlice selected / plan present"
 }
 
 State1 -[hidden]right-> State2

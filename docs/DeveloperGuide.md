@@ -265,13 +265,13 @@ This section describes some noteworthy details on how certain features are imple
 
 Undo/redo allows the user to move through complete application states. Each state contains the BrotherGym data, including students and their workout plans, together with the current student-list view. Undoing or redoing a command therefore restores both the data and where the user was working.
 
-The following example shows how undo/redo behaves when the user searches for a student and manages a workout plan. Assume that Alice is already in the BrotherGym and has no workout plans initially.
+The following example shows how undo/redo behaves when the user adds a student, selects an existing student, and manages a workout plan. Assume that Alice is the first student in the BrotherGym and has no workout plans initially.
 
 Step 1. The user launches the application. The initial state shows all students and no student is selected.
 
 <puml src="diagrams/UndoRedoState0.puml" alt="UndoRedoState0" />
 
-Step 2. The user executes `find Alice`. The BrotherGym data is unchanged, but the filtered student list changes, so the new view can be restored by undo/redo.
+Step 2. The user executes `addStudent David Tan --hp 91234567 --email david@example.com --addr David Street`. The student data changes, but the user remains on the home view.
 
 <puml src="diagrams/UndoRedoState1.puml" alt="UndoRedoState1" />
 
@@ -310,7 +310,7 @@ Similarly, how an undo operation goes through the `Model` component is shown bel
 
 <puml src="diagrams/UndoSequenceDiagram-Model.puml" alt="UndoSequenceDiagram-Model" />
 
-Step 6. The user executes `undo` again. The application returns to the filtered Alice list, with no student selected.
+Step 6. The user executes `undo` again. The application returns to the home view, with no student selected. David remains in the student list because the earlier `addStudent` change was not undone.
 
 <puml src="diagrams/UndoRedoState5.puml" alt="UndoRedoState5" />
 
@@ -320,7 +320,7 @@ If the user executes `undo` once more and then executes `home`, the application 
 
 <box type="info" seamless>
 
-**Note:** Repeating an identical `home`, `find`, or `viewStudent` operation does not create an extra history entry. A view-only command such as `viewPlan`, `help`, or `exit` also leaves the undo/redo history unchanged.
+**Note:** Repeating an identical `home` or `viewStudent` operation does not create an extra history entry. A view-only command such as `viewPlan`, `help`, or `exit` also leaves the undo/redo history unchanged.
 </box>
 
 `viewStudent` is a special case because it may refresh date-based workout-plan statuses. If the refresh changes a status, that data change and the new selected-student view are restored as one undoable step.
