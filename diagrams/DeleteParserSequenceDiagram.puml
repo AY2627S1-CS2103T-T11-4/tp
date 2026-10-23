@@ -1,0 +1,42 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+box Parser LOGIC_COLOR_T1
+participant ":BrotherGymParser" as BrotherGymParser LOGIC_COLOR
+participant ":SingleIndexCommandParser" as SingleIndexCommandParser LOGIC_COLOR
+participant "<<class>>\nArgumentTokenizer" as ArgumentTokenizer LOGIC_COLOR
+participant ":ArgumentValidator" as ArgumentValidator LOGIC_COLOR
+participant "<<class>>\nParserUtil" as ParserUtil LOGIC_COLOR
+end box
+
+participant "cmd:DeleteStudentCommand" as DeleteStudentCommand LOGIC_COLOR
+
+activate BrotherGymParser
+BrotherGymParser -> SingleIndexCommandParser : parse("1")
+activate SingleIndexCommandParser
+
+SingleIndexCommandParser -> ArgumentTokenizer : tokenize("1")
+activate ArgumentTokenizer
+ArgumentTokenizer --> SingleIndexCommandParser : argMultimap
+deactivate ArgumentTokenizer
+SingleIndexCommandParser -> ArgumentValidator : verifyArgs(argMultimap)
+activate ArgumentValidator
+deactivate ArgumentValidator
+
+SingleIndexCommandParser -> ParserUtil : parseIndex("1")
+activate ParserUtil
+ParserUtil --> SingleIndexCommandParser : index
+deactivate ParserUtil
+
+create DeleteStudentCommand
+SingleIndexCommandParser -> DeleteStudentCommand : construct(index)
+activate DeleteStudentCommand
+DeleteStudentCommand --> SingleIndexCommandParser : cmd
+deactivate DeleteStudentCommand
+SingleIndexCommandParser --> BrotherGymParser : cmd
+
+deactivate SingleIndexCommandParser
+
+
+@enduml
