@@ -72,16 +72,16 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/se-
 
 <puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
 
-The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `StudentListPanel`, and `StatusBarFooter`. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
+The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `StudentListPanel`, `WorkoutPlanListPanel`, and `StatusBarFooter`. `StudentListPanel` displays students using `StudentCard` objects, while `WorkoutPlanListPanel` displays the current student's plans using `WorkoutPlanCard` objects. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/MainWindow.java).
 
 The `UI` component,
 
 * executes user commands using the `Logic` component.
-* listens for changes to `Model` data so that the UI can be updated with the modified data.
+* listens for changes to `Model` data so that the UI can be updated with the modified data. In particular, `MainWindow` observes `Logic#currentStudentProperty()` and updates `WorkoutPlanListPanel` when the current student changes.
 * keeps a reference to the `Logic` component, because the `UI` relies on the `Logic` to execute commands.
-* depends on some classes in the `Model` component because it displays `Student` objects from the model.
+* depends on some classes in the `Model` component because it displays `Student` and `WorkoutPlan` objects from the model.
 
 ### Logic component
 
@@ -285,6 +285,42 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 ## **Implementation**
 
 This section describes some noteworthy details on how certain features are implemented.
+
+### Workout plan display
+
+#### Implementation
+
+The workout plan display is facilitated by `WorkoutPlanListPanel` and `WorkoutPlanCard`. `MainWindow` obtains the current student as a read-only observable property through `Logic#currentStudentProperty()` and registers a listener when initializing its UI parts.
+
+Workout-plan statuses are refreshed explicitly when `viewStudent` is executed. `ViewStudentCommand` calls `Model#updateStudentWorkoutsState()` to recalculate each plan as pending or overdue for the current date, then calls `Model#setCurrentStudent()` with the refreshed student. This command-triggered refresh avoids a background timer and gives status changes a clear point in the application flow.
+
+Changing the current student notifies `MainWindow` through the observable property. The listener passes the selected student to `WorkoutPlanListPanel#showStudent()`, which clears its `FlowPane` and creates one `WorkoutPlanCard` for each plan. The same observable flow redraws the panel after commands such as `markPlan` and `unmarkPlan` replace the selected student. If there is no current student, the panel clears its cards and prompts the user to select a student.
+
+Each `WorkoutPlanCard` reads the plan's title, date, workout description, tags, and status through `WorkoutPlan` getters. Tags are sorted by name and rendered individually as labels, giving a stable display order without relying on `WorkoutPlan#toString()`. The card maps the status to visible `DONE`, `OVERDUE`, or `PENDING` text and applies matching CSS classes to both the badge and card.
+
+The following sequence diagram shows how the panel is updated when the user executes `viewStudent 1`:
+
+<puml src="diagrams/WorkoutPlanUiSequenceDiagram.puml" alt="Command-triggered workout status refresh and workout plan panel update" />
+
+#### Design considerations
+
+**Aspect: When to refresh time-dependent workout-plan statuses:**
+
+* **Alternative 1 (current choice):** Refresh statuses explicitly when `viewStudent` is executed.
+  * Pros: Status changes happen at a predictable point without a background timer, and the model remains responsible for calculating status.
+  * Cons: A plan does not automatically become overdue while its student remains open across midnight; the user must execute `viewStudent` again to refresh it.
+* **Alternative 2:** Recalculate statuses continuously or whenever a card is rendered.
+  * Pros: The display always reflects the current time without requiring another command.
+  * Cons: A timer adds lifecycle complexity, while calculating status in the UI mixes model rules with presentation logic.
+
+**Aspect: Keeping the workout plan panel synchronized with the current student:**
+
+* **Alternative 1 (current choice):** Observe `Logic#currentStudentProperty()`.
+  * Pros: The panel updates for every command that changes the current student without requiring command-specific UI logic.
+  * Cons: Commands and `Model` operations must update the current-student property correctly for the listener to be notified.
+* **Alternative 2:** Call `WorkoutPlanListPanel#showStudent()` manually after every successful command.
+  * Pros: The refresh is explicit in the command-execution flow.
+  * Cons: The UI is refreshed even for unrelated commands, and new commands can fail to refresh the panel if the manual call is omitted.
 
 ### \[Proposed\] Undo/redo feature
 
