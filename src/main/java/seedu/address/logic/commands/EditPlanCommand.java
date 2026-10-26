@@ -1,12 +1,11 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_ADD_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_DELETE_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,8 +35,7 @@ public class EditPlanCommand extends Command {
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Edits a workout plan from the Student currently being viewed.\n"
             + "Parameters: PLAN_ID [" + PREFIX_NAME + " PLAN_NAME] [" + PREFIX_PLAN + " DESCRIPTION] ["
-            + PREFIX_DATE + " DATE(DDMMYYYY)] [" + PREFIX_ADD_TAG + " TAG]... [" + PREFIX_DELETE_TAG
-            + " TAG]... [" + PREFIX_CLEAR_TAGS + "]\n"
+            + PREFIX_DATE + " DATE(DDMMYYYY)] [" + PREFIX_TAG + " TAG]... [" + PREFIX_CLEAR_TAGS + "]\n"
             + "Example: " + COMMAND_WORD + " 1 " + PREFIX_NAME + " NewName " + PREFIX_PLAN + " New description "
             + PREFIX_DATE + " 15102026";
 
@@ -97,13 +95,7 @@ public class EditPlanCommand extends Command {
         WorkoutTitle updatedTitle = descriptor.getTitle().orElse(planToEdit.getTitle());
         WorkoutDescription updatedDescription = descriptor.getDescription().orElse(planToEdit.getWorkouts());
         WorkoutDate updatedDate = descriptor.getDate().orElse(planToEdit.getDate());
-        Set<WorkoutPlanTag> updatedTags = new HashSet<>(planToEdit.getTags());
-        if (descriptor.isClearTags()) {
-            updatedTags.clear();
-        } else {
-            descriptor.getTagsToDelete().ifPresent(updatedTags::removeAll);
-        }
-        descriptor.getTagsToAdd().ifPresent(updatedTags::addAll);
+        Set<WorkoutPlanTag> updatedTags = descriptor.getWorkoutPlanTags().orElse(planToEdit.getTags());
         return new WorkoutPlan(updatedTitle, updatedDescription, updatedDate, updatedTags, planToEdit.getStatus());
     }
 
@@ -132,9 +124,7 @@ public class EditPlanCommand extends Command {
         private WorkoutTitle title;
         private WorkoutDescription description;
         private WorkoutDate date;
-        private Set<WorkoutPlanTag> tagsToAdd;
-        private Set<WorkoutPlanTag> tagsToDelete;
-        private boolean clearTags;
+        private Set<WorkoutPlanTag> tags;
 
         public EditPlanDescriptor() {}
 
@@ -144,14 +134,11 @@ public class EditPlanCommand extends Command {
             setTitle(toCopy.title);
             setDescription(toCopy.description);
             setDate(toCopy.date);
-            setTagsToAdd(toCopy.tagsToAdd);
-            setTagsToDelete(toCopy.tagsToDelete);
-            setClearTags(toCopy.clearTags);
+            setWorkoutPlanTags(toCopy.tags);
         }
 
         public boolean isAnyFieldEdited() {
-            return title != null || description != null || date != null
-                    || tagsToAdd != null || tagsToDelete != null || clearTags;
+            return title != null || description != null || date != null || tags != null;
         }
 
         public void setTitle(WorkoutTitle title) {
@@ -178,34 +165,15 @@ public class EditPlanCommand extends Command {
             return Optional.ofNullable(date);
         }
 
-        /** Sets the tags to add. */
-        public void setTagsToAdd(Set<WorkoutPlanTag> tagsToAdd) {
-            this.tagsToAdd = tagsToAdd == null ? null : new HashSet<>(tagsToAdd);
+        /** Sets tags; an empty set explicitly clears all tags. */
+        public void setWorkoutPlanTags(Set<WorkoutPlanTag> tags) {
+            this.tags = tags == null ? null : new HashSet<>(tags);
         }
 
-        public Optional<Set<WorkoutPlanTag>> getTagsToAdd() {
-            return tagsToAdd == null
+        public Optional<Set<WorkoutPlanTag>> getWorkoutPlanTags() {
+            return tags == null
                     ? Optional.empty()
-                    : Optional.of(Collections.unmodifiableSet(tagsToAdd));
-        }
-
-        /** Sets the tags to delete. */
-        public void setTagsToDelete(Set<WorkoutPlanTag> tagsToDelete) {
-            this.tagsToDelete = tagsToDelete == null ? null : new HashSet<>(tagsToDelete);
-        }
-
-        public Optional<Set<WorkoutPlanTag>> getTagsToDelete() {
-            return tagsToDelete == null
-                    ? Optional.empty()
-                    : Optional.of(Collections.unmodifiableSet(tagsToDelete));
-        }
-
-        public void setClearTags(boolean clearTags) {
-            this.clearTags = clearTags;
-        }
-
-        public boolean isClearTags() {
-            return clearTags;
+                    : Optional.of(Collections.unmodifiableSet(tags));
         }
 
         @Override
@@ -219,14 +187,12 @@ public class EditPlanCommand extends Command {
             return Objects.equals(title, otherDescriptor.title)
                     && Objects.equals(description, otherDescriptor.description)
                     && Objects.equals(date, otherDescriptor.date)
-                    && Objects.equals(tagsToAdd, otherDescriptor.tagsToAdd)
-                    && Objects.equals(tagsToDelete, otherDescriptor.tagsToDelete)
-                    && clearTags == otherDescriptor.clearTags;
+                    && Objects.equals(tags, otherDescriptor.tags);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(title, description, date, tagsToAdd, tagsToDelete, clearTags);
+            return Objects.hash(title, description, date, tags);
         }
 
         @Override
@@ -235,9 +201,7 @@ public class EditPlanCommand extends Command {
                     .add("title", title)
                     .add("description", description)
                     .add("date", date)
-                    .add("tagsToAdd", tagsToAdd)
-                    .add("tagsToDelete", tagsToDelete)
-                    .add("clearTags", clearTags)
+                    .add("tags", tags)
                     .toString();
         }
     }

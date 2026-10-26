@@ -36,9 +36,7 @@ public class EditStudentDescriptorBuilder {
         descriptor.setPhone(student.getPhone());
         descriptor.setEmail(student.getEmail());
         descriptor.setAddress(student.getAddress());
-        if (!student.getTags().isEmpty()) {
-            descriptor.setTagsToAdd(student.getTags());
-        }
+        descriptor.setTags(student.getTags());
     }
 
     /**
@@ -77,22 +75,9 @@ public class EditStudentDescriptorBuilder {
      * Parses the {@code tags} into a {@code Set<StudentTag>} and sets it to the {@code EditStudentDescriptor}
      * that we are building.
      */
-    public EditStudentDescriptorBuilder withTagsToAdd(String... tags) {
+    public EditStudentDescriptorBuilder withTags(String... tags) {
         Set<StudentTag> tagSet = Stream.of(tags).map(StudentTag::new).collect(Collectors.toSet());
-        descriptor.setTagsToAdd(tagSet);
-        return this;
-    }
-
-    /** Sets the tags to delete on the descriptor. */
-    public EditStudentDescriptorBuilder withTagsToDelete(String... tags) {
-        Set<StudentTag> tagSet = Stream.of(tags).map(StudentTag::new).collect(Collectors.toSet());
-        descriptor.setTagsToDelete(tagSet);
-        return this;
-    }
-
-    /** Sets the clear-tags operation on the descriptor. */
-    public EditStudentDescriptorBuilder withClearTags() {
-        descriptor.setClearTags(true);
+        descriptor.setTags(tagSet);
         return this;
     }
 

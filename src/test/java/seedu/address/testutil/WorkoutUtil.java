@@ -1,14 +1,16 @@
 package seedu.address.testutil;
 
-import static seedu.address.logic.parser.CliSyntax.PREFIX_ADD_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_DELETE_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
+
+import java.util.Set;
 
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.EditPlanCommand;
+import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
@@ -45,13 +47,14 @@ public class WorkoutUtil {
                 sb.append(PREFIX_PLAN).append(" ").append(plan.getValue()).append(" "));
         descriptor.getDate().ifPresent(date ->
                 sb.append(PREFIX_DATE).append(" ").append(date.toInputString()).append(" "));
-        if (descriptor.isClearTags()) {
-            sb.append(PREFIX_CLEAR_TAGS).append(" ");
+        if (descriptor.getWorkoutPlanTags().isPresent()) {
+            Set<WorkoutPlanTag> tags = descriptor.getWorkoutPlanTags().get();
+            if (tags.isEmpty()) {
+                sb.append(PREFIX_CLEAR_TAGS);
+            } else {
+                tags.forEach(s -> sb.append(PREFIX_TAG).append(" ").append(s.tagName).append(" "));
+            }
         }
-        descriptor.getTagsToDelete().ifPresent(tags ->
-                tags.forEach(s -> sb.append(PREFIX_DELETE_TAG).append(" ").append(s.tagName).append(" ")));
-        descriptor.getTagsToAdd().ifPresent(tags ->
-                tags.forEach(s -> sb.append(PREFIX_ADD_TAG).append(" ").append(s.tagName).append(" ")));
         return sb.toString();
     }
 }

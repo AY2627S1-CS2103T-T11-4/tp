@@ -2,9 +2,9 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_ADD_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
@@ -24,13 +24,13 @@ public class AddStudentCommand extends Command {
             + PREFIX_PHONE + " PHONE "
             + PREFIX_EMAIL + " EMAIL "
             + PREFIX_ADDRESS + " ADDRESS "
-            + "[" + PREFIX_ADD_TAG + " TAG]...\n"
+            + "[" + PREFIX_TAG + " TAG]...\n"
             + "Example: " + COMMAND_WORD + " John Doe "
             + PREFIX_PHONE + " 98765432 "
             + PREFIX_EMAIL + " johnd@example.com "
             + PREFIX_ADDRESS + " 311, Clementi Ave 2, #02-25 "
-            + PREFIX_ADD_TAG + " friends "
-            + PREFIX_ADD_TAG + " owesMoney";
+            + PREFIX_TAG + " friends "
+            + PREFIX_TAG + " owesMoney";
 
     public static final String MESSAGE_SUCCESS = "New student added: %1$s";
     public static final String MESSAGE_DUPLICATE_STUDENT = "This student already exists in the student list.";

@@ -2,23 +2,24 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_BOB;
-import static seedu.address.logic.commands.CommandTestUtil.ADD_TAG_DESC_FRIEND;
-import static seedu.address.logic.commands.CommandTestUtil.ADD_TAG_DESC_HUSBAND;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_ADDRESS_DESC;
-import static seedu.address.logic.commands.CommandTestUtil.INVALID_ADD_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_EMAIL_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_NAME_PREAMBLE;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PHONE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_PREAMBLE_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_PREAMBLE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_FRIEND;
+import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_HUSBAND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
@@ -52,7 +53,7 @@ public class AddStudentCommandParserTest {
 
         // valid command format
         assertParseSuccess(parser, NAME_PREAMBLE_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                + ADDRESS_DESC_BOB + ADD_TAG_DESC_FRIEND, new AddStudentCommand(expectedStudent));
+                + ADDRESS_DESC_BOB + TAG_DESC_FRIEND, new AddStudentCommand(expectedStudent));
 
 
         // multiple tags - all accepted
@@ -60,14 +61,14 @@ public class AddStudentCommandParserTest {
                 .build();
         assertParseSuccess(parser,
                 NAME_PREAMBLE_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
-                        + ADD_TAG_DESC_HUSBAND + ADD_TAG_DESC_FRIEND,
+                        + TAG_DESC_HUSBAND + TAG_DESC_FRIEND,
                 new AddStudentCommand(expectedStudentMultipleTags));
     }
 
     @Test
     public void parse_repeatedNonTagValue_failure() {
         String validExpectedStudentString = NAME_PREAMBLE_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                + ADDRESS_DESC_BOB + ADD_TAG_DESC_FRIEND;
+                + ADDRESS_DESC_BOB + TAG_DESC_FRIEND;
 
         // multiple phones
         assertParseFailure(parser, validExpectedStudentString + PHONE_DESC_AMY,
@@ -96,29 +97,35 @@ public class AddStudentCommandParserTest {
         assertParseFailure(parser,
                 NAME_PREAMBLE_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB + INVALID_PREFIX_DESC,
                 this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
+
+        assertParseFailure(parser,
+                NAME_PREAMBLE_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
+                        + " " + PREFIX_CLEAR_TAGS,
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_CLEAR_TAGS)));
+
     }
 
     @Test
     public void parse_invalidValue_failure() {
         // invalid name
         assertParseFailure(parser, INVALID_NAME_PREAMBLE + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
-                + ADD_TAG_DESC_HUSBAND + ADD_TAG_DESC_FRIEND, this.formatParserError(Name.MESSAGE_CONSTRAINTS));
+                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, this.formatParserError(Name.MESSAGE_CONSTRAINTS));
 
         // invalid phone
         assertParseFailure(parser, NAME_PREAMBLE_BOB + INVALID_PHONE_DESC + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
-                + ADD_TAG_DESC_HUSBAND + ADD_TAG_DESC_FRIEND, this.formatParserError(Phone.MESSAGE_CONSTRAINTS));
+                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, this.formatParserError(Phone.MESSAGE_CONSTRAINTS));
 
         // invalid email
         assertParseFailure(parser, NAME_PREAMBLE_BOB + PHONE_DESC_BOB + INVALID_EMAIL_DESC + ADDRESS_DESC_BOB
-                + ADD_TAG_DESC_HUSBAND + ADD_TAG_DESC_FRIEND, this.formatParserError(Email.MESSAGE_CONSTRAINTS));
+                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, this.formatParserError(Email.MESSAGE_CONSTRAINTS));
 
         // invalid address
         assertParseFailure(parser, NAME_PREAMBLE_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + INVALID_ADDRESS_DESC
-                + ADD_TAG_DESC_HUSBAND + ADD_TAG_DESC_FRIEND, this.formatParserError(Address.MESSAGE_CONSTRAINTS));
+                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, this.formatParserError(Address.MESSAGE_CONSTRAINTS));
 
         // invalid tag
         assertParseFailure(parser, NAME_PREAMBLE_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
-                + INVALID_ADD_TAG_DESC + VALID_TAG_FRIEND, this.formatParserError(Tag.MESSAGE_CONSTRAINTS));
+                + INVALID_TAG_DESC + VALID_TAG_FRIEND, this.formatParserError(Tag.MESSAGE_CONSTRAINTS));
 
         // two invalid values, only first invalid value reported
         assertParseFailure(parser, INVALID_NAME_PREAMBLE + PHONE_DESC_BOB + EMAIL_DESC_BOB + INVALID_ADDRESS_DESC,

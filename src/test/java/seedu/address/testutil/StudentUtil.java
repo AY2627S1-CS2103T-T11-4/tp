@@ -1,16 +1,18 @@
 package seedu.address.testutil;
 
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_ADD_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_DELETE_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
+
+import java.util.Set;
 
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.EditStudentCommand;
 import seedu.address.model.student.Student;
+import seedu.address.model.tag.StudentTag;
 
 /**
  * A utility class for Student.
@@ -34,7 +36,7 @@ public class StudentUtil {
         sb.append(PREFIX_EMAIL + " " + student.getEmail().value + " ");
         sb.append(PREFIX_ADDRESS + " " + student.getAddress().value + " ");
         student.getTags().stream().forEach(
-            s -> sb.append(PREFIX_ADD_TAG).append(" ").append(s.tagName).append(" ")
+            s -> sb.append(PREFIX_TAG).append(" ").append(s.tagName).append(" ")
         );
         return sb.toString();
     }
@@ -48,13 +50,14 @@ public class StudentUtil {
         descriptor.getPhone().ifPresent(phone -> sb.append(PREFIX_PHONE).append(" ").append(phone.value).append(" "));
         descriptor.getEmail().ifPresent(email -> sb.append(PREFIX_EMAIL).append(" ").append(email.value).append(" "));
         descriptor.getAddress().ifPresent(addr -> sb.append(PREFIX_ADDRESS).append(" ").append(addr.value).append(" "));
-        if (descriptor.isClearTags()) {
-            sb.append(PREFIX_CLEAR_TAGS).append(" ");
+        if (descriptor.getTags().isPresent()) {
+            Set<StudentTag> tags = descriptor.getTags().get();
+            if (tags.isEmpty()) {
+                sb.append(PREFIX_CLEAR_TAGS);
+            } else {
+                tags.forEach(s -> sb.append(PREFIX_TAG).append(" ").append(s.tagName).append(" "));
+            }
         }
-        descriptor.getTagsToDelete().ifPresent(tags ->
-                tags.forEach(s -> sb.append(PREFIX_DELETE_TAG).append(" ").append(s.tagName).append(" ")));
-        descriptor.getTagsToAdd().ifPresent(tags ->
-                tags.forEach(s -> sb.append(PREFIX_ADD_TAG).append(" ").append(s.tagName).append(" ")));
         return sb.toString();
     }
 }

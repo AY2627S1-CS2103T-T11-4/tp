@@ -247,24 +247,6 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void validateNoTagConflicts_disjointTags_success() throws Exception {
-        ParserUtil.validateNoTagConflicts(Set.of(new TagStub(VALID_TAG_1)),
-                Set.of(new TagStub(VALID_TAG_2)));
-    }
-
-    @Test
-    public void validateNoTagConflicts_overlappingTags_throwsFieldValueInvalidException() {
-        Set<TagStub> tagsToAdd = Set.of(new TagStub(VALID_TAG_1), new TagStub(VALID_TAG_2));
-        Set<TagStub> tagsToDelete = Set.of(new TagStub(VALID_TAG_2), new TagStub(VALID_TAG_1));
-        String errorMessage = Messages.getErrorMessageForTagConflicts(tagsToAdd);
-
-        assertEquals("The following tags cannot be both added and deleted: friend, neighbour", errorMessage);
-
-        assertThrows(FieldValueInvalidException.class, errorMessage, () ->
-                ParserUtil.validateNoTagConflicts(tagsToAdd, tagsToDelete));
-    }
-
-    @Test
     public void validateEmptyField_emptyValue_success() throws Exception {
         ParserUtil.validateEmptyField("", Messages.getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS));
     }

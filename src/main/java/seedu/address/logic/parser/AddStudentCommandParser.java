@@ -2,9 +2,9 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_ADD_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Set;
 import java.util.logging.Logger;
@@ -25,8 +25,7 @@ import seedu.address.model.tag.StudentTag;
  */
 public class AddStudentCommandParser implements Parser<AddStudentCommand> {
 
-    private static final Set<Prefix> VALID_PREFIXES =
-            Set.of(PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_ADD_TAG);
+    private static final Set<Prefix> VALID_PREFIXES = Set.of(PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG);
     private static final Set<Prefix> REQUIRED_PREFIXES = Set.of(PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
     private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
 
@@ -71,7 +70,7 @@ public class AddStudentCommandParser implements Parser<AddStudentCommand> {
         Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
         Email email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
         Address address = ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get());
-        Set<StudentTag> tagList = ParserUtil.parseStudentTags(argMultimap.getAllValues(PREFIX_ADD_TAG));
+        Set<StudentTag> tagList = ParserUtil.parseStudentTags(argMultimap.getAllValues(PREFIX_TAG));
 
         return new Student(name, phone, email, address, tagList);
     }

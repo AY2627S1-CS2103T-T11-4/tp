@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 
 import seedu.address.logic.parser.Prefix;
 import seedu.address.model.student.Student;
-import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutPlan;
 
@@ -26,8 +25,6 @@ public class Messages {
     public static final String MESSAGE_DUPLICATE_FIELDS = "Multiple values specified for single-valued field(s): %1$s";
     public static final String MESSAGE_INVALID_PREFIX = "Invalid prefix(es) included: %1$s";
     public static final String MESSAGE_EXTRA_VALUES = "%1$s should not have values supplied";
-    public static final String MESSAGE_TAG_CONFLICT =
-            "The following tags cannot be both added and deleted: %1$s";
     public static final String MESSAGE_EMPTY_PREFIX = "Empty prefix detected."
             + " Ensure all prefixes are in the form '--prefix' and isolated by spaces";
 
@@ -52,17 +49,6 @@ public class Messages {
      */
     public static String getErrorMessageForExtraValues(Prefix... prefixesWithValues) {
         return String.format(MESSAGE_EXTRA_VALUES, getErrorMessageForPrefixes(prefixesWithValues));
-    }
-
-    /**
-     * Returns an error message indicating tags that were supplied for both addition and deletion.
-     */
-    public static String getErrorMessageForTagConflicts(Set<? extends Tag> conflictingTags) {
-        String tagNames = conflictingTags.stream()
-                .map(tag -> tag.tagName)
-                .sorted()
-                .collect(Collectors.joining(", "));
-        return String.format(MESSAGE_TAG_CONFLICT, tagNames);
     }
 
     /**

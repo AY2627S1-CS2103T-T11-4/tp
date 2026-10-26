@@ -2,13 +2,14 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.getErrorMessageForExtraValues;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_ADD_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_DELETE_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
+import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -26,7 +27,7 @@ import seedu.address.model.tag.WorkoutPlanTag;
 public class EditPlanCommandParser implements Parser<EditPlanCommand> {
 
     private static final Set<Prefix> VALID_PREFIXES =
-            Set.of(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE, PREFIX_ADD_TAG, PREFIX_DELETE_TAG, PREFIX_CLEAR_TAGS);
+            Set.of(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG, PREFIX_CLEAR_TAGS);
     private static final Set<Prefix> REQUIRED_PREFIXES = Set.of();
     private static final Set<Prefix> NO_REPEAT_PREFIXES =
             Set.of(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE, PREFIX_CLEAR_TAGS);
@@ -87,25 +88,28 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
         if (argMultimap.getValue(PREFIX_DATE).isPresent()) {
             editPlanDescriptor.setDate(ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get()));
         }
-
-        Set<WorkoutPlanTag> tagsToAdd =
-                ParserUtil.parseWorkoutPlanTags(argMultimap.getAllValues(PREFIX_ADD_TAG));
-        Set<WorkoutPlanTag> tagsToDelete =
-                ParserUtil.parseWorkoutPlanTags(argMultimap.getAllValues(PREFIX_DELETE_TAG));
-        ParserUtil.validateNoTagConflicts(tagsToAdd, tagsToDelete);
-        if (!tagsToAdd.isEmpty()) {
-            editPlanDescriptor.setTagsToAdd(tagsToAdd);
-        }
-        if (!tagsToDelete.isEmpty()) {
-            editPlanDescriptor.setTagsToDelete(tagsToDelete);
-        }
+        parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editPlanDescriptor::setWorkoutPlanTags);
 
         if (argMultimap.getValue(PREFIX_CLEAR_TAGS).isPresent()) {
             verifyClearTag(argMultimap);
-            editPlanDescriptor.setClearTags(true);
+            editPlanDescriptor.setWorkoutPlanTags(Set.of());
         }
 
         return editPlanDescriptor;
+    }
+
+    /**
+     * Parses {@code Collection<String> tags} into a {@code Set<WorkoutPlanTag>} if {@code tags} is non-empty.
+     * If {@code tags} contains only one element which is an empty string, it will be parsed into a
+     * {@code Set<StudentTag>} containing zero tags.
+     */
+    private Optional<Set<WorkoutPlanTag>> parseTagsForEdit(Collection<String> tags) throws ParseException {
+        assert tags != null;
+
+        if (tags.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(ParserUtil.parseWorkoutPlanTags(tags));
     }
 
     /**

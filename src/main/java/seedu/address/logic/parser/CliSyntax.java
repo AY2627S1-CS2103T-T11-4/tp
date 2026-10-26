@@ -7,8 +7,7 @@ public class CliSyntax {
 
     /* Common Prefixes */
     public static final Prefix PREFIX_NAME = new Prefix("--name");
-    public static final Prefix PREFIX_ADD_TAG = new Prefix("--addTag");
-    public static final Prefix PREFIX_DELETE_TAG = new Prefix("--deleteTag");
+    public static final Prefix PREFIX_TAG = new Prefix("--tag");
     public static final Prefix PREFIX_CLEAR_TAGS = new Prefix("--clearTags");
 
     /* Student Prefixes */
