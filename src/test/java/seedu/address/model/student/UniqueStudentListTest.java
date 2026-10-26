@@ -58,6 +58,14 @@ public class UniqueStudentListTest {
     }
 
     @Test
+    public void add_studentNameDiffersOnlyByCase_throwsDuplicateStudentException() {
+        uniqueStudentList.add(ALICE);
+        Student sameNameDifferentCase = new StudentBuilder(ALICE).withName(ALICE.getName().fullName.toLowerCase())
+                .build();
+        assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.add(sameNameDifferentCase));
+    }
+
+    @Test
     public void setStudent_nullTargetStudent_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> uniqueStudentList.setStudent(null, ALICE));
     }
@@ -93,6 +101,14 @@ public class UniqueStudentListTest {
     }
 
     @Test
+    public void setStudent_editedStudentNameDiffersOnlyByCase_success() {
+        uniqueStudentList.add(ALICE);
+        Student editedAlice = new StudentBuilder(ALICE).withName(ALICE.getName().fullName.toLowerCase()).build();
+        uniqueStudentList.setStudent(ALICE, editedAlice);
+        assertEquals(List.of(editedAlice), uniqueStudentList.asUnmodifiableObservableList());
+    }
+
+    @Test
     public void setStudent_editedStudentHasDifferentIdentity_success() {
         uniqueStudentList.add(ALICE);
         uniqueStudentList.setStudent(ALICE, BOB);
@@ -106,6 +122,14 @@ public class UniqueStudentListTest {
         uniqueStudentList.add(ALICE);
         uniqueStudentList.add(BOB);
         assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudent(ALICE, BOB));
+    }
+
+    @Test
+    public void setStudent_editedStudentNameDiffersOnlyByCaseFromAnotherStudent_throwsDuplicateStudentException() {
+        uniqueStudentList.add(ALICE);
+        uniqueStudentList.add(BOB);
+        Student editedBob = new StudentBuilder(BOB).withName(ALICE.getName().fullName.toLowerCase()).build();
+        assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudent(BOB, editedBob));
     }
 
     @Test
@@ -163,6 +187,15 @@ public class UniqueStudentListTest {
         List<Student> listWithDuplicateStudents = List.of(ALICE, ALICE);
         assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudents(listWithDuplicateStudents));
         assertEquals(List.of(BOB), uniqueStudentList.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void setStudents_listWithNamesThatDifferOnlyByCase_throwsDuplicateStudentException() {
+        Student sameNameDifferentCase = new StudentBuilder(ALICE).withName(ALICE.getName().fullName.toLowerCase())
+                .build();
+        List<Student> listWithCaseOnlyDuplicates = List.of(ALICE, sameNameDifferentCase);
+        assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudents(listWithCaseOnlyDuplicates));
+        assertTrue(uniqueStudentList.asUnmodifiableObservableList().isEmpty());
     }
 
     @Test
