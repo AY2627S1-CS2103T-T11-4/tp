@@ -136,6 +136,9 @@ Format: `find KEYWORD [MORE_KEYWORDS]...`
 * The search considers only names.
 * Only full words match; for example, `Han` does not match `Hans`.
 * Students matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
+* At least one keyword must contain only letters and digits, following the student-name format.
+  Searches such as `find !!!` or `find Alice! Bob?` show an error and command usage.
+  Mixed input such as `find Alice !!!` still searches for `Alice`.
 
 Examples:
 * `find John` returns `john` and `John Doe`

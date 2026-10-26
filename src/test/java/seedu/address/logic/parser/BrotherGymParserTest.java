@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
@@ -135,6 +136,13 @@ public class BrotherGymParserTest {
         FindCommand command = (FindCommand) parser.parseCommand(
                 FindCommand.COMMAND_WORD + " " + keywords.stream().collect(Collectors.joining(" ")));
         assertEquals(new FindCommand(new NameContainsKeywordsPredicate(keywords)), command);
+    }
+
+    @Test
+    public void parseCommand_findInvalidKeywords_throwsParseException() {
+        assertThrows(ParseException.class,
+                Messages.formatParserError(FindCommand.MESSAGE_INVALID_KEYWORDS, FindCommand.MESSAGE_USAGE), ()
+                    -> parser.parseCommand("find !!!"));
     }
 
     @Test
