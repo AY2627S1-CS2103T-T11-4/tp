@@ -31,12 +31,15 @@ public class EditPlanCommand extends Command {
 
     public static final String COMMAND_WORD = "editPlan";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Edits a workout plan from the Student currently being viewed.\n"
-            + "Parameters: PLAN_ID [" + PREFIX_NAME + " PLAN_NAME] [" + PREFIX_PLAN + " DESCRIPTION] ["
-            + PREFIX_DATE + " DATE(DDMMYYYY)] [" + PREFIX_TAG + " TAG]...\n"
-            + "Example: " + COMMAND_WORD + " 1 " + PREFIX_NAME + " NewName " + PREFIX_PLAN + " New description "
-            + PREFIX_DATE + " 15102026";
+    public static final String MESSAGE_DESCRIPTION =
+            "Edits a workout plan from the Student currently being viewed.";
+    public static final String MESSAGE_PARAMETERS = "PLAN_ID [" + PREFIX_NAME + " PLAN_NAME] [" + PREFIX_PLAN
+            + " DESCRIPTION] [" + PREFIX_DATE + " DATE(DDMMYYYY)] [" + PREFIX_TAG + " TAG]...";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1 " + PREFIX_NAME + " NewName " + PREFIX_PLAN
+            + " New description " + PREFIX_DATE + " 15102026";
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
+            + "Parameters: " + MESSAGE_PARAMETERS + "\n"
+            + "Example: " + MESSAGE_EXAMPLE;
 
     public static final String MESSAGE_SUCCESS = "Edited workout: %1$s";
     public static final String MESSAGE_NO_STUDENT_SELECTED =
