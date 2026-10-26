@@ -2,9 +2,9 @@ package seedu.address.logic.parser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import seedu.address.logic.Messages;
-import seedu.address.logic.parser.exceptions.InputFormatInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -16,6 +16,10 @@ import seedu.address.logic.parser.exceptions.ParseException;
  *    in the above example.<br>
  */
 public class ArgumentTokenizer {
+    private static final String PREFIX_REGEX = "--[A-Za-z0-9]+";
+    private static final Pattern PREFIX_PATTERN = Pattern.compile(" " + PREFIX_REGEX);
+    private static final Pattern FULL_PREFIX_PATTERN = Pattern.compile(PREFIX_REGEX);
+
     /**
      * Tokenizes an arguments string and returns an {@code ArgumentMultimap} object that maps prefixes to their
      * respective argument values.
@@ -37,13 +41,16 @@ public class ArgumentTokenizer {
         int prefixPosition = findNextPrefixPosition(argsString, 0);
         while (prefixPosition != -1) {
             String prefixString = getFullPrefix(argsString, prefixPosition);
-            Prefix prefix = new Prefix(prefixString);
-            PrefixPosition extendedPrefix = new PrefixPosition(prefix, prefixPosition);
-            positions.add(extendedPrefix);
-
             int nextPrefixPosition = findNextPrefixPosition(argsString, prefixPosition);
             assert nextPrefixPosition == -1 || nextPrefixPosition > prefixPosition
                     : "Prefix scanning should always progress";
+
+            if (!isValidPrefix(prefixString)) {
+                prefixPosition = nextPrefixPosition;
+                continue;
+            }
+
+            positions.add(new PrefixPosition(new Prefix(prefixString), prefixPosition));
             prefixPosition = nextPrefixPosition;
         }
 
@@ -53,28 +60,32 @@ public class ArgumentTokenizer {
     /**
      * Returns the index of the first occurrence of any --prefix in {@code argsString}
      * starting from index {@code fromIndex}.
-     * An --prefix is detected if there is a whitespace before the --prefix
+     * An --prefix is detected if there is a literal space before the --prefix, followed by at least one alphanumeric
+     * character.
      * Returns -1 if no such occurrence can be found.
      */
     private static int findNextPrefixPosition(String argsString, int fromIndex) {
-        int prefixIndex = argsString.indexOf(" --", fromIndex);
-        return prefixIndex == -1 ? -1 : prefixIndex + 1; // +1 as offset of whitespace
+        Matcher matcher = PREFIX_PATTERN.matcher(argsString);
+        return matcher.find(fromIndex) ? matcher.start() + 1 : -1; // +1 as offset of whitespace
     }
 
     /**
      * From the starting index of the --prefix given in {@code prefixStartIndex},
-     * get the entire --prefix string, delimited by a space at the end of the prefix
-     *
-     * @throws ParseException if the prefix name is empty, i.e. occurrences of " -- "
+     * get the entire --prefix string, delimited by a space at the end of the prefix.
      */
-    private static String getFullPrefix(String argsString, int prefixStartIndex) throws ParseException {
+    private static String getFullPrefix(String argsString, int prefixStartIndex) {
         int prefixEndIndex = argsString.indexOf(" ", prefixStartIndex);
         // if end index is -1, the argsString ends with the index
         prefixEndIndex = prefixEndIndex == -1 ? argsString.length() : prefixEndIndex;
-        if (prefixEndIndex - prefixStartIndex == 2) { // checking for "--"
-            throw new InputFormatInvalidException(Messages.MESSAGE_EMPTY_PREFIX);
-        }
         return argsString.substring(prefixStartIndex, prefixEndIndex);
+    }
+
+    /**
+     * Returns whether {@code prefixString} has the form {@code --prefix}, where every character after the initial
+     * {@code --} is alphanumeric.
+     */
+    private static boolean isValidPrefix(String prefixString) {
+        return FULL_PREFIX_PATTERN.matcher(prefixString).matches();
     }
 
     /**

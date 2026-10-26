@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.Messages;
-import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.testutil.Assert;
 
 public class ArgumentTokenizerTest {
@@ -67,14 +65,26 @@ public class ArgumentTokenizerTest {
     }
 
     @Test
-    public void tokenize_emptyPrefix_throwsParseException() {
-        String ddMiddleArgString = " some random string -- some text behind invalid prefix";
-        Assert.assertThrows(ParseException.class, Messages.MESSAGE_EMPTY_PREFIX, () ->
-                ArgumentTokenizer.tokenize(ddMiddleArgString));
+    public void tokenize_bareDashTokens_areNotPrefixes() {
+        String argsString = " some random string -- some text ---";
+        ArgumentMultimap argMultimap = Assert.assertDoesNotThrow(() -> ArgumentTokenizer.tokenize(argsString));
 
-        String ddEndArgString = " some random string --";
-        Assert.assertThrows(ParseException.class, Messages.MESSAGE_EMPTY_PREFIX, () ->
-                ArgumentTokenizer.tokenize(ddEndArgString));
+        assertPreamblePresent(argMultimap, argsString.trim());
+        assertArgumentAbsent(argMultimap, ddashP);
+    }
+
+    @Test
+    public void tokenize_malformedPrefixes_areIgnored() {
+        String malformedArgsString = "Preamble --name- ignored --_ ignored --! ignored --A1 valid";
+        ArgumentMultimap argMultimap = Assert.assertDoesNotThrow(() ->
+                ArgumentTokenizer.tokenize(malformedArgsString));
+
+        assertPreamblePresent(argMultimap, "Preamble --name- ignored --_ ignored --! ignored");
+        assertArgumentPresent(argMultimap, new Prefix("--A1"), "valid");
+
+        String malformedValueString = "Preamble --A1 valid --name- remains ordinary text";
+        argMultimap = Assert.assertDoesNotThrow(() -> ArgumentTokenizer.tokenize(malformedValueString));
+        assertArgumentPresent(argMultimap, new Prefix("--A1"), "valid --name- remains ordinary text");
     }
 
     @Test
