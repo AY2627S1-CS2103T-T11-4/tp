@@ -9,6 +9,7 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 
@@ -25,6 +26,7 @@ public class MarkPlanCommand extends SingleIndexCommand {
             + "Example: " + COMMAND_WORD + " 1";
 
     public static final String MESSAGE_SUCCESS = "Marked workout as done: %1$s";
+    public static final String MESSAGE_ALREADY_MARKED = "This workout plan is already marked as completed.";
     public static final String MESSAGE_NO_STUDENT_SELECTED =
             "No student is currently selected. Use viewStudent first.";
     public static final String MESSAGE_INVALID_WORKOUT_ID =
@@ -48,6 +50,10 @@ public class MarkPlanCommand extends SingleIndexCommand {
 
         final WorkoutPlansList updatedPlans;
         try {
+            WorkoutPlan targetPlan = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
+            if (targetPlan.getStatus() == WorkoutPlanStatus.COMPLETED) {
+                throw new CommandException(MESSAGE_ALREADY_MARKED);
+            }
             updatedPlans = currentStudent.getWorkoutPlansList().markWorkoutPlan(targetIndex.getZeroBased());
         } catch (WorkoutPlanIndexOutOfBoundsException e) {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
