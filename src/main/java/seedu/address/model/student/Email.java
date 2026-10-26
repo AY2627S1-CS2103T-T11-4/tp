@@ -10,8 +10,13 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 public class Email {
 
     private static final String SPECIAL_CHARACTERS = "+_.-";
+    public static final int MIN_LENGTH = 6;
+    public static final int MAX_LOCAL_PART_LENGTH = 64;
+    public static final int MAX_DOMAIN_LENGTH = 64;
     public static final String MESSAGE_CONSTRAINTS = "Emails should be of the format local-part@domain "
-            + "and adhere to the following constraints:\n"
+            + "and be between " + MIN_LENGTH + " and "
+            + (MAX_LOCAL_PART_LENGTH + 1 + MAX_DOMAIN_LENGTH) + " characters long, with the local part and domain "
+            + "each at most 64 characters, and adhere to the following constraints:\n"
             + "1. The local-part should only contain alphanumeric characters and these special characters, excluding "
             + "the parentheses, (" + SPECIAL_CHARACTERS + "). The local-part may not start or end with any special "
             + "characters.\n"
@@ -48,7 +53,11 @@ public class Email {
      * Returns true if a given string is a valid email.
      */
     public static boolean isValidEmail(String test) {
-        return test.matches(VALIDATION_REGEX);
+        if (!test.matches(VALIDATION_REGEX) || test.length() < MIN_LENGTH) {
+            return false;
+        }
+        int atIndex = test.indexOf('@');
+        return atIndex <= MAX_LOCAL_PART_LENGTH && test.length() - atIndex - 1 <= MAX_DOMAIN_LENGTH;
     }
 
     @Override
