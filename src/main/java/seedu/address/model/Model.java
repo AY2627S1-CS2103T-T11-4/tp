@@ -68,6 +68,7 @@ public interface Model {
 
     /**
      * Appends a workout plan to the student and stores an updated student value.
+     * Refreshes the added plan's date-based status before checking for duplicates and storing it.
      *
      * @throws StudentNotFoundException If the student is not in the model.
      */
@@ -83,6 +84,7 @@ public interface Model {
 
     /**
      * Replaces {@code target} with {@code editedPlan} at the same position and stores an updated student value.
+     * Refreshes the edited plan's date-based status before checking for duplicates and storing it.
      *
      * @throws StudentNotFoundException If the student is not in the model.
      * @throws WorkoutPlanNotFoundException If the student has no matching plan.

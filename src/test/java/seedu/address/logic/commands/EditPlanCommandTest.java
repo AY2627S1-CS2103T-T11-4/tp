@@ -31,11 +31,11 @@ public class EditPlanCommandTest {
 
     private static final WorkoutPlan FIRST_PLAN = new WorkoutPlan(
             new WorkoutTitle("Strength"), new WorkoutDescription("Upper body"),
-            WorkoutDate.fromLocalDate(LocalDate.of(2026, 10, 15)),
+            WorkoutDate.fromLocalDate(LocalDate.now().plusDays(1)),
             Set.of(new WorkoutPlanTag("old")));
     private static final WorkoutPlan SECOND_PLAN = new WorkoutPlan(
             new WorkoutTitle("Cardio"), new WorkoutDescription("Running"),
-            WorkoutDate.fromLocalDate(LocalDate.of(2026, 10, 16)));
+            WorkoutDate.fromLocalDate(LocalDate.now().plusDays(2)));
 
     @Test
     public void constructor_nullArguments_throwsNullPointerException() {
@@ -83,6 +83,32 @@ public class EditPlanCommandTest {
                 String.format(EditPlanCommand.MESSAGE_SUCCESS, expectedPlan), expectedModel);
         assertEquals(WorkoutPlanStatus.COMPLETED,
                 model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutList().get(0).getStatus());
+    }
+
+    @Test
+    public void execute_dateEdited_immediatelyRefreshesStatus() throws Exception {
+        for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
+            for (int days : List.of(-1, 0, 1)) {
+                LocalDate dueDate = LocalDate.now().plusDays(days);
+                WorkoutPlan original = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getWorkouts(),
+                        FIRST_PLAN.getDate(), FIRST_PLAN.getTags(), status);
+                Model model = createModelWithPlans(original, SECOND_PLAN);
+                model.setCurrentStudent(model.getFilteredStudentList().get(0));
+                EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
+                descriptor.setDate(WorkoutDate.fromLocalDate(dueDate));
+
+                new EditPlanCommand(Index.fromOneBased(1), descriptor).execute(model);
+
+                WorkoutPlan edited = model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutPlan(0);
+                WorkoutPlanStatus expectedStatus = status == WorkoutPlanStatus.COMPLETED
+                        ? WorkoutPlanStatus.COMPLETED
+                        : days < 0 ? WorkoutPlanStatus.OVERDUE : WorkoutPlanStatus.PENDING;
+                assertEquals(expectedStatus, edited.getStatus());
+                assertEquals(WorkoutDate.fromLocalDate(dueDate), edited.getDate());
+                assertEquals(SECOND_PLAN,
+                        model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutPlan(1));
+            }
+        }
     }
 
     @Test

@@ -3,6 +3,7 @@ package seedu.address.model;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -133,7 +134,8 @@ public class ModelManager implements Model {
         logger.fine(() -> "Attempting to add workout plan for student " + student.getName() + ": " + plan);
 
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
-        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().addWorkoutPlan(plan);
+        WorkoutPlan refreshedPlan = plan.updateState(LocalDate.now());
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().addWorkoutPlan(refreshedPlan);
         Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
                 storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
         setStudent(storedStudent, updatedStudent);
@@ -164,7 +166,8 @@ public class ModelManager implements Model {
                 + ": " + target + " -> " + editedPlan);
 
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
-        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().setWorkoutPlan(target, editedPlan);
+        WorkoutPlan refreshedPlan = editedPlan.updateState(LocalDate.now());
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().setWorkoutPlan(target, refreshedPlan);
         Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
                 storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
         setStudent(storedStudent, updatedStudent);
