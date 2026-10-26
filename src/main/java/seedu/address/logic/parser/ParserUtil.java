@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
+import seedu.address.logic.Messages;
 import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Address;
@@ -147,6 +148,23 @@ public class ParserUtil {
      */
     public static Set<StudentTag> parseStudentTags(Collection<String> tags) throws ParseException {
         return parseTags(tags, StudentTag::new);
+    }
+
+    /**
+     * Validates that no tag is present in both the add and delete collections.
+     *
+     * @throws ParseException if the collections contain an overlapping tag.
+     */
+    public static <T extends Tag> void validateNoTagConflicts(Set<T> tagsToAdd,
+                                                               Set<T> tagsToDelete) throws ParseException {
+        requireNonNull(tagsToAdd);
+        requireNonNull(tagsToDelete);
+
+        Set<T> conflictingTags = new HashSet<>(tagsToAdd);
+        conflictingTags.retainAll(tagsToDelete);
+        if (!conflictingTags.isEmpty()) {
+            throw new FieldValueInvalidException(Messages.getErrorMessageForTagConflicts(conflictingTags));
+        }
     }
 
     /**

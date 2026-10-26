@@ -1,32 +1,35 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.logic.commands.CommandTestUtil.ADD_TAG_DESC_STRENGTH;
+import static seedu.address.logic.commands.CommandTestUtil.CLEAR_TAGS_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.DATE_DESC_LEGS;
+import static seedu.address.logic.commands.CommandTestUtil.DELETE_TAG_DESC_HIIT;
+import static seedu.address.logic.commands.CommandTestUtil.DELETE_TAG_DESC_STRENGTH;
+import static seedu.address.logic.commands.CommandTestUtil.EMPTY_ADD_TAG_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_ADD_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LETTERS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PLAN_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC;
-import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TITLE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_CHEST;
 import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_LEGS;
-import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_HIIT;
-import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_STRENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.TITLE_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HIIT;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_STRENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_DATE_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_PLAN_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_TITLE_LEGS;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND;
 import static seedu.address.testutil.TypicalIndexes.INDEX_THIRD;
+
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -40,9 +43,6 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 import seedu.address.testutil.EditPlanDescriptorBuilder;
 
 public class EditPlanCommandParserTest {
-
-    private static final String TAG_EMPTY = " " + PREFIX_TAG;
-    private static final String CLEAR_TAGS = " " + PREFIX_CLEAR_TAGS;
 
     private EditPlanCommandParser parser = new EditPlanCommandParser();
 
@@ -86,7 +86,7 @@ public class EditPlanCommandParserTest {
                 this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS)); // invalid date (invalid letters)
         assertParseFailure(parser, "1" + INVALID_DATE_DESC_LENGTH,
                 this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS)); // invalid date (too long)
-        assertParseFailure(parser, "1" + INVALID_TAG_DESC + CLEAR_TAGS,
+        assertParseFailure(parser, "1" + INVALID_ADD_TAG_DESC + CLEAR_TAGS_DESC,
                 this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS)); // invalid tag
 
         // invalid plan followed by valid date
@@ -94,7 +94,7 @@ public class EditPlanCommandParserTest {
                 this.formatParserError(WorkoutDescription.MESSAGE_CONSTRAINTS));
 
         // an empty tag remains invalid since --clearTags is available for clearing tags
-        assertParseFailure(parser, "1" + TAG_EMPTY,
+        assertParseFailure(parser, "1" + EMPTY_ADD_TAG_DESC,
                 this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS));
 
         // multiple invalid values, but only the first invalid value is captured
@@ -106,12 +106,12 @@ public class EditPlanCommandParserTest {
     public void parse_allFieldsSpecified_success() {
         Index targetIndex = INDEX_SECOND;
         String userInput = targetIndex.getOneBased() + TITLE_DESC_LEGS + PLAN_DESC_LEGS
-                + DATE_DESC_LEGS + TAG_DESC_STRENGTH + TAG_DESC_HIIT;
+                + DATE_DESC_LEGS + ADD_TAG_DESC_STRENGTH + DELETE_TAG_DESC_HIIT;
 
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder()
                 .withTitle(VALID_WORKOUT_TITLE_LEGS)
                 .withDescription(VALID_WORKOUT_PLAN_LEGS).withDate(VALID_WORKOUT_DATE_LEGS)
-                .withTags(VALID_TAG_STRENGTH, VALID_TAG_HIIT).build();
+                .withTagsToAdd(VALID_TAG_STRENGTH).withTagsToDelete(VALID_TAG_HIIT).build();
         EditPlanCommand expectedCommand = new EditPlanCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
@@ -153,8 +153,8 @@ public class EditPlanCommandParserTest {
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // tags
-        userInput = targetIndex.getOneBased() + TAG_DESC_STRENGTH;
-        descriptor = new EditPlanDescriptorBuilder().withTags(VALID_TAG_STRENGTH).build();
+        userInput = targetIndex.getOneBased() + ADD_TAG_DESC_STRENGTH;
+        descriptor = new EditPlanDescriptorBuilder().withTagsToAdd(VALID_TAG_STRENGTH).build();
         expectedCommand = new EditPlanCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -173,15 +173,14 @@ public class EditPlanCommandParserTest {
         // invalid prefix alone
         assertParseFailure(parser, "1" + INVALID_PREFIX_DESC,
                 this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
-
     }
 
     @Test
     public void parse_clearTags_success() {
         Index targetIndex = INDEX_THIRD;
-        String userInput = targetIndex.getOneBased() + CLEAR_TAGS;
+        String userInput = targetIndex.getOneBased() + CLEAR_TAGS_DESC;
 
-        EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder().withTags().build();
+        EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder().withClearTags().build();
         EditPlanCommand expectedCommand = new EditPlanCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
@@ -190,10 +189,10 @@ public class EditPlanCommandParserTest {
     @Test
     public void parse_clearTagsWithOtherField_success() {
         Index targetIndex = INDEX_THIRD;
-        String userInput = targetIndex.getOneBased() + TITLE_DESC_LEGS + CLEAR_TAGS;
+        String userInput = targetIndex.getOneBased() + TITLE_DESC_LEGS + CLEAR_TAGS_DESC;
 
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder()
-                .withTitle(VALID_WORKOUT_TITLE_LEGS).withTags().build();
+                .withTitle(VALID_WORKOUT_TITLE_LEGS).withClearTags().build();
         EditPlanCommand expectedCommand = new EditPlanCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
@@ -202,12 +201,20 @@ public class EditPlanCommandParserTest {
     @Test
     public void parse_tagAndClearTags_success() {
         Index targetIndex = INDEX_THIRD;
-        String userInput = targetIndex.getOneBased() + TAG_DESC_STRENGTH + CLEAR_TAGS;
+        String userInput = targetIndex.getOneBased() + ADD_TAG_DESC_STRENGTH + CLEAR_TAGS_DESC;
 
-        EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder().withTags().build();
+        EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder()
+                .withTagsToAdd(VALID_TAG_STRENGTH).withClearTags().build();
         EditPlanCommand expectedCommand = new EditPlanCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
+    }
+
+    @Test
+    public void parse_addDeleteSameTag_failure() {
+        String userInput = INDEX_FIRST.getOneBased() + ADD_TAG_DESC_STRENGTH + DELETE_TAG_DESC_STRENGTH;
+        assertParseFailure(parser, userInput, this.formatParserError(
+                Messages.getErrorMessageForTagConflicts(Set.of(new WorkoutPlanTag(VALID_TAG_STRENGTH)))));
     }
 
 }

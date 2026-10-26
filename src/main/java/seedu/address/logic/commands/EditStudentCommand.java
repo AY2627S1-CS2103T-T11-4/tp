@@ -2,11 +2,12 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_ADD_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DELETE_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_STUDENTS;
 
 import java.util.Collections;
@@ -44,7 +45,8 @@ public class EditStudentCommand extends Command {
             + "[" + PREFIX_PHONE + " PHONE] "
             + "[" + PREFIX_EMAIL + " EMAIL] "
             + "[" + PREFIX_ADDRESS + " ADDRESS] "
-            + "[" + PREFIX_TAG + " TAG]... [" + PREFIX_CLEAR_TAGS + "]\n"
+            + "[" + PREFIX_ADD_TAG + " TAG]... [" + PREFIX_DELETE_TAG + " TAG]... ["
+            + PREFIX_CLEAR_TAGS + "]\n"
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_PHONE + " 91234567 "
             + PREFIX_EMAIL + " johndoe@example.com";
@@ -100,7 +102,13 @@ public class EditStudentCommand extends Command {
         Phone updatedPhone = editStudentDescriptor.getPhone().orElse(studentToEdit.getPhone());
         Email updatedEmail = editStudentDescriptor.getEmail().orElse(studentToEdit.getEmail());
         Address updatedAddress = editStudentDescriptor.getAddress().orElse(studentToEdit.getAddress());
-        Set<StudentTag> updatedTags = editStudentDescriptor.getTags().orElse(studentToEdit.getTags());
+        Set<StudentTag> updatedTags = new HashSet<>(studentToEdit.getTags());
+        if (editStudentDescriptor.isClearTags()) {
+            updatedTags.clear();
+        } else {
+            editStudentDescriptor.getTagsToDelete().ifPresent(updatedTags::removeAll);
+        }
+        editStudentDescriptor.getTagsToAdd().ifPresent(updatedTags::addAll);
 
         return new Student(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedTags,
                 studentToEdit.getWorkoutPlansList());
@@ -130,21 +138,22 @@ public class EditStudentCommand extends Command {
     }
 
     /**
-     * Stores the details to edit the student with. Each non-empty field value will replace the
-     * corresponding field value of the student.
+     * Stores the details to edit the student with.
      */
     public static class EditStudentDescriptor {
         private Name name;
         private Phone phone;
         private Email email;
         private Address address;
-        private Set<StudentTag> tags;
+        private Set<StudentTag> tagsToAdd;
+        private Set<StudentTag> tagsToDelete;
+        private boolean clearTags;
 
         public EditStudentDescriptor() {}
 
         /**
          * Copy constructor.
-         * A defensive copy of {@code tags} is used internally.
+         * Defensive copies of the tag sets are used internally.
          */
         public EditStudentDescriptor(EditStudentDescriptor toCopy) {
             requireNonNull(toCopy);
@@ -152,14 +161,17 @@ public class EditStudentCommand extends Command {
             setPhone(toCopy.phone);
             setEmail(toCopy.email);
             setAddress(toCopy.address);
-            setTags(toCopy.tags);
+            setTagsToAdd(toCopy.tagsToAdd);
+            setTagsToDelete(toCopy.tagsToDelete);
+            setClearTags(toCopy.clearTags);
         }
 
         /**
          * Returns true if at least one field is edited.
          */
         public boolean isAnyFieldEdited() {
-            return CollectionUtil.isAnyNonNull(name, phone, email, address, tags);
+            return CollectionUtil.isAnyNonNull(name, phone, email, address, tagsToAdd, tagsToDelete)
+                    || clearTags;
         }
 
         public void setName(Name name) {
@@ -195,20 +207,33 @@ public class EditStudentCommand extends Command {
         }
 
         /**
-         * Sets {@code tags} to this object's {@code tags}.
-         * A defensive copy of {@code tags} is used internally.
+         * Sets the tags to add to this object's descriptor.
          */
-        public void setTags(Set<StudentTag> tags) {
-            this.tags = (tags != null) ? new HashSet<>(tags) : null;
+        public void setTagsToAdd(Set<StudentTag> tagsToAdd) {
+            this.tagsToAdd = tagsToAdd != null ? new HashSet<>(tagsToAdd) : null;
         }
 
-        /**
-         * Returns an unmodifiable tag set, which throws {@code UnsupportedOperationException}
-         * if modification is attempted.
-         * Returns {@code Optional#empty()} if {@code tags} is null.
-         */
-        public Optional<Set<StudentTag>> getTags() {
-            return (tags != null) ? Optional.of(Collections.unmodifiableSet(tags)) : Optional.empty();
+        public Optional<Set<StudentTag>> getTagsToAdd() {
+            return tagsToAdd != null
+                    ? Optional.of(Collections.unmodifiableSet(tagsToAdd)) : Optional.empty();
+        }
+
+        /** Sets the tags to delete to this object's descriptor. */
+        public void setTagsToDelete(Set<StudentTag> tagsToDelete) {
+            this.tagsToDelete = tagsToDelete != null ? new HashSet<>(tagsToDelete) : null;
+        }
+
+        public Optional<Set<StudentTag>> getTagsToDelete() {
+            return tagsToDelete != null
+                    ? Optional.of(Collections.unmodifiableSet(tagsToDelete)) : Optional.empty();
+        }
+
+        public void setClearTags(boolean clearTags) {
+            this.clearTags = clearTags;
+        }
+
+        public boolean isClearTags() {
+            return clearTags;
         }
 
         @Override
@@ -226,7 +251,9 @@ public class EditStudentCommand extends Command {
                     && Objects.equals(phone, otherEditStudentDescriptor.phone)
                     && Objects.equals(email, otherEditStudentDescriptor.email)
                     && Objects.equals(address, otherEditStudentDescriptor.address)
-                    && Objects.equals(tags, otherEditStudentDescriptor.tags);
+                    && Objects.equals(tagsToAdd, otherEditStudentDescriptor.tagsToAdd)
+                    && Objects.equals(tagsToDelete, otherEditStudentDescriptor.tagsToDelete)
+                    && clearTags == otherEditStudentDescriptor.clearTags;
         }
 
         @Override
@@ -236,7 +263,9 @@ public class EditStudentCommand extends Command {
                     .add("phone", phone)
                     .add("email", email)
                     .add("address", address)
-                    .add("tags", tags)
+                    .add("tagsToAdd", tagsToAdd)
+                    .add("tagsToDelete", tagsToDelete)
+                    .add("clearTags", clearTags)
                     .toString();
         }
     }
