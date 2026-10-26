@@ -9,7 +9,6 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.exceptions.AlreadyUnmarkedException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
@@ -51,10 +50,6 @@ public class UnmarkPlanCommand extends SingleIndexCommand {
 
         final WorkoutPlansList updatedPlans;
         try {
-            WorkoutPlan targetPlan = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
-            if (targetPlan.getStatus() != WorkoutPlanStatus.COMPLETED) {
-                throw new CommandException(MESSAGE_ALREADY_UNMARKED);
-            }
             updatedPlans = currentStudent.getWorkoutPlansList().unmarkWorkoutPlan(targetIndex.getZeroBased());
         } catch (AlreadyUnmarkedException e) {
             throw new CommandException(MESSAGE_ALREADY_UNMARKED, e);

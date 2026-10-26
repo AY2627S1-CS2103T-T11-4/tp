@@ -9,7 +9,6 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.exceptions.AlreadyMarkedException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
@@ -51,10 +50,6 @@ public class MarkPlanCommand extends SingleIndexCommand {
 
         final WorkoutPlansList updatedPlans;
         try {
-            WorkoutPlan targetPlan = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
-            if (targetPlan.getStatus() == WorkoutPlanStatus.COMPLETED) {
-                throw new CommandException(MESSAGE_ALREADY_MARKED);
-            }
             updatedPlans = currentStudent.getWorkoutPlansList().markWorkoutPlan(targetIndex.getZeroBased());
         } catch (AlreadyMarkedException e) {
             throw new CommandException(MESSAGE_ALREADY_MARKED, e);
