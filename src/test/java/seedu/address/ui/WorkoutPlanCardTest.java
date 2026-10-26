@@ -2,6 +2,7 @@ package seedu.address.ui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -59,5 +60,26 @@ public class WorkoutPlanCardTest {
     @Test
     public void getSortedTags_nullWorkoutPlan_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> WorkoutPlanCard.getSortedTags(null));
+    }
+
+    @Test
+    public void getDescriptionPreview_shortDescription_returnsUnchangedText() {
+        assertEquals("Squats and lunges", WorkoutPlanCard.getDescriptionPreview("Squats and lunges"));
+    }
+
+    @Test
+    public void getDescriptionPreview_longDescription_returnsShortenedText() {
+        String description = "Complete five rounds of squats, lunges, deadlifts, pull-ups, push-ups, "
+                + "planks, mountain climbers, and stretching";
+
+        String preview = WorkoutPlanCard.getDescriptionPreview(description);
+
+        assertTrue(preview.length() <= 72);
+        assertTrue(preview.endsWith("..."));
+    }
+
+    @Test
+    public void getDescriptionPreview_nullDescription_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> WorkoutPlanCard.getDescriptionPreview(null));
     }
 }

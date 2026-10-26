@@ -32,6 +32,9 @@ public interface Logic {
     /** Returns the current student as a read-only observable property. */
     ReadOnlyObjectProperty<Student> currentStudentProperty();
 
+    /** Selects the given student. */
+    void setCurrentStudent(Student student);
+
     /**
      * Returns the user prefs' GUI settings.
      */

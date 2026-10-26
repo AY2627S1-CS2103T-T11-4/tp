@@ -228,6 +228,10 @@ public class ModelManager implements Model {
     public void updateFilteredStudentList(Predicate<Student> predicate) {
         requireNonNull(predicate);
         filteredStudents.setPredicate(predicate);
+        Student selectedStudent = currentStudent.get();
+        if (selectedStudent != null && !filteredStudents.contains(selectedStudent)) {
+            clearCurrentStudent();
+        }
     }
 
 

@@ -230,6 +230,29 @@ public class ModelManagerTest {
     }
 
     @Test
+    public void updateFilteredStudentList_selectedStudentExcluded_clearsCurrentStudent() {
+        modelManager.addStudent(ALICE);
+        modelManager.addStudent(BENSON);
+        modelManager.setCurrentStudent(ALICE);
+
+        modelManager.updateFilteredStudentList(student -> student.equals(BENSON));
+
+        assertEquals(List.of(BENSON), modelManager.getFilteredStudentList());
+        assertTrue(modelManager.getCurrentStudent().isEmpty());
+    }
+
+    @Test
+    public void updateFilteredStudentList_selectedStudentIncluded_keepsCurrentStudent() {
+        modelManager.addStudent(ALICE);
+        modelManager.addStudent(BENSON);
+        modelManager.setCurrentStudent(ALICE);
+
+        modelManager.updateFilteredStudentList(student -> student.equals(ALICE));
+
+        assertSame(ALICE, modelManager.getCurrentStudent().orElseThrow());
+    }
+
+    @Test
     public void setCurrentStudent_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> modelManager.setCurrentStudent(null));
     }
