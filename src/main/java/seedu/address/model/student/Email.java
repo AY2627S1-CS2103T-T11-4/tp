@@ -9,7 +9,6 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public class Email {
 
-    private static final String SPECIAL_CHARACTERS = "+_.-";
     public static final int MIN_LENGTH = 6;
     public static final int MAX_LOCAL_PART_LENGTH = 64;
     public static final int MAX_DOMAIN_LENGTH = 64;
@@ -18,7 +17,7 @@ public class Email {
             + (MAX_LOCAL_PART_LENGTH + 1 + MAX_DOMAIN_LENGTH) + " characters long, with the local part and domain "
             + "each at most 64 characters, and adhere to the following constraints:\n"
             + "1. The local-part should only contain alphanumeric characters and these special characters, excluding "
-            + "the parentheses, (" + SPECIAL_CHARACTERS + "). The local-part may not start or end with any special "
+            + "the parentheses, (+_.-). The local-part may not start or end with any special "
             + "characters.\n"
             + "2. The local-part is followed by an '@' and then a domain name. The domain name is made up of domain "
             + "labels separated by periods.\n"
@@ -26,6 +25,7 @@ public class Email {
             + "    - end with a domain label at least 2 characters long\n"
             + "    - have each domain label start and end with alphanumeric characters\n"
             + "    - have each domain label consist of alphanumeric characters, separated only by hyphens, if any.";
+    private static final String SPECIAL_CHARACTERS = "+_.-";
     // alphanumeric and special characters
     private static final String ALPHANUMERIC_NO_UNDERSCORE = "[^\\W_]+"; // alphanumeric characters except underscore
     private static final String LOCAL_PART_REGEX = "^" + ALPHANUMERIC_NO_UNDERSCORE + "([" + SPECIAL_CHARACTERS + "]"
