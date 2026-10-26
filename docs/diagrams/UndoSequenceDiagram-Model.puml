@@ -4,18 +4,12 @@ skinparam ArrowFontStyle plain
 
 box Model MODEL_COLOR_T1
 participant ":Model" as Model MODEL_COLOR
-participant ":VersionedBrotherGym" as VersionedBrotherGym MODEL_COLOR
 end box
 
 [-> Model : undoBrotherGym()
 activate Model
 
-Model -> VersionedBrotherGym : undo()
-activate VersionedBrotherGym
-
-VersionedBrotherGym -> VersionedBrotherGym :resetData(ReadOnlyBrotherGym)
-VersionedBrotherGym --> Model :
-deactivate VersionedBrotherGym
+Model -> Model : restore previous complete data and view
 
 [<-- Model
 deactivate Model

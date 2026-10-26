@@ -8,11 +8,11 @@ start
 'Since the beta syntax does not support placing the condition outside the
 'diamond we place it as the true branch instead.
 
-if () then ([command commits BrotherGym])
-    :Purge redundant states;
-    :Save BrotherGym to
-    brotherGymStateList;
-else ([else])
+if () then ([successful command changes data or view])
+    :Discard states after the current state;
+    :Save the complete application state;
+else ([failed or unchanged command])
+    :Leave history unchanged;
 endif
 stop
 @enduml
