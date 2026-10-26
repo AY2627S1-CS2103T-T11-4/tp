@@ -193,4 +193,15 @@ public class ParserUtil {
         }
         return WorkoutDate.fromLocalDate(dateObject);
     }
+
+    /**
+     * Checks that {@code emptyField} is an empty string
+     *
+     * @throws ParseException with {@code errorMessage} if {@code} emptyField is not an empty string
+     */
+    public static void validateEmptyField(String emptyField, String errorMessage) throws ParseException {
+        if (!emptyField.isEmpty()) {
+            throw new FieldValueInvalidException(errorMessage);
+        }
+    }
 }

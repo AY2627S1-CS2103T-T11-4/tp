@@ -1,4 +1,6 @@
 package seedu.address.testutil;
+
+import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
@@ -48,7 +50,7 @@ public class WorkoutUtil {
         if (descriptor.getWorkoutPlanTags().isPresent()) {
             Set<WorkoutPlanTag> tags = descriptor.getWorkoutPlanTags().get();
             if (tags.isEmpty()) {
-                sb.append(PREFIX_TAG);
+                sb.append(PREFIX_CLEAR_TAGS);
             } else {
                 tags.forEach(s -> sb.append(PREFIX_TAG).append(" ").append(s.tagName).append(" "));
             }

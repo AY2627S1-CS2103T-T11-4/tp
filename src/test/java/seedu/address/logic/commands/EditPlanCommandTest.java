@@ -103,7 +103,7 @@ public class EditPlanCommandTest {
     }
 
     @Test
-    public void execute_emptyTagsSpecified_clearsTags() throws Exception {
+    public void execute_explicitEmptyTagSet_clearsTags() throws Exception {
         Model model = createModelWithPlans(FIRST_PLAN);
         Student currentStudent = model.getFilteredStudentList().get(0);
         model.setCurrentStudent(currentStudent);
