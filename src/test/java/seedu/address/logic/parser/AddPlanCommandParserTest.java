@@ -19,6 +19,8 @@ import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailur
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalWorkouts.LEG_DAY;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
@@ -102,5 +104,25 @@ public class AddPlanCommandParserTest {
         // both invalid values, first invalid value reported
         assertParseFailure(parser, TITLE_PREAMBLE_LEGS + INVALID_PLAN_DESC + INVALID_DATE_DESC_LENGTH,
                 this.formatParserError(WorkoutDescription.MESSAGE_CONSTRAINTS));
+    }
+
+    @Test
+    public void parse_invalidCalendarDate_reportsSpecificError() {
+        String input = TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + " --date ";
+        assertParseFailure(parser, input + "01132026",
+                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_MONTH, 13)));
+        assertParseFailure(parser, input + "32122026",
+                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_DAY, 32, 12, 2026, 31)));
+        assertParseFailure(parser, input + "31022026",
+                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_DAY, 31, 2, 2026, 28)));
+        assertParseFailure(parser, input + "29022026",
+                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_DAY, 29, 2, 2026, 28)));
+    }
+
+    @Test
+    public void parse_validLeapDay_success() {
+        WorkoutPlan expectedPlan = new WorkoutBuilder(LEG_DAY).withDate(LocalDate.of(2024, 2, 29)).build();
+        assertParseSuccess(parser, TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + " --date 29022024",
+                new AddPlanCommand(expectedPlan));
     }
 }

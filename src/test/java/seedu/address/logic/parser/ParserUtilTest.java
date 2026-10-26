@@ -277,6 +277,43 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseDate_invalidMonth_reportsMonthError() {
+        for (String date : List.of("01132026", "01002026")) {
+            int month = Integer.parseInt(date.substring(2, 4));
+            assertThrows(ParseException.class, String.format(WorkoutDate.MESSAGE_INVALID_MONTH, month), ()
+                -> ParserUtil.parseDate(date));
+        }
+    }
+
+    @Test
+    public void parseDate_invalidDay_reportsActualMonthLength() {
+        for (String date : List.of("32122026", "00012026", "31022026", "29022026", "31042026", "29022100")) {
+            int day = Integer.parseInt(date.substring(0, 2));
+            int month = Integer.parseInt(date.substring(2, 4));
+            int year = Integer.parseInt(date.substring(4, 8));
+            int lastDay = month == 2 ? 28 : month == 4 ? 30 : 31;
+            assertThrows(ParseException.class,
+                    String.format(WorkoutDate.MESSAGE_INVALID_DAY, day, month, year, lastDay), ()
+                    -> ParserUtil.parseDate(date));
+        }
+    }
+
+    @Test
+    public void parseDate_zeroYear_reportsYearError() {
+        assertThrows(ParseException.class, WorkoutDate.MESSAGE_INVALID_YEAR, () -> ParserUtil.parseDate("01010000"));
+    }
+
+    @Test
+    public void parseDate_validCalendarBoundaries_preservesInputAndDisplay() throws Exception {
+        for (String date : List.of("28022026", "29022024", "29022000", "30042026", "31122026")) {
+            WorkoutDate parsed = ParserUtil.parseDate(date);
+            assertEquals(date, parsed.toInputString());
+            assertEquals(date.substring(0, 2) + "-" + date.substring(2, 4) + "-" + date.substring(4),
+                    parsed.toDisplayString());
+        }
+    }
+
+    @Test
     public void parseDate_validValue_returnsWorkoutDate() throws Exception {
         WorkoutDate expectedDate = new WorkoutDate(VALID_DATE_OBJECT);
         assertEquals(expectedDate, ParserUtil.parseDate(VALID_DATE));
