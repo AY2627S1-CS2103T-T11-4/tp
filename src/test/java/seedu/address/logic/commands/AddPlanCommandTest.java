@@ -23,6 +23,7 @@ import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.WorkoutTitle;
 
@@ -90,15 +91,19 @@ public class AddPlanCommandTest {
     public void execute_duplicateWorkoutPlan_throwsCommandException() {
         Student baseStudent = new ModelManager(getTypicalBrotherGym(), new UserPrefs())
                 .getFilteredStudentList().get(0);
-        Student studentWithPlan = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
-                baseStudent.getAddress(), baseStudent.getTags(), new WorkoutPlansList(List.of(PLAN)));
-        BrotherGym brotherGym = new BrotherGym();
-        brotherGym.addStudent(studentWithPlan);
-        Model model = new ModelManager(brotherGym, new UserPrefs());
-        model.setCurrentStudent(studentWithPlan);
-        AddPlanCommand command = new AddPlanCommand(PLAN);
+        for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
+            WorkoutPlan existing = new WorkoutPlan(PLAN.getTitle(), PLAN.getWorkouts(), PLAN.getDate(),
+                    PLAN.getTags(), status);
+            Student studentWithPlan = new Student(baseStudent.getName(), baseStudent.getPhone(),
+                    baseStudent.getEmail(), baseStudent.getAddress(), baseStudent.getTags(),
+                    new WorkoutPlansList(List.of(existing)));
+            BrotherGym brotherGym = new BrotherGym();
+            brotherGym.addStudent(studentWithPlan);
+            Model model = new ModelManager(brotherGym, new UserPrefs());
+            model.setCurrentStudent(studentWithPlan);
 
-        assertCommandFailure(command, model, AddPlanCommand.MESSAGE_DUPLICATE_PLAN);
+            assertCommandFailure(new AddPlanCommand(PLAN), model, AddPlanCommand.MESSAGE_DUPLICATE_PLAN);
+        }
     }
 
     @Test

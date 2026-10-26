@@ -160,16 +160,20 @@ public class EditPlanCommandTest {
 
     @Test
     public void execute_duplicatePlan_throwsCommandException() {
-        Model model = createModelWithPlans(FIRST_PLAN, SECOND_PLAN);
-        model.setCurrentStudent(model.getFilteredStudentList().get(0));
-        EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
-        descriptor.setTitle(SECOND_PLAN.getTitle());
-        descriptor.setDescription(SECOND_PLAN.getWorkouts());
-        descriptor.setDate(SECOND_PLAN.getDate());
-        descriptor.setWorkoutPlanTags(SECOND_PLAN.getTags());
+        for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
+            WorkoutPlan existing = new WorkoutPlan(SECOND_PLAN.getTitle(), SECOND_PLAN.getWorkouts(),
+                    SECOND_PLAN.getDate(), SECOND_PLAN.getTags(), status);
+            Model model = createModelWithPlans(FIRST_PLAN, existing);
+            model.setCurrentStudent(model.getFilteredStudentList().get(0));
+            EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
+            descriptor.setTitle(existing.getTitle());
+            descriptor.setDescription(existing.getWorkouts());
+            descriptor.setDate(existing.getDate());
+            descriptor.setWorkoutPlanTags(existing.getTags());
 
-        CommandTestUtil.assertCommandFailure(new EditPlanCommand(Index.fromOneBased(1), descriptor), model,
-                EditPlanCommand.MESSAGE_DUPLICATE_PLAN);
+            CommandTestUtil.assertCommandFailure(new EditPlanCommand(Index.fromOneBased(1), descriptor), model,
+                    EditPlanCommand.MESSAGE_DUPLICATE_PLAN);
+        }
     }
 
     @Test
