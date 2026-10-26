@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_UNEXPECTED_PARAMETERS;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
@@ -28,6 +30,7 @@ import seedu.address.logic.commands.MarkPlanCommand;
 import seedu.address.logic.commands.UnmarkPlanCommand;
 import seedu.address.logic.commands.ViewPlanCommand;
 import seedu.address.logic.commands.ViewStudentCommand;
+import seedu.address.logic.parser.exceptions.InputFormatInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
@@ -53,7 +56,8 @@ public class BrotherGymParserTest {
     @Test
     public void parseCommand_clear() throws Exception {
         assertTrue(parser.parseCommand(ClearCommand.COMMAND_WORD) instanceof ClearCommand);
-        assertTrue(parser.parseCommand(ClearCommand.COMMAND_WORD + " 3") instanceof ClearCommand);
+        assertTrue(parser.parseCommand(ClearCommand.COMMAND_WORD + " \t ") instanceof ClearCommand);
+        assertUnexpectedArgumentsRejected(ClearCommand.COMMAND_WORD, ClearCommand.MESSAGE_USAGE);
     }
 
     @Test
@@ -126,7 +130,8 @@ public class BrotherGymParserTest {
     @Test
     public void parseCommand_exit() throws Exception {
         assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD) instanceof ExitCommand);
-        assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD + " 3") instanceof ExitCommand);
+        assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD + " \t ") instanceof ExitCommand);
+        assertUnexpectedArgumentsRejected(ExitCommand.COMMAND_WORD, ExitCommand.MESSAGE_USAGE);
     }
 
     @Test
@@ -140,13 +145,23 @@ public class BrotherGymParserTest {
     @Test
     public void parseCommand_help() throws Exception {
         assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD) instanceof HelpCommand);
-        assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD + " 3") instanceof HelpCommand);
+        assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD + " \t ") instanceof HelpCommand);
+        assertUnexpectedArgumentsRejected(HelpCommand.COMMAND_WORD, HelpCommand.MESSAGE_USAGE);
     }
 
     @Test
     public void parseCommand_home() throws Exception {
         assertTrue(parser.parseCommand(HomeCommand.COMMAND_WORD) instanceof HomeCommand);
-        assertTrue(parser.parseCommand(HomeCommand.COMMAND_WORD + " 3") instanceof HomeCommand);
+        assertTrue(parser.parseCommand(HomeCommand.COMMAND_WORD + " \t ") instanceof HomeCommand);
+        assertUnexpectedArgumentsRejected(HomeCommand.COMMAND_WORD, HomeCommand.MESSAGE_USAGE);
+    }
+
+    private void assertUnexpectedArgumentsRejected(String commandWord, String usage) {
+        for (String arguments : List.of(" 1", " arbitrary text", " n/Alice", " \t 1 \t ")) {
+            assertThrows(InputFormatInvalidException.class,
+                    Messages.formatParserError(MESSAGE_UNEXPECTED_PARAMETERS, usage), ()
+                    -> parser.parseCommand(commandWord + arguments));
+        }
     }
 
     @Test

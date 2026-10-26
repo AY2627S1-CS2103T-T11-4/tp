@@ -12,6 +12,9 @@ public class HomeCommand extends Command {
 
     public static final String COMMAND_WORD = "home";
 
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Lists all students.\n"
+            + "Example: " + COMMAND_WORD;
+
     public static final String MESSAGE_SUCCESS = "Listed all students.";
 
 
