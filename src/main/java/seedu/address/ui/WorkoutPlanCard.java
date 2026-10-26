@@ -50,33 +50,53 @@ public class WorkoutPlanCard extends UiPart<Region> {
         super(FXML);
         requireNonNull(workoutPlan);
         assert displayedIndex > 0 : "displayed index must be positive";
+
         id.setText("#" + displayedIndex);
+        setTitle(workoutPlan);
+        setDate(workoutPlan);
+        setStatus(workoutPlan);
+        setDescription(workoutPlan);
+        setTags(workoutPlan);
+    }
+
+    private void setTitle(WorkoutPlan workoutPlan) {
         String fullTitle = workoutPlan.getTitle().getValue();
         title.setText(fullTitle);
         title.setTooltip(createTooltip(fullTitle));
+    }
+
+    private void setDate(WorkoutPlan workoutPlan) {
         date.setText(workoutPlan.getDate().getValue().toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()
                 .format(DATE_FORMATTER).toUpperCase(Locale.ROOT));
+    }
+
+    private void setStatus(WorkoutPlan workoutPlan) {
         status.setText(getStatusText(workoutPlan.getStatus()));
         status.getStyleClass().add(getStatusStyleClass(workoutPlan.getStatus()));
         getRoot().getStyleClass().add(getCardStyleClass(workoutPlan.getStatus()));
+    }
+
+    private void setDescription(WorkoutPlan workoutPlan) {
         String fullDescription = workoutPlan.getWorkouts().getValue();
         description.setText(getDescriptionPreview(fullDescription));
         description.setTooltip(createTooltip(fullDescription));
+    }
 
+    private void setTags(WorkoutPlan workoutPlan) {
         List<WorkoutPlanTag> sortedTags = getSortedTags(workoutPlan);
-        String allTags = sortedTags.stream()
+        String allTagNames = sortedTags.stream()
                 .map(tag -> tag.tagName)
                 .collect(Collectors.joining(", "));
         sortedTags.stream().limit(MAX_VISIBLE_TAGS)
-                .forEach(tag -> addTagLabel(tag.tagName, allTags));
+                .forEach(tag -> addTagLabel(tag.tagName, allTagNames));
         int hiddenTagCount = sortedTags.size() - MAX_VISIBLE_TAGS;
         if (hiddenTagCount > 0) {
-            addTagLabel("+" + hiddenTagCount, allTags);
+            addTagLabel("+" + hiddenTagCount, allTagNames);
         }
         if (!sortedTags.isEmpty()) {
-            Tooltip.install(tags, createTooltip(allTags));
+            Tooltip.install(tags, createTooltip(allTagNames));
         }
     }
 
