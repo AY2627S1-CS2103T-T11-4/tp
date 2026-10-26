@@ -14,6 +14,7 @@ import static seedu.address.testutil.TypicalStudents.AMY;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.AddStudentCommand;
+import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.HomeCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -30,10 +32,12 @@ import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyBrotherGym;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.student.Student;
+import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.storage.JsonBrotherGymStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
 import seedu.address.storage.StorageManager;
 import seedu.address.testutil.StudentBuilder;
+import seedu.address.testutil.WorkoutBuilder;
 
 public class LogicManagerTest {
     private static final IOException DUMMY_IO_EXCEPTION = new IOException("dummy IO exception");
@@ -71,6 +75,42 @@ public class LogicManagerTest {
     public void execute_validCommand_success() throws Exception {
         String listCommand = HomeCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand, HomeCommand.MESSAGE_SUCCESS, model);
+    }
+
+    @Test
+    public void execute_clear_preservesStudentsAndPlansUntilConfirmed() throws Exception {
+        Student student = new Student(AMY.getName(), AMY.getPhone(), AMY.getEmail(), AMY.getAddress(), AMY.getTags(),
+                new WorkoutPlansList(List.of(new WorkoutBuilder().build())));
+        model.addStudent(student);
+        model.setCurrentStudent(student);
+
+        assertEquals(ClearCommand.MESSAGE_CONFIRMATION, logic.execute("clear").getFeedbackToUser());
+        assertEquals(List.of(student), model.getBrotherGym().getStudentList());
+        assertSame(student, model.getCurrentStudent().orElseThrow());
+        assertEquals(model.getBrotherGym(), storage.readBrotherGym().orElseThrow());
+
+        // Continuing with another command and repeating clear must both preserve data.
+        logic.execute("home");
+        logic.execute("clear");
+        assertEquals(List.of(student), storage.readBrotherGym().orElseThrow().getStudentList());
+
+        model.setCurrentStudent(student);
+        assertEquals(ClearCommand.MESSAGE_SUCCESS, logic.execute("clear confirm").getFeedbackToUser());
+        assertEquals(List.of(), model.getBrotherGym().getStudentList());
+        assertEquals(Optional.empty(), model.getCurrentStudent());
+        assertEquals(List.of(), storage.readBrotherGym().orElseThrow().getStudentList());
+    }
+
+    @Test
+    public void execute_clearWithInvalidArguments_preservesData() throws Exception {
+        model.addStudent(AMY);
+        storage.saveBrotherGym(model.getBrotherGym());
+
+        for (String argument : List.of("1", "yes", "confirm extra", "CONFIRM")) {
+            assertThrows(ParseException.class, () -> logic.execute("clear " + argument));
+            assertEquals(List.of(AMY), model.getBrotherGym().getStudentList());
+            assertEquals(List.of(AMY), storage.readBrotherGym().orElseThrow().getStudentList());
+        }
     }
 
     @Test

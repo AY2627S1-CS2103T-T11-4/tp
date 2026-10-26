@@ -42,7 +42,7 @@ If you type quickly, BrotherGym can help you manage students and workouts faster
 
    * `deleteStudent 3` : Deletes the 3rd student shown in the current BrotherGym student list.
 
-   * `clear` : Deletes all contacts.
+   * `clear` : Requests confirmation before deleting all students and workout plans.
 
    * `exit` : Exits the app.
 
@@ -68,7 +68,7 @@ If you type quickly, BrotherGym can help you manage students and workouts faster
 * Parameters can be in any order.<br>
   For example, if the command specifies `--name NAME --hp PHONE_NUMBER`, `--hp PHONE_NUMBER --name NAME` is also acceptable.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `home`, `exit`, and `clear`, are ignored.<br>
+* `clear` accepts only the optional confirmation word `confirm`; other arguments are rejected.<br>
   For example, `help 123` is interpreted as `help`.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
@@ -249,9 +249,15 @@ Format: `deletePlan PLAN_ID`
 
 ### Clearing all entries: `clear`
 
-Clears all entries from the BrotherGym student list.
+Deletes all students and their associated workout plans after explicit confirmation.
 
 Format: `clear`
+
+1. Enter `clear`. A warning appears, and all data remains unchanged.
+2. Enter `clear confirm` to permanently delete all students and workout plans.
+
+To keep your data, continue with another command. Repeating `clear` only shows the warning again.
+Only `clear confirm` deletes data; it can also be entered directly as an explicit confirmation.
 
 ### Exiting the program: `exit`
 
@@ -313,7 +319,7 @@ Action     | Format, Examples
 **View Student** | `viewStudent STUDENT_ID`<br> e.g., `viewStudent 2`
 **Find Student**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **Delete Student** | `deleteStudent STUDENT_ID`<br> e.g., `deleteStudent 3`
-**Clear all Students**  | `clear`git
+**Clear all Students**  | `clear`, then `clear confirm`
 
 Workout plan-related commands
 

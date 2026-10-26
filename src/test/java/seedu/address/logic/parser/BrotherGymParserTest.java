@@ -29,6 +29,7 @@ import seedu.address.logic.commands.UnmarkPlanCommand;
 import seedu.address.logic.commands.ViewPlanCommand;
 import seedu.address.logic.commands.ViewStudentCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.ModelManager;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -52,8 +53,17 @@ public class BrotherGymParserTest {
 
     @Test
     public void parseCommand_clear() throws Exception {
-        assertTrue(parser.parseCommand(ClearCommand.COMMAND_WORD) instanceof ClearCommand);
-        assertTrue(parser.parseCommand(ClearCommand.COMMAND_WORD + " 3") instanceof ClearCommand);
+        assertEquals(ClearCommand.MESSAGE_CONFIRMATION,
+                parser.parseCommand("clear").execute(new ModelManager()).getFeedbackToUser());
+        assertEquals(ClearCommand.MESSAGE_CONFIRMATION,
+                parser.parseCommand("clear \t ").execute(new ModelManager()).getFeedbackToUser());
+        assertEquals(ClearCommand.MESSAGE_SUCCESS,
+                parser.parseCommand("clear confirm").execute(new ModelManager()).getFeedbackToUser());
+        assertEquals(ClearCommand.MESSAGE_SUCCESS,
+                parser.parseCommand("clear \t confirm \t ").execute(new ModelManager()).getFeedbackToUser());
+        for (String argument : List.of("3", "yes", "CONFIRM", "confirm extra", "--confirm")) {
+            assertThrows(ParseException.class, () -> parser.parseCommand("clear " + argument));
+        }
     }
 
     @Test
