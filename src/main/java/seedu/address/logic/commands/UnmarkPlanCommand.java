@@ -10,6 +10,7 @@ import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
+import seedu.address.model.workoutplan.exceptions.AlreadyUnmarkedException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 
 /**
@@ -25,6 +26,7 @@ public class UnmarkPlanCommand extends SingleIndexCommand {
             + "Example: " + COMMAND_WORD + " 1";
 
     public static final String MESSAGE_SUCCESS = "Unmarked workout: %1$s";
+    public static final String MESSAGE_ALREADY_UNMARKED = "This workout plan is already unmarked.";
     public static final String MESSAGE_NO_STUDENT_SELECTED =
             "No student is currently selected. Use viewStudent first.";
     public static final String MESSAGE_INVALID_WORKOUT_ID =
@@ -49,6 +51,8 @@ public class UnmarkPlanCommand extends SingleIndexCommand {
         final WorkoutPlansList updatedPlans;
         try {
             updatedPlans = currentStudent.getWorkoutPlansList().unmarkWorkoutPlan(targetIndex.getZeroBased());
+        } catch (AlreadyUnmarkedException e) {
+            throw new CommandException(MESSAGE_ALREADY_UNMARKED, e);
         } catch (WorkoutPlanIndexOutOfBoundsException e) {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
