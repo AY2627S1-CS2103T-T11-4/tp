@@ -17,6 +17,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
@@ -106,6 +107,9 @@ public class ParserUtilTest {
         // Leading and trailing whitespaces
         assertEquals(INDEX_FIRST, ParserUtil.parseIndex("  1  "));
         assertEquals(INDEX_SECOND, ParserUtil.parseIndex("2"));
+
+        // Largest supported one-based index
+        assertEquals(Index.fromOneBased(Integer.MAX_VALUE), ParserUtil.parseIndex(Integer.toString(Integer.MAX_VALUE)));
     }
 
     @Test

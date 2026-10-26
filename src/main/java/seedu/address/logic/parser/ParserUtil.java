@@ -29,12 +29,13 @@ import seedu.address.model.workoutplan.WorkoutTitle;
  */
 public class ParserUtil {
 
-    public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer without leading zeros.";
+    public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer between 1 and "
+            + Integer.MAX_VALUE + ", without leading zeros.";
 
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be
      * trimmed.
-     * @throws ParseException if the specified index is invalid (not a non-zero unsigned integer without leading zeros).
+     * @throws ParseException if the index is outside the positive integer range or has leading zeros.
      */
     public static Index parseIndex(String oneBasedIndex) throws ParseException {
         requireNonNull(oneBasedIndex);
