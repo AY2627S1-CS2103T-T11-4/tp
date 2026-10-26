@@ -227,6 +227,10 @@ During startup, `MainApp` first loads preferences through `JsonUserPrefsStorage`
 
 <puml src="diagrams/StorageReadSequenceDiagram.puml" alt="Successful startup read from JSON through adapters into the model" width="800" />
 
+The following diagram expands the `JsonSerializableBrotherGym.toModelType()` call to show the nested adapter conversions. It continues from deserialized JSON, so file access and startup are omitted.
+
+<puml src="diagrams/StorageModelConversionSequenceDiagram.puml" alt="Nested conversion of JSON adapters into students, workout plans and tags" width="800" />
+
 1. `StorageManager` delegates `readBrotherGym()` to `JsonBrotherGymStorage`.
 1. `JsonUtil.readJsonFile()` reads the file and deserializes it into `JsonSerializableBrotherGym`.
 1. `JsonSerializableBrotherGym.toModelType()` creates an empty `BrotherGym` and calls `JsonAdaptedStudent.toModelType()` for each stored student. Each student adapter validates its contact fields, converts its tags using `JsonAdaptedTag.toStudentTag()`, and calls `JsonAdaptedWorkoutPlan.toModelType()` for each stored workout plan. Each workout-plan adapter checks required fields, parses its date, and converts its tags using `JsonAdaptedTag.toWorkoutPlanTag()` before constructing a `WorkoutPlan`. The student adapter then collects these plans into a `WorkoutPlansList` and constructs a `Student` using the converted contact fields, tags, and plans. Finally, `JsonSerializableBrotherGym.toModelType()` adds each reconstructed student to the `BrotherGym`. This chain assembles smaller model objects into larger ones: tags and workout fields form workout plans; contact fields, student tags, and workout plans form students; students form the complete `BrotherGym`. Model constructors also enforce their own constraints.

@@ -1,0 +1,50 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+skinparam maxMessageSize 45
+
+box Storage STORAGE_COLOR_T1
+participant ":JsonBrotherGymStorage" as JsonStorage STORAGE_COLOR
+participant "data:JsonSerializableBrotherGym" as Data STORAGE_COLOR
+participant ":JsonAdaptedStudent" as Student STORAGE_COLOR
+participant ":JsonAdaptedWorkoutPlan" as Plan STORAGE_COLOR
+participant ":JsonAdaptedTag" as Tag STORAGE_COLOR
+end box
+
+note over JsonStorage, Data
+JSON has already been deserialized.
+This expands the overview's toModelType() call.
+end note
+JsonStorage -> Data : toModelType()
+activate Data
+loop each student
+Data -> Student : toModelType()
+activate Student
+loop each student tag
+Student -> Tag : toStudentTag()
+Tag --> Student : studentTag
+end
+loop each workout plan
+Student -> Plan : toModelType()
+activate Plan
+loop each workout-plan tag
+Plan -> Tag : toWorkoutPlanTag()
+Tag --> Plan : workoutPlanTag
+end
+Plan --> Student : workoutPlan
+deactivate Plan
+end
+note over Student, Plan
+Adapters validate fields and
+construct the corresponding model objects.
+end note
+Student --> Data : student
+deactivate Student
+note over Data
+Reject duplicate students;
+add the student to BrotherGym.
+end note
+end
+Data --> JsonStorage : brotherGym
+deactivate Data
+@enduml
