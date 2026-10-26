@@ -35,7 +35,9 @@ public class EditPlanDescriptorBuilder {
         descriptor.setTitle(plan.getTitle());
         descriptor.setDescription(plan.getWorkouts());
         descriptor.setDate(plan.getDate());
-        descriptor.setWorkoutPlanTags(plan.getTags());
+        if (!plan.getTags().isEmpty()) {
+            descriptor.setTagsToAdd(plan.getTags());
+        }
     }
 
     /**
@@ -66,9 +68,22 @@ public class EditPlanDescriptorBuilder {
      * Parses the {@code tags} into a {@code Set<WorkoutTag>} and sets it to the {@code EditPlanDescriptor}
      * that we are building.
      */
-    public EditPlanDescriptorBuilder withTags(String... tags) {
+    public EditPlanDescriptorBuilder withTagsToAdd(String... tags) {
         Set<WorkoutPlanTag> tagSet = Stream.of(tags).map(WorkoutPlanTag::new).collect(Collectors.toSet());
-        descriptor.setWorkoutPlanTags(tagSet);
+        descriptor.setTagsToAdd(tagSet);
+        return this;
+    }
+
+    /** Sets the tags to delete on the descriptor. */
+    public EditPlanDescriptorBuilder withTagsToDelete(String... tags) {
+        Set<WorkoutPlanTag> tagSet = Stream.of(tags).map(WorkoutPlanTag::new).collect(Collectors.toSet());
+        descriptor.setTagsToDelete(tagSet);
+        return this;
+    }
+
+    /** Sets the clear-tags operation on the descriptor. */
+    public EditPlanDescriptorBuilder withClearTags() {
+        descriptor.setClearTags(true);
         return this;
     }
 
