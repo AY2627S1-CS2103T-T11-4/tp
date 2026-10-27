@@ -12,9 +12,12 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.WorkoutPlanTag;
 
 public class WorkoutPlanTest {
@@ -64,6 +67,23 @@ public class WorkoutPlanTest {
         assertEquals(WorkoutPlanStatus.COMPLETED, plan.getStatus());
         assertThrows(NullPointerException.class, () -> new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
                 DATE_VALID, Set.of(), null));
+    }
+
+    @Test
+    public void constructor_tagsAtLimit_success() {
+        Set<WorkoutPlanTag> tags = createWorkoutPlanTags(Tag.MAX_TAG_COUNT);
+
+        WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID, tags);
+
+        assertEquals(tags, plan.getTags());
+    }
+
+    @Test
+    public void constructor_tooManyTags_throwsIllegalArgumentException() {
+        Set<WorkoutPlanTag> tags = createWorkoutPlanTags(Tag.MAX_TAG_COUNT + 1);
+
+        assertThrows(IllegalArgumentException.class, Tag.MESSAGE_TAG_LIMIT, ()
+            -> new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID, tags));
     }
 
     @Test
@@ -193,5 +213,11 @@ public class WorkoutPlanTest {
                 Set.of(new WorkoutPlanTag("strength"), new WorkoutPlanTag("cardio")));
         String taggedExpected = expected + " Tags: [cardio] [strength]";
         assertEquals(taggedExpected, taggedPlan.toString());
+    }
+
+    private static Set<WorkoutPlanTag> createWorkoutPlanTags(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(index -> new WorkoutPlanTag("tag" + index))
+                .collect(Collectors.toSet());
     }
 }

@@ -11,10 +11,12 @@ import static seedu.address.testutil.TypicalStudents.BOB;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.student.exceptions.DuplicateStudentException;
+import seedu.address.model.student.exceptions.StudentListFullException;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.testutil.StudentBuilder;
 
@@ -58,6 +60,14 @@ public class UniqueStudentListTest {
         Student sameNameDifferentCase = new StudentBuilder(ALICE).withName(ALICE.getName().fullName.toLowerCase())
                 .build();
         assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.add(sameNameDifferentCase));
+    }
+
+    @Test
+    public void add_studentToFullList_throwsStudentListFullException() {
+        uniqueStudentList.setStudents(createStudents(UniqueStudentList.MAX_STUDENTS));
+
+        assertThrows(StudentListFullException.class, ()
+            -> uniqueStudentList.add(new StudentBuilder().withName("ExtraStudent").build()));
     }
 
     @Test
@@ -181,6 +191,13 @@ public class UniqueStudentListTest {
     }
 
     @Test
+    public void setStudents_listExceedingLimit_throwsStudentListFullException() {
+        List<Student> students = createStudents(UniqueStudentList.MAX_STUDENTS + 1);
+
+        assertThrows(StudentListFullException.class, () -> uniqueStudentList.setStudents(students));
+    }
+
+    @Test
     public void setStudents_singleNullStudent_throwsNullPointerException() {
         uniqueStudentList.add(ALICE);
         List<Student> students = new ArrayList<>();
@@ -209,5 +226,11 @@ public class UniqueStudentListTest {
     @Test
     public void toStringMethod() {
         assertEquals(uniqueStudentList.asUnmodifiableObservableList().toString(), uniqueStudentList.toString());
+    }
+
+    private static List<Student> createStudents(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(index -> new StudentBuilder().withName("Student" + index).build())
+                .toList();
     }
 }

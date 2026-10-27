@@ -9,6 +9,7 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seedu.address.model.student.exceptions.DuplicateStudentException;
+import seedu.address.model.student.exceptions.StudentListFullException;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
 
 /**
@@ -24,6 +25,8 @@ import seedu.address.model.student.exceptions.StudentNotFoundException;
  * @see Student#isSameStudent(Student)
  */
 public class UniqueStudentList implements Iterable<Student> {
+
+    public static final int MAX_STUDENTS = 999;
 
     private final ObservableList<Student> internalList = FXCollections.observableArrayList();
     private final ObservableList<Student> internalUnmodifiableList =
@@ -45,6 +48,9 @@ public class UniqueStudentList implements Iterable<Student> {
         requireNonNull(toAdd);
         if (contains(toAdd)) {
             throw new DuplicateStudentException();
+        }
+        if (isFull()) {
+            throw new StudentListFullException();
         }
         internalList.add(toAdd);
         assert studentsAreUnique(internalList) : "Student list contains duplicate identities";
@@ -95,6 +101,9 @@ public class UniqueStudentList implements Iterable<Student> {
         requireAllNonNull(students);
         if (!studentsAreUnique(students)) {
             throw new DuplicateStudentException();
+        }
+        if (students.size() > MAX_STUDENTS) {
+            throw new StudentListFullException();
         }
 
         internalList.setAll(students);
@@ -148,5 +157,10 @@ public class UniqueStudentList implements Iterable<Student> {
             }
         }
         return true;
+    }
+
+    /** Returns true if no more students can be added. */
+    private boolean isFull() {
+        return internalList.size() >= MAX_STUDENTS;
     }
 }

@@ -18,10 +18,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.tag.StudentTag;
+import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -83,6 +86,24 @@ public class StudentTest {
 
         assertThrows(NullPointerException.class, () -> new Student(ALICE.getName(), ALICE.getPhone(),
                 ALICE.getEmail(), ALICE.getAddress(), tags));
+    }
+
+    @Test
+    public void constructor_tagsAtLimit_success() {
+        Set<StudentTag> tags = createStudentTags(Tag.MAX_TAG_COUNT);
+
+        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                ALICE.getAddress(), tags);
+
+        assertEquals(tags, student.getTags());
+    }
+
+    @Test
+    public void constructor_tooManyTags_throwsIllegalArgumentException() {
+        Set<StudentTag> tags = createStudentTags(Tag.MAX_TAG_COUNT + 1);
+
+        assertThrows(IllegalArgumentException.class, Tag.MESSAGE_TAG_LIMIT, ()
+            -> new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(), ALICE.getAddress(), tags));
     }
 
     @Test
@@ -180,5 +201,11 @@ public class StudentTest {
                 + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", tags=" + ALICE.getTags()
                 + ", workoutPlansList=" + ALICE.getWorkoutPlansList() + "}";
         assertEquals(expected, ALICE.toString());
+    }
+
+    private static Set<StudentTag> createStudentTags(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(index -> new StudentTag("tag" + index))
+                .collect(Collectors.toSet());
     }
 }

@@ -9,11 +9,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.commons.util.JsonUtil;
+import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
@@ -91,6 +93,17 @@ public class JsonAdaptedWorkoutPlanTest {
     }
 
     @Test
+    public void toModelType_tooManyTags_throwsIllegalValueException() {
+        List<JsonAdaptedTag> tags = IntStream.range(0, Tag.MAX_TAG_COUNT + 1)
+                .mapToObj(index -> new JsonAdaptedTag("tag" + index))
+                .toList();
+        JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan("Strength", "Squats", "2023-11-15", tags);
+
+        IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
+        assertEquals(Tag.MESSAGE_TAG_LIMIT, exception.getMessage());
+    }
+
+    @Test
     public void toModelType_validPlan_returnsPlan() throws Exception {
         JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan(
                 "Strength", "Squats", "2023-11-15");
@@ -135,7 +148,8 @@ public class JsonAdaptedWorkoutPlanTest {
 
     @Test
     public void toModelType_blankDescription_throwsIllegalValueException() {
-        for (String description : List.of("", " ", "\t\n")) {
+        for (String description : List.of("", " ", "\t\n",
+                "a".repeat(WorkoutDescription.MAX_LENGTH + 1))) {
             JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan("Strength", description, "2023-11-15");
             IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
             assertEquals(WorkoutDescription.MESSAGE_CONSTRAINTS, exception.getMessage());

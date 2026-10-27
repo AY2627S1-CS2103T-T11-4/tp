@@ -9,7 +9,10 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public abstract class Tag {
 
+    public static final int MAX_TAG_COUNT = 30;
     public static final String MESSAGE_CONSTRAINTS = "Tag names should be alphanumeric";
+    public static final String MESSAGE_TAG_LIMIT = "A student or workout plan can have at most "
+            + MAX_TAG_COUNT + " tags";
     public static final String VALIDATION_REGEX = "\\p{Alnum}+";
 
     public final String tagName;
@@ -30,6 +33,13 @@ public abstract class Tag {
      */
     public static boolean isValidTagName(String test) {
         return test.matches(VALIDATION_REGEX);
+    }
+
+    /**
+     * Returns true if {@code tagCount} is within the supported range.
+     */
+    public static boolean isValidTagCount(int tagCount) {
+        return tagCount >= 0 && tagCount <= MAX_TAG_COUNT;
     }
 
     @Override
