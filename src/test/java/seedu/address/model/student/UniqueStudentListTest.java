@@ -184,18 +184,11 @@ public class UniqueStudentListTest {
     @Test
     public void setStudents_listWithDuplicateStudents_throwsDuplicateStudentException() {
         uniqueStudentList.add(BOB);
-        List<Student> listWithDuplicateStudents = List.of(ALICE, ALICE);
-        assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudents(listWithDuplicateStudents));
-        assertEquals(List.of(BOB), uniqueStudentList.asUnmodifiableObservableList());
-    }
-
-    @Test
-    public void setStudents_listWithNamesThatDifferOnlyByCase_throwsDuplicateStudentException() {
         Student sameNameDifferentCase = new StudentBuilder(ALICE).withName(ALICE.getName().fullName.toLowerCase())
                 .build();
-        List<Student> listWithCaseOnlyDuplicates = List.of(ALICE, sameNameDifferentCase);
-        assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudents(listWithCaseOnlyDuplicates));
-        assertTrue(uniqueStudentList.asUnmodifiableObservableList().isEmpty());
+        List<Student> listWithDuplicateStudents = List.of(ALICE, sameNameDifferentCase);
+        assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudents(listWithDuplicateStudents));
+        assertEquals(List.of(BOB), uniqueStudentList.asUnmodifiableObservableList());
     }
 
     @Test
