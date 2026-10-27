@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import seedu.address.logic.parser.exceptions.ParseException;
-
 /**
  * Tokenizes arguments string of the form: {@code preamble <prefix>value <prefix>value ...}<br>
  *     e.g. {@code some preamble text --t 11.00 --t 12.00 --k --m July}  where prefixes are {@code --t --k --m}.<br>
@@ -27,7 +25,7 @@ public class ArgumentTokenizer {
      * @param argsString Arguments string of the form: {@code preamble <prefix> value <prefix> value ...}
      * @return           ArgumentMultimap object that maps prefixes to their arguments
      */
-    public static ArgumentMultimap tokenize(String argsString) throws ParseException {
+    public static ArgumentMultimap tokenize(String argsString) {
         List<PrefixPosition> positions = findAllPrefixPositions(argsString);
         return extractArguments(argsString, positions);
     }
@@ -35,7 +33,7 @@ public class ArgumentTokenizer {
     /**
      * Find all zero-based prefix positions based on "--" in the given {@code argsString}
      */
-    private static List<PrefixPosition> findAllPrefixPositions(String argsString) throws ParseException {
+    private static List<PrefixPosition> findAllPrefixPositions(String argsString) {
         List<PrefixPosition> positions = new ArrayList<>();
 
         int prefixPosition = findNextPrefixPosition(argsString, 0);
