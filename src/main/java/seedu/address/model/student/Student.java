@@ -98,7 +98,7 @@ public class Student {
         }
 
         return otherStudent != null
-                && otherStudent.getName().fullName.equalsIgnoreCase(getName().fullName);
+                && getName().isSameName(otherStudent.getName());
     }
 
     /**
