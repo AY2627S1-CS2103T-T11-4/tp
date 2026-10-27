@@ -14,9 +14,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseDescription;
 import seedu.address.model.exercise.ExerciseName;
-import seedu.address.model.exercise.ExerciseReps;
-import seedu.address.model.exercise.ExerciseWeight;
 import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
@@ -31,7 +30,7 @@ public class WorkoutPlansListTest {
     private static final WorkoutPlan FIRST_WITH_EXERCISES = new WorkoutPlan(
             FIRST.getTitle(), FIRST.getWorkouts(), FIRST.getDate(), FIRST.getTags(), FIRST.getStatus(),
             new ExercisesList(List.of(new Exercise(new ExerciseName("Squats"),
-                    new ExerciseWeight(20.5), new ExerciseReps(10)))));
+                    new ExerciseDescription("Barbell back squat")))));
 
     @Test
     public void updateState_replacesChangedPlansAndPreservesUnchangedPlans() {

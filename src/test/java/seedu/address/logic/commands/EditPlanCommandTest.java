@@ -18,9 +18,8 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseDescription;
 import seedu.address.model.exercise.ExerciseName;
-import seedu.address.model.exercise.ExerciseReps;
-import seedu.address.model.exercise.ExerciseWeight;
 import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.student.Student;
 import seedu.address.model.tag.WorkoutPlanTag;
@@ -35,7 +34,7 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 public class EditPlanCommandTest {
 
     private static final ExercisesList EXERCISES = new ExercisesList(List.of(new Exercise(
-            new ExerciseName("Squats"), new ExerciseWeight(20.5), new ExerciseReps(10))));
+            new ExerciseName("Squats"), new ExerciseDescription("Barbell back squat"))));
 
     private static final WorkoutPlan FIRST_PLAN = new WorkoutPlan(
             new WorkoutTitle("Strength"), new WorkoutDescription("Upper body"),

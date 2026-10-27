@@ -17,9 +17,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseDescription;
 import seedu.address.model.exercise.ExerciseName;
-import seedu.address.model.exercise.ExerciseReps;
-import seedu.address.model.exercise.ExerciseWeight;
 import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.tag.WorkoutPlanTag;
 
@@ -38,7 +37,7 @@ public class WorkoutPlanTest {
     private static final WorkoutDate DATE_VALID = new WorkoutDate(new Date(DATE_TIME_VALID));
 
     private static final Exercise EXERCISE = new Exercise(new ExerciseName("Squats"),
-            new ExerciseWeight(20.5), new ExerciseReps(10));
+            new ExerciseDescription("Barbell back squat"));
     private static final ExercisesList EXERCISES = new ExercisesList(List.of(EXERCISE));
 
     @Test
