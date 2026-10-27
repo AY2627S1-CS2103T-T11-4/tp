@@ -71,6 +71,7 @@ public class ArgumentTokenizerTest {
 
         assertPreamblePresent(argMultimap, argsString.trim());
         assertArgumentAbsent(argMultimap, ddashP);
+        assertEquals(argMultimap.getPreamble(), argsString.trim());
     }
 
     @Test
