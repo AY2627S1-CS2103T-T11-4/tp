@@ -55,11 +55,6 @@ public class UniqueStudentListTest {
     public void add_duplicateStudent_throwsDuplicateStudentException() {
         uniqueStudentList.add(ALICE);
         assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.add(ALICE));
-    }
-
-    @Test
-    public void add_studentNameDiffersOnlyByCase_throwsDuplicateStudentException() {
-        uniqueStudentList.add(ALICE);
         Student sameNameDifferentCase = new StudentBuilder(ALICE).withName(ALICE.getName().fullName.toLowerCase())
                 .build();
         assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.add(sameNameDifferentCase));
