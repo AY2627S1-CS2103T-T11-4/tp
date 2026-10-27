@@ -9,49 +9,71 @@ import org.junit.jupiter.api.Test;
 
 public class ExerciseNameTest {
 
-    private static final String VALID_NAME = "Squats";
+    private static final String NAME_VALID = "Squats";
+    private static final String NAME_OTHER = "Push-ups";
 
     @Test
-    public void constructor_validValues_storesValue() {
-        ExerciseName name = new ExerciseName(VALID_NAME);
-
-        assertEquals(VALID_NAME, name.getValue());
-        assertEquals(VALID_NAME, name.toString());
-    }
-
-    @Test
-    public void constructor_nullBlankOrOverlongValue_throwsException() {
+    public void constructor_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new ExerciseName(null));
-        assertThrows(IllegalArgumentException.class, () -> new ExerciseName(" "));
-        assertThrows(IllegalArgumentException.class, () -> new ExerciseName("\t"));
-        assertThrows(IllegalArgumentException.class, () ->
-                new ExerciseName("a".repeat(ExerciseName.MAX_LENGTH + 1)));
-
-        new ExerciseName("a".repeat(ExerciseName.MAX_LENGTH));
     }
 
     @Test
-    public void validationHelper_returnsExpectedResults() {
+    public void constructor_invalidExerciseName_throwsIllegalArgumentException() {
+        String invalidExerciseName = "";
+        assertThrows(IllegalArgumentException.class, () -> new ExerciseName(invalidExerciseName));
+    }
+
+    @Test
+    public void constructor_validName_storesValue() {
+        ExerciseName name = new ExerciseName(NAME_VALID);
+
+        assertEquals(NAME_VALID, name.getValue());
+    }
+
+    @Test
+    public void isValidName() {
+        // null name
         assertThrows(NullPointerException.class, () -> ExerciseName.isValidName(null));
-        assertTrue(ExerciseName.isValidName("a".repeat(ExerciseName.MAX_LENGTH)));
+
+        // invalid names
+        assertFalse(ExerciseName.isValidName("")); // empty string
+        assertFalse(ExerciseName.isValidName(" ")); // spaces only
+        assertFalse(ExerciseName.isValidName("\t")); // whitespace only
         assertFalse(ExerciseName.isValidName("a".repeat(ExerciseName.MAX_LENGTH + 1)));
+
+        // valid names
+        assertTrue(ExerciseName.isValidName("a".repeat(ExerciseName.MAX_LENGTH)));
+        assertTrue(ExerciseName.isValidName(NAME_VALID));
     }
 
     @Test
     public void equals() {
-        ExerciseName name = new ExerciseName(VALID_NAME);
-        ExerciseName sameValues = new ExerciseName(VALID_NAME);
+        ExerciseName name = new ExerciseName(NAME_VALID);
 
+        // same values -> returns true
+        assertTrue(name.equals(new ExerciseName(NAME_VALID)));
+
+        // same object -> returns true
         assertTrue(name.equals(name));
-        assertTrue(name.equals(sameValues));
+
+        // null -> returns false
         assertFalse(name.equals(null));
-        assertFalse(name.equals(VALID_NAME));
-        assertFalse(name.equals(new ExerciseName(VALID_NAME.toLowerCase())));
+
+        // different type -> returns false
+        assertFalse(name.equals(NAME_VALID));
+
+        // different values -> returns false
+        assertFalse(name.equals(new ExerciseName(NAME_OTHER)));
     }
 
     @Test
     public void hashCode_equalNames_haveSameHashCode() {
-        assertEquals(new ExerciseName(VALID_NAME).hashCode(),
-                new ExerciseName(VALID_NAME).hashCode());
+        assertEquals(new ExerciseName(NAME_VALID).hashCode(),
+                new ExerciseName(NAME_VALID).hashCode());
+    }
+
+    @Test
+    public void toStringMethod() {
+        assertEquals(NAME_VALID, new ExerciseName(NAME_VALID).toString());
     }
 }

@@ -2,9 +2,10 @@ package seedu.address.model.exercise;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static seedu.address.testutil.Assert.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +24,17 @@ public class ExercisesListTest {
             new ExerciseWeight(0.0), new ExerciseReps(15));
     private static final Exercise THIRD = new Exercise(new ExerciseName("Lunges"),
             new ExerciseWeight(10.0), new ExerciseReps(12));
+    private static final Exercise REPLACEMENT = new Exercise(new ExerciseName("Deadlift"),
+            new ExerciseWeight(40.0), new ExerciseReps(8));
 
     @Test
-    public void constructors_createEmptyListAndDefensivelyCopyInput() {
+    public void constructors_rejectNullsAndCopyInput() {
         assertEquals(List.of(), new ExercisesList().getExerciseList());
+        assertThrows(NullPointerException.class, () -> new ExercisesList(null));
+
+        List<Exercise> inputWithNull = new ArrayList<>(List.of(FIRST));
+        inputWithNull.add(null);
+        assertThrows(NullPointerException.class, () -> new ExercisesList(inputWithNull));
 
         List<Exercise> input = new ArrayList<>(List.of(FIRST));
         ExercisesList exercises = new ExercisesList(input);
@@ -35,15 +43,6 @@ public class ExercisesListTest {
         assertEquals(List.of(FIRST), exercises.getExerciseList());
         assertThrows(UnsupportedOperationException.class, () ->
                 exercises.getExerciseList().add(SECOND));
-    }
-
-    @Test
-    public void constructor_nullOrDuplicateValues_throwsException() {
-        assertThrows(NullPointerException.class, () -> new ExercisesList(null));
-
-        List<Exercise> inputWithNull = new ArrayList<>(List.of(FIRST));
-        inputWithNull.add(null);
-        assertThrows(NullPointerException.class, () -> new ExercisesList(inputWithNull));
 
         Exercise equalFirst = new Exercise(new ExerciseName("Squats"),
                 new ExerciseWeight(20.5), new ExerciseReps(10));
@@ -52,47 +51,37 @@ public class ExercisesListTest {
     }
 
     @Test
-    public void getExercise_returnsExerciseInOrder() {
-        ExercisesList exercises = new ExercisesList(List.of(FIRST, SECOND));
-
-        assertSame(FIRST, exercises.getExercise(0));
-        assertSame(SECOND, exercises.getExercise(1));
-    }
-
-    @Test
-    public void getExercise_invalidIndex_throwsException() {
-        ExercisesList exercises = new ExercisesList(List.of(FIRST));
-
-        assertThrows(ExerciseIndexOutOfBoundsException.class, () -> exercises.getExercise(-1));
-        assertThrows(ExerciseIndexOutOfBoundsException.class, () -> exercises.getExercise(1));
-    }
-
-    @Test
-    public void addExercise_appendsWithoutChangingOriginal() {
+    public void addExercise_appendsInNewList() {
         ExercisesList original = new ExercisesList(List.of(FIRST));
 
         ExercisesList updated = original.addExercise(SECOND);
 
+        assertNotSame(original, updated);
         assertEquals(List.of(FIRST), original.getExerciseList());
         assertEquals(List.of(FIRST, SECOND), updated.getExerciseList());
+
+        assertThrows(NullPointerException.class, () -> original.addExercise(null));
+        assertThrows(DuplicateExerciseException.class, () -> original.addExercise(FIRST));
     }
 
     @Test
-    public void addExercise_nullOrDuplicate_throwsException() {
-        ExercisesList exercises = new ExercisesList(List.of(FIRST));
+    public void setExercise_replacesExactTargetAndPreservesOrder() {
+        Exercise equalFirst = new Exercise(new ExerciseName("Squats"),
+                new ExerciseWeight(20.5), new ExerciseReps(10));
+        ExercisesList original = new ExercisesList(List.of(FIRST, SECOND, THIRD));
 
-        assertThrows(NullPointerException.class, () -> exercises.addExercise(null));
-        assertThrows(DuplicateExerciseException.class, () -> exercises.addExercise(FIRST));
-    }
+        ExercisesList updated = original.setExercise(equalFirst, REPLACEMENT);
 
-    @Test
-    public void setExercise_replacesTargetAndPreservesPosition() {
-        ExercisesList original = new ExercisesList(List.of(FIRST, SECOND));
+        assertNotSame(original, updated);
+        assertEquals(List.of(FIRST, SECOND, THIRD), original.getExerciseList());
+        assertEquals(List.of(REPLACEMENT, SECOND, THIRD), updated.getExerciseList());
+        assertSame(SECOND, updated.getExerciseList().get(1));
 
-        ExercisesList updated = original.setExercise(FIRST, THIRD);
-
-        assertEquals(List.of(FIRST, SECOND), original.getExerciseList());
-        assertEquals(List.of(THIRD, SECOND), updated.getExerciseList());
+        assertThrows(DuplicateExerciseException.class, () -> original.setExercise(FIRST, SECOND));
+        assertThrows(NullPointerException.class, () -> original.setExercise(null, REPLACEMENT));
+        assertThrows(NullPointerException.class, () -> original.setExercise(FIRST, null));
+        assertThrows(ExerciseNotFoundException.class, () ->
+                original.setExercise(REPLACEMENT, FIRST));
     }
 
     @Test
@@ -105,39 +94,30 @@ public class ExercisesListTest {
     }
 
     @Test
-    public void setExercise_nullMissingOrDuplicateReplacement_throwsException() {
-        ExercisesList exercises = new ExercisesList(List.of(FIRST, SECOND));
-        Exercise missing = new Exercise(new ExerciseName("Deadlift"),
-                new ExerciseWeight(40.0), new ExerciseReps(8));
-
-        assertThrows(NullPointerException.class, () -> exercises.setExercise(null, THIRD));
-        assertThrows(NullPointerException.class, () -> exercises.setExercise(FIRST, null));
-        assertThrows(ExerciseNotFoundException.class, () -> exercises.setExercise(missing, THIRD));
-        assertThrows(DuplicateExerciseException.class, () -> exercises.setExercise(FIRST, SECOND));
-    }
-
-    @Test
-    public void removeExercise_removesTargetAndPreservesRemainingOrder() {
+    public void removeExercise_removesSpecifiedExerciseInNewList() {
         ExercisesList original = new ExercisesList(List.of(FIRST, SECOND, THIRD));
 
         ExercisesList updated = original.removeExercise(SECOND);
 
+        assertNotSame(original, updated);
         assertEquals(List.of(FIRST, SECOND, THIRD), original.getExerciseList());
         assertEquals(List.of(FIRST, THIRD), updated.getExerciseList());
+
+        assertThrows(NullPointerException.class, () -> original.removeExercise(null));
+        assertThrows(ExerciseNotFoundException.class, () -> original.removeExercise(REPLACEMENT));
     }
 
     @Test
-    public void removeExercise_nullOrMissing_throwsException() {
-        ExercisesList exercises = new ExercisesList(List.of(FIRST));
-        Exercise missing = new Exercise(new ExerciseName("Deadlift"),
-                new ExerciseWeight(40.0), new ExerciseReps(8));
+    public void indexedAccess_invalidIndex_throwsExerciseIndexOutOfBoundsException() {
+        ExercisesList exercises = new ExercisesList(List.of(FIRST, SECOND));
 
-        assertThrows(NullPointerException.class, () -> exercises.removeExercise(null));
-        assertThrows(ExerciseNotFoundException.class, () -> exercises.removeExercise(missing));
+        assertSame(SECOND, exercises.getExercise(1));
+        assertThrows(ExerciseIndexOutOfBoundsException.class, () -> exercises.getExercise(-1));
+        assertThrows(ExerciseIndexOutOfBoundsException.class, () -> exercises.getExercise(2));
     }
 
     @Test
-    public void equalsAndHashCode() {
+    public void equals() {
         ExercisesList first = new ExercisesList(List.of(FIRST, SECOND));
         ExercisesList sameValues = new ExercisesList(List.of(FIRST, SECOND));
         ExercisesList reversed = new ExercisesList(List.of(SECOND, FIRST));
@@ -147,11 +127,18 @@ public class ExercisesListTest {
         assertFalse(first.equals(reversed));
         assertFalse(first.equals(null));
         assertFalse(first.equals(FIRST));
+    }
+
+    @Test
+    public void hashCode_equalLists_haveSameHashCode() {
+        ExercisesList first = new ExercisesList(List.of(FIRST, SECOND));
+        ExercisesList sameValues = new ExercisesList(List.of(FIRST, SECOND));
+
         assertEquals(first.hashCode(), sameValues.hashCode());
     }
 
     @Test
-    public void toStringMethod_returnsUnderlyingExerciseValues() {
+    public void toStringMethod() {
         ExercisesList exercises = new ExercisesList(List.of(FIRST, SECOND));
 
         assertEquals(List.of(FIRST, SECOND).toString(), exercises.toString());
