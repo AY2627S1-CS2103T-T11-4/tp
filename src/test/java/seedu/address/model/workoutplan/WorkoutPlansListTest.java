@@ -13,6 +13,11 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseName;
+import seedu.address.model.exercise.ExerciseReps;
+import seedu.address.model.exercise.ExerciseWeight;
+import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
@@ -23,6 +28,10 @@ public class WorkoutPlansListTest {
             new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
     private static final WorkoutPlan SECOND = new WorkoutPlan(
             new WorkoutTitle("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
+    private static final WorkoutPlan FIRST_WITH_EXERCISES = new WorkoutPlan(
+            FIRST.getTitle(), FIRST.getWorkouts(), FIRST.getDate(), FIRST.getTags(), FIRST.getStatus(),
+            new ExercisesList(List.of(new Exercise(new ExerciseName("Squats"),
+                    new ExerciseWeight(20.5), new ExerciseReps(10)))));
 
     @Test
     public void updateState_replacesChangedPlansAndPreservesUnchangedPlans() {
@@ -64,6 +73,7 @@ public class WorkoutPlansListTest {
         assertEquals(List.of(FIRST, SECOND), updated.getWorkoutList());
         assertThrows(NullPointerException.class, () -> original.addWorkoutPlan(null));
         assertThrows(DuplicateWorkoutPlanException.class, () -> original.addWorkoutPlan(FIRST));
+        assertThrows(DuplicateWorkoutPlanException.class, () -> original.addWorkoutPlan(FIRST_WITH_EXERCISES));
     }
 
     @Test
@@ -114,6 +124,11 @@ public class WorkoutPlansListTest {
         assertThrows(NullPointerException.class, () -> original.setWorkoutPlan(null, SECOND));
         assertThrows(NullPointerException.class, () -> original.setWorkoutPlan(FIRST, null));
         assertThrows(WorkoutPlanNotFoundException.class, () -> new WorkoutPlansList().setWorkoutPlan(FIRST, SECOND));
+
+        WorkoutPlan secondWithExercises = new WorkoutPlan(SECOND.getTitle(), SECOND.getWorkouts(), SECOND.getDate(),
+                SECOND.getTags(), SECOND.getStatus(), FIRST_WITH_EXERCISES.getExercises());
+        assertThrows(DuplicateWorkoutPlanException.class, () ->
+                original.setWorkoutPlan(equalFirst, secondWithExercises));
     }
 
     @Test
@@ -128,6 +143,16 @@ public class WorkoutPlansListTest {
 
         assertEquals(List.of(replacement, SECOND), updated.getWorkoutList());
         assertEquals(List.of(FIRST, SECOND), original.getWorkoutList());
+    }
+
+    @Test
+    public void setWorkoutPlan_nestedExercisesChangeIsAllowedForTarget() {
+        WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST));
+
+        WorkoutPlansList updated = original.setWorkoutPlan(FIRST, FIRST_WITH_EXERCISES);
+
+        assertEquals(List.of(FIRST), original.getWorkoutList());
+        assertEquals(List.of(FIRST_WITH_EXERCISES), updated.getWorkoutList());
     }
 
     @Test

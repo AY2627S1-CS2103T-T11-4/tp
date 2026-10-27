@@ -53,8 +53,14 @@ public final class WorkoutPlansList {
     /** Returns a list with each plan's status refreshed. */
     public WorkoutPlansList updateState() {
         LocalDate today = LocalDate.now();
-        List<WorkoutPlan> updated = plans.stream().map(plan -> plan.updateState(today)).toList();
-        return updated.equals(plans) ? this : new WorkoutPlansList(updated);
+        List<WorkoutPlan> updated = new ArrayList<>(plans.size());
+        boolean changed = false;
+        for (WorkoutPlan plan : plans) {
+            WorkoutPlan updatedPlan = plan.updateState(today);
+            updated.add(updatedPlan);
+            changed |= updatedPlan != plan;
+        }
+        return changed ? new WorkoutPlansList(updated) : this;
     }
 
     /** Returns a list with the plan at {@code index} marked as completed. */

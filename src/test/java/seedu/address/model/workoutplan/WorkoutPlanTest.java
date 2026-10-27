@@ -11,10 +11,16 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseName;
+import seedu.address.model.exercise.ExerciseReps;
+import seedu.address.model.exercise.ExerciseWeight;
+import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.tag.WorkoutPlanTag;
 
 public class WorkoutPlanTest {
@@ -30,6 +36,10 @@ public class WorkoutPlanTest {
     private static final long DATE_TIME_VALID = 1_700_000_000_000L;
     private static final long DATE_TIME_OTHER = 0L;
     private static final WorkoutDate DATE_VALID = new WorkoutDate(new Date(DATE_TIME_VALID));
+
+    private static final Exercise EXERCISE = new Exercise(new ExerciseName("Squats"),
+            new ExerciseWeight(20.5), new ExerciseReps(10));
+    private static final ExercisesList EXERCISES = new ExercisesList(List.of(EXERCISE));
 
     @Test
     public void constructor_nullTitle_throwsNullPointerException() {
@@ -54,6 +64,7 @@ public class WorkoutPlanTest {
         assertEquals(DATE_VALID, plan.getDate());
         assertTrue(plan.getTags().isEmpty());
         assertEquals(WorkoutPlanStatus.PENDING, plan.getStatus());
+        assertEquals(new ExercisesList(), plan.getExercises());
     }
 
     @Test
@@ -64,6 +75,17 @@ public class WorkoutPlanTest {
         assertEquals(WorkoutPlanStatus.COMPLETED, plan.getStatus());
         assertThrows(NullPointerException.class, () -> new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
                 DATE_VALID, Set.of(), null));
+
+        assertThrows(NullPointerException.class, () -> new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
+                DATE_VALID, Set.of(), WorkoutPlanStatus.PENDING, null));
+    }
+
+    @Test
+    public void constructor_withExercises_storesExercises() {
+        WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(), WorkoutPlanStatus.PENDING, EXERCISES);
+
+        assertSame(EXERCISES, plan.getExercises());
     }
 
     @Test
@@ -84,6 +106,7 @@ public class WorkoutPlanTest {
         assertEquals(WorkoutPlanStatus.PENDING, pending.getStatus());
         assertEquals(pending.getTitle(), updated.getTitle());
         assertEquals(pending.getDate(), updated.getDate());
+        assertEquals(EXERCISES, updated.getExercises());
     }
 
     @Test
@@ -105,6 +128,7 @@ public class WorkoutPlanTest {
         assertEquals(WorkoutPlanStatus.COMPLETED, marked.getStatus());
         assertEquals(WorkoutPlanStatus.PENDING, pending.getStatus());
         assertEquals(pending.getDate(), marked.getDate());
+        assertEquals(EXERCISES, marked.getExercises());
         assertSame(marked, marked.mark());
     }
 
@@ -119,13 +143,15 @@ public class WorkoutPlanTest {
         assertEquals(WorkoutPlanStatus.PENDING, dueToday.unmark().getStatus());
         assertEquals(WorkoutPlanStatus.PENDING, future.unmark().getStatus());
         assertEquals(WorkoutPlanStatus.COMPLETED, past.getStatus());
+        assertEquals(EXERCISES, past.unmark().getExercises());
 
         WorkoutPlan unmarked = past.unmark();
         assertSame(unmarked, unmarked.unmark());
     }
 
     private static WorkoutPlan planForDate(LocalDate deadline, WorkoutPlanStatus status) {
-        return new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, WorkoutDate.fromLocalDate(deadline), Set.of(), status);
+        return new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, WorkoutDate.fromLocalDate(deadline), Set.of(), status,
+                EXERCISES);
     }
 
     @Test
@@ -165,10 +191,15 @@ public class WorkoutPlanTest {
                 Set.of(new WorkoutPlanTag("cardio")));
         assertFalse(strength.equals(cardio));
 
-        // different status -> returns false
+        // different status -> still returns true because status is not part of plan equality
         WorkoutPlan overdue = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
                 Set.of(), WorkoutPlanStatus.OVERDUE);
-        assertFalse(plan.equals(overdue));
+        assertTrue(plan.equals(overdue));
+
+        // different exercises -> still returns true because exercises are nested data
+        WorkoutPlan withExercises = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(), WorkoutPlanStatus.PENDING, EXERCISES);
+        assertTrue(plan.equals(withExercises));
     }
 
     @Test
@@ -177,6 +208,10 @@ public class WorkoutPlanTest {
         WorkoutPlan second = new WorkoutPlan(new WorkoutTitle(TITLE_TEXT_VALID),
                 new WorkoutDescription(DESCRIPTION_TEXT_VALID), new WorkoutDate(DATE_VALID.getValue()));
         assertEquals(first.hashCode(), second.hashCode());
+
+        WorkoutPlan differentStatusAndExercises = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(), WorkoutPlanStatus.OVERDUE, EXERCISES);
+        assertEquals(first.hashCode(), differentStatusAndExercises.hashCode());
     }
 
     @Test
