@@ -83,11 +83,6 @@ public class LogicManager implements Logic {
     }
 
     @Override
-    public void setCurrentStudent(Student student) {
-        model.setCurrentStudent(student);
-    }
-
-    @Override
     public GuiSettings getGuiSettings() {
         return model.getGuiSettings();
     }

@@ -3,7 +3,7 @@ package seedu.address.ui;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -21,16 +21,18 @@ public class StudentListPanel extends UiPart<Region> {
     @FXML
     private ListView<Student> studentListView;
 
-    /** Creates a panel that notifies {@code onStudentSelected} when a student card is selected. */
-    public StudentListPanel(ObservableList<Student> studentList, Consumer<Student> onStudentSelected) {
+    /** Creates a panel whose highlight follows the student selected through commands. */
+    public StudentListPanel(ObservableList<Student> studentList,
+            Supplier<Optional<Student>> currentStudentSupplier) {
         super(FXML);
         requireNonNull(studentList);
-        requireNonNull(onStudentSelected);
+        requireNonNull(currentStudentSupplier);
         studentListView.setItems(studentList);
         studentListView.setCellFactory(listView -> new StudentListViewCell());
         studentListView.getSelectionModel().selectedItemProperty().addListener((observable, oldStudent, newStudent) -> {
-            if (newStudent != null) {
-                onStudentSelected.accept(newStudent);
+            Optional<Student> currentStudent = requireNonNull(currentStudentSupplier.get());
+            if (!currentStudent.equals(Optional.ofNullable(newStudent))) {
+                selectStudent(currentStudent);
             }
         });
     }
