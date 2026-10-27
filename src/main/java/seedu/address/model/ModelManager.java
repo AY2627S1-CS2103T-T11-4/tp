@@ -13,6 +13,8 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
@@ -171,6 +173,61 @@ public class ModelManager implements Model {
 
         logger.info(() -> "Workout plan set for student " + student.getName() + ": "
                 + target.getTitle() + " -> " + editedPlan.getTitle());
+    }
+
+    @Override
+    public void addExerciseForWorkoutPlan(Student student, WorkoutPlan plan, Exercise exercise) {
+        requireAllNonNull(student, plan, exercise);
+        logger.fine(() -> "Attempting to add exercise to workout plan for student "
+                + student.getName() + ": " + exercise);
+
+        Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
+        WorkoutPlan storedPlan = storedStudent.getWorkoutPlansList().getWorkoutPlan(plan);
+        ExercisesList updatedExercises = storedPlan.getExercises().addExercise(exercise);
+        WorkoutPlan updatedPlan = new WorkoutPlan(storedPlan.getTitle(), storedPlan.getWorkouts(),
+                storedPlan.getDate(), storedPlan.getTags(), storedPlan.getStatus(), updatedExercises);
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList()
+                .setWorkoutPlan(storedPlan, updatedPlan);
+        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
+                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        setStudent(storedStudent, updatedStudent);
+    }
+
+    @Override
+    public void setExerciseForWorkoutPlan(Student student, WorkoutPlan plan,
+            Exercise target, Exercise editedExercise) {
+        requireAllNonNull(student, plan, target, editedExercise);
+        logger.fine(() -> "Attempting to set exercise in workout plan for student "
+                + student.getName() + ": " + target + " -> " + editedExercise);
+
+        Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
+        WorkoutPlan storedPlan = storedStudent.getWorkoutPlansList().getWorkoutPlan(plan);
+        ExercisesList updatedExercises = storedPlan.getExercises().setExercise(target, editedExercise);
+        WorkoutPlan updatedPlan = new WorkoutPlan(storedPlan.getTitle(), storedPlan.getWorkouts(),
+                storedPlan.getDate(), storedPlan.getTags(), storedPlan.getStatus(), updatedExercises);
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList()
+                .setWorkoutPlan(storedPlan, updatedPlan);
+        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
+                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        setStudent(storedStudent, updatedStudent);
+    }
+
+    @Override
+    public void removeExerciseForWorkoutPlan(Student student, WorkoutPlan plan, Exercise target) {
+        requireAllNonNull(student, plan, target);
+        logger.fine(() -> "Attempting to remove exercise from workout plan for student "
+                + student.getName() + ": " + target);
+
+        Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
+        WorkoutPlan storedPlan = storedStudent.getWorkoutPlansList().getWorkoutPlan(plan);
+        ExercisesList updatedExercises = storedPlan.getExercises().removeExercise(target);
+        WorkoutPlan updatedPlan = new WorkoutPlan(storedPlan.getTitle(), storedPlan.getWorkouts(),
+                storedPlan.getDate(), storedPlan.getTags(), storedPlan.getStatus(), updatedExercises);
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList()
+                .setWorkoutPlan(storedPlan, updatedPlan);
+        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
+                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        setStudent(storedStudent, updatedStudent);
     }
 
     @Override

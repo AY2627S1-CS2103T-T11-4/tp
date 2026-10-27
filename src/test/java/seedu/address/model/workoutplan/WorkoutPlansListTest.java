@@ -65,6 +65,22 @@ public class WorkoutPlansListTest {
     }
 
     @Test
+    public void getWorkoutPlan_target_returnsCanonicalStoredPlan() {
+        WorkoutPlan equalFirst = new WorkoutPlan(
+                new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+        WorkoutPlan equalExternal = new WorkoutPlan(
+                new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+        WorkoutPlansList plans = new WorkoutPlansList(List.of(FIRST, SECOND, equalFirst));
+
+        assertSame(equalFirst, plans.getWorkoutPlan(equalFirst));
+        assertSame(FIRST, plans.getWorkoutPlan(equalExternal));
+        assertThrows(NullPointerException.class, () -> plans.getWorkoutPlan(null));
+        assertThrows(WorkoutPlanNotFoundException.class, () -> plans.getWorkoutPlan(
+                new WorkoutPlan(new WorkoutTitle("Missing"), new WorkoutDescription("Missing"),
+                        new WorkoutDate(new Date(3)))));
+    }
+
+    @Test
     public void addWorkoutPlan_appendsInNewList() {
         WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST));
         WorkoutPlansList updated = original.addWorkoutPlan(SECOND);

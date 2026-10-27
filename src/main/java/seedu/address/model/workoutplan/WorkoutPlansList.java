@@ -44,6 +44,21 @@ public final class WorkoutPlansList {
         return plans.get(index);
     }
 
+    /**
+     * Returns the stored plan matching {@code target}.
+     * Prefers the exact target instance when equal-valued plans are present.
+     *
+     * @throws WorkoutPlanNotFoundException If no matching plan is present.
+     */
+    public WorkoutPlan getWorkoutPlan(WorkoutPlan target) {
+        Objects.requireNonNull(target);
+        int index = findTargetIndex(target);
+        if (index < 0) {
+            throw new WorkoutPlanNotFoundException(target);
+        }
+        return plans.get(index);
+    }
+
     private void checkIndex(int index) {
         if (index < 0 || index >= plans.size()) {
             throw new WorkoutPlanIndexOutOfBoundsException(index);
@@ -96,16 +111,7 @@ public final class WorkoutPlansList {
     public WorkoutPlansList setWorkoutPlan(WorkoutPlan target, WorkoutPlan editedPlan) {
         Objects.requireNonNull(target);
         Objects.requireNonNull(editedPlan);
-        int index = -1;
-        for (int i = 0; i < plans.size(); i++) {
-            if (plans.get(i) == target) {
-                index = i;
-                break;
-            }
-        }
-        if (index < 0) {
-            index = plans.indexOf(target);
-        }
+        int index = findTargetIndex(target);
         if (index < 0) {
             throw new WorkoutPlanNotFoundException(target);
         }
@@ -115,6 +121,15 @@ public final class WorkoutPlansList {
             }
         }
         return replaceWorkoutPlan(index, editedPlan);
+    }
+
+    private int findTargetIndex(WorkoutPlan target) {
+        for (int i = 0; i < plans.size(); i++) {
+            if (plans.get(i) == target) {
+                return i;
+            }
+        }
+        return plans.indexOf(target);
     }
 
     /**

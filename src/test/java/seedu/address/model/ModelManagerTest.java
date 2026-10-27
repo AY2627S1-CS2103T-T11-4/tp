@@ -8,6 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_STUDENTS;
 import static seedu.address.testutil.Assert.assertThrows;
+import static seedu.address.testutil.TypicalExercises.DEADLIFTS;
+import static seedu.address.testutil.TypicalExercises.LUNGES;
+import static seedu.address.testutil.TypicalExercises.PUSH_UPS;
+import static seedu.address.testutil.TypicalExercises.SQUATS;
 import static seedu.address.testutil.TypicalStudents.ALICE;
 import static seedu.address.testutil.TypicalStudents.BENSON;
 
@@ -20,6 +24,10 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.GuiSettings;
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExercisesList;
+import seedu.address.model.exercise.exceptions.DuplicateExerciseException;
+import seedu.address.model.exercise.exceptions.ExerciseNotFoundException;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
@@ -110,6 +118,121 @@ public class ModelManagerTest {
     }
 
     @Test
+    public void exerciseOperations_replaceNestedValuesWithoutChangingOriginalValues() {
+        WorkoutPlan first = planWithExercises("First", LocalDate.now(), WorkoutPlanStatus.PENDING,
+                SQUATS, PUSH_UPS);
+        WorkoutPlan second = plan("Second", LocalDate.now(), WorkoutPlanStatus.PENDING);
+        Student original = withPlans(ALICE, first, second);
+        Student benson = withPlans(BENSON, plan("Other", LocalDate.now(), WorkoutPlanStatus.PENDING));
+        modelManager.addStudent(original);
+        modelManager.addStudent(benson);
+        modelManager.setCurrentStudent(original);
+
+        modelManager.addExerciseForWorkoutPlan(original, first, LUNGES);
+        Student afterAdd = modelManager.getCurrentStudent().orElseThrow();
+        WorkoutPlan afterAddPlan = afterAdd.getWorkoutPlansList().getWorkoutPlan(0);
+        assertEquals(List.of(SQUATS, PUSH_UPS, LUNGES), afterAddPlan.getExercises().getExerciseList());
+        assertSame(second, afterAdd.getWorkoutPlansList().getWorkoutPlan(1));
+        assertEquals(List.of(SQUATS, PUSH_UPS), first.getExercises().getExerciseList());
+        assertEquals(List.of(first, second), original.getWorkoutPlansList().getWorkoutList());
+        assertSame(benson, modelManager.getBrotherGym().getStudentList().get(1));
+
+        modelManager.setExerciseForWorkoutPlan(afterAdd, afterAddPlan, PUSH_UPS, DEADLIFTS);
+        Student afterSet = modelManager.getCurrentStudent().orElseThrow();
+        WorkoutPlan afterSetPlan = afterSet.getWorkoutPlansList().getWorkoutPlan(0);
+        assertEquals(List.of(SQUATS, DEADLIFTS, LUNGES), afterSetPlan.getExercises().getExerciseList());
+        assertEquals(first.getTitle(), afterSetPlan.getTitle());
+        assertEquals(first.getWorkouts(), afterSetPlan.getWorkouts());
+        assertEquals(first.getDate(), afterSetPlan.getDate());
+        assertEquals(first.getTags(), afterSetPlan.getTags());
+        assertEquals(first.getStatus(), afterSetPlan.getStatus());
+
+        modelManager.removeExerciseForWorkoutPlan(afterSet, afterSetPlan, SQUATS);
+        Student afterRemove = modelManager.getCurrentStudent().orElseThrow();
+        assertEquals(List.of(DEADLIFTS, LUNGES),
+                afterRemove.getWorkoutPlansList().getWorkoutPlan(0).getExercises().getExerciseList());
+        assertSame(afterRemove, modelManager.getBrotherGym().getStudentList().get(0));
+        assertSame(benson, modelManager.getBrotherGym().getStudentList().get(1));
+    }
+
+    @Test
+    public void exerciseOperations_equalParentsUseStoredWorkoutPlan() {
+        WorkoutPlan storedPlan = planWithExercises("First", LocalDate.now(), WorkoutPlanStatus.PENDING, SQUATS);
+        Student storedStudent = withPlans(ALICE, storedPlan);
+        Student equalStudent = withPlans(ALICE, storedPlan);
+        WorkoutPlan equalPlan = new WorkoutPlan(storedPlan.getTitle(), storedPlan.getWorkouts(), storedPlan.getDate(),
+                storedPlan.getTags(), WorkoutPlanStatus.COMPLETED, new ExercisesList(List.of(PUSH_UPS)));
+        modelManager.addStudent(storedStudent);
+
+        modelManager.addExerciseForWorkoutPlan(equalStudent, equalPlan, LUNGES);
+
+        WorkoutPlan updatedPlan = modelManager.getBrotherGym().getStudentList().get(0)
+                .getWorkoutPlansList().getWorkoutPlan(0);
+        assertEquals(List.of(SQUATS, LUNGES), updatedPlan.getExercises().getExerciseList());
+    }
+
+    @Test
+    public void exerciseOperations_missingParents_leaveModelUnchanged() {
+        WorkoutPlan plan = plan("Plan", LocalDate.now(), WorkoutPlanStatus.PENDING);
+        WorkoutPlan missingPlan = plan("Missing", LocalDate.now(), WorkoutPlanStatus.PENDING);
+        Student studentNotInModel = withPlans(BENSON, plan);
+        modelManager.addStudent(ALICE);
+
+        assertThrows(StudentNotFoundException.class, () ->
+                modelManager.addExerciseForWorkoutPlan(studentNotInModel, plan, SQUATS));
+        assertThrows(StudentNotFoundException.class, () ->
+                modelManager.setExerciseForWorkoutPlan(studentNotInModel, plan, SQUATS, PUSH_UPS));
+        assertThrows(StudentNotFoundException.class, () ->
+                modelManager.removeExerciseForWorkoutPlan(studentNotInModel, plan, SQUATS));
+        assertThrows(WorkoutPlanNotFoundException.class, () ->
+                modelManager.addExerciseForWorkoutPlan(ALICE, missingPlan, SQUATS));
+        assertThrows(WorkoutPlanNotFoundException.class, () ->
+                modelManager.setExerciseForWorkoutPlan(ALICE, missingPlan, SQUATS, PUSH_UPS));
+        assertThrows(WorkoutPlanNotFoundException.class, () ->
+                modelManager.removeExerciseForWorkoutPlan(ALICE, missingPlan, SQUATS));
+        assertSame(ALICE, modelManager.getBrotherGym().getStudentList().get(0));
+    }
+
+    @Test
+    public void exerciseOperations_invalidExercises_leaveModelUnchanged() {
+        WorkoutPlan plan = planWithExercises("Plan", LocalDate.now(), WorkoutPlanStatus.PENDING,
+                SQUATS, PUSH_UPS);
+        Student original = withPlans(ALICE, plan);
+        modelManager.addStudent(original);
+        Student storedStudent = modelManager.getBrotherGym().getStudentList().get(0);
+        WorkoutPlan storedPlan = storedStudent.getWorkoutPlansList().getWorkoutPlan(0);
+
+        assertThrows(DuplicateExerciseException.class, () ->
+                modelManager.addExerciseForWorkoutPlan(storedStudent, storedPlan, SQUATS));
+        assertThrows(DuplicateExerciseException.class, () ->
+                modelManager.setExerciseForWorkoutPlan(storedStudent, storedPlan, SQUATS, PUSH_UPS));
+        assertThrows(ExerciseNotFoundException.class, () ->
+                modelManager.setExerciseForWorkoutPlan(storedStudent, storedPlan, LUNGES, DEADLIFTS));
+        assertThrows(ExerciseNotFoundException.class, () ->
+                modelManager.removeExerciseForWorkoutPlan(storedStudent, storedPlan, LUNGES));
+
+        assertSame(storedStudent, modelManager.getBrotherGym().getStudentList().get(0));
+        assertSame(storedPlan, storedStudent.getWorkoutPlansList().getWorkoutPlan(0));
+        assertEquals(List.of(SQUATS, PUSH_UPS), storedPlan.getExercises().getExerciseList());
+    }
+
+    @Test
+    public void exerciseOperations_nullArguments_throwNullPointerException() {
+        WorkoutPlan plan = plan("Plan", LocalDate.now(), WorkoutPlanStatus.PENDING);
+
+        assertThrows(NullPointerException.class, () ->
+                modelManager.addExerciseForWorkoutPlan(null, plan, SQUATS));
+        assertThrows(NullPointerException.class, () ->
+                modelManager.addExerciseForWorkoutPlan(ALICE, null, SQUATS));
+        assertThrows(NullPointerException.class, () ->
+                modelManager.addExerciseForWorkoutPlan(ALICE, plan, null));
+        assertThrows(NullPointerException.class, () ->
+                modelManager.setExerciseForWorkoutPlan(ALICE, plan, null, PUSH_UPS));
+        assertThrows(NullPointerException.class, () ->
+                modelManager.removeExerciseForWorkoutPlan(ALICE, plan, null));
+    }
+
+    @Test
     public void updateStudentWorkoutsState_storesAndReturnsOnlyTargetStudent() {
         LocalDate today = LocalDate.now();
         ModelManager model = new ModelManager(new BrotherGym(), new UserPrefs());
@@ -154,6 +277,13 @@ public class ModelManagerTest {
     private static WorkoutPlan plan(String title, LocalDate deadline, WorkoutPlanStatus status) {
         WorkoutDate date = WorkoutDate.fromLocalDate(deadline);
         return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription("Exercise"), date, Set.of(), status);
+    }
+
+    private static WorkoutPlan planWithExercises(String title, LocalDate deadline,
+            WorkoutPlanStatus status, Exercise... exercises) {
+        WorkoutDate date = WorkoutDate.fromLocalDate(deadline);
+        return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription("Exercise"), date,
+                Set.of(), status, new ExercisesList(List.of(exercises)));
     }
 
     @Test
