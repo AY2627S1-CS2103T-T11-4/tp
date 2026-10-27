@@ -40,6 +40,22 @@ public final class Exercise {
         return repetitions;
     }
 
+    /**
+     * Returns whether this exercise represents the same exercise as {@code otherExercise}.
+     *
+     * @param otherExercise the exercise to compare against
+     * @return true if both exercises have the same name, weight, and repetitions
+     */
+    public boolean isSameExercise(Exercise otherExercise) {
+        if (otherExercise == this) {
+            return true;
+        }
+        return otherExercise != null
+                && name.equals(otherExercise.name)
+                && weight.equals(otherExercise.weight)
+                && repetitions.equals(otherExercise.repetitions);
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {

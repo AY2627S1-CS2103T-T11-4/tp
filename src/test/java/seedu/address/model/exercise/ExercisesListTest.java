@@ -53,6 +53,8 @@ public class ExercisesListTest {
     @Test
     public void addExercise_appendsInNewList() {
         ExercisesList original = new ExercisesList(List.of(FIRST));
+        Exercise equalFirst = new Exercise(new ExerciseName("Squats"),
+                new ExerciseWeight(20.5), new ExerciseReps(10));
 
         ExercisesList updated = original.addExercise(SECOND);
 
@@ -62,6 +64,7 @@ public class ExercisesListTest {
 
         assertThrows(NullPointerException.class, () -> original.addExercise(null));
         assertThrows(DuplicateExerciseException.class, () -> original.addExercise(FIRST));
+        assertThrows(DuplicateExerciseException.class, () -> original.addExercise(equalFirst));
     }
 
     @Test
@@ -89,15 +92,19 @@ public class ExercisesListTest {
         ExercisesList original = new ExercisesList(List.of(FIRST, SECOND));
         Exercise equalFirst = new Exercise(new ExerciseName("Squats"),
                 new ExerciseWeight(20.5), new ExerciseReps(10));
+        Exercise equalReplacement = new Exercise(new ExerciseName("Squats"),
+                new ExerciseWeight(20.5), new ExerciseReps(10));
 
-        assertSame(original, original.setExercise(equalFirst, equalFirst));
+        assertSame(original, original.setExercise(equalFirst, equalReplacement));
     }
 
     @Test
     public void removeExercise_removesSpecifiedExerciseInNewList() {
         ExercisesList original = new ExercisesList(List.of(FIRST, SECOND, THIRD));
+        Exercise equalSecond = new Exercise(new ExerciseName("Push-ups"),
+                new ExerciseWeight(0.0), new ExerciseReps(15));
 
-        ExercisesList updated = original.removeExercise(SECOND);
+        ExercisesList updated = original.removeExercise(equalSecond);
 
         assertNotSame(original, updated);
         assertEquals(List.of(FIRST, SECOND, THIRD), original.getExerciseList());

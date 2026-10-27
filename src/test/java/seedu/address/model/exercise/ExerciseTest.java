@@ -44,6 +44,37 @@ public class ExerciseTest {
     }
 
     @Test
+    public void isSameExercise() {
+        Exercise exercise = new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_VALID);
+
+        // same object -> returns true
+        assertTrue(exercise.isSameExercise(exercise));
+
+        // same values -> returns true
+        assertTrue(exercise.isSameExercise(
+                new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_VALID)));
+
+        // null -> returns false
+        assertFalse(exercise.isSameExercise(null));
+
+        // different name -> returns false
+        assertFalse(exercise.isSameExercise(
+                new Exercise(NAME_OTHER, WEIGHT_VALID, REPETITIONS_VALID)));
+
+        // different weight -> returns false
+        assertFalse(exercise.isSameExercise(
+                new Exercise(NAME_VALID, WEIGHT_OTHER, REPETITIONS_VALID)));
+
+        // different repetitions -> returns false
+        assertFalse(exercise.isSameExercise(
+                new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_OTHER)));
+
+        // case-sensitive name comparison -> returns false
+        assertFalse(exercise.isSameExercise(
+                new Exercise(new ExerciseName("squats"), WEIGHT_VALID, REPETITIONS_VALID)));
+    }
+
+    @Test
     public void equals() {
         Exercise exercise = new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_VALID);
 
