@@ -10,76 +10,60 @@ import org.junit.jupiter.api.Test;
 public class ExerciseTest {
 
     private static final ExerciseName NAME_VALID = new ExerciseName("Squats");
-    private static final ExerciseName NAME_OTHER = new ExerciseName("Push-ups");
-    private static final ExerciseWeight WEIGHT_VALID = new ExerciseWeight(20.5);
-    private static final ExerciseWeight WEIGHT_OTHER = new ExerciseWeight(10.0);
-    private static final ExerciseReps REPETITIONS_VALID = new ExerciseReps(10);
-    private static final ExerciseReps REPETITIONS_OTHER = new ExerciseReps(11);
+    private static final ExerciseName NAME_OTHER = new ExerciseName("Push Ups");
+    private static final ExerciseDescription DESCRIPTION_VALID = new ExerciseDescription("Barbell back squat");
+    private static final ExerciseDescription DESCRIPTION_OTHER = new ExerciseDescription("Bodyweight squat");
 
     @Test
-    public void constructor_nullName_throwsNullPointerException() {
+    public void constructor_nullFields_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
-                new Exercise(null, WEIGHT_VALID, REPETITIONS_VALID));
-    }
+                new Exercise(null, DESCRIPTION_VALID));
 
-    @Test
-    public void constructor_nullWeight_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
-                new Exercise(NAME_VALID, null, REPETITIONS_VALID));
-    }
-
-    @Test
-    public void constructor_nullRepetitions_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () ->
-                new Exercise(NAME_VALID, WEIGHT_VALID, null));
+                new Exercise(NAME_VALID, null));
     }
 
     @Test
     public void constructor_validFields_storesValues() {
-        Exercise exercise = new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_VALID);
+        Exercise exercise = new Exercise(NAME_VALID, DESCRIPTION_VALID);
 
         assertEquals(NAME_VALID, exercise.getName());
-        assertEquals(WEIGHT_VALID, exercise.getWeight());
-        assertEquals(REPETITIONS_VALID, exercise.getRepetitions());
+        assertEquals(DESCRIPTION_VALID, exercise.getDescription());
     }
 
     @Test
     public void isSameExercise() {
-        Exercise exercise = new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_VALID);
+        Exercise exercise = new Exercise(NAME_VALID, DESCRIPTION_VALID);
 
         // same object -> returns true
         assertTrue(exercise.isSameExercise(exercise));
 
         // same values -> returns true
         assertTrue(exercise.isSameExercise(
-                new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_VALID)));
+                new Exercise(NAME_VALID, DESCRIPTION_VALID)));
 
         // null -> returns false
         assertFalse(exercise.isSameExercise(null));
 
         // different name -> returns false
         assertFalse(exercise.isSameExercise(
-                new Exercise(NAME_OTHER, WEIGHT_VALID, REPETITIONS_VALID)));
+                new Exercise(NAME_OTHER, DESCRIPTION_VALID)));
 
-        // different weight -> returns false
+        // different description -> returns false
         assertFalse(exercise.isSameExercise(
-                new Exercise(NAME_VALID, WEIGHT_OTHER, REPETITIONS_VALID)));
-
-        // different repetitions -> returns false
-        assertFalse(exercise.isSameExercise(
-                new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_OTHER)));
+                new Exercise(NAME_VALID, DESCRIPTION_OTHER)));
 
         // case-sensitive name comparison -> returns false
         assertFalse(exercise.isSameExercise(
-                new Exercise(new ExerciseName("squats"), WEIGHT_VALID, REPETITIONS_VALID)));
+                new Exercise(new ExerciseName("squats"), DESCRIPTION_VALID)));
     }
 
     @Test
     public void equals() {
-        Exercise exercise = new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_VALID);
+        Exercise exercise = new Exercise(NAME_VALID, DESCRIPTION_VALID);
 
         // same values -> returns true
-        assertTrue(exercise.equals(new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_VALID)));
+        assertTrue(exercise.equals(new Exercise(NAME_VALID, DESCRIPTION_VALID)));
 
         // same object -> returns true
         assertTrue(exercise.equals(exercise));
@@ -91,27 +75,24 @@ public class ExerciseTest {
         assertFalse(exercise.equals(NAME_VALID));
 
         // different name -> returns false
-        assertFalse(exercise.equals(new Exercise(NAME_OTHER, WEIGHT_VALID, REPETITIONS_VALID)));
+        assertFalse(exercise.equals(new Exercise(NAME_OTHER, DESCRIPTION_VALID)));
 
-        // different weight -> returns false
-        assertFalse(exercise.equals(new Exercise(NAME_VALID, WEIGHT_OTHER, REPETITIONS_VALID)));
-
-        // different repetitions -> returns false
-        assertFalse(exercise.equals(new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_OTHER)));
+        // different description -> returns false
+        assertFalse(exercise.equals(new Exercise(NAME_VALID, DESCRIPTION_OTHER)));
     }
 
     @Test
     public void hashCode_equalExercises_haveSameHashCode() {
-        Exercise first = new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_VALID);
-        Exercise second = new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_VALID);
+        Exercise first = new Exercise(NAME_VALID, DESCRIPTION_VALID);
+        Exercise second = new Exercise(NAME_VALID, DESCRIPTION_VALID);
 
         assertEquals(first.hashCode(), second.hashCode());
     }
 
     @Test
     public void toStringMethod() {
-        Exercise exercise = new Exercise(NAME_VALID, WEIGHT_VALID, REPETITIONS_VALID);
+        Exercise exercise = new Exercise(NAME_VALID, DESCRIPTION_VALID);
 
-        assertEquals("Squats (20.5 kg, 10 reps)", exercise.toString());
+        assertEquals("Squats (Barbell back squat)", exercise.toString());
     }
 }

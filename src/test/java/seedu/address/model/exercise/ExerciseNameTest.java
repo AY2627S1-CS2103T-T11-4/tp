@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 public class ExerciseNameTest {
 
     private static final String NAME_VALID = "Squats";
-    private static final String NAME_OTHER = "Push-ups";
+    private static final String NAME_OTHER = "Push Ups";
 
     @Test
     public void constructor_null_throwsNullPointerException() {
@@ -39,11 +39,16 @@ public class ExerciseNameTest {
         assertFalse(ExerciseName.isValidName("")); // empty string
         assertFalse(ExerciseName.isValidName(" ")); // spaces only
         assertFalse(ExerciseName.isValidName("\t")); // whitespace only
-        assertFalse(ExerciseName.isValidName("a".repeat(ExerciseName.MAX_LENGTH + 1)));
+        assertFalse(ExerciseName.isValidName("^")); // only non-alphanumeric characters
+        assertFalse(ExerciseName.isValidName("peter*")); // contains non-alphanumeric characters
+        assertFalse(ExerciseName.isValidName(" Squats")); // starts with whitespace
 
         // valid names
-        assertTrue(ExerciseName.isValidName("a".repeat(ExerciseName.MAX_LENGTH)));
-        assertTrue(ExerciseName.isValidName(NAME_VALID));
+        assertTrue(ExerciseName.isValidName("peter jack")); // alphabets only
+        assertTrue(ExerciseName.isValidName("12345")); // numbers only
+        assertTrue(ExerciseName.isValidName("peter the 2nd")); // alphanumeric characters
+        assertTrue(ExerciseName.isValidName("Capital Tan")); // with capital letters
+        assertTrue(ExerciseName.isValidName("David Roger Jackson Ray Jr 2nd")); // long names
     }
 
     @Test
@@ -64,6 +69,9 @@ public class ExerciseNameTest {
 
         // different values -> returns false
         assertFalse(name.equals(new ExerciseName(NAME_OTHER)));
+
+        // case-sensitive values -> returns false
+        assertFalse(name.equals(new ExerciseName("squats")));
     }
 
     @Test
