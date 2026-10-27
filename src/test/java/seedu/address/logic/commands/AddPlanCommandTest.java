@@ -92,8 +92,10 @@ public class AddPlanCommandTest {
         Student baseStudent = new ModelManager(getTypicalBrotherGym(), new UserPrefs())
                 .getFilteredStudentList().get(0);
         for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
+            Set<WorkoutPlanTag> existingTags = status == WorkoutPlanStatus.PENDING
+                    ? PLAN.getTags() : Set.of(new WorkoutPlanTag("different"));
             WorkoutPlan existing = new WorkoutPlan(PLAN.getTitle(), PLAN.getWorkouts(), PLAN.getDate(),
-                    PLAN.getTags(), status);
+                    existingTags, status);
             Student studentWithPlan = new Student(baseStudent.getName(), baseStudent.getPhone(),
                     baseStudent.getEmail(), baseStudent.getAddress(), baseStudent.getTags(),
                     new WorkoutPlansList(List.of(existing)));

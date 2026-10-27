@@ -110,7 +110,7 @@ public final class WorkoutPlan {
     }
 
     /**
-     * Returns true if both plans have the same details, regardless of status.
+     * Returns true if both plans have the same title, workouts, and date, regardless of tags or status.
      * This defines the identity used to prevent duplicate plans for a student.
      */
     public boolean isSamePlan(WorkoutPlan otherPlan) {
@@ -120,8 +120,7 @@ public final class WorkoutPlan {
         return otherPlan != null
                 && title.equals(otherPlan.title)
                 && workouts.equals(otherPlan.workouts)
-                && date.equals(otherPlan.date)
-                && tags.equals(otherPlan.tags);
+                && date.equals(otherPlan.date);
     }
 
     @Override

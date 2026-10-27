@@ -195,8 +195,10 @@ public class WorkoutPlanTest {
                 new WorkoutDescription(DESCRIPTION_TEXT_OTHER), DATE_VALID)));
         assertFalse(plan.isSamePlan(new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
                 new WorkoutDate(new Date(DATE_TIME_OTHER)))));
-        assertFalse(plan.isSamePlan(new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
-                Set.of(new WorkoutPlanTag("strength")))));
+        WorkoutPlan tagged = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(new WorkoutPlanTag("strength")));
+        assertTrue(plan.isSamePlan(tagged));
+        assertTrue(tagged.isSamePlan(plan));
     }
 
     @Test

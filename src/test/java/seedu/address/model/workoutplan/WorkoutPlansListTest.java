@@ -10,9 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
@@ -76,7 +78,7 @@ public class WorkoutPlansListTest {
             WorkoutPlansList plans = new WorkoutPlansList(List.of(existing));
             for (WorkoutPlanStatus newStatus : List.of(WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE)) {
                 WorkoutPlan newPlan = new WorkoutPlan(FIRST.getTitle(), FIRST.getWorkouts(), FIRST.getDate(),
-                        FIRST.getTags(), newStatus);
+                        Set.of(new WorkoutPlanTag("different")), newStatus);
                 assertThrows(DuplicateWorkoutPlanException.class, () -> plans.addWorkoutPlan(newPlan));
             }
         }
@@ -180,7 +182,7 @@ public class WorkoutPlansListTest {
         WorkoutPlan existing = new WorkoutPlan(FIRST.getTitle(), FIRST.getWorkouts(), FIRST.getDate(),
                 FIRST.getTags(), existingStatus);
         WorkoutPlan target = new WorkoutPlan(new WorkoutTitle("Cardio"), existing.getWorkouts(), existing.getDate(),
-                existing.getTags(), WorkoutPlanStatus.PENDING);
+                Set.of(new WorkoutPlanTag("different")), WorkoutPlanStatus.PENDING);
         WorkoutPlan edited = new WorkoutPlan(existing.getTitle(), target.getWorkouts(), target.getDate(),
                 target.getTags(), target.getStatus());
         WorkoutPlansList plans = new WorkoutPlansList(List.of(existing, target));

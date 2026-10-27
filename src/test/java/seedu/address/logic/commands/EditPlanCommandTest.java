@@ -169,7 +169,9 @@ public class EditPlanCommandTest {
             descriptor.setTitle(existing.getTitle());
             descriptor.setDescription(existing.getWorkouts());
             descriptor.setDate(existing.getDate());
-            descriptor.setWorkoutPlanTags(existing.getTags());
+            Set<WorkoutPlanTag> editedTags = status == WorkoutPlanStatus.PENDING
+                    ? existing.getTags() : Set.of(new WorkoutPlanTag("different"));
+            descriptor.setWorkoutPlanTags(editedTags);
 
             CommandTestUtil.assertCommandFailure(new EditPlanCommand(Index.fromOneBased(1), descriptor), model,
                     EditPlanCommand.MESSAGE_DUPLICATE_PLAN);
