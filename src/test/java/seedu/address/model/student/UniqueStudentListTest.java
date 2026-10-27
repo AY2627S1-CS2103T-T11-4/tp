@@ -113,16 +113,10 @@ public class UniqueStudentListTest {
     }
 
     @Test
-    public void setStudent_editedStudentHasNonUniqueIdentity_throwsDuplicateStudentException() {
+    public void setStudent_duplicateStudent_throwsDuplicateStudentException() {
         uniqueStudentList.add(ALICE);
         uniqueStudentList.add(BOB);
         assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudent(ALICE, BOB));
-    }
-
-    @Test
-    public void setStudent_editedStudentIsSameAsAnotherStudent_throwsDuplicateStudentException() {
-        uniqueStudentList.add(ALICE);
-        uniqueStudentList.add(BOB);
         Student editedBob = new StudentBuilder(BOB).withName(ALICE.getName().fullName.toLowerCase()).build();
         assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudent(BOB, editedBob));
     }
