@@ -6,38 +6,46 @@ import java.util.Objects;
 
 /**
  * Represents an exercise in a workout plan.
- * Guarantees: name, weight, and repetitions are valid and immutable.
+ * Guarantees: name and description are valid and immutable.
  */
 public final class Exercise {
 
     private final ExerciseName name;
-    private final ExerciseWeight weight;
-    private final ExerciseReps repetitions;
+    private final ExerciseDescription description;
 
     /**
      * Constructs an {@code Exercise} with validated fields.
      *
      * @param name the exercise name
-     * @param weight the exercise weight in kilograms
-     * @param repetitions the number of repetitions
+     * @param description the exercise description
      */
-    public Exercise(ExerciseName name, ExerciseWeight weight, ExerciseReps repetitions) {
-        requireAllNonNull(name, weight, repetitions);
+    public Exercise(ExerciseName name, ExerciseDescription description) {
+        requireAllNonNull(name, description);
         this.name = name;
-        this.weight = weight;
-        this.repetitions = repetitions;
+        this.description = description;
     }
 
     public ExerciseName getName() {
         return name;
     }
 
-    public ExerciseWeight getWeight() {
-        return weight;
+    public ExerciseDescription getDescription() {
+        return description;
     }
 
-    public ExerciseReps getRepetitions() {
-        return repetitions;
+    /**
+     * Returns whether this exercise represents the same exercise as {@code otherExercise}.
+     *
+     * @param otherExercise the exercise to compare against
+     * @return true if both exercises have the same name and description
+     */
+    public boolean isSameExercise(Exercise otherExercise) {
+        if (otherExercise == this) {
+            return true;
+        }
+        return otherExercise != null
+                && name.equals(otherExercise.name)
+                && description.equals(otherExercise.description);
     }
 
     @Override
@@ -49,17 +57,16 @@ public final class Exercise {
             return false;
         }
         return name.equals(otherExercise.name)
-                && weight.equals(otherExercise.weight)
-                && repetitions.equals(otherExercise.repetitions);
+                && description.equals(otherExercise.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, weight, repetitions);
+        return Objects.hash(name, description);
     }
 
     @Override
     public String toString() {
-        return name + " (" + weight + " kg, " + repetitions + " reps)";
+        return name + " (" + description + ")";
     }
 }

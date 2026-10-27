@@ -43,7 +43,7 @@ public final class ExercisesList {
     /** Returns a new list with {@code exercise} appended. */
     public ExercisesList addExercise(Exercise exercise) {
         requireAllNonNull(exercise);
-        if (exercises.contains(exercise)) {
+        if (exercises.stream().anyMatch(existingExercise -> existingExercise.isSameExercise(exercise))) {
             throw new DuplicateExerciseException();
         }
         List<Exercise> updated = new ArrayList<>(exercises);
@@ -61,7 +61,7 @@ public final class ExercisesList {
         if (index < 0) {
             throw new ExerciseNotFoundException(target);
         }
-        if (target.equals(replacement)) {
+        if (target.isSameExercise(replacement)) {
             return this;
         }
 
@@ -95,13 +95,18 @@ public final class ExercisesList {
                 return i;
             }
         }
-        return exercises.indexOf(target);
+        for (int i = 0; i < exercises.size(); i++) {
+            if (exercises.get(i).isSameExercise(target)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private static void ensureExercisesAreUnique(List<Exercise> exercises) {
         for (int i = 0; i < exercises.size() - 1; i++) {
             for (int j = i + 1; j < exercises.size(); j++) {
-                if (exercises.get(i).equals(exercises.get(j))) {
+                if (exercises.get(i).isSameExercise(exercises.get(j))) {
                     throw new DuplicateExerciseException();
                 }
             }

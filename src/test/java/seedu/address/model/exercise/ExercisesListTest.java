@@ -19,13 +19,13 @@ import seedu.address.model.exercise.exceptions.ExerciseNotFoundException;
 public class ExercisesListTest {
 
     private static final Exercise FIRST = new Exercise(new ExerciseName("Squats"),
-            new ExerciseWeight(20.5), new ExerciseReps(10));
-    private static final Exercise SECOND = new Exercise(new ExerciseName("Push-ups"),
-            new ExerciseWeight(0.0), new ExerciseReps(15));
+            new ExerciseDescription("Barbell back squat"));
+    private static final Exercise SECOND = new Exercise(new ExerciseName("Push Ups"),
+            new ExerciseDescription("Bodyweight push-up"));
     private static final Exercise THIRD = new Exercise(new ExerciseName("Lunges"),
-            new ExerciseWeight(10.0), new ExerciseReps(12));
+            new ExerciseDescription("Forward lunges"));
     private static final Exercise REPLACEMENT = new Exercise(new ExerciseName("Deadlift"),
-            new ExerciseWeight(40.0), new ExerciseReps(8));
+            new ExerciseDescription("Conventional deadlift"));
 
     @Test
     public void constructors_rejectNullsAndCopyInput() {
@@ -45,7 +45,7 @@ public class ExercisesListTest {
                 exercises.getExerciseList().add(SECOND));
 
         Exercise equalFirst = new Exercise(new ExerciseName("Squats"),
-                new ExerciseWeight(20.5), new ExerciseReps(10));
+                new ExerciseDescription("Barbell back squat"));
         assertThrows(DuplicateExerciseException.class, () ->
                 new ExercisesList(List.of(FIRST, equalFirst)));
     }
@@ -53,6 +53,8 @@ public class ExercisesListTest {
     @Test
     public void addExercise_appendsInNewList() {
         ExercisesList original = new ExercisesList(List.of(FIRST));
+        Exercise equalFirst = new Exercise(new ExerciseName("Squats"),
+                new ExerciseDescription("Barbell back squat"));
 
         ExercisesList updated = original.addExercise(SECOND);
 
@@ -62,12 +64,18 @@ public class ExercisesListTest {
 
         assertThrows(NullPointerException.class, () -> original.addExercise(null));
         assertThrows(DuplicateExerciseException.class, () -> original.addExercise(FIRST));
+        assertThrows(DuplicateExerciseException.class, () -> original.addExercise(equalFirst));
+
+        Exercise sameNameDifferentDescription = new Exercise(new ExerciseName("Squats"),
+                new ExerciseDescription("Goblet squat"));
+        assertEquals(List.of(FIRST, sameNameDifferentDescription),
+                original.addExercise(sameNameDifferentDescription).getExerciseList());
     }
 
     @Test
     public void setExercise_replacesExactTargetAndPreservesOrder() {
         Exercise equalFirst = new Exercise(new ExerciseName("Squats"),
-                new ExerciseWeight(20.5), new ExerciseReps(10));
+                new ExerciseDescription("Barbell back squat"));
         ExercisesList original = new ExercisesList(List.of(FIRST, SECOND, THIRD));
 
         ExercisesList updated = original.setExercise(equalFirst, REPLACEMENT);
@@ -88,16 +96,20 @@ public class ExercisesListTest {
     public void setExercise_equalTargetAndReplacement_returnsOriginal() {
         ExercisesList original = new ExercisesList(List.of(FIRST, SECOND));
         Exercise equalFirst = new Exercise(new ExerciseName("Squats"),
-                new ExerciseWeight(20.5), new ExerciseReps(10));
+                new ExerciseDescription("Barbell back squat"));
+        Exercise equalReplacement = new Exercise(new ExerciseName("Squats"),
+                new ExerciseDescription("Barbell back squat"));
 
-        assertSame(original, original.setExercise(equalFirst, equalFirst));
+        assertSame(original, original.setExercise(equalFirst, equalReplacement));
     }
 
     @Test
     public void removeExercise_removesSpecifiedExerciseInNewList() {
         ExercisesList original = new ExercisesList(List.of(FIRST, SECOND, THIRD));
+        Exercise equalSecond = new Exercise(new ExerciseName("Push Ups"),
+                new ExerciseDescription("Bodyweight push-up"));
 
-        ExercisesList updated = original.removeExercise(SECOND);
+        ExercisesList updated = original.removeExercise(equalSecond);
 
         assertNotSame(original, updated);
         assertEquals(List.of(FIRST, SECOND, THIRD), original.getExerciseList());

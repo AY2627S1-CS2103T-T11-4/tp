@@ -5,13 +5,13 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 
 /**
  * Represents the name of an exercise.
- * Guarantees: immutable, non-blank, and at most 100 characters.
+ * Guarantees: immutable and valid as declared in {@link #isValidName(String)}.
  */
 public final class ExerciseName {
 
-    public static final int MAX_LENGTH = 100;
     public static final String MESSAGE_CONSTRAINTS =
-            "Exercise names should not be blank and should not exceed 100 characters";
+            "Names should only contain alphanumeric characters and spaces, and should not be blank";
+    public static final String VALIDATION_REGEX = "[\\p{Alnum}][\\p{Alnum} ]*";
 
     private final String value;
 
@@ -26,10 +26,10 @@ public final class ExerciseName {
         value = name;
     }
 
-    /** Returns true if {@code name} is non-blank and within the maximum length. */
+    /** Returns true if {@code name} follows the same rules as a student name. */
     public static boolean isValidName(String name) {
         requireNonNull(name);
-        return !name.isBlank() && name.length() <= MAX_LENGTH;
+        return name.matches(VALIDATION_REGEX);
     }
 
     public String getValue() {
