@@ -1,76 +1,42 @@
 package seedu.address.model.exercise;
 
-import static java.util.Objects.requireNonNull;
-import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Objects;
 
 /**
  * Represents an exercise in a workout plan.
- * Guarantees: name and description are non-blank and at most 100 characters, and repetitions are valid.
+ * Guarantees: name, weight, and repetitions are valid and immutable.
  */
 public final class Exercise {
 
-    public static final int MAX_NAME_LENGTH = 100;
-    public static final int MAX_DESCRIPTION_LENGTH = 100;
-    public static final int MIN_REPETITIONS = 1;
-    public static final int MAX_REPETITIONS = 1000;
-
-    public static final String NAME_MESSAGE_CONSTRAINTS =
-            "Exercise names should not be blank and should not exceed 100 characters";
-    public static final String DESCRIPTION_MESSAGE_CONSTRAINTS =
-            "Exercise descriptions should not be blank and should not exceed 100 characters";
-    public static final String REPETITIONS_MESSAGE_CONSTRAINTS =
-            "Exercise repetitions should be between 1 and 1000";
-
-    private final String name;
-    private final String description;
-    private final int repetitions;
+    private final ExerciseName name;
+    private final ExerciseWeight weight;
+    private final ExerciseReps repetitions;
 
     /**
      * Constructs an {@code Exercise} with validated fields.
      *
      * @param name the exercise name
-     * @param description the exercise description
+     * @param weight the exercise weight in kilograms
      * @param repetitions the number of repetitions
      */
-    public Exercise(String name, String description, int repetitions) {
-        requireNonNull(name);
-        requireNonNull(description);
-        checkArgument(isValidName(name), NAME_MESSAGE_CONSTRAINTS);
-        checkArgument(isValidDescription(description), DESCRIPTION_MESSAGE_CONSTRAINTS);
-        checkArgument(isValidRepetitions(repetitions), REPETITIONS_MESSAGE_CONSTRAINTS);
+    public Exercise(ExerciseName name, ExerciseWeight weight, ExerciseReps repetitions) {
+        requireAllNonNull(name, weight, repetitions);
         this.name = name;
-        this.description = description;
+        this.weight = weight;
         this.repetitions = repetitions;
     }
 
-    /** Returns true if {@code name} is non-blank and within the maximum length. */
-    public static boolean isValidName(String name) {
-        requireNonNull(name);
-        return !name.isBlank() && name.length() <= MAX_NAME_LENGTH;
-    }
-
-    /** Returns true if {@code description} is non-blank and within the maximum length. */
-    public static boolean isValidDescription(String description) {
-        requireNonNull(description);
-        return !description.isBlank() && description.length() <= MAX_DESCRIPTION_LENGTH;
-    }
-
-    /** Returns true if {@code repetitions} is within the supported range. */
-    public static boolean isValidRepetitions(int repetitions) {
-        return repetitions >= MIN_REPETITIONS && repetitions <= MAX_REPETITIONS;
-    }
-
-    public String getName() {
+    public ExerciseName getName() {
         return name;
     }
 
-    public String getDescription() {
-        return description;
+    public ExerciseWeight getWeight() {
+        return weight;
     }
 
-    public int getRepetitions() {
+    public ExerciseReps getRepetitions() {
         return repetitions;
     }
 
@@ -83,17 +49,17 @@ public final class Exercise {
             return false;
         }
         return name.equals(otherExercise.name)
-                && description.equals(otherExercise.description)
-                && repetitions == otherExercise.repetitions;
+                && weight.equals(otherExercise.weight)
+                && repetitions.equals(otherExercise.repetitions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, repetitions);
+        return Objects.hash(name, weight, repetitions);
     }
 
     @Override
     public String toString() {
-        return name + " - " + description + " (" + repetitions + " reps)";
+        return name + " (" + weight + " kg, " + repetitions + " reps)";
     }
 }

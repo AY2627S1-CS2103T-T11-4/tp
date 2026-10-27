@@ -17,9 +17,12 @@ import seedu.address.model.exercise.exceptions.ExerciseNotFoundException;
 
 public class ExercisesListTest {
 
-    private static final Exercise FIRST = new Exercise("Squats", "Barbell back squat", 10);
-    private static final Exercise SECOND = new Exercise("Push-ups", "Standard push-up", 15);
-    private static final Exercise THIRD = new Exercise("Lunges", "Alternating forward lunges", 12);
+    private static final Exercise FIRST = new Exercise(new ExerciseName("Squats"),
+            new ExerciseWeight(20.5), new ExerciseReps(10));
+    private static final Exercise SECOND = new Exercise(new ExerciseName("Push-ups"),
+            new ExerciseWeight(0.0), new ExerciseReps(15));
+    private static final Exercise THIRD = new Exercise(new ExerciseName("Lunges"),
+            new ExerciseWeight(10.0), new ExerciseReps(12));
 
     @Test
     public void constructors_createEmptyListAndDefensivelyCopyInput() {
@@ -42,7 +45,8 @@ public class ExercisesListTest {
         inputWithNull.add(null);
         assertThrows(NullPointerException.class, () -> new ExercisesList(inputWithNull));
 
-        Exercise equalFirst = new Exercise("Squats", "Barbell back squat", 10);
+        Exercise equalFirst = new Exercise(new ExerciseName("Squats"),
+                new ExerciseWeight(20.5), new ExerciseReps(10));
         assertThrows(DuplicateExerciseException.class, () ->
                 new ExercisesList(List.of(FIRST, equalFirst)));
     }
@@ -94,7 +98,8 @@ public class ExercisesListTest {
     @Test
     public void setExercise_equalTargetAndReplacement_returnsOriginal() {
         ExercisesList original = new ExercisesList(List.of(FIRST, SECOND));
-        Exercise equalFirst = new Exercise("Squats", "Barbell back squat", 10);
+        Exercise equalFirst = new Exercise(new ExerciseName("Squats"),
+                new ExerciseWeight(20.5), new ExerciseReps(10));
 
         assertSame(original, original.setExercise(equalFirst, equalFirst));
     }
@@ -102,7 +107,8 @@ public class ExercisesListTest {
     @Test
     public void setExercise_nullMissingOrDuplicateReplacement_throwsException() {
         ExercisesList exercises = new ExercisesList(List.of(FIRST, SECOND));
-        Exercise missing = new Exercise("Deadlift", "Conventional deadlift", 8);
+        Exercise missing = new Exercise(new ExerciseName("Deadlift"),
+                new ExerciseWeight(40.0), new ExerciseReps(8));
 
         assertThrows(NullPointerException.class, () -> exercises.setExercise(null, THIRD));
         assertThrows(NullPointerException.class, () -> exercises.setExercise(FIRST, null));
@@ -123,7 +129,8 @@ public class ExercisesListTest {
     @Test
     public void removeExercise_nullOrMissing_throwsException() {
         ExercisesList exercises = new ExercisesList(List.of(FIRST));
-        Exercise missing = new Exercise("Deadlift", "Conventional deadlift", 8);
+        Exercise missing = new Exercise(new ExerciseName("Deadlift"),
+                new ExerciseWeight(40.0), new ExerciseReps(8));
 
         assertThrows(NullPointerException.class, () -> exercises.removeExercise(null));
         assertThrows(ExerciseNotFoundException.class, () -> exercises.removeExercise(missing));
