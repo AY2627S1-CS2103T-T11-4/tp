@@ -35,7 +35,8 @@
         </top>
 
         <center>
-          <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="help-scroll" vbarPolicy="AS_NEEDED">
+          <ScrollPane fx:id="helpScroll" fitToWidth="true" hbarPolicy="NEVER" styleClass="help-scroll"
+                      vbarPolicy="AS_NEEDED">
             <content>
               <VBox fx:id="commandSections" fillWidth="true" spacing="20.0" styleClass="command-sections">
                 <padding>
@@ -51,7 +52,7 @@
             <padding>
               <Insets top="13.0" right="22.0" bottom="13.0" left="22.0" />
             </padding>
-            <Button mnemonicParsing="false" onAction="#openUserGuide" text="Open User Guide"
+            <Button fx:id="userGuideButton" mnemonicParsing="false" onAction="#openUserGuide" text="Open User Guide"
                     styleClass="user-guide-button" />
           </HBox>
         </bottom>

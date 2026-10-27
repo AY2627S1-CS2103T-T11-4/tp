@@ -5,14 +5,19 @@ import static java.util.Objects.requireNonNull;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -80,9 +85,16 @@ public class HelpWindow extends UiPart<Stage> {
                             UnmarkPlanCommand.MESSAGE_DESCRIPTION, UnmarkPlanCommand.MESSAGE_EXAMPLE))));
 
     private final Consumer<String> commandFormatHandler;
+    private final List<CommandCard> commandCards = new ArrayList<>();
 
     @FXML
     private VBox commandSections;
+
+    @FXML
+    private ScrollPane helpScroll;
+
+    @FXML
+    private Button userGuideButton;
 
     /**
      * Creates a new HelpWindow.
@@ -93,6 +105,7 @@ public class HelpWindow extends UiPart<Stage> {
     public HelpWindow(Stage root, Consumer<String> commandFormatHandler) {
         super(FXML, requireNonNull(root));
         this.commandFormatHandler = requireNonNull(commandFormatHandler);
+        getRoot().addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyPressed);
         populateCommandSections();
     }
 
@@ -150,7 +163,7 @@ public class HelpWindow extends UiPart<Stage> {
     public void focus() {
         getRoot().setIconified(false);
         getRoot().toFront();
-        getRoot().requestFocus();
+        focusCard(0);
     }
 
     /** Opens the user guide in the user's default browser. */
@@ -176,6 +189,7 @@ public class HelpWindow extends UiPart<Stage> {
 
     private void populateCommandSections() {
         commandSections.getChildren().clear();
+        commandCards.clear();
         COMMAND_CATEGORIES.stream()
                 .map(this::createCommandCategory)
                 .forEach(commandSections.getChildren()::add);
@@ -189,14 +203,17 @@ public class HelpWindow extends UiPart<Stage> {
         commandCards.getStyleClass().add("command-cards");
         category.commands().stream()
                 .map(this::createCommandCard)
-                .forEach(commandCards.getChildren()::add);
+                .forEach(commandCard -> {
+                    this.commandCards.add(commandCard);
+                    commandCards.getChildren().add(commandCard.card());
+                });
 
         VBox categoryBox = new VBox(9, categoryTitle, commandCards);
         categoryBox.getStyleClass().add("command-category");
         return categoryBox;
     }
 
-    private VBox createCommandCard(CommandReference command) {
+    private CommandCard createCommandCard(CommandReference command) {
         Label commandFormat = new Label(command.format());
         commandFormat.setWrapText(true);
         commandFormat.setMaxWidth(Double.MAX_VALUE);
@@ -219,7 +236,7 @@ public class HelpWindow extends UiPart<Stage> {
         exampleBlock.setMaxWidth(Double.MAX_VALUE);
         exampleBlock.getStyleClass().add("example-block");
 
-        Button useFormatButton = new Button("Use format");
+        Button useFormatButton = new Button("Use Command");
         useFormatButton.setMnemonicParsing(false);
         useFormatButton.setOnAction(event -> commandFormatHandler.accept(command.format()));
         useFormatButton.getStyleClass().add("use-format-button");
@@ -230,14 +247,102 @@ public class HelpWindow extends UiPart<Stage> {
 
         VBox card = new VBox(7, commandFormat, description, exampleBlock, actionRow);
         card.setMaxWidth(Double.MAX_VALUE);
+        card.setFocusTraversable(true);
         card.getStyleClass().add("command-card");
-        return card;
+        return new CommandCard(card, useFormatButton);
+    }
+
+    private void handleKeyPressed(KeyEvent event) {
+        int focusedCardIndex = getFocusedCardIndex();
+        if (focusedCardIndex >= 0) {
+            if (event.getCode() == KeyCode.DOWN) {
+                focusCard(focusedCardIndex + 1);
+                event.consume();
+            } else if (event.getCode() == KeyCode.UP) {
+                focusCard(focusedCardIndex - 1);
+                event.consume();
+            } else if (event.getCode() == KeyCode.TAB) {
+                if (event.isShiftDown() && focusedCardIndex == 0) {
+                    userGuideButton.requestFocus();
+                } else if (!event.isShiftDown() && focusedCardIndex == commandCards.size() - 1) {
+                    userGuideButton.requestFocus();
+                } else {
+                    focusCard(focusedCardIndex + (event.isShiftDown() ? -1 : 1));
+                }
+                event.consume();
+            } else if (event.getCode() == KeyCode.ENTER) {
+                Button useCommandButton = commandCards.get(focusedCardIndex).useCommandButton();
+                if (useCommandButton.isFocused()) {
+                    useCommandButton.fire();
+                    event.consume();
+                } else if (isCardFocused(focusedCardIndex)) {
+                    useCommandButton.requestFocus();
+                    event.consume();
+                }
+            }
+        } else if (userGuideButton.isFocused() && event.getCode() == KeyCode.TAB) {
+            focusCard(event.isShiftDown() ? commandCards.size() - 1 : 0);
+            event.consume();
+        }
+    }
+
+    private int getFocusedCardIndex() {
+        for (int i = 0; i < commandCards.size(); i++) {
+            CommandCard commandCard = commandCards.get(i);
+            if (commandCard.card().isFocused() || commandCard.useCommandButton().isFocused()) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private boolean isCardFocused(int index) {
+        return commandCards.get(index).card().isFocused();
+    }
+
+    private void focusCard(int index) {
+        if (commandCards.isEmpty()) {
+            userGuideButton.requestFocus();
+            return;
+        }
+
+        int boundedIndex = Math.max(0, Math.min(index, commandCards.size() - 1));
+        VBox card = commandCards.get(boundedIndex).card();
+        card.requestFocus();
+        Platform.runLater(() -> scrollCardIntoView(card));
+    }
+
+    private void scrollCardIntoView(VBox card) {
+        double contentHeight = commandSections.getHeight();
+        double viewportHeight = helpScroll.getViewportBounds().getHeight();
+        double maximumScroll = contentHeight - viewportHeight;
+        if (maximumScroll <= 0) {
+            return;
+        }
+
+        double contentTop = commandSections.localToScene(commandSections.getBoundsInLocal()).getMinY();
+        double viewportTop = helpScroll.localToScene(helpScroll.getViewportBounds()).getMinY();
+        double cardTop = card.localToScene(card.getBoundsInLocal()).getMinY() - contentTop;
+        double cardBottom = card.localToScene(card.getBoundsInLocal()).getMaxY() - contentTop;
+        double visibleTop = viewportTop - contentTop;
+        double visibleBottom = visibleTop + viewportHeight;
+        double targetScroll = helpScroll.getVvalue() * maximumScroll;
+
+        if (cardTop < visibleTop) {
+            targetScroll = cardTop;
+        } else if (cardBottom > visibleBottom) {
+            targetScroll = cardBottom - viewportHeight;
+        }
+
+        helpScroll.setVvalue(Math.max(0, Math.min(1, targetScroll / maximumScroll)));
     }
 
     private static CommandReference command(String commandWord, String parameters,
                                             String description, String example) {
         return new CommandReference(commandWord, parameters, description, example);
     }
+
+    private record CommandCard(VBox card, Button useCommandButton) {}
 
     private record CommandCategory(String title, List<CommandReference> commands) {}
 
