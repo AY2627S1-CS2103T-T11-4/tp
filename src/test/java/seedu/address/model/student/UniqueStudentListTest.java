@@ -58,7 +58,7 @@ public class UniqueStudentListTest {
     }
 
     @Test
-    public void add_studentNameDiffersOnlyByCase_throwsDuplicateStudentException() {
+    public void add_caseInsensitiveDuplicate_throwsDuplicateStudentException() {
         uniqueStudentList.add(ALICE);
         Student sameNameDifferentCase = new StudentBuilder(ALICE).withName(ALICE.getName().fullName.toLowerCase())
                 .build();
@@ -101,7 +101,7 @@ public class UniqueStudentListTest {
     }
 
     @Test
-    public void setStudent_editedStudentNameDiffersOnlyByCase_success() {
+    public void setStudent_caseInsensitiveNameChange_success() {
         uniqueStudentList.add(ALICE);
         Student editedAlice = new StudentBuilder(ALICE).withName(ALICE.getName().fullName.toLowerCase()).build();
         uniqueStudentList.setStudent(ALICE, editedAlice);
@@ -125,7 +125,7 @@ public class UniqueStudentListTest {
     }
 
     @Test
-    public void setStudent_editedStudentIsSameAsAnotherStudent_throwsDuplicateStudentException() {
+    public void setStudent_caseInsensitiveDuplicate_throwsDuplicateStudentException() {
         uniqueStudentList.add(ALICE);
         uniqueStudentList.add(BOB);
         Student editedBob = new StudentBuilder(BOB).withName(ALICE.getName().fullName.toLowerCase()).build();
