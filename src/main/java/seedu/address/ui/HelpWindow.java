@@ -6,10 +6,14 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import seedu.address.commons.core.LogsCenter;
@@ -75,6 +79,8 @@ public class HelpWindow extends UiPart<Stage> {
                     command(UnmarkPlanCommand.COMMAND_WORD, UnmarkPlanCommand.MESSAGE_PARAMETERS,
                             UnmarkPlanCommand.MESSAGE_DESCRIPTION, UnmarkPlanCommand.MESSAGE_EXAMPLE))));
 
+    private final Consumer<String> commandFormatHandler;
+
     @FXML
     private VBox commandSections;
 
@@ -82,17 +88,21 @@ public class HelpWindow extends UiPart<Stage> {
      * Creates a new HelpWindow.
      *
      * @param root Stage to use as the root of the HelpWindow.
+     * @param commandFormatHandler handler for inserting a command format into the main command box
      */
-    public HelpWindow(Stage root) {
+    public HelpWindow(Stage root, Consumer<String> commandFormatHandler) {
         super(FXML, requireNonNull(root));
+        this.commandFormatHandler = requireNonNull(commandFormatHandler);
         populateCommandSections();
     }
 
     /**
-     * Creates a new HelpWindow.
+     * Creates a new HelpWindow using a new stage.
+     *
+     * @param commandFormatHandler handler for inserting a command format into the main command box
      */
-    public HelpWindow() {
-        this(new Stage());
+    public HelpWindow(Consumer<String> commandFormatHandler) {
+        this(new Stage(), commandFormatHandler);
     }
 
     /**
@@ -167,18 +177,18 @@ public class HelpWindow extends UiPart<Stage> {
     private void populateCommandSections() {
         commandSections.getChildren().clear();
         COMMAND_CATEGORIES.stream()
-                .map(HelpWindow::createCommandCategory)
+                .map(this::createCommandCategory)
                 .forEach(commandSections.getChildren()::add);
     }
 
-    private static VBox createCommandCategory(CommandCategory category) {
+    private VBox createCommandCategory(CommandCategory category) {
         Label categoryTitle = new Label(category.title());
         categoryTitle.getStyleClass().add("category-title");
 
         VBox commandCards = new VBox(10);
         commandCards.getStyleClass().add("command-cards");
         category.commands().stream()
-                .map(HelpWindow::createCommandCard)
+                .map(this::createCommandCard)
                 .forEach(commandCards.getChildren()::add);
 
         VBox categoryBox = new VBox(9, categoryTitle, commandCards);
@@ -186,7 +196,7 @@ public class HelpWindow extends UiPart<Stage> {
         return categoryBox;
     }
 
-    private static VBox createCommandCard(CommandReference command) {
+    private VBox createCommandCard(CommandReference command) {
         Label commandFormat = new Label(command.format());
         commandFormat.setWrapText(true);
         commandFormat.setMaxWidth(Double.MAX_VALUE);
@@ -209,7 +219,16 @@ public class HelpWindow extends UiPart<Stage> {
         exampleBlock.setMaxWidth(Double.MAX_VALUE);
         exampleBlock.getStyleClass().add("example-block");
 
-        VBox card = new VBox(7, commandFormat, description, exampleBlock);
+        Button useFormatButton = new Button("Use format");
+        useFormatButton.setMnemonicParsing(false);
+        useFormatButton.setOnAction(event -> commandFormatHandler.accept(command.format()));
+        useFormatButton.getStyleClass().add("use-format-button");
+
+        HBox actionRow = new HBox(useFormatButton);
+        actionRow.setAlignment(Pos.CENTER_RIGHT);
+        actionRow.setMaxWidth(Double.MAX_VALUE);
+
+        VBox card = new VBox(7, commandFormat, description, exampleBlock, actionRow);
         card.setMaxWidth(Double.MAX_VALUE);
         card.getStyleClass().add("command-card");
         return card;

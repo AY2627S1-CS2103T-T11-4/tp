@@ -40,6 +40,7 @@ public class MainWindow extends UiPart<Stage> {
     private StudentListPanel studentListPanel;
     private WorkoutPlanListPanel workoutPlanListPanel;
     private ResultDisplay resultDisplay;
+    private CommandBox commandBox;
     private HelpWindow helpWindow;
 
     @FXML
@@ -77,7 +78,7 @@ public class MainWindow extends UiPart<Stage> {
 
         setAccelerators();
 
-        helpWindow = new HelpWindow();
+        helpWindow = new HelpWindow(this::handleCommandFormatSelected);
     }
 
     public Stage getPrimaryStage() {
@@ -142,8 +143,21 @@ public class MainWindow extends UiPart<Stage> {
         StatusBarFooter statusBarFooter = new StatusBarFooter(dataFilePath);
         statusbarPlaceholder.getChildren().add(statusBarFooter.getRoot());
 
-        CommandBox commandBox = new CommandBox(this::executeCommand);
+        commandBox = new CommandBox(this::executeCommand);
         commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
+    }
+
+    /**
+     * Inserts a command format into the main command box and returns focus to the main window.
+     *
+     * @param commandFormat command format selected from the Help window
+     */
+    private void handleCommandFormatSelected(String commandFormat) {
+        requireNonNull(commandFormat);
+        helpWindow.hide();
+        primaryStage.toFront();
+        primaryStage.requestFocus();
+        commandBox.setCommandText(commandFormat);
     }
 
     /**
