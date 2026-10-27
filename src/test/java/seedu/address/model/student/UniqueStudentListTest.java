@@ -125,7 +125,7 @@ public class UniqueStudentListTest {
     }
 
     @Test
-    public void setStudent_editedStudentNameDiffersOnlyByCaseFromAnotherStudent_throwsDuplicateStudentException() {
+    public void setStudent_editedStudentIsSameAsAnotherStudent_throwsDuplicateStudentException() {
         uniqueStudentList.add(ALICE);
         uniqueStudentList.add(BOB);
         Student editedBob = new StudentBuilder(BOB).withName(ALICE.getName().fullName.toLowerCase()).build();
