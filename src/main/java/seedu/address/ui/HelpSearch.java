@@ -20,6 +20,7 @@ import seedu.address.logic.commands.MarkPlanCommand;
 import seedu.address.logic.commands.UnmarkPlanCommand;
 import seedu.address.logic.commands.ViewPlanCommand;
 import seedu.address.logic.commands.ViewStudentCommand;
+import seedu.address.logic.parser.CliSyntax;
 
 /** Provides the Help window's command catalog and command-word search behavior. */
 final class HelpSearch {
@@ -82,16 +83,71 @@ final class HelpSearch {
 
     private static CommandReference command(String commandWord, String parameters,
                                             String description, String example) {
-        return new CommandReference(commandWord, parameters, description, example);
+        return new CommandReference(commandWord, parameters, description, example, fields(commandWord));
+    }
+
+    private static List<CommandField> fields(String commandWord) {
+        return switch (commandWord) {
+            case AddStudentCommand.COMMAND_WORD -> List.of(
+                field("Name", "", true, false, "Full name"),
+                field("Phone", CliSyntax.PREFIX_PHONE.toString(), true, false, "Phone number"),
+                field("Email", CliSyntax.PREFIX_EMAIL.toString(), true, false, "Email address"),
+                field("Address", CliSyntax.PREFIX_ADDRESS.toString(), true, false, "Home address"),
+                field("Tags", CliSyntax.PREFIX_TAG.toString(), false, true, "Optional tag"));
+            case ViewStudentCommand.COMMAND_WORD, DeleteStudentCommand.COMMAND_WORD -> List.of(
+                field("Student ID", "", true, false, "Positive integer"));
+            case EditStudentCommand.COMMAND_WORD -> List.of(
+                field("Student ID", "", true, false, "Positive integer"),
+                field("Name", CliSyntax.PREFIX_NAME.toString(), false, false, "Updated name"),
+                field("Phone", CliSyntax.PREFIX_PHONE.toString(), false, false, "Updated phone number"),
+                field("Email", CliSyntax.PREFIX_EMAIL.toString(), false, false, "Updated email address"),
+                field("Address", CliSyntax.PREFIX_ADDRESS.toString(), false, false, "Updated home address"),
+                field("Tags", CliSyntax.PREFIX_TAG.toString(), false, true, "Replacement tag"));
+            case FindCommand.COMMAND_WORD -> List.of(
+                field("Keywords", "", true, false, "Space-separated keywords"));
+            case AddPlanCommand.COMMAND_WORD -> List.of(
+                field("Plan title", "", true, false, "Workout title"),
+                field("Description", CliSyntax.PREFIX_PLAN.toString(), true, false, "Workout description"),
+                field("Date", CliSyntax.PREFIX_DATE.toString(), true, false, "DDMMYYYY"),
+                field("Tags", CliSyntax.PREFIX_TAG.toString(), false, true, "Optional tag"));
+            case ViewPlanCommand.COMMAND_WORD, DeletePlanCommand.COMMAND_WORD,
+                MarkPlanCommand.COMMAND_WORD, UnmarkPlanCommand.COMMAND_WORD -> List.of(
+                field("Plan ID", "", true, false, "Positive integer"));
+            case EditPlanCommand.COMMAND_WORD -> List.of(
+                field("Plan ID", "", true, false, "Positive integer"),
+                field("Plan name", CliSyntax.PREFIX_NAME.toString(), false, false, "Updated plan name"),
+                field("Description", CliSyntax.PREFIX_PLAN.toString(), false, false, "Updated description"),
+                field("Date", CliSyntax.PREFIX_DATE.toString(), false, false, "DDMMYYYY"),
+                field("Tags", CliSyntax.PREFIX_TAG.toString(), false, true, "Replacement tag"));
+            default -> List.of();
+        };
+    }
+
+    private static CommandField field(String label, String prefix, boolean required,
+                                      boolean repeatable, String hint) {
+        return new CommandField(label, prefix, required, repeatable, hint);
     }
 
     /** A category of commands shown in the Help window. */
     record CommandCategory(String title, List<CommandReference> commands) {}
 
     /** Metadata used to render and search a command reference. */
-    record CommandReference(String commandWord, String parameters, String description, String example) {
+    record CommandReference(String commandWord, String parameters, String description, String example,
+                            List<CommandField> fields) {
+        CommandReference(String commandWord, String parameters, String description, String example) {
+            this(commandWord, parameters, description, example, List.of());
+        }
+
         String format() {
             return parameters.isBlank() ? commandWord : commandWord + " " + parameters;
         }
+
+        boolean requiresUpdate() {
+            return commandWord.equals(EditStudentCommand.COMMAND_WORD)
+                    || commandWord.equals(EditPlanCommand.COMMAND_WORD);
+        }
     }
+
+    /** Metadata for one value accepted by a structured command form. */
+    record CommandField(String label, String prefix, boolean required, boolean repeatable, String hint) {}
 }

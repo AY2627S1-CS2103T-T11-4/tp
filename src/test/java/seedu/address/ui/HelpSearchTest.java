@@ -80,6 +80,21 @@ class HelpSearchTest {
     }
 
     @Test
+    void commandReferences_exposeStructuredFieldsInParserOrder() {
+        HelpSearch search = new HelpSearch();
+
+        assertEquals(List.of("Name", "Phone", "Email", "Address", "Tags"),
+                fieldLabels(findCommand(search, "addStudent")));
+        assertEquals(List.of("Student ID", "Name", "Phone", "Email", "Address", "Tags"),
+                fieldLabels(findCommand(search, "editStudent")));
+        assertEquals(List.of("Plan title", "Description", "Date", "Tags"),
+                fieldLabels(findCommand(search, "addPlan")));
+        assertEquals(List.of("Plan ID", "Plan name", "Description", "Date", "Tags"),
+                fieldLabels(findCommand(search, "editPlan")));
+        assertTrue(findCommand(search, "home").fields().isEmpty());
+    }
+
+    @Test
     void commandReference_format_combinesWordAndParameters() {
         HelpSearch search = new HelpSearch();
 
@@ -103,8 +118,7 @@ class HelpSearchTest {
                 .orElseThrow();
     }
 
-    private static HelpSearch.CommandReference reference(String commandWord, String parameters,
-                                                         String description, String example) {
-        return new HelpSearch.CommandReference(commandWord, parameters, description, example);
+    private static List<String> fieldLabels(HelpSearch.CommandReference command) {
+        return command.fields().stream().map(HelpSearch.CommandField::label).toList();
     }
 }

@@ -113,6 +113,12 @@
 }
 
 .command-format {
+    -fx-hgap: 6px;
+    -fx-vgap: 5px;
+    -fx-padding: 1px 0 2px 0;
+}
+
+.command-format-token {
     -fx-font-family: "Cascadia Mono", "Consolas", monospace;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
@@ -135,6 +141,57 @@
     -fx-background-radius: 5px;
     -fx-font-family: "Cascadia Mono", "Consolas", monospace;
     -fx-padding: 6px 8px 6px 8px;
+}
+
+.inline-command-input {
+    -fx-background-color: #17242b;
+    -fx-background-radius: 5px;
+    -fx-border-color: #334a56;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+    -fx-font-family: "Cascadia Mono", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-font-weight: normal;
+    -fx-prompt-text-fill: #91a5ae;
+    -fx-text-fill: #edf4f7;
+}
+
+.inline-command-input:focused {
+    -fx-border-color: #a8ff20;
+    -fx-effect: dropshadow(gaussian, rgba(168, 255, 32, 0.32), 8, 0.12, 0, 0);
+}
+
+.inline-input-button {
+    -fx-background-color: #17242b;
+    -fx-background-radius: 5px;
+    -fx-border-color: #334a56;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+    -fx-font-family: "Cascadia Mono", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #edf4f7;
+    -fx-min-width: 25px;
+    -fx-pref-width: 25px;
+    -fx-min-height: 25px;
+    -fx-pref-height: 25px;
+    -fx-padding: 0 6px 0 6px;
+    -fx-content-display: text-only;
+}
+
+.inline-input-button:hover {
+    -fx-background-color: #203038;
+    -fx-border-color: #a8ff20;
+}
+
+.inline-input-button:focused {
+    -fx-border-color: #a8ff20;
+    -fx-effect: dropshadow(gaussian, rgba(168, 255, 32, 0.32), 8, 0.12, 0, 0);
+}
+
+.input-validation-message {
+    -fx-font-size: 11px;
+    -fx-text-fill: #ff8f8f;
 }
 
 .use-format-button {
