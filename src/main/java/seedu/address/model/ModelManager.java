@@ -339,15 +339,15 @@ public class ModelManager implements Model {
         currentWorkoutPlan.set(null);
     }
 
-    private static WorkoutPlan retainedSelectedPlan(Student updated, WorkoutPlan selectedPlan) {
-        List<WorkoutPlan> updatedPlans = updated.getWorkoutPlansList().getWorkoutList();
+    private static WorkoutPlan retainedSelectedPlan(Student updatedStudent, WorkoutPlan selectedPlan) {
+        List<WorkoutPlan> updatedPlans = updatedStudent.getWorkoutPlansList().getWorkoutList();
         int index = indexOfInstance(updatedPlans, selectedPlan);
         return index < 0 ? null : updatedPlans.get(index);
     }
 
-    private static int indexOfInstance(List<WorkoutPlan> plans, WorkoutPlan target) {
-        for (int index = 0; index < plans.size(); index++) {
-            if (plans.get(index) == target) {
+    private static int indexOfInstance(List<WorkoutPlan> workoutPlans, WorkoutPlan target) {
+        for (int index = 0; index < workoutPlans.size(); index++) {
+            if (workoutPlans.get(index) == target) {
                 return index;
             }
         }

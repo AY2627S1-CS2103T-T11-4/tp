@@ -459,8 +459,9 @@
 }
 
 .workout-plan-card.workout-plan-selected {
-    -fx-background-color: #152b35;
-    -fx-border-color: #5caed6;
+    -fx-background-color: #24371d;
+    -fx-border-color: #a8ff20;
+    -fx-border-width: 0 0 0 4px;
 }
 
 .exercise-section-heading {
@@ -480,7 +481,7 @@
     -fx-min-width: 30px;
     -fx-font-family: "Cascadia Mono", "Consolas", monospace;
     -fx-font-size: 13px;
-    -fx-text-fill: #74c7ed;
+    -fx-text-fill: #a8ff20;
 }
 
 .exercise-name {

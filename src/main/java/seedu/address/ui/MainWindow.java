@@ -129,13 +129,13 @@ public class MainWindow extends UiPart<Stage> {
         workoutPlanListPanel = new WorkoutPlanListPanel();
         workoutPlanPanelPlaceholder.getChildren().add(workoutPlanListPanel.getRoot());
         Optional<Student> initialStudent = Optional.ofNullable(logic.currentStudentProperty().get());
-        Optional<WorkoutPlan> initialPlan = Optional.ofNullable(logic.currentWorkoutPlanProperty().get());
-        workoutPlanListPanel.showStudent(initialStudent, initialPlan);
+        Optional<WorkoutPlan> initialWorkoutPlan = Optional.ofNullable(logic.currentWorkoutPlanProperty().get());
+        workoutPlanListPanel.showStudent(initialStudent, initialWorkoutPlan);
         studentListPanel.selectStudent(initialStudent);
         logic.currentStudentProperty().addListener((observable, oldStudent, newStudent) -> {
             Optional<Student> selectedStudent = Optional.ofNullable(newStudent);
-            Optional<WorkoutPlan> selectedPlan = Optional.ofNullable(logic.currentWorkoutPlanProperty().get());
-            workoutPlanListPanel.showStudent(selectedStudent, selectedPlan);
+            Optional<WorkoutPlan> selectedWorkoutPlan = Optional.ofNullable(logic.currentWorkoutPlanProperty().get());
+            workoutPlanListPanel.showStudent(selectedStudent, selectedWorkoutPlan);
             studentListPanel.selectStudent(selectedStudent);
         });
         logic.currentWorkoutPlanProperty().addListener((observable, oldPlan, newPlan) ->

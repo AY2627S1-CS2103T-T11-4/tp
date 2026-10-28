@@ -48,9 +48,9 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
     }
 
     /** Displays either the student's plans or the selected plan's exercises. */
-    public void showStudent(Optional<Student> student, Optional<WorkoutPlan> plan) {
+    public void showStudent(Optional<Student> student, Optional<WorkoutPlan> selectedPlan) {
         requireNonNull(student);
-        requireNonNull(plan);
+        requireNonNull(selectedPlan);
         if (student.isEmpty()) {
             heading.setText("Workout Plans");
             subtitle.setManaged(false);
@@ -63,10 +63,10 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
         Student selectedStudent = student.get();
         String studentName = selectedStudent.getName().toString();
         List<WorkoutPlan> workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
-        int selectedPlanIndex = plan.map(value -> indexOfInstance(workoutPlans, value)).orElse(-1);
+        int selectedPlanIndex = selectedPlan.map(value -> indexOfInstance(workoutPlans, value)).orElse(-1);
         heading.setText(studentName);
         subtitle.setText(selectedPlanIndex < 0 ? "Workout plans"
-                : "Plan #" + (selectedPlanIndex + 1) + ": " + plan.get().getTitle());
+                : "Plan #" + (selectedPlanIndex + 1) + ": " + selectedPlan.get().getTitle());
         subtitle.setManaged(true);
         subtitle.setVisible(true);
         if (selectedPlanIndex >= 0) {
@@ -89,16 +89,16 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
         }
     }
 
-    private void showSelectedPlan(WorkoutPlan plan, int displayedIndex) {
+    private void showSelectedPlan(WorkoutPlan selectedPlan, int displayedIndex) {
         workoutPlanList.getChildren().clear();
-        Region planCard = new WorkoutPlanCard(plan, displayedIndex).getRoot();
+        Region planCard = new WorkoutPlanCard(selectedPlan, displayedIndex).getRoot();
         planCard.getStyleClass().add("workout-plan-selected");
         workoutPlanList.getChildren().add(planCard);
 
         Label exercisesHeading = new Label("Exercises");
         exercisesHeading.getStyleClass().add("exercise-section-heading");
         workoutPlanList.getChildren().add(exercisesHeading);
-        List<Exercise> exercises = plan.getExercisesList().getExerciseList();
+        List<Exercise> exercises = selectedPlan.getExercisesList().getExerciseList();
         if (exercises.isEmpty()) {
             Label noExercises = new Label("No exercises in this workout plan.");
             noExercises.getStyleClass().add("empty-message");
@@ -135,9 +135,9 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
         return entry;
     }
 
-    private static int indexOfInstance(List<WorkoutPlan> plans, WorkoutPlan selectedPlan) {
-        for (int index = 0; index < plans.size(); index++) {
-            if (plans.get(index) == selectedPlan) {
+    private static int indexOfInstance(List<WorkoutPlan> workoutPlans, WorkoutPlan selectedPlan) {
+        for (int index = 0; index < workoutPlans.size(); index++) {
+            if (workoutPlans.get(index) == selectedPlan) {
                 return index;
             }
         }

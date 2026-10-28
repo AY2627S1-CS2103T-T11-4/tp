@@ -240,7 +240,7 @@ Format: `viewPlan PLAN_ID`
 
 Example: `viewStudent 1` followed by `viewPlan 2` opens the second plan and highlights it above its exercises.
 
-![Selected workout plan and its exercises](images/selectedPlanView.png)
+![Example selected workout plan with sample exercises](images/selectedPlanView.png)
 
 #### Deleting a workout plan: `deletePlan`
 
