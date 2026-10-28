@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
@@ -18,6 +19,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
+import seedu.address.logic.Messages;
+import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
@@ -42,7 +45,7 @@ public class ParserUtilTest {
     private static final String INVALID_DATE_CALENDAR_VALUE = "31132026";
 
     private static final String VALID_NAME = "Rachel Walker";
-    private static final String VALID_PHONE = "123456";
+    private static final String VALID_PHONE = "1234567";
     private static final String VALID_ADDRESS = "123 Main Street #0505";
     private static final String VALID_EMAIL = "rachel@example.com";
     private static final String VALID_TAG_1 = "friend";
@@ -215,6 +218,12 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseTag_emptyValue_throwsParseException() {
+        assertThrows(ParseException.class, Tag.MESSAGE_CONSTRAINTS, ()
+                -> ParserUtil.parseTag("", TagStub::new));
+    }
+
+    @Test
     public void parseTag_validValueWithoutWhitespace_returnsTag() throws Exception {
         TagStub expectedTag = new TagStub(VALID_TAG_1);
         assertEquals(expectedTag, ParserUtil.parseTag(VALID_TAG_1, TagStub::new));
@@ -248,6 +257,18 @@ public class ParserUtilTest {
         Set<TagStub> expectedTagSet = Set.of(new TagStub(VALID_TAG_1), new TagStub(VALID_TAG_2));
 
         assertEquals(expectedTagSet, actualTagSet);
+    }
+
+    @Test
+    public void validateEmptyField_emptyValue_success() throws Exception {
+        ParserUtil.validateEmptyField("", Messages.getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS));
+    }
+
+    @Test
+    public void validateEmptyField_nonEmptyValue_throwsFieldValueInvalidException() {
+        String errorMessage = Messages.getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS);
+        assertThrows(FieldValueInvalidException.class, errorMessage, () ->
+                ParserUtil.validateEmptyField("value", errorMessage));
     }
 
     @Test

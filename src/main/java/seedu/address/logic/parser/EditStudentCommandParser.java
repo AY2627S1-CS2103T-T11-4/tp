@@ -1,14 +1,15 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.Messages.getErrorMessageForExtraValues;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -27,11 +28,10 @@ import seedu.address.model.tag.StudentTag;
 public class EditStudentCommandParser implements Parser<EditStudentCommand> {
 
     private static final Set<Prefix> VALID_PREFIXES =
-            Set.of(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG);
+            Set.of(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG, PREFIX_CLEAR_TAGS);
     private static final Set<Prefix> REQUIRED_PREFIXES = Set.of();
     private static final Set<Prefix> NO_REPEAT_PREFIXES =
-            Set.of(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
-
+            Set.of(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_CLEAR_TAGS);
     private static final Logger logger = LogsCenter.getLogger(EditStudentCommandParser.class);
 
     /**
@@ -42,7 +42,8 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
     public EditStudentCommand parse(String args) throws ParseException {
         requireNonNull(args);
 
-        ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
+        ArgumentValidator argValidator = new ArgumentValidator(true, VALID_PREFIXES, NO_REPEAT_PREFIXES,
+                REQUIRED_PREFIXES);
         Index index;
         EditStudentCommand.EditStudentDescriptor editStudentDescriptor;
 
@@ -92,6 +93,10 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
             editStudentDescriptor.setAddress(ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get()));
         }
         parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editStudentDescriptor::setTags);
+        if (argMultimap.getValue(PREFIX_CLEAR_TAGS).isPresent()) {
+            verifyClearTag(argMultimap);
+            editStudentDescriptor.setTags(Set.of());
+        }
 
         return editStudentDescriptor;
     }
@@ -107,8 +112,15 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
         if (tags.isEmpty()) {
             return Optional.empty();
         }
-        Collection<String> tagSet = tags.size() == 1 && tags.contains("") ? Collections.emptySet() : tags;
-        return Optional.of(ParserUtil.parseStudentTags(tagSet));
+        return Optional.of(ParserUtil.parseStudentTags(tags));
+    }
+
+    /**
+     * Ensures that {@code emptyString} is empty, then produces an empty set of {@code StudentTag}s.
+     */
+    public static void verifyClearTag(ArgumentMultimap argMultiMap) throws ParseException {
+        ParserUtil.validateEmptyField(
+                argMultiMap.getValue(PREFIX_CLEAR_TAGS).get(), getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS));
     }
 
 }
