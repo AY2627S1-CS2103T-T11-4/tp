@@ -9,11 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.exercise.exceptions.DuplicateExerciseException;
 import seedu.address.model.exercise.exceptions.ExerciseIndexOutOfBoundsException;
+import seedu.address.model.exercise.exceptions.ExerciseListFullException;
 import seedu.address.model.exercise.exceptions.ExerciseNotFoundException;
 
 public class ExercisesListTest {
@@ -48,6 +50,13 @@ public class ExercisesListTest {
                 new ExerciseDescription("Barbell back squat"));
         assertThrows(DuplicateExerciseException.class, () ->
                 new ExercisesList(List.of(FIRST, equalFirst)));
+
+        List<Exercise> exercisesAtCapacity = createNumberedExercises(ExercisesList.MAX_EXERCISES);
+        assertEquals(ExercisesList.MAX_EXERCISES,
+                new ExercisesList(exercisesAtCapacity).getExerciseList().size());
+
+        List<Exercise> exercisesOverCapacity = createNumberedExercises(ExercisesList.MAX_EXERCISES + 1);
+        assertThrows(ExerciseListFullException.class, () -> new ExercisesList(exercisesOverCapacity));
     }
 
     @Test
@@ -65,6 +74,16 @@ public class ExercisesListTest {
         assertThrows(NullPointerException.class, () -> original.addExercise(null));
         assertThrows(DuplicateExerciseException.class, () -> original.addExercise(FIRST));
         assertThrows(DuplicateExerciseException.class, () -> original.addExercise(equalFirst));
+
+        ExercisesList nearlyFull = new ExercisesList(
+                createNumberedExercises(ExercisesList.MAX_EXERCISES - 1));
+        assertEquals(ExercisesList.MAX_EXERCISES,
+                nearlyFull.addExercise(REPLACEMENT).getExerciseList().size());
+
+        ExercisesList full = new ExercisesList(createNumberedExercises(ExercisesList.MAX_EXERCISES));
+        assertThrows(ExerciseListFullException.class, () -> full.addExercise(REPLACEMENT));
+        assertThrows(DuplicateExerciseException.class, () -> full.addExercise(full.getExercise(0)));
+        assertEquals(ExercisesList.MAX_EXERCISES, full.getExerciseList().size());
 
         Exercise sameNameDifferentDescription = new Exercise(new ExerciseName("Squats"),
                 new ExerciseDescription("Goblet squat"));
@@ -154,5 +173,12 @@ public class ExercisesListTest {
         ExercisesList exercises = new ExercisesList(List.of(FIRST, SECOND));
 
         assertEquals(List.of(FIRST, SECOND).toString(), exercises.toString());
+    }
+
+    private static List<Exercise> createNumberedExercises(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(index -> new Exercise(new ExerciseName("Exercise" + index),
+                        new ExerciseDescription("Description " + index)))
+                .toList();
     }
 }
