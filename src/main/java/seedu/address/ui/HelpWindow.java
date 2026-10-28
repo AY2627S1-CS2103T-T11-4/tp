@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -16,6 +17,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
@@ -86,15 +88,23 @@ public class HelpWindow extends UiPart<Stage> {
 
     private final Consumer<String> commandFormatHandler;
     private final List<CommandCard> commandCards = new ArrayList<>();
+    private final List<CommandCategoryView> commandCategoryViews = new ArrayList<>();
+    private final Label noResultsLabel = new Label("No commands found.");
 
     @FXML
     private VBox commandSections;
+
+    @FXML
+    private TextField commandSearchField;
 
     @FXML
     private ScrollPane helpScroll;
 
     @FXML
     private Button userGuideButton;
+
+    @FXML
+    private Button closeHelpButton;
 
     /**
      * Creates a new HelpWindow.
@@ -106,6 +116,12 @@ public class HelpWindow extends UiPart<Stage> {
         super(FXML, requireNonNull(root));
         this.commandFormatHandler = requireNonNull(commandFormatHandler);
         getRoot().addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyPressed);
+        commandSearchField.textProperty().addListener((observable, oldValue, newValue) -> filterCommands(newValue));
+        getRoot().focusedProperty().addListener((observable, wasFocused, isFocused) -> {
+            if (isFocused) {
+                Platform.runLater(commandSearchField::requestFocus);
+            }
+        });
         populateCommandSections();
     }
 
@@ -163,7 +179,13 @@ public class HelpWindow extends UiPart<Stage> {
     public void focus() {
         getRoot().setIconified(false);
         getRoot().toFront();
-        focusCard(0);
+        Platform.runLater(commandSearchField::requestFocus);
+    }
+
+    /** Closes the Help window. */
+    @FXML
+    private void closeHelp() {
+        hide();
     }
 
     /** Opens the user guide in the user's default browser. */
@@ -190,27 +212,37 @@ public class HelpWindow extends UiPart<Stage> {
     private void populateCommandSections() {
         commandSections.getChildren().clear();
         commandCards.clear();
+        commandCategoryViews.clear();
+        noResultsLabel.getStyleClass().add("no-results-label");
+        noResultsLabel.setManaged(false);
+        noResultsLabel.setVisible(false);
+        commandSections.getChildren().add(noResultsLabel);
         COMMAND_CATEGORIES.stream()
                 .map(this::createCommandCategory)
-                .forEach(commandSections.getChildren()::add);
+                .forEach(commandCategoryView -> {
+                    commandCategoryViews.add(commandCategoryView);
+                    commandSections.getChildren().add(commandCategoryView.categoryBox());
+                });
     }
 
-    private VBox createCommandCategory(CommandCategory category) {
+    private CommandCategoryView createCommandCategory(CommandCategory category) {
         Label categoryTitle = new Label(category.title());
         categoryTitle.getStyleClass().add("category-title");
 
-        VBox commandCards = new VBox(10);
-        commandCards.getStyleClass().add("command-cards");
+        VBox commandCardsBox = new VBox(10);
+        commandCardsBox.getStyleClass().add("command-cards");
+        List<CommandCard> categoryCards = new ArrayList<>();
         category.commands().stream()
                 .map(this::createCommandCard)
                 .forEach(commandCard -> {
                     this.commandCards.add(commandCard);
-                    commandCards.getChildren().add(commandCard.card());
+                    categoryCards.add(commandCard);
+                    commandCardsBox.getChildren().add(commandCard.card());
                 });
 
-        VBox categoryBox = new VBox(9, categoryTitle, commandCards);
+        VBox categoryBox = new VBox(9, categoryTitle, commandCardsBox);
         categoryBox.getStyleClass().add("command-category");
-        return categoryBox;
+        return new CommandCategoryView(categoryBox, categoryCards);
     }
 
     private CommandCard createCommandCard(CommandReference command) {
@@ -249,46 +281,65 @@ public class HelpWindow extends UiPart<Stage> {
         card.setMaxWidth(Double.MAX_VALUE);
         card.setFocusTraversable(true);
         card.getStyleClass().add("command-card");
-        return new CommandCard(card, useFormatButton);
+        return new CommandCard(command, card, useFormatButton);
     }
 
     private void handleKeyPressed(KeyEvent event) {
-        int focusedCardIndex = getFocusedCardIndex();
-        if (focusedCardIndex >= 0) {
-            if (event.getCode() == KeyCode.DOWN) {
-                focusCard(focusedCardIndex + 1);
+        List<CommandCard> visibleCards = getVisibleCommandCards();
+        int focusedCardIndex = getFocusedCardIndex(visibleCards);
+        boolean isForwardNavigation = event.getCode() == KeyCode.DOWN
+                || (event.getCode() == KeyCode.TAB && !event.isShiftDown());
+        boolean isBackwardNavigation = event.getCode() == KeyCode.UP
+                || (event.getCode() == KeyCode.TAB && event.isShiftDown());
+
+        if (isForwardNavigation || isBackwardNavigation) {
+            moveFocus(isForwardNavigation);
+            event.consume();
+        } else if (focusedCardIndex >= 0 && event.getCode() == KeyCode.ENTER) {
+            Button useCommandButton = visibleCards.get(focusedCardIndex).useCommandButton();
+            if (useCommandButton.isFocused()) {
+                useCommandButton.fire();
                 event.consume();
-            } else if (event.getCode() == KeyCode.UP) {
-                focusCard(focusedCardIndex - 1);
+            } else if (isCardFocused(focusedCardIndex)) {
+                useCommandButton.requestFocus();
                 event.consume();
-            } else if (event.getCode() == KeyCode.TAB) {
-                if (event.isShiftDown() && focusedCardIndex == 0) {
-                    userGuideButton.requestFocus();
-                } else if (!event.isShiftDown() && focusedCardIndex == commandCards.size() - 1) {
-                    userGuideButton.requestFocus();
-                } else {
-                    focusCard(focusedCardIndex + (event.isShiftDown() ? -1 : 1));
-                }
-                event.consume();
-            } else if (event.getCode() == KeyCode.ENTER) {
-                Button useCommandButton = commandCards.get(focusedCardIndex).useCommandButton();
-                if (useCommandButton.isFocused()) {
-                    useCommandButton.fire();
-                    event.consume();
-                } else if (isCardFocused(focusedCardIndex)) {
-                    useCommandButton.requestFocus();
-                    event.consume();
-                }
             }
-        } else if (userGuideButton.isFocused() && event.getCode() == KeyCode.TAB) {
-            focusCard(event.isShiftDown() ? commandCards.size() - 1 : 0);
+        } else if (closeHelpButton.isFocused() && event.getCode() == KeyCode.ENTER) {
+            closeHelpButton.fire();
             event.consume();
         }
     }
 
-    private int getFocusedCardIndex() {
-        for (int i = 0; i < commandCards.size(); i++) {
-            CommandCard commandCard = commandCards.get(i);
+    private void moveFocus(boolean forward) {
+        List<CommandCard> visibleCards = getVisibleCommandCards();
+        int focusedCardIndex = getFocusedCardIndex(visibleCards);
+
+        if (focusedCardIndex >= 0) {
+            if (forward && focusedCardIndex == visibleCards.size() - 1) {
+                commandSearchField.requestFocus();
+            } else if (!forward && focusedCardIndex == 0) {
+                closeHelpButton.requestFocus();
+            } else {
+                focusCard(focusedCardIndex + (forward ? 1 : -1));
+            }
+        } else if (closeHelpButton.isFocused()) {
+            if (forward) {
+                focusCard(0);
+            } else {
+                commandSearchField.requestFocus();
+            }
+        } else if (commandSearchField.isFocused()) {
+            if (forward) {
+                closeHelpButton.requestFocus();
+            } else {
+                focusCard(visibleCards.size() - 1);
+            }
+        }
+    }
+
+    private int getFocusedCardIndex(List<CommandCard> visibleCards) {
+        for (int i = 0; i < visibleCards.size(); i++) {
+            CommandCard commandCard = visibleCards.get(i);
             if (commandCard.card().isFocused() || commandCard.useCommandButton().isFocused()) {
                 return i;
             }
@@ -297,19 +348,52 @@ public class HelpWindow extends UiPart<Stage> {
     }
 
     private boolean isCardFocused(int index) {
-        return commandCards.get(index).card().isFocused();
+        return getVisibleCommandCards().get(index).card().isFocused();
     }
 
     private void focusCard(int index) {
-        if (commandCards.isEmpty()) {
-            userGuideButton.requestFocus();
+        List<CommandCard> visibleCards = getVisibleCommandCards();
+        if (visibleCards.isEmpty()) {
+            commandSearchField.requestFocus();
             return;
         }
 
-        int boundedIndex = Math.max(0, Math.min(index, commandCards.size() - 1));
-        VBox card = commandCards.get(boundedIndex).card();
+        int boundedIndex = Math.max(0, Math.min(index, visibleCards.size() - 1));
+        VBox card = visibleCards.get(boundedIndex).card();
         card.requestFocus();
         Platform.runLater(() -> scrollCardIntoView(card));
+    }
+
+    private List<CommandCard> getVisibleCommandCards() {
+        return commandCards.stream()
+                .filter(commandCard -> commandCard.card().isVisible())
+                .toList();
+    }
+
+    private void filterCommands(String query) {
+        String normalizedQuery = query.trim().toLowerCase(Locale.ROOT);
+        boolean hasVisibleCommand = false;
+
+        for (CommandCategoryView categoryView : commandCategoryViews) {
+            boolean hasVisibleCard = false;
+            for (CommandCard commandCard : categoryView.cards()) {
+                boolean isVisible = normalizedQuery.isEmpty()
+                        || commandCard.command().commandWord().toLowerCase(Locale.ROOT).contains(normalizedQuery);
+                commandCard.card().setVisible(isVisible);
+                commandCard.card().setManaged(isVisible);
+                hasVisibleCard |= isVisible;
+            }
+            categoryView.categoryBox().setVisible(hasVisibleCard);
+            categoryView.categoryBox().setManaged(hasVisibleCard);
+            hasVisibleCommand |= hasVisibleCard;
+        }
+
+        noResultsLabel.setVisible(!hasVisibleCommand);
+        noResultsLabel.setManaged(!hasVisibleCommand);
+
+        if (!commandSearchField.isFocused() && getFocusedCardIndex(getVisibleCommandCards()) < 0) {
+            focusCard(0);
+        }
     }
 
     private void scrollCardIntoView(VBox card) {
@@ -342,7 +426,9 @@ public class HelpWindow extends UiPart<Stage> {
         return new CommandReference(commandWord, parameters, description, example);
     }
 
-    private record CommandCard(VBox card, Button useCommandButton) {}
+    private record CommandCard(CommandReference command, VBox card, Button useCommandButton) {}
+
+    private record CommandCategoryView(VBox categoryBox, List<CommandCard> cards) {}
 
     private record CommandCategory(String title, List<CommandReference> commands) {}
 

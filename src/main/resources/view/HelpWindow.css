@@ -24,6 +24,43 @@
     -fx-text-fill: #edf4f7;
 }
 
+.command-search-field {
+    -fx-background-color: #17242b;
+    -fx-background-radius: 7px;
+    -fx-border-color: #334a56;
+    -fx-border-radius: 7px;
+    -fx-border-width: 1px;
+    -fx-font-size: 12px;
+    -fx-prompt-text-fill: #91a5ae;
+    -fx-text-fill: #edf4f7;
+}
+
+.command-search-field:focused {
+    -fx-border-color: #a8ff20;
+    -fx-effect: dropshadow(gaussian, rgba(168, 255, 32, 0.32), 8, 0.12, 0, 0);
+}
+
+.close-help-button {
+    -fx-background-color: #17242b;
+    -fx-background-radius: 7px;
+    -fx-border-color: #334a56;
+    -fx-border-radius: 7px;
+    -fx-border-width: 1px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #edf4f7;
+}
+
+.close-help-button:hover {
+    -fx-background-color: #203038;
+    -fx-border-color: #a8ff20;
+}
+
+.close-help-button:focused {
+    -fx-border-color: #a8ff20;
+    -fx-effect: dropshadow(gaussian, rgba(168, 255, 32, 0.32), 8, 0.12, 0, 0);
+}
+
 .help-scroll,
 .help-scroll > .viewport {
     -fx-background-color: #091116;
@@ -35,6 +72,11 @@
 
 .command-sections {
     -fx-background-color: #091116;
+}
+
+.no-results-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #91a5ae;
 }
 
 .command-category {
