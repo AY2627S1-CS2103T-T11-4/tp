@@ -34,6 +34,18 @@ public class CommandBox extends UiPart<Region> {
     }
 
     /**
+     * Replaces the command text and focuses the command field for editing.
+     *
+     * @param commandText command format to place in the command field
+     */
+    void setCommandText(String commandText) {
+        requireNonNull(commandText);
+        commandTextField.setText(commandText);
+        commandTextField.positionCaret(commandText.length());
+        commandTextField.requestFocus();
+    }
+
+    /**
      * Handles the Enter button pressed event.
      */
     @FXML
