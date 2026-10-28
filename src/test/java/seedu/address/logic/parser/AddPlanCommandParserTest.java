@@ -13,6 +13,7 @@ import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_STRENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.TITLE_PREAMBLE_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HIIT;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_STRENGTH;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
@@ -80,6 +81,10 @@ public class AddPlanCommandParserTest {
         assertParseFailure(parser,
                 TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + DATE_DESC_LEGS + TAG_DESC_STRENGTH + INVALID_PREFIX_DESC,
                 this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
+
+        assertParseFailure(parser,
+                TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + DATE_DESC_LEGS + " " + PREFIX_CLEAR_TAGS,
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_CLEAR_TAGS)));
 
     }
 
