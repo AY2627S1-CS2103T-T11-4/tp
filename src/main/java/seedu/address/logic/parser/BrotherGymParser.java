@@ -27,6 +27,7 @@ import seedu.address.logic.commands.MarkPlanCommand;
 import seedu.address.logic.commands.UnmarkPlanCommand;
 import seedu.address.logic.commands.ViewPlanCommand;
 import seedu.address.logic.commands.ViewStudentCommand;
+import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.InputFormatInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 
@@ -125,12 +126,12 @@ public class BrotherGymParser {
     /**
      * Rejects arguments for a command that does not accept parameters.
      *
-     * @throws InputFormatInvalidException If non-whitespace arguments are present.
+     * @throws FieldValueInvalidException If non-whitespace arguments are present.
      */
     private Command parseCommandWithoutArguments(String arguments, String usage, Command command)
-            throws InputFormatInvalidException {
+            throws FieldValueInvalidException {
         if (!arguments.isBlank()) {
-            throw new InputFormatInvalidException(Messages.formatParserError(MESSAGE_UNEXPECTED_PARAMETERS, usage));
+            throw new FieldValueInvalidException(Messages.formatParserError(MESSAGE_UNEXPECTED_PARAMETERS, usage));
         }
         return command;
     }
