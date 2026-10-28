@@ -125,4 +125,17 @@ public class AddPlanCommandParserTest {
         assertParseSuccess(parser, TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + " --date 29022024",
                 new AddPlanCommand(expectedPlan));
     }
+
+    @Test
+    public void parse_leapDayInYearDivisibleBy400_success() {
+        WorkoutPlan expectedPlan = new WorkoutBuilder(LEG_DAY).withDate(LocalDate.of(2000, 2, 29)).build();
+        assertParseSuccess(parser, TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + " --date 29022000",
+                new AddPlanCommand(expectedPlan));
+    }
+
+    @Test
+    public void parse_leapDayInCenturyNotDivisibleBy400_failure() {
+        assertParseFailure(parser, TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + " --date 29021900",
+                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_DAY, 29, 2, 1900, 28)));
+    }
 }
