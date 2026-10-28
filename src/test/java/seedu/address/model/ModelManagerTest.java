@@ -131,16 +131,16 @@ public class ModelManagerTest {
         modelManager.addExerciseForWorkoutPlan(original, first, LUNGES);
         Student afterAdd = modelManager.getCurrentStudent().orElseThrow();
         WorkoutPlan afterAddPlan = afterAdd.getWorkoutPlansList().getWorkoutPlan(0);
-        assertEquals(List.of(SQUATS, PUSH_UPS, LUNGES), afterAddPlan.getExercises().getExerciseList());
+        assertEquals(List.of(SQUATS, PUSH_UPS, LUNGES), afterAddPlan.getExercisesList().getExerciseList());
         assertSame(second, afterAdd.getWorkoutPlansList().getWorkoutPlan(1));
-        assertEquals(List.of(SQUATS, PUSH_UPS), first.getExercises().getExerciseList());
+        assertEquals(List.of(SQUATS, PUSH_UPS), first.getExercisesList().getExerciseList());
         assertEquals(List.of(first, second), original.getWorkoutPlansList().getWorkoutList());
         assertSame(benson, modelManager.getBrotherGym().getStudentList().get(1));
 
         modelManager.setExerciseForWorkoutPlan(afterAdd, afterAddPlan, PUSH_UPS, DEADLIFTS);
         Student afterSet = modelManager.getCurrentStudent().orElseThrow();
         WorkoutPlan afterSetPlan = afterSet.getWorkoutPlansList().getWorkoutPlan(0);
-        assertEquals(List.of(SQUATS, DEADLIFTS, LUNGES), afterSetPlan.getExercises().getExerciseList());
+        assertEquals(List.of(SQUATS, DEADLIFTS, LUNGES), afterSetPlan.getExercisesList().getExerciseList());
         assertEquals(first.getTitle(), afterSetPlan.getTitle());
         assertEquals(first.getWorkouts(), afterSetPlan.getWorkouts());
         assertEquals(first.getDate(), afterSetPlan.getDate());
@@ -150,7 +150,7 @@ public class ModelManagerTest {
         modelManager.removeExerciseForWorkoutPlan(afterSet, afterSetPlan, SQUATS);
         Student afterRemove = modelManager.getCurrentStudent().orElseThrow();
         assertEquals(List.of(DEADLIFTS, LUNGES),
-                afterRemove.getWorkoutPlansList().getWorkoutPlan(0).getExercises().getExerciseList());
+                afterRemove.getWorkoutPlansList().getWorkoutPlan(0).getExercisesList().getExerciseList());
         assertSame(afterRemove, modelManager.getBrotherGym().getStudentList().get(0));
         assertSame(benson, modelManager.getBrotherGym().getStudentList().get(1));
     }
@@ -168,7 +168,7 @@ public class ModelManagerTest {
 
         WorkoutPlan updatedPlan = modelManager.getBrotherGym().getStudentList().get(0)
                 .getWorkoutPlansList().getWorkoutPlan(0);
-        assertEquals(List.of(SQUATS, LUNGES), updatedPlan.getExercises().getExerciseList());
+        assertEquals(List.of(SQUATS, LUNGES), updatedPlan.getExercisesList().getExerciseList());
     }
 
     @Test
@@ -213,7 +213,7 @@ public class ModelManagerTest {
 
         assertSame(storedStudent, modelManager.getBrotherGym().getStudentList().get(0));
         assertSame(storedPlan, storedStudent.getWorkoutPlansList().getWorkoutPlan(0));
-        assertEquals(List.of(SQUATS, PUSH_UPS), storedPlan.getExercises().getExerciseList());
+        assertEquals(List.of(SQUATS, PUSH_UPS), storedPlan.getExercisesList().getExerciseList());
     }
 
     @Test

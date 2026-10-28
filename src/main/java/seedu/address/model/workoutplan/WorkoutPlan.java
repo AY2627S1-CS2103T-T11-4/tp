@@ -88,7 +88,7 @@ public final class WorkoutPlan {
         return status;
     }
 
-    public ExercisesList getExercises() {
+    public ExercisesList getExercisesList() {
         return exercises;
     }
 
