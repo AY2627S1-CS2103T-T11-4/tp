@@ -17,6 +17,7 @@ Class StudentListPanel
 Class WorkoutPlanListPanel
 Class StatusBarFooter
 Class HelpWindow
+Class HelpSearch
 Class StudentCard
 Class WorkoutPlanCard
 }
@@ -43,6 +44,7 @@ MainWindow *-down-> "1" StudentListPanel
 MainWindow *-down-> "1" WorkoutPlanListPanel
 MainWindow *-down-> "1" StatusBarFooter
 MainWindow --> "0..1" HelpWindow
+HelpWindow *-down-> "1" HelpSearch
 
 StudentListPanel *-down-> "*" StudentCard
 WorkoutPlanListPanel *-down-> "*" WorkoutPlanCard
@@ -57,6 +59,7 @@ ResultDisplay -[hidden]right- StudentListPanel
 StudentListPanel -[hidden]right- WorkoutPlanListPanel
 WorkoutPlanListPanel -[hidden]right- StatusBarFooter
 StatusBarFooter -[hidden]right- HelpWindow
+HelpWindow -[hidden]right- HelpSearch
 StudentCard -[hidden]right- WorkoutPlanCard
 
 @enduml

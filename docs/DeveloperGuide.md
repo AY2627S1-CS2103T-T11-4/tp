@@ -72,7 +72,7 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/se-
 
 <puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
 
-The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `StudentListPanel`, `WorkoutPlanListPanel`, and `StatusBarFooter`. `StudentListPanel` displays students using `StudentCard` objects, while `WorkoutPlanListPanel` displays the current student's plans using `WorkoutPlanCard` objects. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
+The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `StudentListPanel`, `WorkoutPlanListPanel`, `StatusBarFooter`, and `HelpWindow`. `StudentListPanel` displays students using `StudentCard` objects, while `WorkoutPlanListPanel` displays the current student's plans using `WorkoutPlanCard` objects. `HelpWindow` manages the help page's cards, focus navigation, and user interactions, while the package-private `HelpSearch` helper owns the command catalog and command-word filtering. All visible GUI parts, including `MainWindow`, inherit from the abstract `UiPart` class, while `HelpSearch` is a non-visual UI helper.
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/MainWindow.java).
 
