@@ -1,0 +1,25 @@
+{
+  "students": [
+    {
+      "name": "Legacy Student",
+      "phone": "91234567",
+      "email": "legacy@example.com",
+      "address": "123 Gym Road",
+      "tags": ["beginner"],
+      "workoutPlans": [
+        {
+          "title": "Strength",
+          "workoutDescription": "Keep these original plan notes exactly.",
+          "date": "2026-10-15",
+          "tags": ["legs"],
+          "status": "COMPLETED"
+        },
+        {
+          "title": "Recovery",
+          "workoutDescription": "Legacy notes are not individual exercises.",
+          "date": "2026-10-16"
+        }
+      ]
+    }
+  ]
+}

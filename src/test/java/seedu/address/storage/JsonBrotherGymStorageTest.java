@@ -81,6 +81,24 @@ public class JsonBrotherGymStorageTest {
     }
 
     @Test
+    public void readAndSaveBrotherGym_legacyPlans_preservesNotesAndMetadata() throws Exception {
+        ReadOnlyBrotherGym legacy = readBrotherGym("legacyWorkoutPlansWithoutExercises.json").orElseThrow();
+        Student student = legacy.getStudentList().get(0);
+        List<WorkoutPlan> plans = student.getWorkoutPlansList().getWorkoutList();
+        assertEquals(2, plans.size());
+        assertEquals("Keep these original plan notes exactly.", plans.get(0).getWorkouts().getValue());
+        assertEquals("Legacy notes are not individual exercises.", plans.get(1).getWorkouts().getValue());
+        assertEquals(WorkoutPlanStatus.COMPLETED, plans.get(0).getStatus());
+        assertEquals(WorkoutPlanStatus.PENDING, plans.get(1).getStatus());
+        assertEquals(Set.of(new WorkoutPlanTag("legs")), plans.get(0).getTags());
+
+        JsonBrotherGymStorage storage = new JsonBrotherGymStorage(testFolder.resolve("MigratedLegacy.json"));
+        storage.saveBrotherGym(legacy);
+
+        assertEquals(new BrotherGym(legacy), new BrotherGym(storage.readBrotherGym().orElseThrow()));
+    }
+
+    @Test
     public void read_notJsonFormat_exceptionThrown() {
         assertThrows(DataLoadingException.class, () -> readBrotherGym("notJsonFormatBrotherGym.json"));
     }

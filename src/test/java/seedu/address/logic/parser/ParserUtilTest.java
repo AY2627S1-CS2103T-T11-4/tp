@@ -1,6 +1,7 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -16,6 +17,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
@@ -71,6 +73,27 @@ public class ParserUtilTest {
                 return false;
             }
             return tagName.equals(otherTag.tagName);
+        }
+    }
+
+    @Test
+    public void parseClearConfirmation_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseClearConfirmation(null));
+    }
+
+    @Test
+    public void parseClearConfirmation_validInput_success() throws Exception {
+        assertFalse(ParserUtil.parseClearConfirmation(""));
+        assertFalse(ParserUtil.parseClearConfirmation(WHITESPACE));
+        assertTrue(ParserUtil.parseClearConfirmation("confirm"));
+        assertTrue(ParserUtil.parseClearConfirmation(WHITESPACE + "confirm" + WHITESPACE));
+    }
+
+    @Test
+    public void parseClearConfirmation_invalidInput_throwsFieldValueInvalidException() {
+        for (String argument : List.of("yes", "CONFIRM", "confirm extra", "confirm confirm", "--confirm")) {
+            assertThrows(FieldValueInvalidException.class, ParserUtil.MESSAGE_INVALID_CLEAR_CONFIRMATION, ()
+                -> ParserUtil.parseClearConfirmation(argument));
         }
     }
 

@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
+import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Address;
@@ -30,6 +31,26 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 public class ParserUtil {
 
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
+    public static final String MESSAGE_INVALID_CLEAR_CONFIRMATION =
+            "Use clear to request confirmation, or clear confirm to delete all data.";
+
+    /**
+     * Parses the optional clear confirmation, trimming leading and trailing whitespace.
+     * Returns false for an empty argument and true for an explicit confirmation.
+     *
+     * @throws FieldValueInvalidException if the argument is neither empty nor {@code confirm}.
+     */
+    public static boolean parseClearConfirmation(String confirmation) throws FieldValueInvalidException {
+        requireNonNull(confirmation);
+        String trimmedConfirmation = confirmation.trim();
+        if (trimmedConfirmation.isEmpty()) {
+            return false;
+        }
+        if (!trimmedConfirmation.equals(ClearCommand.CONFIRMATION_ARGUMENT)) {
+            throw new FieldValueInvalidException(MESSAGE_INVALID_CLEAR_CONFIRMATION);
+        }
+        return true;
+    }
 
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be
