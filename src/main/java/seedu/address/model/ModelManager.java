@@ -131,8 +131,10 @@ public class ModelManager implements Model {
                 : retainedSelectedPlan(editedStudent, selectedPlan);
         brotherGym.setStudent(storedStudent, editedStudent);
         if (currentStudent.get() == storedStudent) {
-            currentStudent.set(editedStudent);
-            currentWorkoutPlan.set(reboundPlan);
+            setCurrentStudent(editedStudent);
+            if (reboundPlan != null) {
+                setCurrentWorkoutPlan(reboundPlan);
+            }
             if (filteredStudents.stream().noneMatch(candidate -> candidate == editedStudent)) {
                 clearCurrentStudent();
             }
@@ -263,7 +265,7 @@ public class ModelManager implements Model {
                     : -1;
             setStudent(storedStudent, updatedStudent);
             if (selectedIndex >= 0 && currentStudent.get() == updatedStudent) {
-                currentWorkoutPlan.set(updatedStudent.getWorkoutPlansList().getWorkoutPlan(selectedIndex));
+                setCurrentWorkoutPlan(updatedStudent.getWorkoutPlansList().getWorkoutPlan(selectedIndex));
             }
         }
         return updatedStudent;
@@ -274,7 +276,7 @@ public class ModelManager implements Model {
         boolean wasSelected = currentStudent.get() == student && currentWorkoutPlan.get() == target;
         setStudent(student, updatedStudent);
         if (wasSelected && currentStudent.get() == updatedStudent) {
-            currentWorkoutPlan.set(replacement);
+            setCurrentWorkoutPlan(replacement);
         }
     }
 
