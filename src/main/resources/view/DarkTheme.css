@@ -351,7 +351,7 @@
 
 .workout-plan-scroll,
 .workout-plan-scroll > .viewport,
-.workout-plan-grid {
+.workout-plan-list {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
 }
@@ -361,30 +361,29 @@
     -fx-padding: 0;
 }
 
-.workout-plan-grid {
+.workout-plan-list {
     -fx-padding: 0 4 8 0;
 }
 
 .workout-plan-card {
-    -fx-background-color: #111e25;
-    -fx-border-color: #20333d;
-    -fx-border-width: 1px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 0 3px;
     -fx-border-radius: 7px;
     -fx-background-radius: 7px;
 }
 
 .workout-plan-card:hover {
-    -fx-background-color: #15252c;
-    -fx-border-color: #526b35;
+    -fx-background-color: #15242b;
 }
 
 .plan-id-badge {
-    -fx-min-width: 38px;
-    -fx-pref-width: 38px;
-    -fx-max-width: 38px;
-    -fx-min-height: 38px;
-    -fx-pref-height: 38px;
-    -fx-max-height: 38px;
+    -fx-min-width: 42px;
+    -fx-pref-width: 42px;
+    -fx-max-width: 42px;
+    -fx-min-height: 42px;
+    -fx-pref-height: 42px;
+    -fx-max-height: 42px;
     -fx-alignment: center;
     -fx-background-color: #2d261f;
     -fx-background-radius: 999px;
@@ -439,26 +438,19 @@
 }
 
 .workout-plan-card.workout-plan-overdue {
-    -fx-background-color: #32191e;
     -fx-border-color: #b64955;
-    -fx-border-width: 1.5px;
-    -fx-effect: dropshadow(gaussian, rgba(218, 76, 89, 0.32), 12, 0.30, 0, 2);
 }
 
 .workout-plan-card.workout-plan-overdue:hover {
-    -fx-background-color: #3b1d23;
-    -fx-border-color: #e05c69;
+    -fx-background-color: #32191e;
 }
 
 .workout-plan-card.workout-plan-completed {
-    -fx-background-color: #14251c;
     -fx-border-color: #4c8a5a;
-    -fx-effect: dropshadow(gaussian, rgba(100, 210, 125, 0.30), 12, 0.30, 0, 2);
 }
 
 .workout-plan-card.workout-plan-completed:hover {
-    -fx-background-color: #183022;
-    -fx-border-color: #6fbd7f;
+    -fx-background-color: #14251c;
 }
 
 .workout-plan-description {
