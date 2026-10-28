@@ -99,6 +99,9 @@ class JsonAdaptedStudent {
             }
             modelTags.add(tag.toStudentTag());
         }
+        if (!Tag.isValidTagCount(modelTags.size())) {
+            throw new IllegalValueException(Tag.MESSAGE_TAG_LIMIT);
+        }
 
         List<WorkoutPlan> modelPlans = new ArrayList<>();
         for (JsonAdaptedWorkoutPlan plan : workoutPlans) {

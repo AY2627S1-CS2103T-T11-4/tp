@@ -148,6 +148,9 @@ class JsonAdaptedWorkoutPlan {
             }
             modelTags.add(tag.toWorkoutPlanTag());
         }
+        if (!Tag.isValidTagCount(modelTags.size())) {
+            throw new IllegalValueException(Tag.MESSAGE_TAG_LIMIT);
+        }
 
         // Older files have no status. Preserve the model's default without refreshing dates on load.
         final WorkoutPlanStatus modelStatus;

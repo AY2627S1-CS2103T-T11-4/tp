@@ -7,11 +7,13 @@ import static seedu.address.testutil.TypicalStudents.BENSON;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.tag.StudentTag;
+import seedu.address.model.tag.Tag;
 
 public class JsonAdaptedStudentTest {
 
@@ -56,6 +58,18 @@ public class JsonAdaptedStudentTest {
         JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", "98765432", "johnd@example.com",
                 "311, Clementi Ave 2, #02-25", List.of(new JsonAdaptedTag("#friend")), List.of());
         assertThrows(IllegalValueException.class, student::toModelType);
+    }
+
+    @Test
+    public void toModelType_tooManyTags_throwsIllegalValueException() {
+        List<JsonAdaptedTag> tags = IntStream.range(0, Tag.MAX_TAG_COUNT + 1)
+                .mapToObj(index -> new JsonAdaptedTag("tag" + index))
+                .toList();
+        JsonAdaptedStudent student = new JsonAdaptedStudent("Benson Meier", "98765432", "johnd@example.com",
+                "311, Clementi Ave 2, #02-25", tags, List.of());
+
+        IllegalValueException exception = assertThrows(IllegalValueException.class, student::toModelType);
+        assertEquals(Tag.MESSAGE_TAG_LIMIT, exception.getMessage());
     }
 
     @Test

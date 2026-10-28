@@ -1,5 +1,6 @@
 package seedu.address.model.student;
 
+import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Collections;
@@ -9,6 +10,7 @@ import java.util.Set;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.StudentTag;
+import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 
 /**
@@ -38,6 +40,7 @@ public class Student {
             Set<StudentTag> tags,
             WorkoutPlansList workoutPlansList) {
         requireAllNonNull(name, phone, email, address, tags, workoutPlansList);
+        checkArgument(Tag.isValidTagCount(tags.size()), Tag.MESSAGE_TAG_LIMIT);
         this.name = name;
         this.phone = phone;
         this.email = email;

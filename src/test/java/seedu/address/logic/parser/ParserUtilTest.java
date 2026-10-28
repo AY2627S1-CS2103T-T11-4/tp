@@ -13,6 +13,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
@@ -304,6 +305,21 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseTags_collectionAtLimit_returnsTagSet() throws Exception {
+        List<String> tags = createTagNames(Tag.MAX_TAG_COUNT);
+
+        assertEquals(Tag.MAX_TAG_COUNT, ParserUtil.parseTags(tags, TagStub::new).size());
+    }
+
+    @Test
+    public void parseTags_collectionExceedingLimit_throwsParseException() {
+        List<String> tags = createTagNames(Tag.MAX_TAG_COUNT + 1);
+
+        assertThrows(ParseException.class, Tag.MESSAGE_TAG_LIMIT, ()
+            -> ParserUtil.parseTags(tags, TagStub::new));
+    }
+
+    @Test
     public void parseTitle_invalidValue_throwsParseException() {
         assertThrows(ParseException.class, () -> ParserUtil.parseTitle(INVALID_TITLE));
     }
@@ -374,5 +390,11 @@ public class ParserUtilTest {
     public void parseDate_validValue_returnsWorkoutDate() throws Exception {
         WorkoutDate expectedDate = new WorkoutDate(VALID_DATE_OBJECT);
         assertEquals(expectedDate, ParserUtil.parseDate(VALID_DATE));
+    }
+
+    private static List<String> createTagNames(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(index -> "tag" + index)
+                .toList();
     }
 }

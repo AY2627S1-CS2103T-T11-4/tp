@@ -1,5 +1,6 @@
 package seedu.address.model.workoutplan;
 
+import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.exceptions.AlreadyMarkedException;
 import seedu.address.model.workoutplan.exceptions.AlreadyUnmarkedException;
@@ -49,6 +51,7 @@ public final class WorkoutPlan {
     public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date,
             Set<WorkoutPlanTag> tags, WorkoutPlanStatus status) {
         requireAllNonNull(title, workouts, date, tags, status);
+        checkArgument(Tag.isValidTagCount(tags.size()), Tag.MESSAGE_TAG_LIMIT);
         this.title = title;
         this.workouts = workouts;
         this.date = date;
