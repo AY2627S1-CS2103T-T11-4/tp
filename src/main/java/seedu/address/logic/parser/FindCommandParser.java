@@ -2,15 +2,12 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.FindCommand;
-import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.student.Name;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 
 /**
@@ -38,7 +35,7 @@ public class FindCommandParser implements Parser<FindCommand> {
             argValidator.verifyArgs(argMultimap);
 
             stage = ParsingStage.FIELD_PARSING;
-            nckp = this.parseValidFields(argMultimap.getPreamble());
+            nckp = new NameContainsKeywordsPredicate(ParserUtil.parseNameKeywords(argMultimap.getPreamble()));
 
         } catch (ParseException pe) {
             logger.finer("Parsing of find command failed at " + stage.getMessage());
@@ -46,20 +43,6 @@ public class FindCommandParser implements Parser<FindCommand> {
         }
 
         return new FindCommand(nckp);
-    }
-
-    /**
-     * Parses the validated {@code args} string to produce the FindCommand object.
-     *
-     * @throws FieldValueInvalidException If no keyword can match a valid student name.
-     */
-    private NameContainsKeywordsPredicate parseValidFields(String queries) throws FieldValueInvalidException {
-        List<String> nameKeywords = List.of(queries.split("\\s+"));
-        if (nameKeywords.stream().noneMatch(Name::isValidName)) {
-            throw new FieldValueInvalidException(FindCommand.MESSAGE_INVALID_KEYWORDS);
-        }
-
-        return new NameContainsKeywordsPredicate(nameKeywords);
     }
 
 }

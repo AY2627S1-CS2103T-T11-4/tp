@@ -6,11 +6,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
+import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Address;
@@ -59,6 +61,21 @@ public class ParserUtil {
             throw new FieldValueInvalidException(Name.MESSAGE_CONSTRAINTS);
         }
         return new Name(trimmedName);
+    }
+
+    /**
+     * Parses whitespace-separated name search keywords, trimming leading and trailing whitespace.
+     * Keeps all keywords when at least one can match a valid student name.
+     *
+     * @throws FieldValueInvalidException if no keyword can match a valid student name.
+     */
+    public static List<String> parseNameKeywords(String queries) throws FieldValueInvalidException {
+        requireNonNull(queries);
+        List<String> nameKeywords = List.of(queries.trim().split("\\s+"));
+        if (nameKeywords.stream().noneMatch(Name::isValidName)) {
+            throw new FieldValueInvalidException(FindCommand.MESSAGE_INVALID_KEYWORDS);
+        }
+        return nameKeywords;
     }
 
     /**

@@ -16,6 +16,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.FindCommand;
+import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
@@ -120,6 +122,39 @@ public class ParserUtilTest {
         String nameWithWhitespace = WHITESPACE + VALID_NAME + WHITESPACE;
         Name expectedName = new Name(VALID_NAME);
         assertEquals(expectedName, ParserUtil.parseName(nameWithWhitespace));
+    }
+
+    @Test
+    public void parseNameKeywords_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseNameKeywords(null));
+    }
+
+    @Test
+    public void parseNameKeywords_blank_throwsFieldValueInvalidException() {
+        assertThrows(FieldValueInvalidException.class, FindCommand.MESSAGE_INVALID_KEYWORDS, ()
+            -> ParserUtil.parseNameKeywords(WHITESPACE));
+    }
+
+    @Test
+    public void parseNameKeywords_allInvalid_throwsFieldValueInvalidException() {
+        assertThrows(FieldValueInvalidException.class, FindCommand.MESSAGE_INVALID_KEYWORDS, ()
+            -> ParserUtil.parseNameKeywords("Alice! Bob?"));
+    }
+
+    @Test
+    public void parseNameKeywords_mixedValidity_keepsAllKeywords() throws Exception {
+        assertEquals(List.of("!!!", "Alice", "Bob?"), ParserUtil.parseNameKeywords("!!! Alice Bob?"));
+    }
+
+    @Test
+    public void parseNameKeywords_alphanumeric_returnsKeywords() throws Exception {
+        assertEquals(List.of("Alice123", "123"), ParserUtil.parseNameKeywords("Alice123 123"));
+    }
+
+    @Test
+    public void parseNameKeywords_whitespace_returnsTrimmedKeywords() throws Exception {
+        assertEquals(List.of("Alice", "Bob"),
+                ParserUtil.parseNameKeywords(WHITESPACE + "Alice" + WHITESPACE + "Bob" + WHITESPACE));
     }
 
     @Test
