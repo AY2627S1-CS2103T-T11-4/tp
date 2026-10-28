@@ -466,6 +466,20 @@
     -fx-text-fill: #c7d3d8;
 }
 
+.exercise-plan-description {
+    -fx-text-fill: #c7d3d8;
+    -fx-font-size: 13px;
+}
+
+.exercise-card {
+    -fx-background-color: #17262e;
+    -fx-background-radius: 8px;
+    -fx-border-color: #324650;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px;
+    -fx-text-fill: #edf4f7;
+}
+
 .workout-plan-tags .label {
     -fx-background-color: #e6537d;
     -fx-background-radius: 8px;

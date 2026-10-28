@@ -233,9 +233,23 @@ Displays the details of the workout plan of a student
 
 Format: `viewPlan PLAN_ID`
 
-* Displays the description of the workout plan at the specified `PLAN_ID`.
+* Displays the description and numbered exercises of the workout plan at the specified `PLAN_ID`.
 * The plan id refers to the index number shown in the displayed list of workout plans of the student.
 * The plan id **must be a positive integer** 1, 2, 3, ...
+* The selected workout plan stays active until you view another plan, view another student, return home, or remove its parent.
+* An empty workout plan displays `(none)` under Exercises.
+
+#### Deleting an exercise: `deleteExercise`
+
+Deletes one exercise from the selected workout plan.
+
+Format: `deleteExercise EXERCISE_ID`
+
+* First select a student with `viewStudent STUDENT_ID`, then a workout plan with `viewPlan PLAN_ID`.
+* `EXERCISE_ID` is the positive number shown beside the exercise in `viewPlan` and in the selected plan panel.
+* An invalid or out-of-range exercise ID leaves the plan unchanged. Deleting an exercise affects only the selected plan.
+
+Example: `deleteExercise 2` removes the second exercise from the selected workout plan.
 
 #### Deleting a workout plan: `deletePlan`
 
@@ -325,4 +339,5 @@ Action     | Format, Examples
 **Unmark Workout Plan** | `unmarkPlan PLAN_ID` <br> e.g. `unmarkPlan 2`
 **View Workout Plan** | `viewPlan PLAN_ID`<br> e.g., `viewPlan 2`
 **Delete Workout Plan** | `deletePlan PLAN_ID`<br> e.g., `deletePlan 3`
+**Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `viewStudent 1`, `viewPlan 2`, `deleteExercise 1`
 
