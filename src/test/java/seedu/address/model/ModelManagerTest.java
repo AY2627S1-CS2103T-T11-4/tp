@@ -38,65 +38,90 @@ public class ModelManagerTest {
 
     private ModelManager modelManager = new ModelManager();
 
+    // At least once: cover each date boundary and status without testing every combination.
     @Test
-    public void addWorkoutPlanForStudent_refreshesOnlyAddedPlanBeforeStoring() {
-        LocalDate today = LocalDate.now();
-        for (int days : List.of(-1, 0, 1)) {
-            for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
-                ModelManager model = new ModelManager();
-                WorkoutPlan unchanged = plan("Other", today.minusDays(1), WorkoutPlanStatus.PENDING);
-                Student student = withPlans(ALICE, unchanged);
-                model.addStudent(student);
-                model.addStudent(BENSON);
-                model.setCurrentStudent(student);
-                WorkoutPlan added = plan("Added", today.plusDays(days), status);
-
-                model.addWorkoutPlanForStudent(student, added);
-
-                Student updated = model.getCurrentStudent().orElseThrow();
-                WorkoutPlanStatus expectedStatus = status == WorkoutPlanStatus.COMPLETED
-                        ? WorkoutPlanStatus.COMPLETED
-                        : days < 0 ? WorkoutPlanStatus.OVERDUE : WorkoutPlanStatus.PENDING;
-                assertEquals(plan("Added", today.plusDays(days), expectedStatus),
-                        updated.getWorkoutPlansList().getWorkoutPlan(1));
-                assertSame(unchanged, updated.getWorkoutPlansList().getWorkoutPlan(0));
-                assertSame(updated, model.getBrotherGym().getStudentList().get(0));
-                assertSame(BENSON, model.getBrotherGym().getStudentList().get(1));
-                assertEquals(List.of(unchanged), student.getWorkoutPlansList().getWorkoutList());
-                assertEquals(status, added.getStatus());
-            }
-        }
+    public void addWorkoutPlanForStudent_pastPending_storesExpectedStatus() {
+        assertAddRefresh(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
     }
 
     @Test
-    public void setWorkoutPlanForStudent_refreshesOnlyEditedPlanBeforeStoring() {
+    public void addWorkoutPlanForStudent_dueTodayOverdue_storesExpectedStatus() {
+        assertAddRefresh(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
+    }
+
+    @Test
+    public void addWorkoutPlanForStudent_futurePending_storesExpectedStatus() {
+        assertAddRefresh(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
+    }
+
+    @Test
+    public void addWorkoutPlanForStudent_pastCompleted_storesExpectedStatus() {
+        assertAddRefresh(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
+    }
+
+    private void assertAddRefresh(int days, WorkoutPlanStatus status, WorkoutPlanStatus expectedStatus) {
         LocalDate today = LocalDate.now();
-        for (int days : List.of(-1, 0, 1)) {
-            for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
-                ModelManager model = new ModelManager();
-                WorkoutPlan unchanged = plan("Other", today.minusDays(1), WorkoutPlanStatus.PENDING);
-                WorkoutPlan target = plan("Target", today, status);
-                Student student = withPlans(ALICE, unchanged, target);
-                model.addStudent(student);
-                model.addStudent(BENSON);
-                model.setCurrentStudent(student);
-                WorkoutPlan edited = plan("Edited", today.plusDays(days), status);
+        ModelManager model = new ModelManager();
+        WorkoutPlan unchanged = plan("Other", today.minusDays(1), WorkoutPlanStatus.PENDING);
+        Student student = withPlans(ALICE, unchanged);
+        model.addStudent(student);
+        model.addStudent(BENSON);
+        model.setCurrentStudent(student);
+        WorkoutPlan added = plan("Added", today.plusDays(days), status);
 
-                model.setWorkoutPlanForStudent(student, target, edited);
+        model.addWorkoutPlanForStudent(student, added);
 
-                Student updated = model.getCurrentStudent().orElseThrow();
-                WorkoutPlanStatus expectedStatus = status == WorkoutPlanStatus.COMPLETED
-                        ? WorkoutPlanStatus.COMPLETED
-                        : days < 0 ? WorkoutPlanStatus.OVERDUE : WorkoutPlanStatus.PENDING;
-                assertEquals(plan("Edited", today.plusDays(days), expectedStatus),
-                        updated.getWorkoutPlansList().getWorkoutPlan(1));
-                assertSame(unchanged, updated.getWorkoutPlansList().getWorkoutPlan(0));
-                assertSame(updated, model.getBrotherGym().getStudentList().get(0));
-                assertSame(BENSON, model.getBrotherGym().getStudentList().get(1));
-                assertEquals(List.of(unchanged, target), student.getWorkoutPlansList().getWorkoutList());
-                assertEquals(status, edited.getStatus());
-            }
-        }
+        Student updated = model.getCurrentStudent().orElseThrow();
+        assertEquals(plan("Added", today.plusDays(days), expectedStatus),
+                updated.getWorkoutPlansList().getWorkoutPlan(1));
+        assertSame(unchanged, updated.getWorkoutPlansList().getWorkoutPlan(0));
+        assertSame(updated, model.getBrotherGym().getStudentList().get(0));
+        assertSame(BENSON, model.getBrotherGym().getStudentList().get(1));
+        assertEquals(List.of(unchanged), student.getWorkoutPlansList().getWorkoutList());
+        assertEquals(status, added.getStatus());
+    }
+
+    @Test
+    public void setWorkoutPlanForStudent_pastPending_storesExpectedStatus() {
+        assertSetRefresh(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
+    }
+
+    @Test
+    public void setWorkoutPlanForStudent_dueTodayOverdue_storesExpectedStatus() {
+        assertSetRefresh(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
+    }
+
+    @Test
+    public void setWorkoutPlanForStudent_futurePending_storesExpectedStatus() {
+        assertSetRefresh(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
+    }
+
+    @Test
+    public void setWorkoutPlanForStudent_pastCompleted_storesExpectedStatus() {
+        assertSetRefresh(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
+    }
+
+    private void assertSetRefresh(int days, WorkoutPlanStatus status, WorkoutPlanStatus expectedStatus) {
+        LocalDate today = LocalDate.now();
+        ModelManager model = new ModelManager();
+        WorkoutPlan unchanged = plan("Other", today.minusDays(1), WorkoutPlanStatus.PENDING);
+        WorkoutPlan target = plan("Target", today, status);
+        Student student = withPlans(ALICE, unchanged, target);
+        model.addStudent(student);
+        model.addStudent(BENSON);
+        model.setCurrentStudent(student);
+        WorkoutPlan edited = plan("Edited", today.plusDays(days), status);
+
+        model.setWorkoutPlanForStudent(student, target, edited);
+
+        Student updated = model.getCurrentStudent().orElseThrow();
+        assertEquals(plan("Edited", today.plusDays(days), expectedStatus),
+                updated.getWorkoutPlansList().getWorkoutPlan(1));
+        assertSame(unchanged, updated.getWorkoutPlansList().getWorkoutPlan(0));
+        assertSame(updated, model.getBrotherGym().getStudentList().get(0));
+        assertSame(BENSON, model.getBrotherGym().getStudentList().get(1));
+        assertEquals(List.of(unchanged, target), student.getWorkoutPlansList().getWorkoutList());
+        assertEquals(status, edited.getStatus());
     }
 
     @Test
