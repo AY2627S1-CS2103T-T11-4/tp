@@ -16,7 +16,7 @@ import seedu.address.testutil.Assert;
 
 public class ArgumentValidatorTest {
     private static final Prefix REQUIRED_PREFIX = new Prefix("--required");
-    private static final Prefix SECOND_REQUIRED_PREFIX = new Prefix("--also-required");
+    private static final Prefix SECOND_REQUIRED_PREFIX = new Prefix("--alsorequired");
     private static final Prefix SINGLE_VALUE_PREFIX = new Prefix("--single");
     private static final Prefix REPEATABLE_PREFIX = new Prefix("--repeatable");
     private static final Prefix INVALID_PREFIX = new Prefix("--invalid");
@@ -38,7 +38,7 @@ public class ArgumentValidatorTest {
     public void verifyArgs_validInput_success() {
         verifySuccessfully(
                 VALIDATOR,
-                "John --required value --also-required value "
+                "John --required value --alsorequired value "
                         + "--single one --repeatable first --repeatable second");
     }
 
@@ -46,7 +46,7 @@ public class ArgumentValidatorTest {
     public void verifyArgs_missingPreamble_failure() {
         String message = getValidationError(
                 VALIDATOR,
-                " --required value --also-required value");
+                " --required value --alsorequired value");
 
         assertTrue(message.startsWith(Messages.MESSAGE_MISSING_PREAMBLE));
     }
@@ -73,7 +73,7 @@ public class ArgumentValidatorTest {
         String message = getValidationError(
                 VALIDATOR,
                 "John --required first --required second "
-                        + "--also-required value");
+                        + "--alsorequired value");
 
         assertEquals(
                 Messages.getErrorMessageForDuplicatePrefixes(REQUIRED_PREFIX),
@@ -85,7 +85,7 @@ public class ArgumentValidatorTest {
         String message = getValidationError(
                 VALIDATOR,
                 "John --required first --required second "
-                        + "--also-required first --also-required second");
+                        + "--alsorequired first --alsorequired second");
 
         assertTrue(message.contains(REQUIRED_PREFIX.toString()));
         assertTrue(message.contains(SECOND_REQUIRED_PREFIX.toString()));
@@ -95,7 +95,7 @@ public class ArgumentValidatorTest {
     public void verifyArgs_invalidPrefix_failure() {
         String message = getValidationError(
                 VALIDATOR,
-                "John --required value --also-required value --invalid value");
+                "John --required value --alsorequired value --invalid value");
 
         assertEquals(
                 Messages.getErrorMessageForInvalidPrefixes(INVALID_PREFIX),
@@ -104,12 +104,12 @@ public class ArgumentValidatorTest {
 
     @Test
     public void verifyArgs_multipleInvalidPrefixes_failure() {
-        Prefix anotherInvalidPrefix = new Prefix("--another-invalid");
+        Prefix anotherInvalidPrefix = new Prefix("--anotherinvalid");
 
         String message = getValidationError(
                 VALIDATOR,
-                "John --required value --also-required value "
-                        + "--invalid first --another-invalid second");
+                "John --required value --alsorequired value "
+                        + "--invalid first --anotherinvalid second");
 
         assertTrue(message.contains(INVALID_PREFIX.toString()));
         assertTrue(message.contains(anotherInvalidPrefix.toString()));
@@ -119,7 +119,7 @@ public class ArgumentValidatorTest {
     public void verifyArgs_repeatedInvalidPrefix_failure() {
         String message = getValidationError(
                 VALIDATOR,
-                "John --required value --also-required value "
+                "John --required value --alsorequired value "
                         + "--invalid first --invalid second");
 
         assertEquals(
@@ -157,7 +157,7 @@ public class ArgumentValidatorTest {
     public void verifyArgs_emptyFieldValues_success() {
         verifySuccessfully(
                 VALIDATOR,
-                "John --required --also-required --single --repeatable");
+                "John --required --alsorequired --single --repeatable");
     }
 
     @Test

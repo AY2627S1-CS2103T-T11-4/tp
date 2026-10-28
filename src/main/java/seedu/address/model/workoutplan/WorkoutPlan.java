@@ -123,6 +123,20 @@ public final class WorkoutPlan {
         return status == WorkoutPlanStatus.COMPLETED ? this : withStatus(statusForDate(today));
     }
 
+    /**
+     * Returns true if both plans have the same title, workouts, and date, regardless of tags or status.
+     * This defines the identity used to prevent duplicate plans for a student.
+     */
+    public boolean isSamePlan(WorkoutPlan otherPlan) {
+        if (otherPlan == this) {
+            return true;
+        }
+        return otherPlan != null
+                && title.equals(otherPlan.title)
+                && workouts.equals(otherPlan.workouts)
+                && date.equals(otherPlan.date);
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {

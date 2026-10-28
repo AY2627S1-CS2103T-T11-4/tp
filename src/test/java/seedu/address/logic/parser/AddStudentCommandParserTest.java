@@ -19,6 +19,7 @@ import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_HUSBAND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
@@ -96,6 +97,11 @@ public class AddStudentCommandParserTest {
         assertParseFailure(parser,
                 NAME_PREAMBLE_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB + INVALID_PREFIX_DESC,
                 this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
+
+        assertParseFailure(parser,
+                NAME_PREAMBLE_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
+                        + " " + PREFIX_CLEAR_TAGS,
+                this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_CLEAR_TAGS)));
 
     }
 
