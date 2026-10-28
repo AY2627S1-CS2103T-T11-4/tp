@@ -137,7 +137,8 @@ public final class WorkoutPlan {
         return title.equals(otherPlan.title)
                 && workouts.equals(otherPlan.workouts)
                 && date.equals(otherPlan.date)
-                && tags.equals(otherPlan.tags);
+                && tags.equals(otherPlan.tags)
+                && status.equals(otherPlan.status);
     }
 
     @Override
