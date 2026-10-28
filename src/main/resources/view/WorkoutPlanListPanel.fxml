@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -24,8 +23,7 @@
                 pannable="true" styleClass="workout-plan-scroll" vbarPolicy="AS_NEEDED"
                 StackPane.alignment="TOP_LEFT">
       <content>
-        <FlowPane fx:id="workoutPlanFlowPane" alignment="TOP_LEFT" hgap="10" orientation="HORIZONTAL"
-                  prefWrapLength="600" styleClass="workout-plan-grid" vgap="10" />
+        <VBox fx:id="workoutPlanList" spacing="4" styleClass="workout-plan-list" />
       </content>
     </ScrollPane>
     <Label fx:id="emptyMessage" alignment="CENTER" maxWidth="360" styleClass="empty-message"

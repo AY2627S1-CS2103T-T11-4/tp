@@ -8,8 +8,8 @@ import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
 
@@ -31,7 +31,7 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
     private ScrollPane workoutPlanScrollPane;
 
     @FXML
-    private FlowPane workoutPlanFlowPane;
+    private VBox workoutPlanList;
 
     /** Creates a panel in its initial state, before a student has been selected. */
     public WorkoutPlanListPanel() {
@@ -46,7 +46,7 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
             heading.setText("Workout Plans");
             subtitle.setManaged(false);
             subtitle.setVisible(false);
-            workoutPlanFlowPane.getChildren().clear();
+            workoutPlanList.getChildren().clear();
             showEmptyMessage("Select a student to view workout plans.");
             return;
         }
@@ -58,10 +58,10 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
         subtitle.setManaged(true);
         subtitle.setVisible(true);
         List<WorkoutPlan> workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
-        workoutPlanFlowPane.getChildren().clear();
+        workoutPlanList.getChildren().clear();
         for (int index = 0; index < workoutPlans.size(); index++) {
             WorkoutPlan workoutPlan = workoutPlans.get(index);
-            workoutPlanFlowPane.getChildren().add(new WorkoutPlanCard(workoutPlan, index + 1).getRoot());
+            workoutPlanList.getChildren().add(new WorkoutPlanCard(workoutPlan, index + 1).getRoot());
         }
 
         if (workoutPlans.isEmpty()) {
