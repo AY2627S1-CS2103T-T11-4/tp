@@ -14,9 +14,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.exceptions.AlreadyMarkedException;
 import seedu.address.model.workoutplan.exceptions.AlreadyUnmarkedException;
-import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
