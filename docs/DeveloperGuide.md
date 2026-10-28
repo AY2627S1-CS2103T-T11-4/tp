@@ -328,11 +328,9 @@ The following sequence diagram shows how the panel is updated when the user exec
 
 ### Deleting an exercise
 
-`deleteExercise EXERCISE_ID` uses `SingleIndexCommandParser` and requires both a selected student and a selected workout plan. The ID is the one-based number displayed by `viewPlan` and the selected plan panel. `DeleteExerciseCommand` checks that the ID is in range before calling `Model#removeExerciseForWorkoutPlan`. A missing selection or invalid ID produces a command error without changing the model.
+`deleteExercise EXERCISE_ID` uses `SingleIndexCommandParser` and requires a student and workout plan selected through `viewStudent` and `viewPlan`. It removes the exercise at the displayed one-based index. Missing selection or an invalid index leaves the data unchanged.
 
-Exercises belong to `WorkoutPlan` through an immutable `ExercisesList`. Removing one builds a new exercise list, plan, and student, then replaces that student in `BrotherGym`. `ModelManager` rebinds the selected plan to the replacement object so a second deletion addresses the updated list. Selection is cleared when the selected plan or student is deleted, on `clear` or `home`, and when another student is viewed. Replacing a student or plan during edit, mark, unmark, or date refresh retains its exercise list and keeps the corresponding plan selected.
-
-The command relies on the exact stored plan and exercise instances when resolving the selected index. `WorkoutPlansList` prefers the exact plan instance when replacing or removing a plan, so selection does not target a different plan with equal displayed fields. The tests cover first, middle, last, and sole-exercise deletion; invalid IDs and missing selection; isolation between plans and students; preservation during parent edits and status changes; and clearing selection after parent removal.
+`Model#removeExerciseForWorkoutPlan` replaces the immutable exercise list, plan, and student. `ModelManager` rebinds the selected plan so subsequent deletions use the updated indexes. Student and plan edits and status changes retain exercises; changing students, deleting a selected parent, `home`, or `clear` clears stale selection.
 
 ### \[Proposed\] Undo/redo feature
 
