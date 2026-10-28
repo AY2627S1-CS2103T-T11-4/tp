@@ -53,7 +53,7 @@ final class HelpCommandCard {
         fieldControls = command.fields().stream()
                 .map(HelpFieldControl::new)
                 .toList();
-        fieldControls.forEach(HelpFieldControl::addField);
+        fieldControls.forEach(HelpFieldControl::initialize);
         Runnable refreshCommandFormat = () -> {
             commandFormat.getChildren().clear();
             commandFormat.getChildren().add(commandWord);

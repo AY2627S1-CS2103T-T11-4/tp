@@ -95,6 +95,18 @@ class HelpSearchTest {
     }
 
     @Test
+    void optionalFields_exposePrefixDerivedControlNames() {
+        HelpSearch search = new HelpSearch();
+
+        assertEquals(List.of("tag"), controlNames(findCommand(search, "addStudent"), false));
+        assertEquals(List.of("name", "hp", "email", "addr", "tag"),
+                controlNames(findCommand(search, "editStudent"), false));
+        assertEquals(List.of("tag"), controlNames(findCommand(search, "addPlan"), false));
+        assertEquals(List.of("name", "plan", "date", "tag"),
+                controlNames(findCommand(search, "editPlan"), false));
+    }
+
+    @Test
     void commandReference_format_combinesWordAndParameters() {
         HelpSearch search = new HelpSearch();
 
@@ -120,5 +132,12 @@ class HelpSearchTest {
 
     private static List<String> fieldLabels(HelpSearch.CommandReference command) {
         return command.fields().stream().map(HelpSearch.CommandField::label).toList();
+    }
+
+    private static List<String> controlNames(HelpSearch.CommandReference command, boolean includeRequired) {
+        return command.fields().stream()
+                .filter(field -> includeRequired || !field.required())
+                .map(HelpSearch.CommandField::controlName)
+                .toList();
     }
 }

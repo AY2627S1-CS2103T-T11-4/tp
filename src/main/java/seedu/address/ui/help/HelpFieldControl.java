@@ -15,21 +15,25 @@ final class HelpFieldControl {
     private final List<TextField> inputs = new ArrayList<>();
     private final List<Button> removeButtons = new ArrayList<>();
     private final List<Node> formatNodes = new ArrayList<>();
-    private final Button addButton = new Button("Add tag");
+    private final Button addButton = new Button();
+    private boolean active;
     private Runnable layoutRefresh;
 
     HelpFieldControl(HelpSearch.CommandField field) {
         this.field = field;
-        if (field.repeatable()) {
-            addButton.setMnemonicParsing(false);
-            addButton.setText("+");
-            addButton.setAccessibleText("Add " + field.label());
-            addButton.getStyleClass().add("inline-input-button");
-            addButton.setOnAction(event -> addField());
+        configureAddButton();
+    }
+
+    void initialize() {
+        active = field.required();
+        if (active) {
+            addField(false);
+        } else {
+            rebuildFormatNodes();
         }
     }
 
-    void addField() {
+    private void addField(boolean requestFocus) {
         TextField input = new TextField();
         input.setPromptText(field.label());
         input.setAccessibleText(field.label() + (field.required() ? " required" : " optional"));
@@ -37,7 +41,7 @@ final class HelpFieldControl {
         input.setMinWidth(80);
         input.getStyleClass().add("inline-command-input");
         inputs.add(input);
-        if (field.repeatable()) {
+        if (!field.required() || field.repeatable()) {
             Button removeButton = new Button("-");
             removeButton.setMnemonicParsing(false);
             removeButton.setAccessibleText("Remove " + field.label());
@@ -47,13 +51,24 @@ final class HelpFieldControl {
         }
         rebuildFormatNodes();
         refreshLayout();
-        Platform.runLater(input::requestFocus);
+        if (requestFocus) {
+            Platform.runLater(input::requestFocus);
+        }
     }
 
     void removeField(TextField input, Button removeButton) {
         if (inputs.size() == 1) {
-            input.clear();
-            Platform.runLater(input::requestFocus);
+            if (field.required()) {
+                input.clear();
+                Platform.runLater(input::requestFocus);
+            } else {
+                active = false;
+                inputs.clear();
+                removeButtons.clear();
+                rebuildFormatNodes();
+                refreshLayout();
+                Platform.runLater(addButton::requestFocus);
+            }
             return;
         }
         int removedIndex = inputs.indexOf(input);
@@ -66,26 +81,33 @@ final class HelpFieldControl {
     }
 
     List<String> values() {
+        if (!active) {
+            return List.of();
+        }
         return inputs.stream().map(TextField::getText).toList();
     }
 
     void reset() {
-        if (field.repeatable()) {
-            while (inputs.size() > 1) {
-                inputs.remove(inputs.size() - 1);
-                removeButtons.remove(removeButtons.size() - 1);
-            }
+        active = field.required();
+        inputs.clear();
+        removeButtons.clear();
+        if (active) {
+            addField(false);
+        } else {
+            rebuildFormatNodes();
+            refreshLayout();
         }
-        inputs.forEach(TextField::clear);
-        rebuildFormatNodes();
-        refreshLayout();
     }
 
     List<Node> focusableNodes() {
         List<Node> nodes = new ArrayList<>();
+        if (!active) {
+            nodes.add(addButton);
+            return nodes;
+        }
         for (int i = 0; i < inputs.size(); i++) {
             nodes.add(inputs.get(i));
-            if (field.repeatable()) {
+            if (!field.required() || field.repeatable()) {
                 nodes.add(removeButtons.get(i));
             }
         }
@@ -105,6 +127,10 @@ final class HelpFieldControl {
 
     private void rebuildFormatNodes() {
         formatNodes.clear();
+        if (!active) {
+            formatNodes.add(addButton);
+            return;
+        }
         for (int i = 0; i < inputs.size(); i++) {
             if (!field.prefix().isEmpty()) {
                 Label prefix = new Label(field.prefix());
@@ -114,7 +140,7 @@ final class HelpFieldControl {
 
             formatNodes.add(inputs.get(i));
 
-            if (field.repeatable()) {
+            if (!field.required() || field.repeatable()) {
                 formatNodes.add(removeButtons.get(i));
             }
         }
@@ -127,5 +153,19 @@ final class HelpFieldControl {
         if (layoutRefresh != null) {
             layoutRefresh.run();
         }
+    }
+
+    private void configureAddButton() {
+        addButton.setMnemonicParsing(false);
+        addButton.setText(field.controlName() + "+");
+        addButton.setAccessibleText("Add " + field.label());
+        addButton.setMinWidth(Math.max(38, field.controlName().length() * 8 + 16));
+        addButton.setPrefWidth(Math.max(38, field.controlName().length() * 8 + 16));
+        addButton.getStyleClass().add("inline-input-button");
+        addButton.getStyleClass().add("optional-field-button");
+        addButton.setOnAction(event -> {
+            active = true;
+            addField(true);
+        });
     }
 }

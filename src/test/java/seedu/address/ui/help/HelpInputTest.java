@@ -25,6 +25,19 @@ class HelpInputTest {
     }
 
     @Test
+    void build_addStudent_omitsInactiveOptionalTags() {
+        HelpSearch.CommandReference command = findCommand("addStudent");
+
+        HelpInput.Result result = HelpInput.build(command, List.of(
+                List.of("John Doe"), List.of("98765432"), List.of("john@example.com"),
+                List.of("311, Clementi Ave 2, #02-25"), List.of()));
+
+        assertTrue(result.isSuccess());
+        assertEquals("addStudent John Doe --hp 98765432 --email john@example.com "
+                + "--addr 311, Clementi Ave 2, #02-25", result.command());
+    }
+
+    @Test
     void build_addPlan_preservesFieldOrderAndSpaces() {
         HelpSearch.CommandReference command = findCommand("addPlan");
 

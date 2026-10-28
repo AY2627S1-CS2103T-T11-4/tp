@@ -149,5 +149,12 @@ final class HelpSearch {
     }
 
     /** Metadata for one value accepted by a structured command form. */
-    record CommandField(String label, String prefix, boolean required, boolean repeatable, String hint) {}
+    record CommandField(String label, String prefix, boolean required, boolean repeatable, String hint) {
+        String controlName() {
+            if (prefix.startsWith("--")) {
+                return prefix.substring(2);
+            }
+            return label.replaceAll("\\s+", "").toLowerCase(Locale.ROOT);
+        }
+    }
 }
