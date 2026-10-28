@@ -38,6 +38,10 @@ public class ExerciseDescriptionTest {
         assertFalse(ExerciseDescription.isValidExerciseDescription(""));
         assertFalse(ExerciseDescription.isValidExerciseDescription(" "));
         assertFalse(ExerciseDescription.isValidExerciseDescription("\t"));
+        assertTrue(ExerciseDescription.isValidExerciseDescription(
+                "a".repeat(ExerciseDescription.MAX_LENGTH)));
+        assertFalse(ExerciseDescription.isValidExerciseDescription(
+                "a".repeat(ExerciseDescription.MAX_LENGTH + 1)));
         assertTrue(ExerciseDescription.isValidExerciseDescription(DESCRIPTION_VALID));
     }
 
