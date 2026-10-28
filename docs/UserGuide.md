@@ -179,9 +179,7 @@ Format: `addPlan TITLE --plan DESCRIPTION --date DDMMYYYY [--tag TAG]...`
 * Displays the updated list of workout plans of the specified student, after the new plan is added
 * Title and description of the workout plan cannot be empty
 * Date field must be provided in `DDMMYYYY` format
-* Dates must exist in the calendar. Invalid months and days show specific errors;
-  for example, `31022026` is rejected because February 2026 has only 28 days.
-
+  
 Examples:
 * `addPlan Leg Day --plan Squats 100kg 10 reps x5; Leg curls 80kg 10 reps x3 --date 20102026`
 * `addPlan Chest Day --plan Bench press 80kg 15 reps x3 --date 31102026`
