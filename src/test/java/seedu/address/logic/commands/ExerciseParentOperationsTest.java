@@ -81,7 +81,7 @@ public class ExerciseParentOperationsTest {
 
         assertEquals(WorkoutPlanStatus.OVERDUE, model.getCurrentWorkoutPlan().orElseThrow().getStatus());
         assertEquals(List.of(SQUATS, PUSH_UPS), model.getCurrentWorkoutPlan().orElseThrow()
-                .getExercises().getExerciseList());
+                .getExercisesList().getExerciseList());
     }
 
     @Test
@@ -97,7 +97,7 @@ public class ExerciseParentOperationsTest {
         new DeletePlanCommand(Index.fromOneBased(1)).execute(model);
         assertSame(second, model.getCurrentWorkoutPlan().orElseThrow());
         assertEquals(List.of(PUSH_UPS), model.getCurrentWorkoutPlan().orElseThrow()
-                .getExercises().getExerciseList());
+                .getExercisesList().getExerciseList());
 
         new DeletePlanCommand(Index.fromOneBased(1)).execute(model);
         assertTrue(model.getCurrentWorkoutPlan().isEmpty());
@@ -124,9 +124,9 @@ public class ExerciseParentOperationsTest {
 
     private static void assertExercisesAndIsolation(ModelManager model, Student untouchedStudent) {
         assertEquals(List.of(SQUATS, PUSH_UPS), model.getCurrentWorkoutPlan().orElseThrow()
-                .getExercises().getExerciseList());
+                .getExercisesList().getExerciseList());
         assertEquals(List.of(PUSH_UPS), model.getCurrentStudent().orElseThrow()
-                .getWorkoutPlansList().getWorkoutPlan(1).getExercises().getExerciseList());
+                .getWorkoutPlansList().getWorkoutPlan(1).getExercisesList().getExerciseList());
         assertSame(untouchedStudent, model.getBrotherGym().getStudentList().get(1));
     }
 

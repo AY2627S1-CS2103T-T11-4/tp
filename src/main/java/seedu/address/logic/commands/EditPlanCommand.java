@@ -96,7 +96,7 @@ public class EditPlanCommand extends Command {
         WorkoutDate updatedDate = descriptor.getDate().orElse(planToEdit.getDate());
         Set<WorkoutPlanTag> updatedTags = descriptor.getWorkoutPlanTags().orElse(planToEdit.getTags());
         return new WorkoutPlan(updatedTitle, updatedDescription, updatedDate, updatedTags,
-                planToEdit.getStatus(), planToEdit.getExercises());
+                planToEdit.getStatus(), planToEdit.getExercisesList());
     }
 
     @Override

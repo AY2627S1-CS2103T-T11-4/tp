@@ -7,10 +7,13 @@ import java.util.List;
 
 import seedu.address.model.exercise.exceptions.DuplicateExerciseException;
 import seedu.address.model.exercise.exceptions.ExerciseIndexOutOfBoundsException;
+import seedu.address.model.exercise.exceptions.ExerciseListFullException;
 import seedu.address.model.exercise.exceptions.ExerciseNotFoundException;
 
 /** Represents an immutable, ordered list of exercises. */
 public final class ExercisesList {
+
+    public static final int MAX_EXERCISES = 100;
 
     private final List<Exercise> exercises;
 
@@ -27,6 +30,7 @@ public final class ExercisesList {
         requireAllNonNull(exercises);
         this.exercises = List.copyOf(exercises);
         ensureExercisesAreUnique(this.exercises);
+        ensureExerciseCountWithinLimit(this.exercises.size());
     }
 
     /** Returns the unmodifiable list of exercises. */
@@ -45,6 +49,9 @@ public final class ExercisesList {
         requireAllNonNull(exercise);
         if (exercises.stream().anyMatch(existingExercise -> existingExercise.isSameExercise(exercise))) {
             throw new DuplicateExerciseException();
+        }
+        if (exercises.size() >= MAX_EXERCISES) {
+            throw new ExerciseListFullException();
         }
         List<Exercise> updated = new ArrayList<>(exercises);
         updated.add(exercise);
@@ -110,6 +117,12 @@ public final class ExercisesList {
                     throw new DuplicateExerciseException();
                 }
             }
+        }
+    }
+
+    private static void ensureExerciseCountWithinLimit(int exerciseCount) {
+        if (exerciseCount > MAX_EXERCISES) {
+            throw new ExerciseListFullException();
         }
     }
 

@@ -54,11 +54,11 @@ public class DeleteExerciseCommandTest {
             expected.remove(index);
 
             assertEquals(String.format(DeleteExerciseCommand.MESSAGE_SUCCESS, deleted), result.getFeedbackToUser());
-            assertEquals(expected, model.getCurrentWorkoutPlan().orElseThrow().getExercises().getExerciseList());
+            assertEquals(expected, model.getCurrentWorkoutPlan().orElseThrow().getExercisesList().getExerciseList());
             assertSame(otherPlan, model.getCurrentStudent().orElseThrow()
                     .getWorkoutPlansList().getWorkoutPlan(1));
             assertSame(benson, model.getBrotherGym().getStudentList().get(1));
-            assertEquals(original, selectedPlan.getExercises().getExerciseList());
+            assertEquals(original, selectedPlan.getExercisesList().getExerciseList());
         }
     }
 
@@ -72,7 +72,7 @@ public class DeleteExerciseCommandTest {
 
         new DeleteExerciseCommand(Index.fromOneBased(1)).execute(model);
 
-        assertTrue(model.getCurrentWorkoutPlan().orElseThrow().getExercises().getExerciseList().isEmpty());
+        assertTrue(model.getCurrentWorkoutPlan().orElseThrow().getExercisesList().getExerciseList().isEmpty());
         assertEquals(1, model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutList().size());
     }
 
@@ -88,7 +88,7 @@ public class DeleteExerciseCommandTest {
         new DeleteExerciseCommand(Index.fromOneBased(2)).execute(model);
 
         assertEquals(List.of(PUSH_UPS), model.getCurrentWorkoutPlan().orElseThrow()
-                .getExercises().getExerciseList());
+                .getExercisesList().getExerciseList());
     }
 
     @Test
@@ -109,7 +109,7 @@ public class DeleteExerciseCommandTest {
                         new DeleteExerciseCommand(Index.fromOneBased(2)).execute(model)).getMessage());
         assertSame(student, model.getCurrentStudent().orElseThrow());
         assertSame(plan, model.getCurrentWorkoutPlan().orElseThrow());
-        assertEquals(List.of(SQUATS), plan.getExercises().getExerciseList());
+        assertEquals(List.of(SQUATS), plan.getExercisesList().getExerciseList());
     }
 
     @Test
@@ -125,7 +125,7 @@ public class DeleteExerciseCommandTest {
         new DeleteExerciseCommand(Index.fromOneBased(1)).execute(model);
 
         assertSame(first, model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutPlan(0));
-        assertTrue(model.getCurrentWorkoutPlan().orElseThrow().getExercises().getExerciseList().isEmpty());
+        assertTrue(model.getCurrentWorkoutPlan().orElseThrow().getExercisesList().getExerciseList().isEmpty());
     }
 
     @Test

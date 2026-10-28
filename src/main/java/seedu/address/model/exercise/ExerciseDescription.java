@@ -9,7 +9,9 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public final class ExerciseDescription {
 
-    public static final String MESSAGE_CONSTRAINTS = "Exercise descriptions should not be blank";
+    public static final int MAX_LENGTH = 500;
+    public static final String MESSAGE_CONSTRAINTS = "Exercise descriptions should not be blank or longer than "
+            + MAX_LENGTH + " characters";
 
     private final String value;
 
@@ -24,10 +26,10 @@ public final class ExerciseDescription {
         value = description;
     }
 
-    /** Returns true if the description contains non-whitespace characters. */
+    /** Returns true if the description contains non-whitespace characters and is within the length limit. */
     public static boolean isValidExerciseDescription(String description) {
         requireNonNull(description);
-        return !description.isBlank();
+        return !description.isBlank() && description.length() <= MAX_LENGTH;
     }
 
     public String getValue() {

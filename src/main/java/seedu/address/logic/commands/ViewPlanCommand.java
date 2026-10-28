@@ -55,7 +55,7 @@ public class ViewPlanCommand extends SingleIndexCommand {
         }
         model.setCurrentWorkoutPlan(workoutPlan);
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(workoutPlan),
-                formatExercises(workoutPlan.getExercises().getExerciseList())));
+                formatExercises(workoutPlan.getExercisesList().getExerciseList())));
     }
 
     private static String formatExercises(List<Exercise> exercises) {

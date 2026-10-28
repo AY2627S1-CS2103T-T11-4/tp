@@ -46,7 +46,7 @@ public class DeleteExerciseCommand extends SingleIndexCommand {
 
         final Exercise exercise;
         try {
-            exercise = plan.getExercises().getExercise(targetIndex.getZeroBased());
+            exercise = plan.getExercisesList().getExercise(targetIndex.getZeroBased());
         } catch (ExerciseIndexOutOfBoundsException e) {
             throw new CommandException(MESSAGE_INVALID_EXERCISE_ID, e);
         }

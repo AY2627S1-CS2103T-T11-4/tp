@@ -141,7 +141,7 @@ public class WorkoutPlansListTest {
         assertThrows(WorkoutPlanNotFoundException.class, () -> new WorkoutPlansList().setWorkoutPlan(FIRST, SECOND));
 
         WorkoutPlan secondWithExercises = new WorkoutPlan(SECOND.getTitle(), SECOND.getWorkouts(), SECOND.getDate(),
-                SECOND.getTags(), SECOND.getStatus(), FIRST_WITH_EXERCISES.getExercises());
+                SECOND.getTags(), SECOND.getStatus(), FIRST_WITH_EXERCISES.getExercisesList());
         assertThrows(DuplicateWorkoutPlanException.class, () ->
                 original.setWorkoutPlan(equalFirst, secondWithExercises));
     }

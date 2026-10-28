@@ -53,6 +53,7 @@ public class WorkoutPlanCard extends UiPart<Region> {
                 .format(DATE_FORMATTER).toUpperCase(Locale.ROOT));
         status.setText(getStatusText(workoutPlan.getStatus()));
         status.getStyleClass().add(getStatusStyleClass(workoutPlan.getStatus()));
+        id.getStyleClass().add(getStatusStyleClass(workoutPlan.getStatus()));
         getRoot().getStyleClass().add(getCardStyleClass(workoutPlan.getStatus()));
         description.setText(workoutPlan.getWorkouts().getValue());
         getSortedTags(workoutPlan).forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
