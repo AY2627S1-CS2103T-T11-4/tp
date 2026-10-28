@@ -8,14 +8,13 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
@@ -270,10 +269,10 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseDate_invalidCalendarValue_throwsParseExceptionWithCause() {
-        ParseException exception =
-                Assertions.assertThrows(ParseException.class, () -> ParserUtil.parseDate(INVALID_DATE_CALENDAR_VALUE));
-        assertTrue(exception.getCause() instanceof DateTimeParseException);
+    public void parseDate_invalidCalendarValue_throwsFieldValueInvalidException() {
+        assertThrows(FieldValueInvalidException.class,
+                String.format(WorkoutDate.MESSAGE_INVALID_MONTH, 13), ()
+                    -> ParserUtil.parseDate(INVALID_DATE_CALENDAR_VALUE));
     }
 
     @Test

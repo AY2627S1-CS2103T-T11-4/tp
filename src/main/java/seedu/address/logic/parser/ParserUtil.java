@@ -2,9 +2,7 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 
-import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -192,17 +190,14 @@ public class ParserUtil {
         if (year == 0) {
             throw new FieldValueInvalidException(WorkoutDate.MESSAGE_INVALID_YEAR);
         }
-        LocalDate dateObject;
-        try {
-            dateObject = LocalDate.parse(date, WorkoutDate.INPUT_DATE_FORMAT);
-        } catch (DateTimeParseException e) {
-            if (month < 1 || month > 12) {
-                throw new FieldValueInvalidException(String.format(WorkoutDate.MESSAGE_INVALID_MONTH, month), e);
-            }
-            int lastDay = YearMonth.of(year, month).lengthOfMonth();
-            throw new FieldValueInvalidException(
-                    String.format(WorkoutDate.MESSAGE_INVALID_DAY, day, month, year, lastDay), e);
+        if (month < 1 || month > 12) {
+            throw new FieldValueInvalidException(String.format(WorkoutDate.MESSAGE_INVALID_MONTH, month));
         }
-        return WorkoutDate.fromLocalDate(dateObject);
+        YearMonth yearMonth = YearMonth.of(year, month);
+        if (!yearMonth.isValidDay(day)) {
+            throw new FieldValueInvalidException(String.format(WorkoutDate.MESSAGE_INVALID_DAY,
+                    day, month, year, yearMonth.lengthOfMonth()));
+        }
+        return WorkoutDate.fromLocalDate(yearMonth.atDay(day));
     }
 }
