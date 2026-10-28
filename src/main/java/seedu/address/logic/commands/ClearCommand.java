@@ -11,8 +11,12 @@ import seedu.address.model.Model;
 public class ClearCommand extends Command {
 
     public static final String COMMAND_WORD = "clear";
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Clears the student list.\n"
-            + "Example: " + COMMAND_WORD;
+    public static final String MESSAGE_DESCRIPTION = "Clears all students and workout plans.";
+    public static final String MESSAGE_PARAMETERS = "";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD;
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
+            + "Example: " + MESSAGE_EXAMPLE;
+
     public static final String MESSAGE_SUCCESS = "BrotherGym has been cleared!";
 
 
