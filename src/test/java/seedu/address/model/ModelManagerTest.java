@@ -161,7 +161,7 @@ public class ModelManagerTest {
         Student storedStudent = withPlans(ALICE, storedPlan);
         Student equalStudent = withPlans(ALICE, storedPlan);
         WorkoutPlan equalPlan = new WorkoutPlan(storedPlan.getTitle(), storedPlan.getWorkouts(), storedPlan.getDate(),
-                storedPlan.getTags(), WorkoutPlanStatus.COMPLETED, new ExercisesList(List.of(PUSH_UPS)));
+                storedPlan.getTags(), WorkoutPlanStatus.PENDING, new ExercisesList(List.of(PUSH_UPS)));
         modelManager.addStudent(storedStudent);
 
         modelManager.addExerciseForWorkoutPlan(equalStudent, equalPlan, LUNGES);

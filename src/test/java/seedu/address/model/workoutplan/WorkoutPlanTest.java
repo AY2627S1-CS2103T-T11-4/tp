@@ -190,10 +190,10 @@ public class WorkoutPlanTest {
                 Set.of(new WorkoutPlanTag("cardio")));
         assertFalse(strength.equals(cardio));
 
-        // different status -> still returns true because status is not part of plan equality
+        // different status -> returns false
         WorkoutPlan overdue = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
                 Set.of(), WorkoutPlanStatus.OVERDUE);
-        assertTrue(plan.equals(overdue));
+        assertFalse(plan.equals(overdue));
 
         // different exercises -> still returns true because exercises are nested data
         WorkoutPlan withExercises = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
