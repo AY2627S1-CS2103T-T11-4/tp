@@ -2,7 +2,6 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
@@ -36,7 +35,7 @@ public class FindCommandParser implements Parser<FindCommand> {
             argValidator.verifyArgs(argMultimap);
 
             stage = ParsingStage.FIELD_PARSING;
-            nckp = this.parseValidFields(argMultimap.getPreamble());
+            nckp = new NameContainsKeywordsPredicate(ParserUtil.parseNameKeywords(argMultimap.getPreamble()));
 
         } catch (ParseException pe) {
             logger.finer("Parsing of find command failed at " + stage.getMessage());
@@ -44,15 +43,6 @@ public class FindCommandParser implements Parser<FindCommand> {
         }
 
         return new FindCommand(nckp);
-    }
-
-    /**
-     * Parses the validated {@code args} string to produce the FindCommand object.
-     */
-    private NameContainsKeywordsPredicate parseValidFields(String queries) {
-        String[] nameKeywords = queries.split("\\s+");
-
-        return new NameContainsKeywordsPredicate(List.of(nameKeywords));
     }
 
 }
