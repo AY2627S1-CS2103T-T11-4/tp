@@ -14,7 +14,9 @@ import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
 
-/** Deletes an exercise from the selected workout plan. */
+/**
+ * Deletes an exercise from the currently selected workout plan.
+ */
 public class DeleteExerciseCommand extends SingleIndexCommand {
 
     public static final String COMMAND_WORD = "deleteExercise";
@@ -32,6 +34,11 @@ public class DeleteExerciseCommand extends SingleIndexCommand {
     public static final String MESSAGE_PLAN_NO_LONGER_AVAILABLE =
             "The selected workout plan is no longer available. Use viewPlan to select a plan.";
 
+    /**
+     * Creates a command to delete the exercise at the given index.
+     *
+     * @param targetIndex index of the exercise to delete
+     */
     public DeleteExerciseCommand(Index targetIndex) {
         super(targetIndex);
     }
@@ -39,36 +46,46 @@ public class DeleteExerciseCommand extends SingleIndexCommand {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-        Student student = model.getCurrentStudent()
+        Student currentStudent = model.getCurrentStudent()
                 .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
-        WorkoutPlan plan = model.getCurrentWorkoutPlan()
+        WorkoutPlan selectedPlan = model.getCurrentWorkoutPlan()
                 .orElseThrow(() -> new CommandException(MESSAGE_NO_PLAN_SELECTED));
 
-        final Exercise exercise;
+        final Exercise exerciseToDelete;
         try {
-            exercise = plan.getExercisesList().getExercise(targetIndex.getZeroBased());
+            exerciseToDelete = selectedPlan.getExercisesList().getExercise(targetIndex.getZeroBased());
         } catch (ExerciseIndexOutOfBoundsException e) {
             throw new CommandException(MESSAGE_INVALID_EXERCISE_ID, e);
         }
 
         try {
-            model.removeExerciseForWorkoutPlan(student, plan, exercise);
+            model.removeExerciseForWorkoutPlan(currentStudent, selectedPlan, exerciseToDelete);
         } catch (StudentNotFoundException | WorkoutPlanNotFoundException e) {
             throw new CommandException(MESSAGE_PLAN_NO_LONGER_AVAILABLE, e);
         } catch (ExerciseNotFoundException e) {
             throw new CommandException(MESSAGE_INVALID_EXERCISE_ID, e);
         }
-        return new CommandResult(String.format(MESSAGE_SUCCESS, exercise));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, exerciseToDelete));
     }
 
     @Override
     public boolean equals(Object other) {
-        return other == this || other instanceof DeleteExerciseCommand command
-                && targetIndex.equals(command.targetIndex);
+        if (other == this) {
+            return true;
+        }
+
+        // instanceof handles nulls
+        if (!(other instanceof DeleteExerciseCommand otherDeleteExerciseCommand)) {
+            return false;
+        }
+
+        return targetIndex.equals(otherDeleteExerciseCommand.targetIndex);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).add("targetIndex", targetIndex).toString();
+        return new ToStringBuilder(this)
+                .add("targetIndex", targetIndex)
+                .toString();
     }
 }

@@ -458,11 +458,6 @@
     -fx-text-fill: #c7d3d8;
 }
 
-.exercise-plan-description {
-    -fx-text-fill: #c7d3d8;
-    -fx-font-size: 13px;
-}
-
 .exercise-card {
     -fx-background-color: #17262e;
     -fx-background-radius: 8px;

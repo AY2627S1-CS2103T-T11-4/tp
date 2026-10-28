@@ -147,14 +147,30 @@ public class DeleteExerciseCommandTest {
     }
 
     @Test
-    public void equalsAndToString() {
-        DeleteExerciseCommand command = new DeleteExerciseCommand(Index.fromOneBased(1));
+    public void constructor_nullIndex_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new DeleteExerciseCommand(null));
-        assertEquals(command, new DeleteExerciseCommand(Index.fromOneBased(1)));
-        assertFalse(command.equals(new DeleteExerciseCommand(Index.fromOneBased(2))));
-        assertFalse(command.equals(null));
-        assertEquals(DeleteExerciseCommand.class.getCanonicalName() + "{targetIndex="
-                + Index.fromOneBased(1) + "}", command.toString());
+    }
+
+    @Test
+    public void equals() {
+        DeleteExerciseCommand first = new DeleteExerciseCommand(Index.fromOneBased(1));
+        DeleteExerciseCommand copy = new DeleteExerciseCommand(Index.fromOneBased(1));
+        DeleteExerciseCommand different = new DeleteExerciseCommand(Index.fromOneBased(2));
+
+        assertTrue(first.equals(first));
+        assertTrue(first.equals(copy));
+        assertFalse(first.equals(different));
+        assertFalse(first.equals(null));
+        assertFalse(first.equals(1));
+    }
+
+    @Test
+    public void toStringMethod() {
+        Index targetIndex = Index.fromOneBased(1);
+        DeleteExerciseCommand command = new DeleteExerciseCommand(targetIndex);
+        String expected = DeleteExerciseCommand.class.getCanonicalName() + "{targetIndex=" + targetIndex + "}";
+
+        assertEquals(expected, command.toString());
     }
 
     private static WorkoutPlan plan(String title, List<Exercise> exercises) {

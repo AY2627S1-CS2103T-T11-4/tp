@@ -131,8 +131,10 @@ public class ModelManager implements Model {
                 : rebindSelectedPlan(storedStudent, editedStudent, selectedPlan);
         brotherGym.setStudent(storedStudent, editedStudent);
         if (currentStudent.get() == storedStudent) {
-            currentStudent.set(editedStudent);
-            currentWorkoutPlan.set(reboundPlan);
+            setCurrentStudent(editedStudent);
+            if (reboundPlan != null) {
+                setCurrentWorkoutPlan(reboundPlan);
+            }
         }
         logger.info(() -> "Student set in model: " + target.getName() + " -> " + editedStudent.getName());
     }
@@ -316,9 +318,10 @@ public class ModelManager implements Model {
         currentWorkoutPlan.set(null);
     }
 
-    private static WorkoutPlan rebindSelectedPlan(Student original, Student updated, WorkoutPlan selectedPlan) {
-        List<WorkoutPlan> previousPlans = original.getWorkoutPlansList().getWorkoutList();
-        List<WorkoutPlan> updatedPlans = updated.getWorkoutPlansList().getWorkoutList();
+    private static WorkoutPlan rebindSelectedPlan(Student originalStudent, Student updatedStudent,
+            WorkoutPlan selectedPlan) {
+        List<WorkoutPlan> previousPlans = originalStudent.getWorkoutPlansList().getWorkoutList();
+        List<WorkoutPlan> updatedPlans = updatedStudent.getWorkoutPlansList().getWorkoutList();
         int previousIndex = indexOfInstance(previousPlans, selectedPlan);
         if (previousIndex < 0) {
             return null;
@@ -331,9 +334,9 @@ public class ModelManager implements Model {
         return previousPlans.size() == updatedPlans.size() ? updatedPlans.get(previousIndex) : null;
     }
 
-    private static int indexOfInstance(List<WorkoutPlan> plans, WorkoutPlan target) {
-        for (int index = 0; index < plans.size(); index++) {
-            if (plans.get(index) == target) {
+    private static int indexOfInstance(List<WorkoutPlan> workoutPlans, WorkoutPlan target) {
+        for (int index = 0; index < workoutPlans.size(); index++) {
+            if (workoutPlans.get(index) == target) {
                 return index;
             }
         }

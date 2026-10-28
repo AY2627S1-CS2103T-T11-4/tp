@@ -46,9 +46,9 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
     }
 
     /** Displays the selected plan's ordered exercises when one is selected. */
-    public void showStudent(Optional<Student> student, Optional<WorkoutPlan> plan) {
+    public void showStudent(Optional<Student> student, Optional<WorkoutPlan> selectedPlan) {
         requireNonNull(student);
-        requireNonNull(plan);
+        requireNonNull(selectedPlan);
         if (student.isEmpty()) {
             heading.setText("Workout Plans");
             subtitle.setManaged(false);
@@ -61,11 +61,12 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
         Student selectedStudent = student.get();
         String studentName = selectedStudent.getName().toString();
         heading.setText(studentName);
-        subtitle.setText(plan.map(value -> "Workout plan: " + value.getTitle()).orElse("Workout plans"));
+        subtitle.setText(selectedPlan.map(workoutPlan -> "Workout plan: " + workoutPlan.getTitle())
+                .orElse("Workout plans"));
         subtitle.setManaged(true);
         subtitle.setVisible(true);
-        if (plan.isPresent()) {
-            showSelectedPlan(plan.get());
+        if (selectedPlan.isPresent()) {
+            showSelectedPlan(selectedPlan.get());
             return;
         }
         List<WorkoutPlan> workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
@@ -85,33 +86,33 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
         }
     }
 
-    private void showSelectedPlan(WorkoutPlan plan) {
+    private void showSelectedPlan(WorkoutPlan selectedPlan) {
         workoutPlanList.getChildren().clear();
-        VBox details = new VBox(10);
-        details.getStyleClass().add("exercise-list");
-        details.prefWidthProperty().bind(workoutPlanScrollPane.widthProperty().subtract(40));
-        Label planDetails = new Label(plan.getWorkouts().getValue());
-        planDetails.setWrapText(true);
-        planDetails.getStyleClass().add("exercise-plan-description");
-        details.getChildren().add(planDetails);
+        VBox selectedPlanDetails = new VBox(10);
+        selectedPlanDetails.getStyleClass().add("exercise-list");
+        selectedPlanDetails.prefWidthProperty().bind(workoutPlanScrollPane.widthProperty().subtract(40));
+        Label planDescription = new Label(selectedPlan.getWorkouts().getValue());
+        planDescription.setWrapText(true);
+        planDescription.getStyleClass().add("workout-plan-description");
+        selectedPlanDetails.getChildren().add(planDescription);
 
-        List<Exercise> exercises = plan.getExercisesList().getExerciseList();
+        List<Exercise> exercises = selectedPlan.getExercisesList().getExerciseList();
         if (exercises.isEmpty()) {
-            Label emptyExercises = new Label("No exercises in this workout plan.");
-            emptyExercises.getStyleClass().add("empty-message");
-            details.getChildren().add(emptyExercises);
+            Label emptyExercisesMessage = new Label("No exercises in this workout plan.");
+            emptyExercisesMessage.getStyleClass().add("empty-message");
+            selectedPlanDetails.getChildren().add(emptyExercisesMessage);
         } else {
             for (int index = 0; index < exercises.size(); index++) {
                 Exercise exercise = exercises.get(index);
-                Label exerciseCard = new Label((index + 1) + ". " + exercise.getName()
+                Label exerciseLabel = new Label((index + 1) + ". " + exercise.getName()
                         + "\n" + exercise.getDescription());
-                exerciseCard.setWrapText(true);
-                exerciseCard.setMaxWidth(Double.MAX_VALUE);
-                exerciseCard.getStyleClass().add("exercise-card");
-                details.getChildren().add(exerciseCard);
+                exerciseLabel.setWrapText(true);
+                exerciseLabel.setMaxWidth(Double.MAX_VALUE);
+                exerciseLabel.getStyleClass().add("exercise-card");
+                selectedPlanDetails.getChildren().add(exerciseLabel);
             }
         }
-        workoutPlanList.getChildren().add(details);
+        workoutPlanList.getChildren().add(selectedPlanDetails);
         emptyMessage.setManaged(false);
         emptyMessage.setVisible(false);
         workoutPlanScrollPane.setManaged(true);
