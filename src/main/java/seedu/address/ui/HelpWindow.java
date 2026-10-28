@@ -248,17 +248,20 @@ public class HelpWindow extends UiPart<Stage> {
         if (isForwardNavigation || isBackwardNavigation) {
             moveFocus(isForwardNavigation);
             event.consume();
-        } else if (focusedCardIndex >= 0 && event.getCode() == KeyCode.ENTER) {
-            Button useCommandButton = visibleCards.get(focusedCardIndex).useCommandButton();
-            if (useCommandButton.isFocused()) {
-                useCommandButton.fire();
+        } else if (event.getCode() == KeyCode.ENTER) {
+            if (focusedCardIndex >= 0 && isCardFocused(focusedCardIndex)) {
+                visibleCards.get(focusedCardIndex).useCommandButton().requestFocus();
                 event.consume();
-            } else if (isCardFocused(focusedCardIndex)) {
-                useCommandButton.requestFocus();
-                event.consume();
+            } else {
+                fireFocusedButton(event);
             }
-        } else if (closeHelpButton.isFocused() && event.getCode() == KeyCode.ENTER) {
-            closeHelpButton.fire();
+        }
+    }
+
+    /** Fires the focused button and consumes Enter so JavaFX cannot handle it twice. */
+    private void fireFocusedButton(KeyEvent event) {
+        if (getRoot().getScene().getFocusOwner() instanceof Button button) {
+            button.fire();
             event.consume();
         }
     }
@@ -269,7 +272,7 @@ public class HelpWindow extends UiPart<Stage> {
 
         if (focusedCardIndex >= 0) {
             if (forward && focusedCardIndex == visibleCards.size() - 1) {
-                commandSearchField.requestFocus();
+                userGuideButton.requestFocus();
             } else if (!forward && focusedCardIndex == 0) {
                 closeHelpButton.requestFocus();
             } else {
@@ -277,12 +280,24 @@ public class HelpWindow extends UiPart<Stage> {
             }
         } else if (closeHelpButton.isFocused()) {
             if (forward) {
-                focusCard(0);
+                if (visibleCards.isEmpty()) {
+                    userGuideButton.requestFocus();
+                } else {
+                    focusCard(0);
+                }
             } else {
                 commandSearchField.requestFocus();
             }
         } else if (commandSearchField.isFocused()) {
             if (forward) {
+                closeHelpButton.requestFocus();
+            } else {
+                userGuideButton.requestFocus();
+            }
+        } else if (userGuideButton.isFocused()) {
+            if (forward) {
+                commandSearchField.requestFocus();
+            } else if (visibleCards.isEmpty()) {
                 closeHelpButton.requestFocus();
             } else {
                 focusCard(visibleCards.size() - 1);
