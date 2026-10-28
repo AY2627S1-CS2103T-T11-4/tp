@@ -1,6 +1,7 @@
 package seedu.address.testutil;
 
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
@@ -35,7 +36,7 @@ public class StudentUtil {
         sb.append(PREFIX_EMAIL + " " + student.getEmail().value + " ");
         sb.append(PREFIX_ADDRESS + " " + student.getAddress().value + " ");
         student.getTags().stream().forEach(
-            s -> sb.append(PREFIX_TAG + s.tagName + " ")
+            s -> sb.append(PREFIX_TAG).append(" ").append(s.tagName).append(" ")
         );
         return sb.toString();
     }
@@ -52,7 +53,7 @@ public class StudentUtil {
         if (descriptor.getTags().isPresent()) {
             Set<StudentTag> tags = descriptor.getTags().get();
             if (tags.isEmpty()) {
-                sb.append(PREFIX_TAG);
+                sb.append(PREFIX_CLEAR_TAGS);
             } else {
                 tags.forEach(s -> sb.append(PREFIX_TAG).append(" ").append(s.tagName).append(" "));
             }
