@@ -1,4 +1,4 @@
-package seedu.address.ui;
+package seedu.address.ui.help;
 
 import static java.util.Objects.requireNonNull;
 

@@ -1,4 +1,4 @@
-package seedu.address.ui;
+package seedu.address.ui.help;
 
 import static java.util.Objects.requireNonNull;
 
@@ -12,19 +12,16 @@ import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.ui.UiPart;
 
 /**
  * Controller for a help page
@@ -39,7 +36,7 @@ public class HelpWindow extends UiPart<Stage> {
 
     private final HelpSearch helpSearch = new HelpSearch();
     private final Consumer<String> commandFormatHandler;
-    private final List<CommandCard> commandCards = new ArrayList<>();
+    private final List<HelpCommandCard> commandCards = new ArrayList<>();
     private final List<CommandCategoryView> commandCategoryViews = new ArrayList<>();
     private final Label noResultsLabel = new Label("No commands found.");
 
@@ -144,7 +141,7 @@ public class HelpWindow extends UiPart<Stage> {
     private void resetHelpState() {
         helpSearch.setQuery("");
         commandSearchField.setText("");
-        commandCards.forEach(CommandCard::resetInputState);
+        commandCards.forEach(HelpCommandCard::resetInputState);
         filterCommands();
         helpScroll.setVvalue(0);
     }
@@ -198,7 +195,7 @@ public class HelpWindow extends UiPart<Stage> {
 
         VBox commandCardsBox = new VBox(10);
         commandCardsBox.getStyleClass().add("command-cards");
-        List<CommandCard> categoryCards = new ArrayList<>();
+        List<HelpCommandCard> categoryCards = new ArrayList<>();
         category.commands().stream()
                 .map(this::createCommandCard)
                 .forEach(commandCard -> {
@@ -212,92 +209,12 @@ public class HelpWindow extends UiPart<Stage> {
         return new CommandCategoryView(categoryBox, categoryCards);
     }
 
-    private CommandCard createCommandCard(HelpSearch.CommandReference command) {
-        FlowPane commandFormat = new FlowPane(6, 5);
-        commandFormat.setMaxWidth(Double.MAX_VALUE);
-        commandFormat.getStyleClass().add("command-format");
-        Label commandWord = new Label(command.commandWord());
-        commandWord.getStyleClass().add("command-format-token");
-        commandFormat.getChildren().add(commandWord);
-
-        Label description = new Label("Description: " + command.description());
-        description.setWrapText(true);
-        description.setMaxWidth(Double.MAX_VALUE);
-        description.getStyleClass().add("command-description");
-
-        Label exampleLabel = new Label("Example usage:");
-        exampleLabel.getStyleClass().add("example-label");
-
-        Label example = new Label(command.example());
-        example.setWrapText(true);
-        example.setMaxWidth(Double.MAX_VALUE);
-        example.getStyleClass().add("command-example");
-
-        VBox exampleBlock = new VBox(4, exampleLabel, example);
-        exampleBlock.setMaxWidth(Double.MAX_VALUE);
-        exampleBlock.getStyleClass().add("example-block");
-
-        List<FieldControl> fieldControls = command.fields().stream()
-                .map(this::createFieldControl)
-                .toList();
-        Runnable refreshCommandFormat = () -> {
-            commandFormat.getChildren().clear();
-            commandFormat.getChildren().add(commandWord);
-            fieldControls.forEach(fieldControl -> commandFormat.getChildren().addAll(fieldControl.formatNodes()));
-        };
-        fieldControls.forEach(fieldControl -> fieldControl.setLayoutRefresh(refreshCommandFormat));
-        refreshCommandFormat.run();
-
-        Label validationMessage = new Label();
-        validationMessage.setManaged(false);
-        validationMessage.setVisible(false);
-        validationMessage.getStyleClass().add("input-validation-message");
-
-        Button useFormatButton = new Button("Use Command");
-        useFormatButton.setMnemonicParsing(false);
-        useFormatButton.setOnAction(event -> handleCommandSelected(
-                command, fieldControls, validationMessage));
-        useFormatButton.getStyleClass().add("use-format-button");
-
-        HBox actionRow = new HBox(useFormatButton);
-        actionRow.setAlignment(Pos.CENTER_RIGHT);
-        actionRow.setMaxWidth(Double.MAX_VALUE);
-
-        VBox card = new VBox(7, commandFormat, description, exampleBlock, validationMessage, actionRow);
-        card.setMaxWidth(Double.MAX_VALUE);
-        card.setFocusTraversable(true);
-        card.getStyleClass().add("command-card");
-        return new CommandCard(command, card, useFormatButton, fieldControls, validationMessage);
-    }
-
-    private FieldControl createFieldControl(HelpSearch.CommandField field) {
-        FieldControl fieldControl = new FieldControl(field);
-        fieldControl.addField();
-        return fieldControl;
-    }
-
-    private void handleCommandSelected(HelpSearch.CommandReference command,
-                                       List<FieldControl> fieldControls,
-                                       Label validationMessage) {
-        if (fieldControls.isEmpty()) {
-            commandFormatHandler.accept(command.format());
-            return;
-        }
-
-        List<List<String>> values = fieldControls.stream()
-                .map(FieldControl::values)
-                .toList();
-        HelpInput.Result result = HelpInput.build(command, values);
-        validationMessage.setText(result.error());
-        validationMessage.setVisible(!result.isSuccess());
-        validationMessage.setManaged(!result.isSuccess());
-        if (result.isSuccess()) {
-            commandFormatHandler.accept(result.command());
-        }
+    private HelpCommandCard createCommandCard(HelpSearch.CommandReference command) {
+        return new HelpCommandCard(command, commandFormatHandler);
     }
 
     private void handleKeyPressed(KeyEvent event) {
-        List<CommandCard> visibleCards = getVisibleCommandCards();
+        List<HelpCommandCard> visibleCards = getVisibleCommandCards();
         int focusedCardIndex = getFocusedCardIndex(visibleCards);
         if (focusedCardIndex >= 0 && focusedCardIndex < visibleCards.size()
                 && visibleCards.get(focusedCardIndex).isFormControlFocused()) {
@@ -314,7 +231,7 @@ public class HelpWindow extends UiPart<Stage> {
             moveFocus(isForwardNavigation);
             event.consume();
         } else if (focusedCardIndex >= 0 && event.getCode() == KeyCode.ENTER) {
-            CommandCard focusedCard = visibleCards.get(focusedCardIndex);
+            HelpCommandCard focusedCard = visibleCards.get(focusedCardIndex);
             if (focusedCard.hasInputFields()) {
                 focusedCard.focusFirstInput();
                 event.consume();
@@ -331,7 +248,7 @@ public class HelpWindow extends UiPart<Stage> {
         }
     }
 
-    private void handleFormKeyPressed(KeyEvent event, CommandCard card) {
+    private void handleFormKeyPressed(KeyEvent event, HelpCommandCard card) {
         boolean isForward = event.getCode() == KeyCode.RIGHT
                 || (event.getCode() == KeyCode.TAB && !event.isShiftDown());
         boolean isBackward = event.getCode() == KeyCode.LEFT
@@ -348,7 +265,7 @@ public class HelpWindow extends UiPart<Stage> {
     }
 
     private void moveFocus(boolean forward) {
-        List<CommandCard> visibleCards = getVisibleCommandCards();
+        List<HelpCommandCard> visibleCards = getVisibleCommandCards();
         int focusedCardIndex = getFocusedCardIndex(visibleCards);
 
         if (focusedCardIndex >= 0) {
@@ -374,9 +291,9 @@ public class HelpWindow extends UiPart<Stage> {
         }
     }
 
-    private int getFocusedCardIndex(List<CommandCard> visibleCards) {
+    private int getFocusedCardIndex(List<HelpCommandCard> visibleCards) {
         for (int i = 0; i < visibleCards.size(); i++) {
-            CommandCard commandCard = visibleCards.get(i);
+            HelpCommandCard commandCard = visibleCards.get(i);
             if (commandCard.card().isFocused() || commandCard.isFormControlFocused()) {
                 return i;
             }
@@ -389,7 +306,7 @@ public class HelpWindow extends UiPart<Stage> {
     }
 
     private void focusCard(int index) {
-        List<CommandCard> visibleCards = getVisibleCommandCards();
+        List<HelpCommandCard> visibleCards = getVisibleCommandCards();
         if (visibleCards.isEmpty()) {
             commandSearchField.requestFocus();
             return;
@@ -401,7 +318,7 @@ public class HelpWindow extends UiPart<Stage> {
         Platform.runLater(() -> scrollCardIntoView(card));
     }
 
-    private List<CommandCard> getVisibleCommandCards() {
+    private List<HelpCommandCard> getVisibleCommandCards() {
         return commandCards.stream()
                 .filter(commandCard -> commandCard.card().isVisible())
                 .toList();
@@ -412,7 +329,7 @@ public class HelpWindow extends UiPart<Stage> {
 
         for (CommandCategoryView categoryView : commandCategoryViews) {
             boolean hasVisibleCard = false;
-            for (CommandCard commandCard : categoryView.cards()) {
+            for (HelpCommandCard commandCard : categoryView.cards()) {
                 boolean isVisible = helpSearch.matches(commandCard.command());
                 commandCard.card().setVisible(isVisible);
                 commandCard.card().setManaged(isVisible);
@@ -456,214 +373,6 @@ public class HelpWindow extends UiPart<Stage> {
         helpScroll.setVvalue(Math.max(0, Math.min(1, targetScroll / maximumScroll)));
     }
 
-    private record CommandCategoryView(VBox categoryBox, List<CommandCard> cards) {}
+    private record CommandCategoryView(VBox categoryBox, List<HelpCommandCard> cards) {}
 
-    private static final class FieldControl {
-        private final HelpSearch.CommandField field;
-        private final List<TextField> inputs = new ArrayList<>();
-        private final List<Button> removeButtons = new ArrayList<>();
-        private final List<Node> formatNodes = new ArrayList<>();
-        private final Button addButton = new Button("Add tag");
-        private Runnable layoutRefresh;
-
-        FieldControl(HelpSearch.CommandField field) {
-            this.field = field;
-            if (field.repeatable()) {
-                addButton.setMnemonicParsing(false);
-                addButton.setText("+");
-                addButton.setAccessibleText("Add " + field.label());
-                addButton.getStyleClass().add("inline-input-button");
-                addButton.setOnAction(event -> addField());
-            }
-        }
-
-        void addField() {
-            TextField input = new TextField();
-            input.setPromptText(field.label());
-            input.setAccessibleText(field.label() + (field.required() ? " required" : " optional"));
-            input.setPrefWidth(Math.max(95, field.hint().length() * 7));
-            input.setMinWidth(80);
-            input.getStyleClass().add("inline-command-input");
-            inputs.add(input);
-            if (field.repeatable()) {
-                Button removeButton = new Button("-");
-                removeButton.setMnemonicParsing(false);
-                removeButton.setAccessibleText("Remove " + field.label());
-                removeButton.getStyleClass().add("inline-input-button");
-                removeButton.setOnAction(event -> removeField(input, removeButton));
-                removeButtons.add(removeButton);
-            }
-            rebuildFormatNodes();
-            refreshLayout();
-            Platform.runLater(input::requestFocus);
-        }
-
-        void removeField(TextField input, Button removeButton) {
-            if (inputs.size() == 1) {
-                input.clear();
-                Platform.runLater(input::requestFocus);
-                return;
-            }
-            int removedIndex = inputs.indexOf(input);
-            inputs.remove(input);
-            removeButtons.remove(removeButton);
-            rebuildFormatNodes();
-            refreshLayout();
-            TextField focusTarget = inputs.get(Math.min(removedIndex, inputs.size() - 1));
-            Platform.runLater(focusTarget::requestFocus);
-        }
-
-        List<String> values() {
-            return inputs.stream().map(TextField::getText).toList();
-        }
-
-        void reset() {
-            if (field.repeatable()) {
-                while (inputs.size() > 1) {
-                    inputs.remove(inputs.size() - 1);
-                    removeButtons.remove(removeButtons.size() - 1);
-                }
-            }
-            inputs.forEach(TextField::clear);
-            rebuildFormatNodes();
-            refreshLayout();
-        }
-
-        List<Node> focusableNodes() {
-            List<Node> nodes = new ArrayList<>();
-            for (int i = 0; i < inputs.size(); i++) {
-                nodes.add(inputs.get(i));
-                if (field.repeatable()) {
-                    nodes.add(removeButtons.get(i));
-                }
-            }
-            if (field.repeatable()) {
-                nodes.add(addButton);
-            }
-            return nodes;
-        }
-
-        List<Node> formatNodes() {
-            return formatNodes;
-        }
-
-        void setLayoutRefresh(Runnable layoutRefresh) {
-            this.layoutRefresh = layoutRefresh;
-        }
-
-        private void rebuildFormatNodes() {
-            formatNodes.clear();
-            for (int i = 0; i < inputs.size(); i++) {
-                if (!field.prefix().isEmpty()) {
-                    Label prefix = new Label(field.prefix());
-                    prefix.getStyleClass().add("command-format-token");
-                    formatNodes.add(prefix);
-                }
-
-                formatNodes.add(inputs.get(i));
-
-                if (field.repeatable()) {
-                    formatNodes.add(removeButtons.get(i));
-                }
-            }
-            if (field.repeatable()) {
-                formatNodes.add(addButton);
-            }
-        }
-
-        private void refreshLayout() {
-            if (layoutRefresh != null) {
-                layoutRefresh.run();
-            }
-        }
-    }
-
-    private static final class CommandCard {
-        private final HelpSearch.CommandReference command;
-        private final VBox card;
-        private final Button useCommandButton;
-        private final List<FieldControl> fieldControls;
-        private final Label validationMessage;
-
-        CommandCard(HelpSearch.CommandReference command, VBox card, Button useCommandButton,
-                    List<FieldControl> fieldControls, Label validationMessage) {
-            this.command = command;
-            this.card = card;
-            this.useCommandButton = useCommandButton;
-            this.fieldControls = fieldControls;
-            this.validationMessage = validationMessage;
-        }
-
-        HelpSearch.CommandReference command() {
-            return command;
-        }
-
-        VBox card() {
-            return card;
-        }
-
-        Button useCommandButton() {
-            return useCommandButton;
-        }
-
-        boolean hasInputFields() {
-            return !fieldControls.isEmpty();
-        }
-
-        void resetInputState() {
-            fieldControls.forEach(FieldControl::reset);
-            validationMessage.setText("");
-            validationMessage.setVisible(false);
-            validationMessage.setManaged(false);
-        }
-
-        boolean isFormControlFocused() {
-            return useCommandButton.isFocused() || formNodes().stream().anyMatch(Node::isFocused);
-        }
-
-        void focusFirstInput() {
-            formNodes().stream().findFirst().ifPresent(Node::requestFocus);
-        }
-
-        void moveFormFocus(boolean forward) {
-            List<Node> nodes = formNodes();
-            if (nodes.isEmpty()) {
-                return;
-            }
-            int current = -1;
-            for (int i = 0; i < nodes.size(); i++) {
-                if (nodes.get(i).isFocused()) {
-                    current = i;
-                    break;
-                }
-            }
-            int next = current < 0 ? 0 : current + (forward ? 1 : -1);
-            if (next < 0) {
-                next = nodes.size() - 1;
-            } else if (next >= nodes.size()) {
-                next = 0;
-            }
-            nodes.get(next).requestFocus();
-        }
-
-        boolean fireFocusedButton() {
-            return formNodes().stream()
-                    .filter(Button.class::isInstance)
-                    .map(Button.class::cast)
-                    .filter(Button::isFocused)
-                    .findFirst()
-                    .map(button -> {
-                        button.fire();
-                        return true;
-                    })
-                    .orElse(false);
-        }
-
-        private List<Node> formNodes() {
-            List<Node> nodes = new ArrayList<>();
-            fieldControls.forEach(fieldControl -> nodes.addAll(fieldControl.focusableNodes()));
-            nodes.add(useCommandButton);
-            return nodes;
-        }
-    }
 }

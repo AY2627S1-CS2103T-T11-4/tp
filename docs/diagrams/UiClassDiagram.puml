@@ -16,10 +16,16 @@ Class ResultDisplay
 Class StudentListPanel
 Class WorkoutPlanListPanel
 Class StatusBarFooter
-Class HelpWindow
-Class HelpSearch
 Class StudentCard
 Class WorkoutPlanCard
+
+package Help <<Rectangle>> {
+Class HelpWindow
+Class HelpCommandCard
+Class HelpFieldControl
+Class HelpSearch
+Class HelpInput
+}
 }
 
 package Logic <<Rectangle>> {
@@ -45,6 +51,9 @@ MainWindow *-down-> "1" WorkoutPlanListPanel
 MainWindow *-down-> "1" StatusBarFooter
 MainWindow --> "0..1" HelpWindow
 HelpWindow *-down-> "1" HelpSearch
+HelpWindow *-down-> "1" HelpInput
+HelpWindow *-down-> "*" HelpCommandCard
+HelpCommandCard *-down-> "*" HelpFieldControl
 
 StudentListPanel *-down-> "*" StudentCard
 WorkoutPlanListPanel *-down-> "*" WorkoutPlanCard
@@ -60,6 +69,8 @@ StudentListPanel -[hidden]right- WorkoutPlanListPanel
 WorkoutPlanListPanel -[hidden]right- StatusBarFooter
 StatusBarFooter -[hidden]right- HelpWindow
 HelpWindow -[hidden]right- HelpSearch
+HelpSearch -[hidden]right- HelpInput
+HelpCommandCard -[hidden]right- HelpFieldControl
 StudentCard -[hidden]right- WorkoutPlanCard
 
 @enduml
