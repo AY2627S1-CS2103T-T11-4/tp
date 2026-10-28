@@ -207,9 +207,7 @@ Examples:
 #### Changing statuses of commands: `markPlan` and `unmarkPlan`
 
 By default, workout plans have a `PENDING` status, which will change to `OVERDUE` when the `workoutDate` has passed.
-* `addPlan` and `editPlan` immediately refresh the added or edited plan's status based on its due date.
-  Completed plans remain completed when edited.
-* `viewStudent` refreshes the statuses of all plans belonging to the selected student.
+
 * The status remains at `PENDING` when the current date is equal to the `workoutDate`,
   only changing to `OVERDUE` on the next day
 
