@@ -135,7 +135,8 @@ public class JsonAdaptedWorkoutPlanTest {
 
     @Test
     public void toModelType_blankDescription_throwsIllegalValueException() {
-        for (String description : List.of("", " ", "\t\n")) {
+        for (String description : List.of("", " ", "\t\n",
+                "a".repeat(WorkoutDescription.MAX_LENGTH + 1))) {
             JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan("Strength", description, "2023-11-15");
             IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
             assertEquals(WorkoutDescription.MESSAGE_CONSTRAINTS, exception.getMessage());
