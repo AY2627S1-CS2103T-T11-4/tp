@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.exercise.ExerciseDescription;
+import seedu.address.model.exercise.ExerciseName;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
@@ -189,6 +191,19 @@ public class ParserUtilTest {
         String emailWithWhitespace = WHITESPACE + VALID_EMAIL + WHITESPACE;
         Email expectedEmail = new Email(VALID_EMAIL);
         assertEquals(expectedEmail, ParserUtil.parseEmail(emailWithWhitespace));
+    }
+
+    @Test
+    public void parseExerciseFields_validValues_returnTrimmedValues() throws Exception {
+        assertEquals(new ExerciseName("Front Squat"), ParserUtil.parseExerciseName("  Front Squat  "));
+        assertEquals(new ExerciseDescription("Three sets"),
+                ParserUtil.parseExerciseDescription("  Three sets  "));
+    }
+
+    @Test
+    public void parseExerciseFields_invalidValues_throwParseException() {
+        assertThrows(ParseException.class, () -> ParserUtil.parseExerciseName("   "));
+        assertThrows(ParseException.class, () -> ParserUtil.parseExerciseDescription("   "));
     }
 
     @Test

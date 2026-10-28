@@ -109,7 +109,7 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 * **Student list and selection:** The UI observes the filtered student list so it reflects changes to the student filter. `MainWindow` observes the current-student property and updates the student selection and workout-plan panel when it changes.
 * **GUI settings:** The UI reads these settings when initializing the window and updates them through `Logic` when exiting.
-* **Workout plans:** The `home` command shows all students and clears the current selection. Plan commands operate on the currently selected student.
+* **Workout plans and exercises:** The `home` command shows all students and clears the current selection. Plan commands operate on the selected student; `viewPlan` selects a plan within that student. Exercise commands operate only on this selected plan.
 
 #### Parser Classes
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
@@ -122,7 +122,7 @@ Here are the classes dedicated to parsing the arguments of the command strings:
 
 How the parsing works:
 * When called upon to parse a user command, the `BrotherGymParser` class creates either an `XYZCommandParser` or a `SingleIndexCommandParser`
-  * `addStudent`, `addPlan`, `addExercise`, `editStudent` and `editPlan` commands each have a dedicated `XYZCommandParser`
+  * `addStudent`, `addPlan`, `addExercise`, `editStudent`, `editPlan`, and `editExercise` commands each have a dedicated `XYZCommandParser`
     (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`),
   * `viewStudent`, `viewPlan`, `deleteStudent`, `deletePlan`, and `deleteExercise` commands are `SingleIndexCommand`s that only parse a single index,
     hence they use the same generic `SingleIndexCommandParser`
@@ -300,7 +300,7 @@ Workout-plan statuses are refreshed explicitly when `viewStudent` is executed. `
 
 Changing either selection notifies `MainWindow`, which passes both to `WorkoutPlanListPanel#showStudent()`. With no selected plan, the panel shows the student's plan cards. `viewPlan` selects a plan and the panel shows its card above numbered exercise entries. An empty plan shows an empty message. With no current student, the panel prompts the user to select one.
 
-`ModelManager` rebinds the selected plan when an edit or exercise change replaces it with an immutable object. It clears the selection when its plan or student is removed, or navigation leaves that student. This keeps the view and subsequent exercise commands on the same stored plan.
+The same observable flow redraws the panel after commands such as `markPlan`, `unmarkPlan`, `editExercise`, and `deleteExercise` replace the selected plan. `ModelManager` rebinds the selected plan when an edit or exercise change replaces it with an immutable object. It clears the selection when its plan or student is removed, or navigation leaves that student. This keeps the view and subsequent exercise commands on the same stored plan.
 
 Each `WorkoutPlanCard` reads the plan's title, date, workout description, tags, and status through `WorkoutPlan` getters. Tags are sorted by name and rendered individually as labels, giving a stable display order without relying on `WorkoutPlan#toString()`. The card maps the status to visible `DONE`, `OVERDUE`, or `PENDING` text and applies matching CSS classes to both the badge and card.
 
@@ -333,6 +333,12 @@ The following sequence diagram shows how the panel is updated when the user exec
 `deleteExercise EXERCISE_ID` uses `SingleIndexCommandParser` and the one-based exercise number shown by `viewPlan`. It requires a selected student and plan. Missing selection or an invalid index leaves the model unchanged.
 
 `Model#removeExerciseForWorkoutPlan` replaces the immutable exercise list, plan, and student. The selected plan is rebound to its replacement, so the panel and subsequent exercise indexes reflect the deletion. Student and plan edits and status changes retain exercises; removing a selected parent or clearing data clears its selection.
+
+### Editing an exercise
+
+`EditExerciseCommandParser` accepts a displayed one-based exercise index and optional `--name` and `--description` values. It rejects repeated or unsupported prefixes and requires at least one edited field.
+
+`EditExerciseCommand` preserves omitted fields and calls `Model#setExerciseForWorkoutPlan`. The model replaces the immutable exercise list, workout plan, and student while retaining the exercise position and unrelated data. Domain failures are translated into command errors before any model state changes.
 
 ### \[Proposed\] Undo/redo feature
 

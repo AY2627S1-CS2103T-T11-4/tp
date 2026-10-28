@@ -19,6 +19,8 @@ import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteExerciseCommand;
 import seedu.address.logic.commands.DeletePlanCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
+import seedu.address.logic.commands.EditExerciseCommand;
+import seedu.address.logic.commands.EditExerciseCommand.EditExerciseDescriptor;
 import seedu.address.logic.commands.EditPlanCommand;
 import seedu.address.logic.commands.EditStudentCommand;
 import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
@@ -95,6 +97,17 @@ public class BrotherGymParserTest {
     public void parseCommand_deleteExerciseInvalidIndex_throwsParseException() {
         assertThrows(ParseException.class, () -> parser.parseCommand(DeleteExerciseCommand.COMMAND_WORD + " 0"));
         assertThrows(ParseException.class, () -> parser.parseCommand(DeleteExerciseCommand.COMMAND_WORD + " abc"));
+    }
+
+    @Test
+    public void parseCommand_editExercise() throws Exception {
+        EditExerciseDescriptor descriptor = new EditExerciseDescriptor();
+        descriptor.setName(new ExerciseName("Front Squat"));
+
+        EditExerciseCommand command = (EditExerciseCommand) parser.parseCommand(
+                EditExerciseCommand.COMMAND_WORD + " 1 --name Front Squat");
+
+        assertEquals(new EditExerciseCommand(INDEX_FIRST, descriptor), command);
     }
 
     @Test
