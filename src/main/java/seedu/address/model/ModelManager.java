@@ -191,6 +191,10 @@ public class ModelManager implements Model {
         Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
                 storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
         setStudent(storedStudent, updatedStudent);
+
+        logger.info(() -> "Exercise added for student " + student.getName() + " in workout plan "
+                + plan.getTitle() + ": " + exercise + "; Total number of exercises: "
+                + updatedExercises.getExerciseList().size());
     }
 
     @Override
@@ -210,6 +214,9 @@ public class ModelManager implements Model {
         Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
                 storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
         setStudent(storedStudent, updatedStudent);
+
+        logger.info(() -> "Exercise set for student " + student.getName() + " in workout plan "
+                + plan.getTitle() + ": " + target + " -> " + editedExercise);
     }
 
     @Override
@@ -228,6 +235,10 @@ public class ModelManager implements Model {
         Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
                 storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
         setStudent(storedStudent, updatedStudent);
+
+        logger.info(() -> "Exercise removed for student " + student.getName() + " in workout plan "
+                + plan.getTitle() + ": " + target + "; Total number of exercises: "
+                + updatedExercises.getExerciseList().size());
     }
 
     @Override
