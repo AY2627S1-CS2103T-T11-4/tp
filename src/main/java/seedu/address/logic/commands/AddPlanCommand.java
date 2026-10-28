@@ -20,12 +20,15 @@ public class AddPlanCommand extends Command {
 
     public static final String COMMAND_WORD = "addPlan";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Adds a workout plan to the Student currently being viewed.\n"
-            + "Parameters: PLAN_TITLE " + PREFIX_PLAN + " DESCRIPTION " + PREFIX_DATE + " DATE(DDMMYYYY) ["
-            + PREFIX_TAG + " TAG]...\n"
-            + "Example: " + COMMAND_WORD + " Strength " + PREFIX_PLAN + " Upper body " + PREFIX_DATE
-            + " 08102025 " + PREFIX_TAG + " strength " + PREFIX_TAG + " upperbody";
+    public static final String MESSAGE_DESCRIPTION =
+            "Adds a workout plan to the Student currently being viewed.";
+    public static final String MESSAGE_PARAMETERS = "PLAN_TITLE " + PREFIX_PLAN + " DESCRIPTION " + PREFIX_DATE
+            + " DATE(DDMMYYYY) [" + PREFIX_TAG + " TAG]...";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " Strength " + PREFIX_PLAN + " Upper body "
+            + PREFIX_DATE + " 08102025 " + PREFIX_TAG + " strength " + PREFIX_TAG + " upperbody";
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
+            + "Parameters: " + MESSAGE_PARAMETERS + "\n"
+            + "Example: " + MESSAGE_EXAMPLE;
 
     public static final String MESSAGE_SUCCESS = "New workout added: %1$s";
     public static final String MESSAGE_NO_STUDENT_SELECTED =

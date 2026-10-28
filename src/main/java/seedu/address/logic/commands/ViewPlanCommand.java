@@ -15,10 +15,12 @@ import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsExc
 public class ViewPlanCommand extends SingleIndexCommand {
     public static final String COMMAND_WORD = "viewPlan";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Displays selected workout plan\n"
-            + "Parameters: PLAN_ID (must be a positive integer)\n"
-            + "Example: " + COMMAND_WORD + " 1";
+    public static final String MESSAGE_DESCRIPTION = "Displays selected workout plan";
+    public static final String MESSAGE_PARAMETERS = "PLAN_ID (must be a positive integer)";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1";
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
+            + "Parameters: " + MESSAGE_PARAMETERS + "\n"
+            + "Example: " + MESSAGE_EXAMPLE;
 
     public static final String MESSAGE_SUCCESS = "Viewing workout plan:\n%1$s";
     public static final String MESSAGE_NO_STUDENT_SELECTED =
