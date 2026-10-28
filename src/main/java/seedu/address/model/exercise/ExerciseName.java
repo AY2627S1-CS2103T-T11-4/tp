@@ -9,9 +9,8 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public final class ExerciseName {
 
-    public static final String MESSAGE_CONSTRAINTS =
-            "Names should only contain alphanumeric characters and spaces, and should not be blank";
-    public static final String VALIDATION_REGEX = "[\\p{Alnum}][\\p{Alnum} ]*";
+    public static final String MESSAGE_CONSTRAINTS = "Exercise names should not be blank";
+    public static final String VALIDATION_REGEX = ".*\\S.*";
 
     private final String value;
 
@@ -26,7 +25,7 @@ public final class ExerciseName {
         value = name;
     }
 
-    /** Returns true if {@code name} follows the same rules as a student name. */
+    /** Returns true if {@code name} contains at least one non-whitespace character. */
     public static boolean isValidName(String name) {
         requireNonNull(name);
         return name.matches(VALIDATION_REGEX);

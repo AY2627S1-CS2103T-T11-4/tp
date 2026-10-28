@@ -39,9 +39,10 @@ public class ExerciseNameTest {
         assertFalse(ExerciseName.isValidName("")); // empty string
         assertFalse(ExerciseName.isValidName(" ")); // spaces only
         assertFalse(ExerciseName.isValidName("\t")); // whitespace only
-        assertFalse(ExerciseName.isValidName("^")); // only non-alphanumeric characters
-        assertFalse(ExerciseName.isValidName("peter*")); // contains non-alphanumeric characters
-        assertFalse(ExerciseName.isValidName(" Squats")); // starts with whitespace
+        assertTrue(ExerciseName.isValidName("^")); // symbols are allowed when nonblank
+        assertTrue(ExerciseName.isValidName("peter*")); // symbols are allowed when nonblank
+        assertTrue(ExerciseName.isValidName(" Squats")); // leading whitespace is allowed
+        assertTrue(ExerciseName.isValidName("Squats ")); // trailing whitespace is allowed
 
         // valid names
         assertTrue(ExerciseName.isValidName("peter jack")); // alphabets only
