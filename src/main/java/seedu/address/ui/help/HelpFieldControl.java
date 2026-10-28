@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
@@ -16,6 +17,7 @@ final class HelpFieldControl {
     private final List<Button> removeButtons = new ArrayList<>();
     private final List<Node> formatNodes = new ArrayList<>();
     private final Button addButton = new Button();
+    private final Label addButtonLabel = new Label();
     private boolean active;
     private Runnable layoutRefresh;
 
@@ -157,8 +159,14 @@ final class HelpFieldControl {
 
     private void configureAddButton() {
         addButton.setMnemonicParsing(false);
-        addButton.setText(field.controlName() + "+");
+        String buttonText = field.controlName() + "+";
+        addButton.setText(buttonText);
         addButton.setAccessibleText("Add " + field.label());
+        addButtonLabel.setText(buttonText);
+        addButtonLabel.setMouseTransparent(true);
+        addButtonLabel.getStyleClass().add("optional-field-button-label");
+        addButton.setGraphic(addButtonLabel);
+        addButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         addButton.setMinWidth(Math.max(38, field.controlName().length() * 8 + 16));
         addButton.setPrefWidth(Math.max(38, field.controlName().length() * 8 + 16));
         addButton.getStyleClass().add("inline-input-button");

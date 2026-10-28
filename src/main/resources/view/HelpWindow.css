@@ -190,8 +190,17 @@
 }
 
 .optional-field-button {
-    -fx-font-size: 11px;
+    -fx-content-display: graphic-only;
+    -fx-min-width: 56px;
+    -fx-pref-width: 56px;
     -fx-padding: 0 8px 0 8px;
+}
+
+.optional-field-button-label {
+    -fx-font-family: "Cascadia Mono", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #edf4f7;
 }
 
 .input-validation-message {
