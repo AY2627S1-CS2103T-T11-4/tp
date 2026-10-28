@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import seedu.address.model.tag.WorkoutPlanTag;
+import seedu.address.model.workoutplan.exceptions.AlreadyMarkedException;
+import seedu.address.model.workoutplan.exceptions.AlreadyUnmarkedException;
 
 /**
  * Represents a workout plan in BrotherGym.
@@ -77,16 +79,28 @@ public final class WorkoutPlan {
         return status;
     }
 
-    /** Returns this plan marked as completed. */
+    /**
+     * Returns this plan marked as completed.
+     *
+     * @throws AlreadyMarkedException If this plan is already completed.
+     */
     public WorkoutPlan mark() {
+        if (status == WorkoutPlanStatus.COMPLETED) {
+            throw new AlreadyMarkedException();
+        }
         return withStatus(WorkoutPlanStatus.COMPLETED);
     }
 
     /**
      * Returns this plan unmarked, with its status determined by today's date.
      * Uses the same date rule as {@link #updateState(LocalDate)}.
+     *
+     * @throws AlreadyUnmarkedException If this plan is pending or overdue.
      */
     public WorkoutPlan unmark() {
+        if (status != WorkoutPlanStatus.COMPLETED) {
+            throw new AlreadyUnmarkedException();
+        }
         return withStatus(statusForDate(LocalDate.now()));
     }
 

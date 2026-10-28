@@ -34,8 +34,6 @@ public class UnmarkPlanCommandTest {
         assertTransition(today.minusDays(1), WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.OVERDUE);
         assertTransition(today, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.PENDING);
         assertTransition(today.plusDays(1), WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.PENDING);
-        assertTransition(today.minusDays(1), WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.OVERDUE);
-        assertTransition(today.plusDays(1), WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
     }
 
     private void assertTransition(LocalDate deadline, WorkoutPlanStatus initialStatus,
@@ -63,8 +61,22 @@ public class UnmarkPlanCommandTest {
         assertEquals(initialStatus, target.getStatus());
         assertEquals(String.format(UnmarkPlanCommand.MESSAGE_SUCCESS, expectedPlan), result.getFeedbackToUser());
 
-        command.execute(model);
-        assertEquals(updated, model.getCurrentStudent().orElseThrow());
+        assertCommandFailure(command, model, UnmarkPlanCommand.MESSAGE_ALREADY_UNMARKED);
+        assertSame(updated, model.getCurrentStudent().orElseThrow());
+    }
+
+    @Test
+    public void execute_unmarkedPlan_throwsCommandExceptionWithoutChangingSelection() {
+        for (WorkoutPlanStatus status : List.of(WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE)) {
+            Student student = withPlans(ALICE, List.of(plan("Target", LocalDate.now().minusDays(1), status)));
+            Model model = new ModelManager();
+            model.addStudent(student);
+            model.setCurrentStudent(student);
+
+            assertCommandFailure(new UnmarkPlanCommand(Index.fromOneBased(1)), model,
+                    UnmarkPlanCommand.MESSAGE_ALREADY_UNMARKED);
+            assertSame(student, model.getCurrentStudent().orElseThrow());
+        }
     }
 
     @Test

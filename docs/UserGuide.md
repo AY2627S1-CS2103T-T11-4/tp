@@ -222,6 +222,7 @@ By default, workout plans have a `PENDING` status, which will change to `OVERDUE
 Format: `markPlan PLAN_ID`
 
 * Marks the workout plan at the specified `PLAN_ID` as `COMPLETED` 
+* Shows an error if the workout plan is already marked as completed
 * The plan id refers to the index number shown in the displayed list of workout plans
 * The plan id **must be a positive integer** 1, 2, 3, ...
 
@@ -230,6 +231,7 @@ Format: `markPlan PLAN_ID`
 Format: `unmarkPlan PLAN_ID`
 
 * Reverts the status of the workout plan at the specified `PLAN_ID`
+* Shows an error if the workout plan is already unmarked (`PENDING` or `OVERDUE`)
 * The plan id refers to the index number shown in the displayed list of workout plans
 * The plan id **must be a positive integer** 1, 2, 3, ...
 

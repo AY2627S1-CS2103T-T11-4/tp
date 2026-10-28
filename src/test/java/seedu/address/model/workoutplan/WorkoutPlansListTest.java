@@ -15,6 +15,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.tag.WorkoutPlanTag;
+import seedu.address.model.workoutplan.exceptions.AlreadyMarkedException;
+import seedu.address.model.workoutplan.exceptions.AlreadyUnmarkedException;
 import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
@@ -99,8 +101,9 @@ public class WorkoutPlansListTest {
         assertEquals(WorkoutPlanStatus.COMPLETED, marked.getWorkoutList().get(0).getStatus());
         assertEquals(WorkoutPlanStatus.OVERDUE, unmarked.getWorkoutList().get(0).getStatus());
         assertSame(SECOND, marked.getWorkoutList().get(1));
-        assertSame(marked, marked.markWorkoutPlan(0));
-        assertSame(unmarked, unmarked.unmarkWorkoutPlan(0));
+        assertThrows(AlreadyMarkedException.class, () -> marked.markWorkoutPlan(0));
+        assertThrows(AlreadyUnmarkedException.class, () -> unmarked.unmarkWorkoutPlan(0));
+        assertThrows(AlreadyUnmarkedException.class, () -> original.unmarkWorkoutPlan(0));
         assertThrows(WorkoutPlanIndexOutOfBoundsException.class, () -> original.markWorkoutPlan(2));
         assertThrows(WorkoutPlanIndexOutOfBoundsException.class, () -> original.unmarkWorkoutPlan(-1));
     }

@@ -16,6 +16,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.tag.WorkoutPlanTag;
+import seedu.address.model.workoutplan.exceptions.AlreadyMarkedException;
+import seedu.address.model.workoutplan.exceptions.AlreadyUnmarkedException;
 
 public class WorkoutPlanTest {
 
@@ -105,7 +107,8 @@ public class WorkoutPlanTest {
         assertEquals(WorkoutPlanStatus.COMPLETED, marked.getStatus());
         assertEquals(WorkoutPlanStatus.PENDING, pending.getStatus());
         assertEquals(pending.getDate(), marked.getDate());
-        assertSame(marked, marked.mark());
+        assertThrows(AlreadyMarkedException.class, marked::mark);
+        assertEquals(WorkoutPlanStatus.COMPLETED, marked.getStatus());
     }
 
     @Test
@@ -121,7 +124,16 @@ public class WorkoutPlanTest {
         assertEquals(WorkoutPlanStatus.COMPLETED, past.getStatus());
 
         WorkoutPlan unmarked = past.unmark();
-        assertSame(unmarked, unmarked.unmark());
+        assertThrows(AlreadyUnmarkedException.class, unmarked::unmark);
+        assertEquals(WorkoutPlanStatus.OVERDUE, unmarked.getStatus());
+    }
+
+    @Test
+    public void unmark_pendingPlan_throwsAlreadyUnmarkedException() {
+        WorkoutPlan pending = planForDate(LocalDate.now().minusDays(1), WorkoutPlanStatus.PENDING);
+
+        assertThrows(AlreadyUnmarkedException.class, pending::unmark);
+        assertEquals(WorkoutPlanStatus.PENDING, pending.getStatus());
     }
 
     private static WorkoutPlan planForDate(LocalDate deadline, WorkoutPlanStatus status) {
