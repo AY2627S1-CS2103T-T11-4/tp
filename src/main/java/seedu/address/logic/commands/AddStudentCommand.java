@@ -11,6 +11,7 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.exceptions.StudentListFullException;
 
 /**
  * Adds a student to the student list.
@@ -34,6 +35,8 @@ public class AddStudentCommand extends Command {
 
     public static final String MESSAGE_SUCCESS = "New student added: %1$s";
     public static final String MESSAGE_DUPLICATE_STUDENT = "This student already exists in the student list.";
+    public static final String MESSAGE_STUDENT_LIST_FULL = "The student list is full. "
+            + "Delete a student before adding another.";
 
     private final Student toAdd;
 
@@ -53,7 +56,11 @@ public class AddStudentCommand extends Command {
             throw new CommandException(MESSAGE_DUPLICATE_STUDENT);
         }
 
-        model.addStudent(toAdd);
+        try {
+            model.addStudent(toAdd);
+        } catch (StudentListFullException e) {
+            throw new CommandException(MESSAGE_STUDENT_LIST_FULL, e);
+        }
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
     }
 
