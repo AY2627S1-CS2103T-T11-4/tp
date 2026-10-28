@@ -10,9 +10,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.tag.WorkoutPlanTag;
+import seedu.address.model.workoutplan.exceptions.AlreadyMarkedException;
+import seedu.address.model.workoutplan.exceptions.AlreadyUnmarkedException;
 import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
@@ -58,12 +62,32 @@ public class WorkoutPlansListTest {
     @Test
     public void addWorkoutPlan_appendsInNewList() {
         WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST));
-        WorkoutPlansList updated = original.addWorkoutPlan(SECOND);
+        WorkoutPlan differentTitle = new WorkoutPlan(new WorkoutTitle("Cardio"), FIRST.getWorkouts(),
+                FIRST.getDate(), FIRST.getTags(), WorkoutPlanStatus.OVERDUE);
+        WorkoutPlansList updated = original.addWorkoutPlan(differentTitle);
 
         assertEquals(List.of(FIRST), original.getWorkoutList());
-        assertEquals(List.of(FIRST, SECOND), updated.getWorkoutList());
+        assertEquals(List.of(FIRST, differentTitle), updated.getWorkoutList());
         assertThrows(NullPointerException.class, () -> original.addWorkoutPlan(null));
         assertThrows(DuplicateWorkoutPlanException.class, () -> original.addWorkoutPlan(FIRST));
+    }
+
+    @Test
+    public void addWorkoutPlan_sameDetailsAcrossStatuses_throwsDuplicateWorkoutPlanException() {
+        for (WorkoutPlanStatus existingStatus : List.of(WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.COMPLETED)) {
+            WorkoutPlan existing = new WorkoutPlan(FIRST.getTitle(), FIRST.getWorkouts(), FIRST.getDate(),
+                    FIRST.getTags(), existingStatus);
+            WorkoutPlansList plans = new WorkoutPlansList(List.of(existing));
+            for (WorkoutPlanStatus newStatus : List.of(WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE)) {
+                WorkoutPlan newPlan = new WorkoutPlan(FIRST.getTitle(), FIRST.getWorkouts(), FIRST.getDate(),
+                        Set.of(new WorkoutPlanTag("different")), newStatus);
+                assertThrows(DuplicateWorkoutPlanException.class, () -> plans.addWorkoutPlan(newPlan));
+            }
+        }
+
+        WorkoutPlansList plans = new WorkoutPlansList(List.of(FIRST));
+        assertThrows(DuplicateWorkoutPlanException.class, () -> plans.markWorkoutPlan(0).addWorkoutPlan(FIRST));
+        assertThrows(DuplicateWorkoutPlanException.class, () -> plans.updateState().addWorkoutPlan(FIRST));
     }
 
     @Test
@@ -77,8 +101,9 @@ public class WorkoutPlansListTest {
         assertEquals(WorkoutPlanStatus.COMPLETED, marked.getWorkoutList().get(0).getStatus());
         assertEquals(WorkoutPlanStatus.OVERDUE, unmarked.getWorkoutList().get(0).getStatus());
         assertSame(SECOND, marked.getWorkoutList().get(1));
-        assertSame(marked, marked.markWorkoutPlan(0));
-        assertSame(unmarked, unmarked.unmarkWorkoutPlan(0));
+        assertThrows(AlreadyMarkedException.class, () -> marked.markWorkoutPlan(0));
+        assertThrows(AlreadyUnmarkedException.class, () -> unmarked.unmarkWorkoutPlan(0));
+        assertThrows(AlreadyUnmarkedException.class, () -> original.unmarkWorkoutPlan(0));
         assertThrows(WorkoutPlanIndexOutOfBoundsException.class, () -> original.markWorkoutPlan(2));
         assertThrows(WorkoutPlanIndexOutOfBoundsException.class, () -> original.unmarkWorkoutPlan(-1));
     }
@@ -128,6 +153,45 @@ public class WorkoutPlansListTest {
 
         assertEquals(List.of(replacement, SECOND), updated.getWorkoutList());
         assertEquals(List.of(FIRST, SECOND), original.getWorkoutList());
+    }
+
+    @Test
+    public void setWorkoutPlan_titleEditMatchesOverduePlan_throwsDuplicateWorkoutPlanException() {
+        assertTitleEditMatchingPlanIsRejected(WorkoutPlanStatus.OVERDUE);
+    }
+
+    @Test
+    public void setWorkoutPlan_titleEditMatchesCompletedPlan_throwsDuplicateWorkoutPlanException() {
+        assertTitleEditMatchingPlanIsRejected(WorkoutPlanStatus.COMPLETED);
+    }
+
+    @Test
+    public void setWorkoutPlan_titleEditRemainsUnique_replacesTarget() {
+        WorkoutPlan existing = new WorkoutPlan(FIRST.getTitle(), FIRST.getWorkouts(), FIRST.getDate(),
+                FIRST.getTags(), WorkoutPlanStatus.COMPLETED);
+        WorkoutPlan target = new WorkoutPlan(new WorkoutTitle("Cardio"), FIRST.getWorkouts(), FIRST.getDate(),
+                FIRST.getTags(), WorkoutPlanStatus.PENDING);
+        WorkoutPlan edited = new WorkoutPlan(new WorkoutTitle("Mobility"), target.getWorkouts(), target.getDate(),
+                target.getTags(), target.getStatus());
+        WorkoutPlansList plans = new WorkoutPlansList(List.of(existing, target));
+
+        WorkoutPlansList updated = plans.setWorkoutPlan(target, edited);
+
+        assertEquals(List.of(existing, edited), updated.getWorkoutList());
+        assertEquals(List.of(existing, target), plans.getWorkoutList());
+    }
+
+    private static void assertTitleEditMatchingPlanIsRejected(WorkoutPlanStatus existingStatus) {
+        WorkoutPlan existing = new WorkoutPlan(FIRST.getTitle(), FIRST.getWorkouts(), FIRST.getDate(),
+                FIRST.getTags(), existingStatus);
+        WorkoutPlan target = new WorkoutPlan(new WorkoutTitle("Cardio"), existing.getWorkouts(), existing.getDate(),
+                Set.of(new WorkoutPlanTag("different")), WorkoutPlanStatus.PENDING);
+        WorkoutPlan edited = new WorkoutPlan(existing.getTitle(), target.getWorkouts(), target.getDate(),
+                target.getTags(), target.getStatus());
+        WorkoutPlansList plans = new WorkoutPlansList(List.of(existing, target));
+
+        assertThrows(DuplicateWorkoutPlanException.class, () -> plans.setWorkoutPlan(target, edited));
+        assertEquals(List.of(existing, target), plans.getWorkoutList());
     }
 
     @Test

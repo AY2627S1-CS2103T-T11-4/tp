@@ -17,6 +17,7 @@ import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 import static seedu.address.testutil.TypicalWorkouts.LEG_DAY;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -74,6 +75,24 @@ public class EditStudentCommandTest {
 
         Model expectedModel = new ModelManager(new BrotherGym(model.getBrotherGym()), new UserPrefs());
         expectedModel.setStudent(lastStudent, editedStudent);
+
+        assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_explicitEmptyTagSet_clearsTags() {
+        Student studentToEdit = model.getFilteredStudentList().get(INDEX_FIRST.getZeroBased());
+        EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withTags().build();
+        EditStudentCommand editStudentCommand = new EditStudentCommand(INDEX_FIRST, descriptor);
+
+        Student editedStudent = new Student(studentToEdit.getName(), studentToEdit.getPhone(),
+                studentToEdit.getEmail(), studentToEdit.getAddress(), Set.of(),
+                studentToEdit.getWorkoutPlansList());
+        String expectedMessage = String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS,
+                Messages.format(editedStudent));
+
+        Model expectedModel = new ModelManager(new BrotherGym(model.getBrotherGym()), new UserPrefs());
+        expectedModel.setStudent(studentToEdit, editedStudent);
 
         assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
     }

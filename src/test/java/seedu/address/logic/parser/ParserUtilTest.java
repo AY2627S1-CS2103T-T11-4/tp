@@ -2,9 +2,11 @@ package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
+import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -16,6 +18,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.core.index.Index;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -42,7 +46,7 @@ public class ParserUtilTest {
     private static final String INVALID_DATE_CALENDAR_VALUE = "31132026";
 
     private static final String VALID_NAME = "Rachel Walker";
-    private static final String VALID_PHONE = "123456";
+    private static final String VALID_PHONE = "1234567";
     private static final String VALID_ADDRESS = "123 Main Street #0505";
     private static final String VALID_EMAIL = "rachel@example.com";
     private static final String VALID_TAG_1 = "friend";
@@ -93,12 +97,23 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseIndex_leadingZeros_throwsParseException() {
+        String paddedIndex = "0".repeat(24) + "1";
+        assertThrows(ParseException.class, MESSAGE_INVALID_INDEX, () -> ParserUtil.parseIndex("01"));
+        assertThrows(ParseException.class, MESSAGE_INVALID_INDEX, () -> ParserUtil.parseIndex(paddedIndex));
+    }
+
+    @Test
     public void parseIndex_validInput_success() throws Exception {
         // No whitespaces
         assertEquals(INDEX_FIRST, ParserUtil.parseIndex("1"));
 
         // Leading and trailing whitespaces
         assertEquals(INDEX_FIRST, ParserUtil.parseIndex("  1  "));
+        assertEquals(INDEX_SECOND, ParserUtil.parseIndex("2"));
+
+        // Largest supported one-based index
+        assertEquals(Index.fromOneBased(Integer.MAX_VALUE), ParserUtil.parseIndex(Integer.toString(Integer.MAX_VALUE)));
     }
 
     @Test
@@ -237,6 +252,12 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseTag_emptyValue_throwsParseException() {
+        assertThrows(ParseException.class, Tag.MESSAGE_CONSTRAINTS, ()
+                -> ParserUtil.parseTag("", TagStub::new));
+    }
+
+    @Test
     public void parseTag_validValueWithoutWhitespace_returnsTag() throws Exception {
         TagStub expectedTag = new TagStub(VALID_TAG_1);
         assertEquals(expectedTag, ParserUtil.parseTag(VALID_TAG_1, TagStub::new));
@@ -270,6 +291,18 @@ public class ParserUtilTest {
         Set<TagStub> expectedTagSet = Set.of(new TagStub(VALID_TAG_1), new TagStub(VALID_TAG_2));
 
         assertEquals(expectedTagSet, actualTagSet);
+    }
+
+    @Test
+    public void validateEmptyField_emptyValue_success() throws Exception {
+        ParserUtil.validateEmptyField("", Messages.getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS));
+    }
+
+    @Test
+    public void validateEmptyField_nonEmptyValue_throwsFieldValueInvalidException() {
+        String errorMessage = Messages.getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS);
+        assertThrows(FieldValueInvalidException.class, errorMessage, () ->
+                ParserUtil.validateEmptyField("value", errorMessage));
     }
 
     @Test
