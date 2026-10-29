@@ -252,6 +252,26 @@ Format: `deletePlan PLAN_ID`
 * The plan id refers to the index number shown in the displayed list of workout plans of the student.
 * The plan id **must be a positive integer** 1, 2, 3, ...
 
+### Exercise-related commands
+
+Workout plans set the focus of a training session. Exercises specify the movements to perform during that session.
+
+<box type="important">
+
+Select a student with `viewStudent`, then select one of their workout plans with `viewPlan` before adding an exercise.
+
+</box>
+
+#### Add an exercise to a workout plan: `addExercise`
+
+Format: `addExercise EXERCISE_TITLE --description DESCRIPTION`
+
+* Both title and description are required and cannot be blank. The description can contain up to 500 characters.
+* The exercise is appended to the selected workout plan. An identical title and description cannot be added twice.
+* A workout plan can contain up to 100 exercises.
+
+Example: `addExercise Squats --description Barbell back squat`
+
 ### Clearing all entries: `clear`
 
 Clears all entries from the BrotherGym student list.
@@ -330,4 +350,10 @@ Action     | Format, Examples
 **Unmark Workout Plan** | `unmarkPlan PLAN_ID` <br> e.g. `unmarkPlan 2`
 **View Workout Plan** | `viewPlan PLAN_ID`<br> e.g., `viewPlan 2`
 **Delete Workout Plan** | `deletePlan PLAN_ID`<br> e.g., `deletePlan 3`
+
+Exercise-related commands
+
+Action     | Format, Examples
+-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+**Add Exercise** | `addExercise EXERCISE_TITLE --description DESCRIPTION`<br> e.g., `addExercise Squats --description Barbell back squat`
 

@@ -13,6 +13,8 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.exercise.ExerciseDescription;
+import seedu.address.model.exercise.ExerciseName;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
@@ -30,6 +32,38 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 public class ParserUtil {
 
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
+
+    /**
+     * Parses and validates an exercise title.
+     *
+     * @param name Exercise title to parse.
+     * @return The parsed exercise name.
+     * @throws ParseException If the title is invalid.
+     */
+    public static ExerciseName parseExerciseName(String name) throws ParseException {
+        requireNonNull(name);
+        String trimmedName = name.trim();
+        if (!ExerciseName.isValidName(trimmedName)) {
+            throw new FieldValueInvalidException(ExerciseName.MESSAGE_CONSTRAINTS);
+        }
+        return new ExerciseName(trimmedName);
+    }
+
+    /**
+     * Parses and validates an exercise description.
+     *
+     * @param description Exercise description to parse.
+     * @return The parsed exercise description.
+     * @throws ParseException If the description is invalid.
+     */
+    public static ExerciseDescription parseExerciseDescription(String description) throws ParseException {
+        requireNonNull(description);
+        String trimmedDescription = description.trim();
+        if (!ExerciseDescription.isValidExerciseDescription(trimmedDescription)) {
+            throw new FieldValueInvalidException(ExerciseDescription.MESSAGE_CONSTRAINTS);
+        }
+        return new ExerciseDescription(trimmedDescription);
+    }
 
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be

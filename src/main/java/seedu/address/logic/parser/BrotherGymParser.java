@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.logic.commands.AddExerciseCommand;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
@@ -44,6 +45,7 @@ public class BrotherGymParser {
      */
     private static final AddStudentCommandParser ADD_STUDENT_PARSER = new AddStudentCommandParser();
     private static final AddPlanCommandParser ADD_PLAN_PARSER = new AddPlanCommandParser();
+    private static final AddExerciseCommandParser ADD_EXERCISE_PARSER = new AddExerciseCommandParser();
     private static final EditStudentCommandParser EDIT_STUDENT_PARSER = new EditStudentCommandParser();
     private static final EditPlanCommandParser EDIT_PLAN_PARSER = new EditPlanCommandParser();
     private static final SingleIndexCommandParser<MarkPlanCommand> MARK_PLAN_PARSER =
@@ -95,6 +97,7 @@ public class BrotherGymParser {
             case DeleteStudentCommand.COMMAND_WORD -> DELETE_STUDENT_PARSER.parse(arguments);
             case ViewStudentCommand.COMMAND_WORD -> VIEW_STUDENT_PARSER.parse(arguments);
             case AddPlanCommand.COMMAND_WORD -> ADD_PLAN_PARSER.parse(arguments);
+            case AddExerciseCommand.COMMAND_WORD -> ADD_EXERCISE_PARSER.parse(arguments);
             case EditPlanCommand.COMMAND_WORD -> EDIT_PLAN_PARSER.parse(arguments);
             case MarkPlanCommand.COMMAND_WORD -> MARK_PLAN_PARSER.parse(arguments);
             case UnmarkPlanCommand.COMMAND_WORD -> UNMARK_PLAN_PARSER.parse(arguments);

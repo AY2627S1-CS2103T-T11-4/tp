@@ -1,0 +1,55 @@
+package seedu.address.logic.parser;
+
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
+import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
+import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+
+import org.junit.jupiter.api.Test;
+
+import seedu.address.logic.Messages;
+import seedu.address.logic.commands.AddExerciseCommand;
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseDescription;
+import seedu.address.model.exercise.ExerciseName;
+
+public class AddExerciseCommandParserTest {
+    private final AddExerciseCommandParser parser = new AddExerciseCommandParser();
+
+    private String formatParserError(String message) {
+        return Messages.formatParserError(message, AddExerciseCommand.MESSAGE_USAGE);
+    }
+
+    @Test
+    public void parse_allFieldsPresent_success() {
+        Exercise exercise = new Exercise(new ExerciseName("Squats"),
+                new ExerciseDescription("Barbell back squat"));
+        assertParseSuccess(parser, " Squats --description Barbell back squat", new AddExerciseCommand(exercise));
+    }
+
+    @Test
+    public void parse_repeatedValue_failure() {
+        assertParseFailure(parser, " Squats --description First --description Second",
+                formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_DESCRIPTION)));
+    }
+
+    @Test
+    public void parse_compulsoryFieldMissing_failure() {
+        assertParseFailure(parser, " Squats",
+                formatParserError(Messages.getErrorMessageForMissingPrefixes(PREFIX_DESCRIPTION)));
+    }
+
+    @Test
+    public void parse_invalidField_failure() {
+        assertParseFailure(parser, " Squats --description Back squat --invalid value",
+                formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
+    }
+
+    @Test
+    public void parse_invalidValue_failure() {
+        assertParseFailure(parser, "  --description Back squat",
+                formatParserError(Messages.MESSAGE_MISSING_PREAMBLE));
+        assertParseFailure(parser, " Squats --description  ",
+                formatParserError(ExerciseDescription.MESSAGE_CONSTRAINTS));
+    }
+}
