@@ -25,22 +25,22 @@ public class EditExerciseCommandParser implements Parser<EditExerciseCommand> {
     @Override
     public EditExerciseCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentValidator validator = new ArgumentValidator(
+        ArgumentValidator argValidator = new ArgumentValidator(
                 VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
         Index index;
         EditExerciseCommand.EditExerciseDescriptor descriptor;
 
         ParsingStage stage = ParsingStage.TOKENIZATION;
         try {
-            ArgumentMultimap arguments = ArgumentTokenizer.tokenize(args);
+            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
             stage = ParsingStage.ARGUMENT_VALIDATION;
-            validator.verifyArgs(arguments);
+            argValidator.verifyArgs(argMultimap);
             stage = ParsingStage.FIELD_PARSING;
-            index = ParserUtil.parseIndex(arguments.getPreamble());
-            descriptor = parseFields(arguments);
-        } catch (ParseException e) {
+            index = ParserUtil.parseIndex(argMultimap.getPreamble());
+            descriptor = parseValidEditFields(argMultimap);
+        } catch (ParseException pe) {
             logger.finer("Parsing of editExercise command failed at " + stage.getMessage());
-            throw e.withMessage(Messages.formatParserError(e.getMessage(), EditExerciseCommand.MESSAGE_USAGE));
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), EditExerciseCommand.MESSAGE_USAGE));
         }
 
         if (!descriptor.isAnyFieldEdited()) {
@@ -49,16 +49,16 @@ public class EditExerciseCommandParser implements Parser<EditExerciseCommand> {
         return new EditExerciseCommand(index, descriptor);
     }
 
-    private EditExerciseCommand.EditExerciseDescriptor parseFields(ArgumentMultimap arguments)
+    private EditExerciseCommand.EditExerciseDescriptor parseValidEditFields(ArgumentMultimap argMultimap)
             throws ParseException {
         EditExerciseCommand.EditExerciseDescriptor descriptor =
                 new EditExerciseCommand.EditExerciseDescriptor();
-        if (arguments.getValue(PREFIX_NAME).isPresent()) {
-            descriptor.setName(ParserUtil.parseExerciseName(arguments.getValue(PREFIX_NAME).get()));
+        if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
+            descriptor.setName(ParserUtil.parseExerciseName(argMultimap.getValue(PREFIX_NAME).get()));
         }
-        if (arguments.getValue(PREFIX_DESCRIPTION).isPresent()) {
+        if (argMultimap.getValue(PREFIX_DESCRIPTION).isPresent()) {
             descriptor.setDescription(ParserUtil.parseExerciseDescription(
-                    arguments.getValue(PREFIX_DESCRIPTION).get()));
+                    argMultimap.getValue(PREFIX_DESCRIPTION).get()));
         }
         return descriptor;
     }
