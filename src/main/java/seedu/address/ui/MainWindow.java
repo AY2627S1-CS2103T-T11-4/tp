@@ -21,6 +21,7 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Student;
+import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
  * The Main Window. Provides the basic application layout containing
@@ -129,13 +130,17 @@ public class MainWindow extends UiPart<Stage> {
         workoutPlanListPanel = new WorkoutPlanListPanel();
         workoutPlanPanelPlaceholder.getChildren().add(workoutPlanListPanel.getRoot());
         Optional<Student> initialStudent = Optional.ofNullable(logic.currentStudentProperty().get());
-        workoutPlanListPanel.showStudent(initialStudent);
+        Optional<WorkoutPlan> initialWorkoutPlan = Optional.ofNullable(logic.currentWorkoutPlanProperty().get());
+        workoutPlanListPanel.showStudent(initialStudent, initialWorkoutPlan);
         studentListPanel.selectStudent(initialStudent);
         logic.currentStudentProperty().addListener((observable, oldStudent, newStudent) -> {
             Optional<Student> selectedStudent = Optional.ofNullable(newStudent);
-            workoutPlanListPanel.showStudent(selectedStudent);
+            Optional<WorkoutPlan> selectedWorkoutPlan = Optional.ofNullable(logic.currentWorkoutPlanProperty().get());
+            workoutPlanListPanel.showStudent(selectedStudent, selectedWorkoutPlan);
             studentListPanel.selectStudent(selectedStudent);
         });
+        logic.currentWorkoutPlanProperty().addListener((observable, oldPlan, newPlan) ->
+                workoutPlanListPanel.showStudent(logic.getCurrentStudent(), Optional.ofNullable(newPlan)));
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());

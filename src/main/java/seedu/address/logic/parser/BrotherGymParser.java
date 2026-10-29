@@ -10,13 +10,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.logic.commands.AddExerciseCommand;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.Command;
+import seedu.address.logic.commands.DeleteExerciseCommand;
 import seedu.address.logic.commands.DeletePlanCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
+import seedu.address.logic.commands.EditExerciseCommand;
 import seedu.address.logic.commands.EditPlanCommand;
 import seedu.address.logic.commands.EditStudentCommand;
 import seedu.address.logic.commands.ExitCommand;
@@ -47,8 +50,10 @@ public class BrotherGymParser {
      */
     private static final AddStudentCommandParser ADD_STUDENT_PARSER = new AddStudentCommandParser();
     private static final AddPlanCommandParser ADD_PLAN_PARSER = new AddPlanCommandParser();
+    private static final AddExerciseCommandParser ADD_EXERCISE_PARSER = new AddExerciseCommandParser();
     private static final EditStudentCommandParser EDIT_STUDENT_PARSER = new EditStudentCommandParser();
     private static final EditPlanCommandParser EDIT_PLAN_PARSER = new EditPlanCommandParser();
+    private static final EditExerciseCommandParser EDIT_EXERCISE_PARSER = new EditExerciseCommandParser();
     private static final SingleIndexCommandParser<MarkPlanCommand> MARK_PLAN_PARSER =
             new SingleIndexCommandParser<>(
                     MarkPlanCommand::new, MarkPlanCommand.MESSAGE_USAGE, MarkPlanCommand.COMMAND_WORD);
@@ -67,6 +72,9 @@ public class BrotherGymParser {
     private static final SingleIndexCommandParser<DeletePlanCommand> DELETE_PLAN_PARSER =
             new SingleIndexCommandParser<>(
                     DeletePlanCommand::new, DeletePlanCommand.MESSAGE_USAGE, DeletePlanCommand.COMMAND_WORD);
+    private static final SingleIndexCommandParser<DeleteExerciseCommand> DELETE_EXERCISE_PARSER =
+            new SingleIndexCommandParser<>(DeleteExerciseCommand::new,
+                    DeleteExerciseCommand.MESSAGE_USAGE, DeleteExerciseCommand.COMMAND_WORD);
 
     /**
      * Parses user input into command for execution.
@@ -98,10 +106,13 @@ public class BrotherGymParser {
             case DeleteStudentCommand.COMMAND_WORD -> DELETE_STUDENT_PARSER.parse(arguments);
             case ViewStudentCommand.COMMAND_WORD -> VIEW_STUDENT_PARSER.parse(arguments);
             case AddPlanCommand.COMMAND_WORD -> ADD_PLAN_PARSER.parse(arguments);
+            case AddExerciseCommand.COMMAND_WORD -> ADD_EXERCISE_PARSER.parse(arguments);
             case EditPlanCommand.COMMAND_WORD -> EDIT_PLAN_PARSER.parse(arguments);
             case MarkPlanCommand.COMMAND_WORD -> MARK_PLAN_PARSER.parse(arguments);
             case UnmarkPlanCommand.COMMAND_WORD -> UNMARK_PLAN_PARSER.parse(arguments);
             case DeletePlanCommand.COMMAND_WORD -> DELETE_PLAN_PARSER.parse(arguments);
+            case DeleteExerciseCommand.COMMAND_WORD -> DELETE_EXERCISE_PARSER.parse(arguments);
+            case EditExerciseCommand.COMMAND_WORD -> EDIT_EXERCISE_PARSER.parse(arguments);
             case ViewPlanCommand.COMMAND_WORD -> VIEW_PLAN_PARSER.parse(arguments);
             case ClearCommand.COMMAND_WORD ->
                 parseCommandWithoutArguments(arguments, ClearCommand.MESSAGE_USAGE, new ClearCommand());

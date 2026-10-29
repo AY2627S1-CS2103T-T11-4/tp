@@ -9,6 +9,7 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Student;
+import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
  * API of the Logic component
@@ -31,6 +32,9 @@ public interface Logic {
 
     /** Returns the current student as a read-only observable property. */
     ReadOnlyObjectProperty<Student> currentStudentProperty();
+
+    /** Returns the selected workout plan as a read-only observable property. */
+    ReadOnlyObjectProperty<WorkoutPlan> currentWorkoutPlanProperty();
 
     /**
      * Returns the user prefs' GUI settings.

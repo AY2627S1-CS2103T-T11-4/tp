@@ -4,26 +4,22 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox minWidth="190" prefWidth="190" maxWidth="190" minHeight="136" prefHeight="136" maxHeight="170"
-      spacing="7" styleClass="workout-plan-card" xmlns="http://javafx.com/javafx/17"
+<HBox alignment="CENTER_LEFT" spacing="11" styleClass="workout-plan-card" xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1">
   <padding>
-    <Insets top="11" right="12" bottom="11" left="12" />
+    <Insets top="9" right="10" bottom="9" left="10" />
   </padding>
-  <HBox alignment="CENTER_LEFT" spacing="8">
-    <Label fx:id="id" alignment="CENTER" minWidth="38" prefWidth="38" maxWidth="38"
-           minHeight="38" prefHeight="38" maxHeight="38" styleClass="plan-id-badge" />
-    <Label fx:id="title" maxWidth="112" styleClass="workout-plan-title" textOverrun="ELLIPSIS" />
-  </HBox>
-  <FlowPane fx:id="tags" hgap="5" vgap="4" styleClass="workout-plan-tags" />
-  <HBox alignment="CENTER_LEFT" spacing="6">
-    <Label fx:id="status" styleClass="workout-status-badge" />
-    <Region HBox.hgrow="ALWAYS" />
+  <Label fx:id="id" alignment="CENTER" minWidth="42" prefWidth="42" maxWidth="42"
+         minHeight="42" prefHeight="42" maxHeight="42" styleClass="plan-id-badge" />
+  <VBox alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS">
+    <HBox alignment="CENTER_LEFT" spacing="8">
+      <Label fx:id="title" styleClass="workout-plan-title" HBox.hgrow="ALWAYS" />
+      <Label fx:id="status" styleClass="workout-status-badge" />
+    </HBox>
     <Label fx:id="date" styleClass="workout-plan-date" />
-  </HBox>
-  <Label fx:id="description" maxHeight="38" styleClass="workout-plan-description"
-         textOverrun="ELLIPSIS" wrapText="true" />
-</VBox>
+    <Label fx:id="description" styleClass="workout-plan-description" wrapText="true" />
+    <FlowPane fx:id="tags" hgap="5" vgap="3" styleClass="workout-plan-tags" />
+  </VBox>
+</HBox>

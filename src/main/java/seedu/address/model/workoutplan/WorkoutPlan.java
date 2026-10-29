@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.exceptions.AlreadyMarkedException;
@@ -28,6 +29,7 @@ public final class WorkoutPlan {
     private final WorkoutDate date;
     private final Set<WorkoutPlanTag> tags;
     private final WorkoutPlanStatus status;
+    private final ExercisesList exercises;
 
     /**
      * Constructs a workout plan with validated, non-null fields.
@@ -50,13 +52,22 @@ public final class WorkoutPlan {
      */
     public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date,
             Set<WorkoutPlanTag> tags, WorkoutPlanStatus status) {
-        requireAllNonNull(title, workouts, date, tags, status);
+        this(title, workouts, date, tags, status, new ExercisesList());
+    }
+
+    /**
+     * Constructs a workout plan with validated, non-null fields and the given status and exercises.
+     */
+    public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date,
+            Set<WorkoutPlanTag> tags, WorkoutPlanStatus status, ExercisesList exercises) {
+        requireAllNonNull(title, workouts, date, tags, status, exercises);
         checkArgument(Tag.isValidTagCount(tags.size()), Tag.MESSAGE_TAG_LIMIT);
         this.title = title;
         this.workouts = workouts;
         this.date = date;
         this.tags = Set.copyOf(tags);
         this.status = status;
+        this.exercises = exercises;
     }
 
     public WorkoutTitle getTitle() {
@@ -80,6 +91,10 @@ public final class WorkoutPlan {
 
     public WorkoutPlanStatus getStatus() {
         return status;
+    }
+
+    public ExercisesList getExercisesList() {
+        return exercises;
     }
 
     /**
@@ -114,7 +129,9 @@ public final class WorkoutPlan {
     }
 
     private WorkoutPlan withStatus(WorkoutPlanStatus updatedStatus) {
-        return status == updatedStatus ? this : new WorkoutPlan(title, workouts, date, tags, updatedStatus);
+        return status == updatedStatus
+                ? this
+                : new WorkoutPlan(title, workouts, date, tags, updatedStatus, exercises);
     }
 
     /**
@@ -152,12 +169,12 @@ public final class WorkoutPlan {
                 && workouts.equals(otherPlan.workouts)
                 && date.equals(otherPlan.date)
                 && tags.equals(otherPlan.tags)
-                && status == otherPlan.status;
+                && status.equals(otherPlan.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, workouts, date, tags, status);
+        return Objects.hash(title, workouts, date, tags);
     }
 
     @Override

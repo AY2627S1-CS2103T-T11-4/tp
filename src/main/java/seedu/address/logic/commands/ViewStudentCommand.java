@@ -54,6 +54,7 @@ public class ViewStudentCommand extends SingleIndexCommand {
         Student selectedStudent = students.get(targetIndex.getZeroBased());
         Student refreshedStudent = model.updateStudentWorkoutsState(selectedStudent);
         model.setCurrentStudent(refreshedStudent);
+        model.clearCurrentWorkoutPlan();
         List<WorkoutPlan> workoutPlans = refreshedStudent.getWorkoutPlansList().getWorkoutList();
 
         return new CommandResult(String.format(

@@ -44,6 +44,21 @@ public final class WorkoutPlansList {
         return plans.get(index);
     }
 
+    /**
+     * Returns the stored plan matching {@code target}.
+     * Prefers the exact target instance when equal-valued plans are present.
+     *
+     * @throws WorkoutPlanNotFoundException If no matching plan is present.
+     */
+    public WorkoutPlan getWorkoutPlan(WorkoutPlan target) {
+        Objects.requireNonNull(target);
+        int index = findTargetIndex(target);
+        if (index < 0) {
+            throw new WorkoutPlanNotFoundException(target);
+        }
+        return plans.get(index);
+    }
+
     private void checkIndex(int index) {
         if (index < 0 || index >= plans.size()) {
             throw new WorkoutPlanIndexOutOfBoundsException(index);
@@ -53,8 +68,14 @@ public final class WorkoutPlansList {
     /** Returns a list with each plan's status refreshed. */
     public WorkoutPlansList updateState() {
         LocalDate today = LocalDate.now();
-        List<WorkoutPlan> updated = plans.stream().map(plan -> plan.updateState(today)).toList();
-        return updated.equals(plans) ? this : new WorkoutPlansList(updated);
+        List<WorkoutPlan> updated = new ArrayList<>(plans.size());
+        boolean changed = false;
+        for (WorkoutPlan plan : plans) {
+            WorkoutPlan updatedPlan = plan.updateState(today);
+            updated.add(updatedPlan);
+            changed |= updatedPlan != plan;
+        }
+        return changed ? new WorkoutPlansList(updated) : this;
     }
 
     /** Returns a list with the plan at {@code index} marked as completed. */
@@ -90,16 +111,7 @@ public final class WorkoutPlansList {
     public WorkoutPlansList setWorkoutPlan(WorkoutPlan target, WorkoutPlan editedPlan) {
         Objects.requireNonNull(target);
         Objects.requireNonNull(editedPlan);
-        int index = -1;
-        for (int i = 0; i < plans.size(); i++) {
-            if (plans.get(i) == target) {
-                index = i;
-                break;
-            }
-        }
-        if (index < 0) {
-            index = plans.indexOf(target);
-        }
+        int index = findTargetIndex(target);
         if (index < 0) {
             throw new WorkoutPlanNotFoundException(target);
         }
@@ -109,6 +121,15 @@ public final class WorkoutPlansList {
             }
         }
         return replaceWorkoutPlan(index, editedPlan);
+    }
+
+    private int findTargetIndex(WorkoutPlan target) {
+        for (int i = 0; i < plans.size(); i++) {
+            if (plans.get(i) == target) {
+                return i;
+            }
+        }
+        return plans.indexOf(target);
     }
 
     /**
@@ -131,10 +152,12 @@ public final class WorkoutPlansList {
      */
     public WorkoutPlansList removeWorkoutPlan(WorkoutPlan plan) {
         Objects.requireNonNull(plan);
-        List<WorkoutPlan> updated = new ArrayList<>(plans);
-        if (!updated.remove(plan)) {
+        int index = findTargetIndex(plan);
+        if (index < 0) {
             throw new WorkoutPlanNotFoundException(plan);
         }
+        List<WorkoutPlan> updated = new ArrayList<>(plans);
+        updated.remove(index);
         return new WorkoutPlansList(updated);
     }
 

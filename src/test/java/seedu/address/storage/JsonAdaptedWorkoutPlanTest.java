@@ -9,12 +9,17 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.commons.util.JsonUtil;
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseDescription;
+import seedu.address.model.exercise.ExerciseName;
+import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
@@ -24,6 +29,57 @@ import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutTitle;
 
 public class JsonAdaptedWorkoutPlanTest {
+
+    @Test
+    public void modelToJsonAndBack_preservesExerciseOrder() throws Exception {
+        Exercise squat = new Exercise(new ExerciseName("Squat"), new ExerciseDescription("Barbell"));
+        Exercise press = new Exercise(new ExerciseName("Press"), new ExerciseDescription("Dumbbell"));
+        Exercise alternateSquat = new Exercise(new ExerciseName("Squat"),
+                new ExerciseDescription("Bodyweight"));
+        WorkoutPlan original = new WorkoutPlan(new WorkoutTitle("Strength"), new WorkoutDescription("Leg day"),
+                WorkoutDate.fromLocalDate(LocalDate.of(2023, 11, 15)), Set.of(), WorkoutPlanStatus.COMPLETED,
+                new ExercisesList(List.of(squat, press, alternateSquat)));
+
+        String json = JsonUtil.toJsonString(new JsonAdaptedWorkoutPlan(original));
+        WorkoutPlan restored = JsonUtil.fromJsonString(json, JsonAdaptedWorkoutPlan.class).toModelType();
+
+        assertEquals(List.of(squat, press, alternateSquat), restored.getExercisesList().getExerciseList());
+        assertEquals(WorkoutPlanStatus.COMPLETED, restored.getStatus());
+    }
+
+    @Test
+    public void fromJson_missingOrNullExercises_loadsLegacyPlan() throws Exception {
+        for (String exercisesField : List.of("", ",\"exercises\":null")) {
+            JsonAdaptedWorkoutPlan adapted = JsonUtil.fromJsonString(
+                    "{\"title\":\"Strength\",\"workoutDescription\":\"Squats\",\"date\":\"2023-11-15\""
+                            + exercisesField + "}", JsonAdaptedWorkoutPlan.class);
+            assertEquals(new ExercisesList(), adapted.toModelType().getExercisesList());
+        }
+    }
+
+    @Test
+    public void fromJson_invalidExerciseList_throwsIllegalValueException() throws Exception {
+        String base = "{\"title\":\"Strength\",\"workoutDescription\":\"Squats\","
+                + "\"date\":\"2023-11-15\",\"exercises\":";
+        for (String exercises : List.of("[null]", "[{\"name\":\"Squat\",\"description\":\" \"}]",
+                "[{\"name\":\"Squat\",\"description\":\"Barbell\"},"
+                        + "{\"name\":\"Squat\",\"description\":\"Barbell\"}]")) {
+            JsonAdaptedWorkoutPlan adapted = JsonUtil.fromJsonString(base + exercises + "}",
+                    JsonAdaptedWorkoutPlan.class);
+            assertThrows(IllegalValueException.class, adapted::toModelType);
+        }
+    }
+
+    @Test
+    public void fromJson_moreThanHundredExercises_throwsIllegalValueException() throws Exception {
+        String exercises = IntStream.range(0, 101)
+                .mapToObj(index -> "{\"name\":\"Exercise " + index + "\",\"description\":\"Valid\"}")
+                .collect(Collectors.joining(",", "[", "]"));
+        JsonAdaptedWorkoutPlan adapted = JsonUtil.fromJsonString(
+                "{\"title\":\"Strength\",\"workoutDescription\":\"Squats\",\"date\":\"2023-11-15\","
+                        + "\"exercises\":" + exercises + "}", JsonAdaptedWorkoutPlan.class);
+        assertThrows(IllegalValueException.class, adapted::toModelType);
+    }
 
     @Test
     public void modelToJsonAndBack_preservesEveryStatusAndTags() throws Exception {

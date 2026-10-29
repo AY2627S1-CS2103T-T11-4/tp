@@ -13,12 +13,16 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.AddExerciseCommand;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.DeleteExerciseCommand;
 import seedu.address.logic.commands.DeletePlanCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
+import seedu.address.logic.commands.EditExerciseCommand;
+import seedu.address.logic.commands.EditExerciseCommand.EditExerciseDescriptor;
 import seedu.address.logic.commands.EditPlanCommand;
 import seedu.address.logic.commands.EditStudentCommand;
 import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
@@ -32,6 +36,9 @@ import seedu.address.logic.commands.ViewPlanCommand;
 import seedu.address.logic.commands.ViewStudentCommand;
 import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseDescription;
+import seedu.address.model.exercise.ExerciseName;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -84,10 +91,43 @@ public class BrotherGymParserTest {
     }
 
     @Test
+    public void parseCommand_deleteExercise() throws Exception {
+        DeleteExerciseCommand command = (DeleteExerciseCommand) parser.parseCommand(
+                DeleteExerciseCommand.COMMAND_WORD + " " + INDEX_FIRST.getOneBased());
+        assertEquals(new DeleteExerciseCommand(INDEX_FIRST), command);
+    }
+
+    @Test
+    public void parseCommand_deleteExerciseInvalidIndex_throwsParseException() {
+        assertThrows(ParseException.class, () -> parser.parseCommand(DeleteExerciseCommand.COMMAND_WORD + " 0"));
+        assertThrows(ParseException.class, () -> parser.parseCommand(DeleteExerciseCommand.COMMAND_WORD + " abc"));
+    }
+
+    @Test
+    public void parseCommand_editExercise() throws Exception {
+        EditExerciseDescriptor descriptor = new EditExerciseDescriptor();
+        descriptor.setName(new ExerciseName("Front Squat"));
+
+        EditExerciseCommand command = (EditExerciseCommand) parser.parseCommand(
+                EditExerciseCommand.COMMAND_WORD + " 1 --name Front Squat");
+
+        assertEquals(new EditExerciseCommand(INDEX_FIRST, descriptor), command);
+    }
+
+    @Test
     public void parseCommand_addPlan() throws Exception {
         WorkoutPlan workout = new WorkoutBuilder().build();
         AddPlanCommand command = (AddPlanCommand) parser.parseCommand(WorkoutUtil.getAddPlanCommand(workout));
         assertEquals(new AddPlanCommand(workout), command);
+    }
+
+    @Test
+    public void parseCommand_addExercise() throws Exception {
+        Exercise exercise = new Exercise(new ExerciseName("Squats"),
+                new ExerciseDescription("Barbell back squat"));
+        AddExerciseCommand command = (AddExerciseCommand) parser.parseCommand(
+                "addExercise Squats --description Barbell back squat");
+        assertEquals(new AddExerciseCommand(exercise), command);
     }
 
     @Test

@@ -17,6 +17,10 @@ import seedu.address.model.BrotherGym;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseDescription;
+import seedu.address.model.exercise.ExerciseName;
+import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.student.Student;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
@@ -29,10 +33,14 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 /** Contains unit and integration tests for {@link EditPlanCommand}. */
 public class EditPlanCommandTest {
 
+    private static final ExercisesList EXERCISES = new ExercisesList(List.of(new Exercise(
+            new ExerciseName("Squats"), new ExerciseDescription("Barbell back squat"))));
+
     private static final WorkoutPlan FIRST_PLAN = new WorkoutPlan(
             new WorkoutTitle("Strength"), new WorkoutDescription("Upper body"),
             WorkoutDate.fromLocalDate(LocalDate.now().plusDays(1)),
-            Set.of(new WorkoutPlanTag("old")));
+            Set.of(new WorkoutPlanTag("old")), WorkoutPlanStatus.PENDING, EXERCISES);
+  
     private static final WorkoutPlan SECOND_PLAN = new WorkoutPlan(
             new WorkoutTitle("Cardio"), new WorkoutDescription("Running"),
             WorkoutDate.fromLocalDate(LocalDate.now().plusDays(2)));
@@ -54,7 +62,8 @@ public class EditPlanCommandTest {
         descriptor.setTitle(new WorkoutTitle("Updated strength"));
 
         WorkoutPlan expectedPlan = new WorkoutPlan(new WorkoutTitle("Updated strength"),
-                FIRST_PLAN.getWorkouts(), FIRST_PLAN.getDate(), FIRST_PLAN.getTags());
+                FIRST_PLAN.getWorkouts(), FIRST_PLAN.getDate(), FIRST_PLAN.getTags(),
+                FIRST_PLAN.getStatus(), FIRST_PLAN.getExercisesList());
         Student expectedStudent = withPlans(currentStudent, expectedPlan, SECOND_PLAN);
         Model expectedModel = modelWithStudent(expectedStudent);
 
@@ -66,7 +75,8 @@ public class EditPlanCommandTest {
     @Test
     public void execute_fieldSpecified_preservesCompletedStatus() throws Exception {
         WorkoutPlan completedPlan = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getWorkouts(),
-                FIRST_PLAN.getDate(), FIRST_PLAN.getTags(), WorkoutPlanStatus.COMPLETED);
+                FIRST_PLAN.getDate(), FIRST_PLAN.getTags(), WorkoutPlanStatus.COMPLETED,
+                FIRST_PLAN.getExercisesList());
         Model model = createModelWithPlans(completedPlan);
         Student currentStudent = model.getFilteredStudentList().get(0);
         model.setCurrentStudent(currentStudent);
@@ -75,7 +85,8 @@ public class EditPlanCommandTest {
         descriptor.setTitle(updatedTitle);
 
         WorkoutPlan expectedPlan = new WorkoutPlan(updatedTitle, completedPlan.getWorkouts(),
-                completedPlan.getDate(), completedPlan.getTags(), WorkoutPlanStatus.COMPLETED);
+                completedPlan.getDate(), completedPlan.getTags(), WorkoutPlanStatus.COMPLETED,
+                completedPlan.getExercisesList());
         Student expectedStudent = withPlans(currentStudent, expectedPlan);
         Model expectedModel = modelWithStudent(expectedStudent);
 
@@ -133,7 +144,8 @@ public class EditPlanCommandTest {
         descriptor.setWorkoutPlanTags(Set.of(new WorkoutPlanTag("new")));
 
         WorkoutPlan expectedPlan = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getWorkouts(),
-                FIRST_PLAN.getDate(), Set.of(new WorkoutPlanTag("new")));
+                FIRST_PLAN.getDate(), Set.of(new WorkoutPlanTag("new")), FIRST_PLAN.getStatus(),
+                FIRST_PLAN.getExercisesList());
         Student expectedStudent = withPlans(currentStudent, expectedPlan);
         Model expectedModel = modelWithStudent(expectedStudent);
 
@@ -150,7 +162,7 @@ public class EditPlanCommandTest {
         descriptor.setWorkoutPlanTags(Set.of());
 
         WorkoutPlan expectedPlan = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getWorkouts(),
-                FIRST_PLAN.getDate(), Set.of());
+                FIRST_PLAN.getDate(), Set.of(), FIRST_PLAN.getStatus(), FIRST_PLAN.getExercisesList());
         Student expectedStudent = withPlans(currentStudent, expectedPlan);
         Model expectedModel = modelWithStudent(expectedStudent);
 

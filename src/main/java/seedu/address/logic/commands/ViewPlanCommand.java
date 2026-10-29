@@ -2,11 +2,16 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
+import seedu.address.model.exercise.Exercise;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
@@ -22,7 +27,8 @@ public class ViewPlanCommand extends SingleIndexCommand {
             + "Parameters: " + MESSAGE_PARAMETERS + "\n"
             + "Example: " + MESSAGE_EXAMPLE;
 
-    public static final String MESSAGE_SUCCESS = "Viewing workout plan:\n%1$s";
+    public static final String MESSAGE_SUCCESS = "Viewing workout plan:\n%1$s\nExercises:\n%2$s";
+    public static final String MESSAGE_NO_EXERCISES = "  (none)";
     public static final String MESSAGE_NO_STUDENT_SELECTED =
             "No student is currently selected. Use viewStudent first.";
     public static final String MESSAGE_INVALID_WORKOUT_ID =
@@ -49,7 +55,18 @@ public class ViewPlanCommand extends SingleIndexCommand {
         } catch (WorkoutPlanIndexOutOfBoundsException e) {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
-        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(workoutPlan)));
+        model.setCurrentWorkoutPlan(workoutPlan);
+        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(workoutPlan),
+                formatExercises(workoutPlan.getExercisesList().getExerciseList())));
+    }
+
+    private static String formatExercises(List<Exercise> exercises) {
+        if (exercises.isEmpty()) {
+            return MESSAGE_NO_EXERCISES;
+        }
+        return IntStream.range(0, exercises.size())
+                .mapToObj(index -> String.format("%d. %s", index + 1, exercises.get(index)))
+                .collect(Collectors.joining("\n"));
     }
 
     @Override

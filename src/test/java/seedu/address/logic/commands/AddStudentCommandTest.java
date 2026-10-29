@@ -23,6 +23,7 @@ import seedu.address.model.BrotherGym;
 import seedu.address.model.Model;
 import seedu.address.model.ReadOnlyBrotherGym;
 import seedu.address.model.ReadOnlyUserPrefs;
+import seedu.address.model.exercise.Exercise;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.exceptions.StudentListFullException;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -162,6 +163,22 @@ public class AddStudentCommandTest {
         }
 
         @Override
+        public void addExerciseForWorkoutPlan(Student student, WorkoutPlan plan, Exercise exercise) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void setExerciseForWorkoutPlan(Student student, WorkoutPlan plan,
+                Exercise target, Exercise editedExercise) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void removeExerciseForWorkoutPlan(Student student, WorkoutPlan plan, Exercise target) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public Student updateStudentWorkoutsState(Student student) {
             throw new AssertionError("This method should not be called.");
         }
@@ -183,6 +200,26 @@ public class AddStudentCommandTest {
 
         @Override
         public void clearCurrentStudent() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public Optional<WorkoutPlan> getCurrentWorkoutPlan() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public ReadOnlyObjectProperty<WorkoutPlan> currentWorkoutPlanProperty() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void setCurrentWorkoutPlan(WorkoutPlan plan) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void clearCurrentWorkoutPlan() {
             throw new AssertionError("This method should not be called.");
         }
 
