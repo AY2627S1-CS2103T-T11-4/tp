@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.DeleteExerciseCommand;
 import seedu.address.logic.commands.DeletePlanCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.EditPlanCommand;
@@ -77,6 +78,19 @@ public class BrotherGymParserTest {
         DeletePlanCommand command = (DeletePlanCommand) parser.parseCommand(
                 DeletePlanCommand.COMMAND_WORD + " " + INDEX_FIRST.getOneBased());
         assertEquals(new DeletePlanCommand(INDEX_FIRST), command);
+    }
+
+    @Test
+    public void parseCommand_deleteExercise() throws Exception {
+        DeleteExerciseCommand command = (DeleteExerciseCommand) parser.parseCommand(
+                DeleteExerciseCommand.COMMAND_WORD + " " + INDEX_FIRST.getOneBased());
+        assertEquals(new DeleteExerciseCommand(INDEX_FIRST), command);
+    }
+
+    @Test
+    public void parseCommand_deleteExerciseInvalidIndex_throwsParseException() {
+        assertThrows(ParseException.class, () -> parser.parseCommand(DeleteExerciseCommand.COMMAND_WORD + " 0"));
+        assertThrows(ParseException.class, () -> parser.parseCommand(DeleteExerciseCommand.COMMAND_WORD + " abc"));
     }
 
     @Test

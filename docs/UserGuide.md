@@ -242,6 +242,18 @@ Example: `viewStudent 1` followed by `viewPlan 2` opens the second plan and high
 
 ![Example selected workout plan with sample exercises](images/selectedPlanView.png)
 
+#### Deleting an exercise: `deleteExercise`
+
+Deletes one exercise from the selected workout plan.
+
+Format: `deleteExercise EXERCISE_ID`
+
+* First select a student with `viewStudent STUDENT_ID`, then a plan with `viewPlan PLAN_ID`.
+* `EXERCISE_ID` is the positive number shown beside the exercise in the selected plan.
+* An invalid or out-of-range ID leaves the plan unchanged. The remaining exercises keep their order and are renumbered.
+
+Example: `deleteExercise 2` removes the second exercise from the selected plan.
+
 #### Deleting a workout plan: `deletePlan`
 
 Deletes the specified workout plan from the list of workouts of the selected student.
@@ -330,4 +342,5 @@ Action     | Format, Examples
 **Unmark Workout Plan** | `unmarkPlan PLAN_ID` <br> e.g. `unmarkPlan 2`
 **View Workout Plan** | `viewPlan PLAN_ID`<br> e.g., `viewPlan 2`
 **Delete Workout Plan** | `deletePlan PLAN_ID`<br> e.g., `deletePlan 3`
+**Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `viewStudent 1`, `viewPlan 2`, `deleteExercise 1`
 

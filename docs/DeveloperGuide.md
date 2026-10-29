@@ -124,7 +124,7 @@ How the parsing works:
 * When called upon to parse a user command, the `BrotherGymParser` class creates either an `XYZCommandParser` or a `SingleIndexCommandParser`
   * `addStudent`, `addPlan`, `editStudent` and `editPlan` commands each have a dedicated `XYZCommandParser`
     (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`),
-  * `viewStudent`, `viewPlan`, `deleteStudent` and `deletePlan` commands are `SingleIndexCommand`s that only parse a single index, 
+  * `viewStudent`, `viewPlan`, `deleteStudent`, `deletePlan`, and `deleteExercise` commands are `SingleIndexCommand`s that only parse a single index,
     hence they use the same generic `SingleIndexCommandParser`
   * both types of parsers implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 * The parser class uses a few dependencies to parse the user input into a valid command object (e.g. `AddStudentCommand`, `DeleteStudentCommand`):
@@ -327,6 +327,12 @@ The following sequence diagram shows how the panel is updated when the user exec
 * **Alternative 2:** Call `WorkoutPlanListPanel#showStudent()` manually after every successful command.
   * Pros: The refresh is explicit in the command-execution flow.
   * Cons: The UI is refreshed even for unrelated commands, and new commands can fail to refresh the panel if the manual call is omitted.
+
+### Deleting an exercise
+
+`deleteExercise EXERCISE_ID` uses `SingleIndexCommandParser` and the one-based exercise number shown by `viewPlan`. It requires a selected student and plan. Missing selection or an invalid index leaves the model unchanged.
+
+`Model#removeExerciseForWorkoutPlan` replaces the immutable exercise list, plan, and student. The selected plan is rebound to its replacement, so the panel and subsequent exercise indexes reflect the deletion. Student and plan edits and status changes retain exercises; removing a selected parent or clearing data clears its selection.
 
 ### \[Proposed\] Undo/redo feature
 
