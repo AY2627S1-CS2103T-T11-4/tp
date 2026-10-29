@@ -187,10 +187,11 @@ public class ParserUtil {
             throw new FieldValueInvalidException(WorkoutDate.MESSAGE_CONSTRAINTS);
         }
         try {
-            return WorkoutDate.fromLocalDate(LocalDate.parse(date, WorkoutDate.INPUT_DATE_FORMAT));
+            dateObject = LocalDate.parse(date, WorkoutDate.INPUT_DATE_FORMAT);
         } catch (DateTimeParseException e) {
             throw new FieldValueInvalidException(WorkoutDate.MESSAGE_CONSTRAINTS, e);
         }
+        return WorkoutDate.fromLocalDate(dateObject);
     }
 
     /**
