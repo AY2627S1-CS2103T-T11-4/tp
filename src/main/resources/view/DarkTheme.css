@@ -458,13 +458,41 @@
     -fx-text-fill: #c7d3d8;
 }
 
-.exercise-card {
-    -fx-background-color: #17262e;
-    -fx-background-radius: 8px;
-    -fx-border-color: #324650;
-    -fx-border-radius: 8px;
-    -fx-padding: 10px;
-    -fx-text-fill: #edf4f7;
+.workout-plan-card.workout-plan-selected {
+    -fx-background-color: #24371d;
+    -fx-border-color: #a8ff20;
+    -fx-border-width: 0 0 0 4px;
+}
+
+.exercise-section-heading {
+    -fx-padding: 12 0 4 0;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4f8f9;
+}
+
+.exercise-entry {
+    -fx-padding: 10 12 10 12;
+    -fx-background-color: #14242c;
+    -fx-background-radius: 7px;
+}
+
+.exercise-number {
+    -fx-min-width: 30px;
+    -fx-font-family: "Cascadia Mono", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #a8ff20;
+}
+
+.exercise-name {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4f8f9;
+}
+
+.exercise-description {
+    -fx-font-size: 12px;
+    -fx-text-fill: #b5c7cf;
 }
 
 .workout-plan-tags .label {

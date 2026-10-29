@@ -229,15 +229,18 @@ Format: `unmarkPlan PLAN_ID`
 
 #### Viewing details of a workout plan: `viewPlan`
 
-Displays the details of the workout plan of a student
+Opens the selected workout plan and its exercises for the current student.
 
 Format: `viewPlan PLAN_ID`
 
-* Displays the description and numbered exercises of the workout plan at the specified `PLAN_ID`.
+* Displays the plan's title, date, status, description, tags, and numbered exercises. An empty plan shows a message instead of exercise entries.
 * The plan id refers to the index number shown in the displayed list of workout plans of the student.
 * The plan id **must be a positive integer** 1, 2, 3, ...
-* The selected workout plan stays active until you view another plan, view another student, return home, or remove its parent.
-* An empty workout plan displays `(none)` under Exercises.
+* Run `viewPlan` again to switch plans, or `viewStudent` to return to the student's plan list. Exercise IDs follow the order displayed in the selected plan.
+
+Example: `viewStudent 1` followed by `viewPlan 2` opens the second plan and highlights it above its exercises.
+
+![Example selected workout plan with sample exercises](images/selectedPlanView.png)
 
 #### Deleting an exercise: `deleteExercise`
 
@@ -245,11 +248,11 @@ Deletes one exercise from the selected workout plan.
 
 Format: `deleteExercise EXERCISE_ID`
 
-* First select a student with `viewStudent STUDENT_ID`, then a workout plan with `viewPlan PLAN_ID`.
-* `EXERCISE_ID` is the positive number shown beside the exercise in `viewPlan` and in the selected plan panel.
-* An invalid or out-of-range exercise ID leaves the plan unchanged. Deleting an exercise affects only the selected plan.
+* First select a student with `viewStudent STUDENT_ID`, then a plan with `viewPlan PLAN_ID`.
+* `EXERCISE_ID` is the positive number shown beside the exercise in the selected plan.
+* An invalid or out-of-range ID leaves the plan unchanged. The remaining exercises keep their order and are renumbered.
 
-Example: `deleteExercise 2` removes the second exercise from the selected workout plan.
+Example: `deleteExercise 2` removes the second exercise from the selected plan.
 
 #### Deleting a workout plan: `deletePlan`
 

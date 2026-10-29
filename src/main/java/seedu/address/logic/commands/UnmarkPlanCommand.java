@@ -52,11 +52,16 @@ public class UnmarkPlanCommand extends SingleIndexCommand {
         } catch (WorkoutPlanIndexOutOfBoundsException e) {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
+        WorkoutPlan originalPlan = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
+        boolean wasSelected = model.getCurrentWorkoutPlan().orElse(null) == originalPlan;
         Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
         model.setStudent(currentStudent, updatedStudent);
 
         WorkoutPlan unmarkedPlan = updatedPlans.getWorkoutPlan(targetIndex.getZeroBased());
+        if (wasSelected && model.getCurrentStudent().isPresent()) {
+            model.setCurrentWorkoutPlan(unmarkedPlan);
+        }
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(unmarkedPlan)));
     }
 

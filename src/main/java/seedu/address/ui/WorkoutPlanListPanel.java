@@ -8,6 +8,8 @@ import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import seedu.address.model.exercise.Exercise;
@@ -45,7 +47,7 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
         showStudent(student, Optional.empty());
     }
 
-    /** Displays the selected plan's ordered exercises when one is selected. */
+    /** Displays either the student's plans or the selected plan's exercises. */
     public void showStudent(Optional<Student> student, Optional<WorkoutPlan> selectedPlan) {
         requireNonNull(student);
         requireNonNull(selectedPlan);
@@ -60,16 +62,17 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
 
         Student selectedStudent = student.get();
         String studentName = selectedStudent.getName().toString();
+        List<WorkoutPlan> workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
+        int selectedPlanIndex = selectedPlan.map(value -> indexOfInstance(workoutPlans, value)).orElse(-1);
         heading.setText(studentName);
-        subtitle.setText(selectedPlan.map(workoutPlan -> "Workout plan: " + workoutPlan.getTitle())
-                .orElse("Workout plans"));
+        subtitle.setText(selectedPlanIndex < 0 ? "Workout plans"
+                : "Plan #" + (selectedPlanIndex + 1) + ": " + selectedPlan.get().getTitle());
         subtitle.setManaged(true);
         subtitle.setVisible(true);
-        if (selectedPlan.isPresent()) {
-            showSelectedPlan(selectedPlan.get());
+        if (selectedPlanIndex >= 0) {
+            showSelectedPlan(workoutPlans.get(selectedPlanIndex), selectedPlanIndex + 1);
             return;
         }
-        List<WorkoutPlan> workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
         workoutPlanList.getChildren().clear();
         for (int index = 0; index < workoutPlans.size(); index++) {
             WorkoutPlan workoutPlan = workoutPlans.get(index);
@@ -86,37 +89,59 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
         }
     }
 
-    private void showSelectedPlan(WorkoutPlan selectedPlan) {
+    private void showSelectedPlan(WorkoutPlan selectedPlan, int displayedIndex) {
         workoutPlanList.getChildren().clear();
-        VBox selectedPlanDetails = new VBox(10);
-        selectedPlanDetails.getStyleClass().add("exercise-list");
-        selectedPlanDetails.prefWidthProperty().bind(workoutPlanScrollPane.widthProperty().subtract(40));
-        Label planDescription = new Label(selectedPlan.getWorkouts().getValue());
-        planDescription.setWrapText(true);
-        planDescription.getStyleClass().add("workout-plan-description");
-        selectedPlanDetails.getChildren().add(planDescription);
+        Region planCard = new WorkoutPlanCard(selectedPlan, displayedIndex).getRoot();
+        planCard.getStyleClass().add("workout-plan-selected");
+        workoutPlanList.getChildren().add(planCard);
 
+        Label exercisesHeading = new Label("Exercises");
+        exercisesHeading.getStyleClass().add("exercise-section-heading");
+        workoutPlanList.getChildren().add(exercisesHeading);
         List<Exercise> exercises = selectedPlan.getExercisesList().getExerciseList();
         if (exercises.isEmpty()) {
-            Label emptyExercisesMessage = new Label("No exercises in this workout plan.");
-            emptyExercisesMessage.getStyleClass().add("empty-message");
-            selectedPlanDetails.getChildren().add(emptyExercisesMessage);
+            Label noExercises = new Label("No exercises in this workout plan.");
+            noExercises.getStyleClass().add("empty-message");
+            workoutPlanList.getChildren().add(noExercises);
         } else {
             for (int index = 0; index < exercises.size(); index++) {
-                Exercise exercise = exercises.get(index);
-                Label exerciseLabel = new Label((index + 1) + ". " + exercise.getName()
-                        + "\n" + exercise.getDescription());
-                exerciseLabel.setWrapText(true);
-                exerciseLabel.setMaxWidth(Double.MAX_VALUE);
-                exerciseLabel.getStyleClass().add("exercise-card");
-                selectedPlanDetails.getChildren().add(exerciseLabel);
+                workoutPlanList.getChildren().add(createExerciseEntry(exercises.get(index), index + 1));
             }
         }
-        workoutPlanList.getChildren().add(selectedPlanDetails);
         emptyMessage.setManaged(false);
         emptyMessage.setVisible(false);
         workoutPlanScrollPane.setManaged(true);
         workoutPlanScrollPane.setVisible(true);
+    }
+
+    private static HBox createExerciseEntry(Exercise exercise, int displayedIndex) {
+        HBox entry = new HBox(10);
+        entry.setMaxWidth(Double.MAX_VALUE);
+        entry.getStyleClass().add("exercise-entry");
+
+        Label number = new Label(displayedIndex + ".");
+        number.getStyleClass().add("exercise-number");
+        Label name = new Label(exercise.getName().getValue());
+        name.setWrapText(true);
+        name.getStyleClass().add("exercise-name");
+        Label description = new Label(exercise.getDescription().getValue());
+        description.setWrapText(true);
+        description.getStyleClass().add("exercise-description");
+
+        VBox text = new VBox(3, name, description);
+        text.setMinWidth(0);
+        HBox.setHgrow(text, Priority.ALWAYS);
+        entry.getChildren().addAll(number, text);
+        return entry;
+    }
+
+    private static int indexOfInstance(List<WorkoutPlan> workoutPlans, WorkoutPlan selectedPlan) {
+        for (int index = 0; index < workoutPlans.size(); index++) {
+            if (workoutPlans.get(index) == selectedPlan) {
+                return index;
+            }
+        }
+        return -1;
     }
 
     private void showEmptyMessage(String message) {

@@ -33,7 +33,7 @@ public interface Logic {
     /** Returns the current student as a read-only observable property. */
     ReadOnlyObjectProperty<Student> currentStudentProperty();
 
-    /** Returns the workout plan selected by {@code viewPlan}, if any. */
+    /** Returns the selected workout plan as a read-only observable property. */
     ReadOnlyObjectProperty<WorkoutPlan> currentWorkoutPlanProperty();
 
     /**

@@ -92,6 +92,23 @@ public class DeleteExerciseCommandTest {
     }
 
     @Test
+    public void execute_afterViewPlan_updatesDisplayedIndexes() throws CommandException {
+        WorkoutPlan plan = plan("Selected", List.of(SQUATS, PUSH_UPS, LUNGES));
+        ModelManager model = modelWith(withPlans(ALICE, plan));
+        new ViewStudentCommand(Index.fromOneBased(1)).execute(model);
+        new ViewPlanCommand(Index.fromOneBased(1)).execute(model);
+
+        new DeleteExerciseCommand(Index.fromOneBased(2)).execute(model);
+
+        assertEquals(List.of(SQUATS, LUNGES), model.getCurrentWorkoutPlan().orElseThrow()
+                .getExercisesList().getExerciseList());
+        String feedback = new ViewPlanCommand(Index.fromOneBased(1)).execute(model).getFeedbackToUser();
+        assertTrue(feedback.contains("1. " + SQUATS));
+        assertTrue(feedback.contains("2. " + LUNGES));
+        assertFalse(feedback.contains("3. "));
+    }
+
+    @Test
     public void execute_missingSelectionOrInvalidIndex_leavesModelUnchanged() {
         WorkoutPlan plan = plan("Selected", List.of(SQUATS));
         Student student = withPlans(ALICE, plan);

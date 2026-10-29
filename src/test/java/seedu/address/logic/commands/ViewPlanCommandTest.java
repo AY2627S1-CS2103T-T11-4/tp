@@ -6,13 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
-import static seedu.address.testutil.TypicalExercises.PUSH_UPS;
-import static seedu.address.testutil.TypicalExercises.SQUATS;
 import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,12 +18,10 @@ import seedu.address.model.BrotherGym;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
-import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.WorkoutTitle;
 
@@ -55,22 +50,6 @@ public class ViewPlanCommandTest {
                         ViewPlanCommand.MESSAGE_NO_EXERCISES), model);
         assertEquals(studentWithPlans, model.getCurrentStudent().orElseThrow());
         assertEquals(SECOND_PLAN, model.getCurrentWorkoutPlan().orElseThrow());
-    }
-
-    @Test
-    public void execute_planWithExercises_displaysNumberedExercises() throws Exception {
-        WorkoutPlan plan = new WorkoutPlan(new WorkoutTitle("Strength"),
-                new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)), Set.of(),
-                WorkoutPlanStatus.PENDING, new ExercisesList(List.of(SQUATS, PUSH_UPS)));
-        Student student = createStudentWithPlans(plan);
-        Model model = createModel(student);
-        model.setCurrentStudent(student);
-
-        CommandResult result = new ViewPlanCommand(Index.fromOneBased(1)).execute(model);
-
-        assertTrue(result.getFeedbackToUser().contains("1. " + SQUATS));
-        assertTrue(result.getFeedbackToUser().contains("2. " + PUSH_UPS));
-        assertEquals(plan, model.getCurrentWorkoutPlan().orElseThrow());
     }
 
     @Test
@@ -114,15 +93,11 @@ public class ViewPlanCommandTest {
     }
 
     private static Student createStudentWithPlans() {
-        return createStudentWithPlans(FIRST_PLAN, SECOND_PLAN);
-    }
-
-    private static Student createStudentWithPlans(WorkoutPlan... plans) {
         Student baseStudent = new ModelManager(getTypicalBrotherGym(), new UserPrefs())
                 .getFilteredStudentList().get(0);
         return new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
                 baseStudent.getAddress(), baseStudent.getTags(),
-                new WorkoutPlansList(List.of(plans)));
+                new WorkoutPlansList(List.of(FIRST_PLAN, SECOND_PLAN)));
     }
 
     private static Model createModel(Student student) {

@@ -101,6 +101,9 @@ public class ExerciseParentOperationsTest {
 
         new DeletePlanCommand(Index.fromOneBased(1)).execute(model);
         assertTrue(model.getCurrentWorkoutPlan().isEmpty());
+        assertEquals(DeleteExerciseCommand.MESSAGE_NO_PLAN_SELECTED,
+                assertThrows(CommandException.class, () ->
+                        new DeleteExerciseCommand(Index.fromOneBased(1)).execute(model)).getMessage());
         assertSame(benson, model.getBrotherGym().getStudentList().get(1));
 
         model.setCurrentStudent(benson);
