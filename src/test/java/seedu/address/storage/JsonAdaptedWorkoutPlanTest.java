@@ -143,7 +143,7 @@ public class JsonAdaptedWorkoutPlanTest {
     }
 
     @Test
-    public void toModelType_descriptionTooLong_throwsIllegalValueException() {
+    public void toModelType_tooLongDescription_throwsIllegalValueException() {
         String description = "a".repeat(WorkoutDescription.MAX_LENGTH + 1);
         JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan("Strength", description, "2023-11-15");
 
