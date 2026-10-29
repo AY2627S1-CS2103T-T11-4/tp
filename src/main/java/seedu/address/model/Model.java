@@ -6,6 +6,9 @@ import java.util.function.Predicate;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.exceptions.DuplicateExerciseException;
+import seedu.address.model.exercise.exceptions.ExerciseNotFoundException;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -68,6 +71,7 @@ public interface Model {
 
     /**
      * Appends a workout plan to the student and stores an updated student value.
+     * Refreshes the added plan's date-based status before checking for duplicates and storing it.
      *
      * @throws StudentNotFoundException If the student is not in the model.
      */
@@ -83,11 +87,41 @@ public interface Model {
 
     /**
      * Replaces {@code target} with {@code editedPlan} at the same position and stores an updated student value.
+     * Refreshes the edited plan's date-based status before checking for duplicates and storing it.
      *
      * @throws StudentNotFoundException If the student is not in the model.
      * @throws WorkoutPlanNotFoundException If the student has no matching plan.
      */
     void setWorkoutPlanForStudent(Student student, WorkoutPlan target, WorkoutPlan editedPlan);
+
+    /**
+     * Adds an exercise to the given workout plan belonging to the given student.
+     *
+     * @throws StudentNotFoundException If the student is not in the model.
+     * @throws WorkoutPlanNotFoundException If the plan is not in the student's plan list.
+     * @throws DuplicateExerciseException If the exercise already exists in the plan.
+     */
+    void addExerciseForWorkoutPlan(Student student, WorkoutPlan plan, Exercise exercise);
+
+    /**
+     * Replaces an exercise in the given workout plan at the same position.
+     *
+     * @throws StudentNotFoundException If the student is not in the model.
+     * @throws WorkoutPlanNotFoundException If the plan is not in the student's plan list.
+     * @throws ExerciseNotFoundException If the target exercise is absent.
+     * @throws DuplicateExerciseException If the replacement already exists in the plan.
+     */
+    void setExerciseForWorkoutPlan(Student student, WorkoutPlan plan,
+            Exercise target, Exercise editedExercise);
+
+    /**
+     * Removes an exercise from the given workout plan.
+     *
+     * @throws StudentNotFoundException If the student is not in the model.
+     * @throws WorkoutPlanNotFoundException If the plan is not in the student's plan list.
+     * @throws ExerciseNotFoundException If the target exercise is absent.
+     */
+    void removeExerciseForWorkoutPlan(Student student, WorkoutPlan plan, Exercise target);
 
     /**
      * Refreshes and stores the given student's workout statuses, then returns the stored student object.
@@ -106,6 +140,18 @@ public interface Model {
 
     /** Clears the current student selection. */
     void clearCurrentStudent();
+
+    /** Returns the workout plan selected within the current student, if any. */
+    Optional<WorkoutPlan> getCurrentWorkoutPlan();
+
+    /** Returns the selected workout plan as an observable, read-only property. */
+    ReadOnlyObjectProperty<WorkoutPlan> currentWorkoutPlanProperty();
+
+    /** Selects a workout plan belonging to the current student. */
+    void setCurrentWorkoutPlan(WorkoutPlan plan);
+
+    /** Clears the current workout plan selection. */
+    void clearCurrentWorkoutPlan();
 
     /** Returns an unmodifiable view of the filtered student list */
     ObservableList<Student> getFilteredStudentList();

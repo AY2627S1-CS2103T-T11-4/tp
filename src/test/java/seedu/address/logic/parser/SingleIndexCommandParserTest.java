@@ -1,6 +1,5 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_EMPTY_PREFIX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -84,8 +83,8 @@ public class SingleIndexCommandParserTest {
 
     @Test
     public void parse_invalidPrefixes_throwsParseException() {
-        // empty prefix throws error message for empty prefixes
-        assertParseFailure(parser, "1 -- gibberish", this.formatParserError(MESSAGE_EMPTY_PREFIX));
+        // bare dashes are treated as part of the preamble and subsequently fail index parsing
+        assertParseFailure(parser, "1 -- gibberish", this.formatParserError(MESSAGE_INVALID_INDEX));
 
         // invalid prefix throws error message for invalid prefixes
         assertParseFailure(parser, "1 --invalid gibberish",

@@ -19,10 +19,13 @@ public class DeletePlanCommand extends SingleIndexCommand {
 
     public static final String COMMAND_WORD = "deletePlan";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Deletes a workout plan from the Student currently being viewed.\n"
-            + "Parameters: PLAN_ID (must be a positive integer)\n"
-            + "Example: " + COMMAND_WORD + " 1";
+    public static final String MESSAGE_DESCRIPTION =
+            "Deletes a workout plan from the Student currently being viewed.";
+    public static final String MESSAGE_PARAMETERS = "PLAN_ID (must be a positive integer)";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1";
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
+            + "Parameters: " + MESSAGE_PARAMETERS + "\n"
+            + "Example: " + MESSAGE_EXAMPLE;
 
     public static final String MESSAGE_SUCCESS = "Deleted workout: %1$s";
     public static final String MESSAGE_NO_STUDENT_SELECTED =

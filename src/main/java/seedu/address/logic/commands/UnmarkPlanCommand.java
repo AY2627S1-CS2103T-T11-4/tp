@@ -10,6 +10,7 @@ import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
+import seedu.address.model.workoutplan.exceptions.AlreadyUnmarkedException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 
 /**
@@ -19,12 +20,16 @@ public class UnmarkPlanCommand extends SingleIndexCommand {
 
     public static final String COMMAND_WORD = "unmarkPlan";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Unmarks a workout plan belonging to the student currently being viewed.\n"
-            + "Parameters: PLAN_ID (must be a positive integer)\n"
-            + "Example: " + COMMAND_WORD + " 1";
+    public static final String MESSAGE_DESCRIPTION =
+            "Unmarks a workout plan belonging to the student currently being viewed.";
+    public static final String MESSAGE_PARAMETERS = "PLAN_ID (must be a positive integer)";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1";
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
+            + "Parameters: " + MESSAGE_PARAMETERS + "\n"
+            + "Example: " + MESSAGE_EXAMPLE;
 
     public static final String MESSAGE_SUCCESS = "Unmarked workout: %1$s";
+    public static final String MESSAGE_ALREADY_UNMARKED = "This workout plan is already unmarked.";
     public static final String MESSAGE_NO_STUDENT_SELECTED =
             "No student is currently selected. Use viewStudent first.";
     public static final String MESSAGE_INVALID_WORKOUT_ID =
@@ -49,14 +54,21 @@ public class UnmarkPlanCommand extends SingleIndexCommand {
         final WorkoutPlansList updatedPlans;
         try {
             updatedPlans = currentStudent.getWorkoutPlansList().unmarkWorkoutPlan(targetIndex.getZeroBased());
+        } catch (AlreadyUnmarkedException e) {
+            throw new CommandException(MESSAGE_ALREADY_UNMARKED, e);
         } catch (WorkoutPlanIndexOutOfBoundsException e) {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
+        WorkoutPlan originalPlan = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
+        boolean wasSelected = model.getCurrentWorkoutPlan().orElse(null) == originalPlan;
         Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
         model.setStudent(currentStudent, updatedStudent);
 
         WorkoutPlan unmarkedPlan = updatedPlans.getWorkoutPlan(targetIndex.getZeroBased());
+        if (wasSelected && model.getCurrentStudent().isPresent()) {
+            model.setCurrentWorkoutPlan(unmarkedPlan);
+        }
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(unmarkedPlan)));
     }
 

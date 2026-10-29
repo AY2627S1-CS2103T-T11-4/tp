@@ -8,6 +8,7 @@ public class CliSyntax {
     /* Common Prefixes */
     public static final Prefix PREFIX_NAME = new Prefix("--name");
     public static final Prefix PREFIX_TAG = new Prefix("--tag");
+    public static final Prefix PREFIX_CLEAR_TAGS = new Prefix("--clearTags");
 
     /* Student Prefixes */
     public static final Prefix PREFIX_PHONE = new Prefix("--hp");
@@ -17,6 +18,9 @@ public class CliSyntax {
     /* Workout Plan Prefixes */
     public static final Prefix PREFIX_PLAN = new Prefix("--plan");
     public static final Prefix PREFIX_DATE = new Prefix("--date");
+
+    /* Exercise Prefixes */
+    public static final Prefix PREFIX_DESCRIPTION = new Prefix("--description");
 
     /* Invalid Prefixes */
     public static final Prefix PREFIX_INVALID = new Prefix("--invalid");

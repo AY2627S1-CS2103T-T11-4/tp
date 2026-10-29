@@ -351,7 +351,7 @@
 
 .workout-plan-scroll,
 .workout-plan-scroll > .viewport,
-.workout-plan-grid {
+.workout-plan-list {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
 }
@@ -361,32 +361,29 @@
     -fx-padding: 0;
 }
 
-.workout-plan-grid {
+.workout-plan-list {
     -fx-padding: 0 4 8 0;
 }
 
 .workout-plan-card {
-    -fx-background-color: #111e25;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
     -fx-border-width: 0;
     -fx-border-radius: 7px;
     -fx-background-radius: 7px;
 }
 
 .workout-plan-card:hover {
-    -fx-background-color: #15252c;
-}
-
-.workout-plan-card:hover .plan-id-badge {
-    -fx-border-color: #ff9f43;
+    -fx-background-color: #15242b;
 }
 
 .plan-id-badge {
-    -fx-min-width: 38px;
-    -fx-pref-width: 38px;
-    -fx-max-width: 38px;
-    -fx-min-height: 38px;
-    -fx-pref-height: 38px;
-    -fx-max-height: 38px;
+    -fx-min-width: 42px;
+    -fx-pref-width: 42px;
+    -fx-max-width: 42px;
+    -fx-min-height: 42px;
+    -fx-pref-height: 42px;
+    -fx-max-height: 42px;
     -fx-alignment: center;
     -fx-background-color: #2d261f;
     -fx-background-radius: 999px;
@@ -459,6 +456,43 @@
 .workout-plan-description {
     -fx-font-size: 12px;
     -fx-text-fill: #c7d3d8;
+}
+
+.workout-plan-card.workout-plan-selected {
+    -fx-background-color: #24371d;
+    -fx-border-color: #a8ff20;
+    -fx-border-width: 0 0 0 4px;
+}
+
+.exercise-section-heading {
+    -fx-padding: 12 0 4 0;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4f8f9;
+}
+
+.exercise-entry {
+    -fx-padding: 10 12 10 12;
+    -fx-background-color: #14242c;
+    -fx-background-radius: 7px;
+}
+
+.exercise-number {
+    -fx-min-width: 30px;
+    -fx-font-family: "Cascadia Mono", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #a8ff20;
+}
+
+.exercise-name {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4f8f9;
+}
+
+.exercise-description {
+    -fx-font-size: 12px;
+    -fx-text-fill: #b5c7cf;
 }
 
 .workout-plan-tags .label {

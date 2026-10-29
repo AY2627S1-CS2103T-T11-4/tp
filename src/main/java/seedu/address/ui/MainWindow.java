@@ -21,6 +21,7 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Student;
+import seedu.address.model.workoutplan.WorkoutPlan;
 
 /**
  * The Main Window. Provides the basic application layout containing
@@ -40,6 +41,7 @@ public class MainWindow extends UiPart<Stage> {
     private StudentListPanel studentListPanel;
     private WorkoutPlanListPanel workoutPlanListPanel;
     private ResultDisplay resultDisplay;
+    private CommandBox commandBox;
     private HelpWindow helpWindow;
 
     @FXML
@@ -77,7 +79,7 @@ public class MainWindow extends UiPart<Stage> {
 
         setAccelerators();
 
-        helpWindow = new HelpWindow();
+        helpWindow = new HelpWindow(this::handleCommandFormatSelected);
     }
 
     public Stage getPrimaryStage() {
@@ -128,13 +130,17 @@ public class MainWindow extends UiPart<Stage> {
         workoutPlanListPanel = new WorkoutPlanListPanel();
         workoutPlanPanelPlaceholder.getChildren().add(workoutPlanListPanel.getRoot());
         Optional<Student> initialStudent = Optional.ofNullable(logic.currentStudentProperty().get());
-        workoutPlanListPanel.showStudent(initialStudent);
+        Optional<WorkoutPlan> initialWorkoutPlan = Optional.ofNullable(logic.currentWorkoutPlanProperty().get());
+        workoutPlanListPanel.showStudent(initialStudent, initialWorkoutPlan);
         studentListPanel.selectStudent(initialStudent);
         logic.currentStudentProperty().addListener((observable, oldStudent, newStudent) -> {
             Optional<Student> selectedStudent = Optional.ofNullable(newStudent);
-            workoutPlanListPanel.showStudent(selectedStudent);
+            Optional<WorkoutPlan> selectedWorkoutPlan = Optional.ofNullable(logic.currentWorkoutPlanProperty().get());
+            workoutPlanListPanel.showStudent(selectedStudent, selectedWorkoutPlan);
             studentListPanel.selectStudent(selectedStudent);
         });
+        logic.currentWorkoutPlanProperty().addListener((observable, oldPlan, newPlan) ->
+                workoutPlanListPanel.showStudent(logic.getCurrentStudent(), Optional.ofNullable(newPlan)));
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
@@ -142,8 +148,21 @@ public class MainWindow extends UiPart<Stage> {
         StatusBarFooter statusBarFooter = new StatusBarFooter(dataFilePath);
         statusbarPlaceholder.getChildren().add(statusBarFooter.getRoot());
 
-        CommandBox commandBox = new CommandBox(this::executeCommand);
+        commandBox = new CommandBox(this::executeCommand);
         commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
+    }
+
+    /**
+     * Inserts a command format into the main command box and returns focus to the main window.
+     *
+     * @param commandFormat command format selected from the Help window
+     */
+    private void handleCommandFormatSelected(String commandFormat) {
+        requireNonNull(commandFormat);
+        helpWindow.hide();
+        primaryStage.toFront();
+        primaryStage.requestFocus();
+        commandBox.setCommandText(commandFormat);
     }
 
     /**

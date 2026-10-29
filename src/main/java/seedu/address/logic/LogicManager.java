@@ -19,6 +19,7 @@ import seedu.address.logic.parser.BrotherGymParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
+import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.storage.Storage;
 
 /**
@@ -80,6 +81,11 @@ public class LogicManager implements Logic {
     @Override
     public ReadOnlyObjectProperty<Student> currentStudentProperty() {
         return model.currentStudentProperty();
+    }
+
+    @Override
+    public ReadOnlyObjectProperty<WorkoutPlan> currentWorkoutPlanProperty() {
+        return model.currentWorkoutPlanProperty();
     }
 
     @Override

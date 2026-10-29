@@ -75,6 +75,7 @@ public class WorkoutPlanCard extends UiPart<Region> {
     private void setStatus(WorkoutPlan workoutPlan) {
         status.setText(getStatusText(workoutPlan.getStatus()));
         status.getStyleClass().add(getStatusStyleClass(workoutPlan.getStatus()));
+        id.getStyleClass().add(getStatusStyleClass(workoutPlan.getStatus()));
         getRoot().getStyleClass().add(getCardStyleClass(workoutPlan.getStatus()));
     }
 

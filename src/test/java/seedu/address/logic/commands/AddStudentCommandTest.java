@@ -23,7 +23,9 @@ import seedu.address.model.BrotherGym;
 import seedu.address.model.Model;
 import seedu.address.model.ReadOnlyBrotherGym;
 import seedu.address.model.ReadOnlyUserPrefs;
+import seedu.address.model.exercise.Exercise;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.exceptions.StudentListFullException;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.testutil.StudentBuilder;
 
@@ -54,6 +56,15 @@ public class AddStudentCommandTest {
 
         assertThrows(CommandException.class,
                 AddStudentCommand.MESSAGE_DUPLICATE_STUDENT, () -> addStudentCommand.execute(modelStub));
+    }
+
+    @Test
+    public void execute_studentListFull_throwsCommandException() {
+        Student validStudent = new StudentBuilder().build();
+        AddStudentCommand addStudentCommand = new AddStudentCommand(validStudent);
+
+        assertThrows(CommandException.class, AddStudentCommand.MESSAGE_STUDENT_LIST_FULL, ()
+            -> addStudentCommand.execute(new ModelStubWithFullStudentList()));
     }
 
     @Test
@@ -152,6 +163,22 @@ public class AddStudentCommandTest {
         }
 
         @Override
+        public void addExerciseForWorkoutPlan(Student student, WorkoutPlan plan, Exercise exercise) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void setExerciseForWorkoutPlan(Student student, WorkoutPlan plan,
+                Exercise target, Exercise editedExercise) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void removeExerciseForWorkoutPlan(Student student, WorkoutPlan plan, Exercise target) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public Student updateStudentWorkoutsState(Student student) {
             throw new AssertionError("This method should not be called.");
         }
@@ -173,6 +200,26 @@ public class AddStudentCommandTest {
 
         @Override
         public void clearCurrentStudent() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public Optional<WorkoutPlan> getCurrentWorkoutPlan() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public ReadOnlyObjectProperty<WorkoutPlan> currentWorkoutPlanProperty() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void setCurrentWorkoutPlan(WorkoutPlan plan) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void clearCurrentWorkoutPlan() {
             throw new AssertionError("This method should not be called.");
         }
 
@@ -226,6 +273,21 @@ public class AddStudentCommandTest {
         @Override
         public ReadOnlyBrotherGym getBrotherGym() {
             return new BrotherGym();
+        }
+    }
+
+    /** A Model stub whose student list cannot accept another student. */
+    private class ModelStubWithFullStudentList extends ModelStub {
+        @Override
+        public boolean hasStudent(Student student) {
+            requireNonNull(student);
+            return false;
+        }
+
+        @Override
+        public void addStudent(Student student) {
+            requireNonNull(student);
+            throw new StudentListFullException();
         }
     }
 

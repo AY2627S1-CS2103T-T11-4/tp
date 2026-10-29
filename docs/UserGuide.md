@@ -65,6 +65,9 @@ If you type quickly, BrotherGym can help you manage students and workouts faster
 * Items followed by `...` can appear zero or more times.<br>
   For example, `[--tag TAG]... ` may be omitted, or written as `--tag friend` or `--tag friend --tag family`.
 
+* Every `--tag` prefix must be followed by a non-empty alphanumeric tag. The valueless `--clearTags` flag is only
+  available for edit commands and must not be followed by a value.
+
 * Parameters can be in any order.<br>
   For example, if the command specifies `--name NAME --hp PHONE_NUMBER`, `--hp PHONE_NUMBER --name NAME` is also acceptable.
 
@@ -113,17 +116,19 @@ Format: `home`
 
 Edits an existing student in the BrotherGym student list.
 
-Format: `editStudent STUDENT_ID [--name NAME] [--hp PHONE] [--email EMAIL] [--addr ADDRESS] [--tag TAG]... `
+Format: `editStudent STUDENT_ID [--name NAME] [--hp PHONE] [--email EMAIL] [--addr ADDRESS] [--tag TAG]... [--clearTags]`
 
 * Edits the student at the specified `STUDENT_ID`. The student id refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, ...
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
 * When editing tags, all of the student's existing tags are removed; adding tags is not cumulative.
-* To remove all of a student's tags, enter `--tag` without a tag after it.
+* To remove all of a student's tags, enter `--clearTags` without a value.
+* If both `--tag TAG` and `--clearTags` are supplied, all tags are cleared after the tag values are validated.
 
 Examples:
 *  `editStudent 1 --hp 91234567 --email johndoe@example.com` Edits the phone number and email address of the 1st student to be `91234567` and `johndoe@example.com` respectively.
-*  `editStudent 2 --name Betsy Crower --tag` Edits the name of the 2nd student to be `Betsy Crower` and clears all existing tags.
+*  `editStudent 2 --name Betsy Crower --clearTags` Edits the name of the 2nd student to be `Betsy Crower` and clears all existing tags.
+*  `editStudent 1 --tag temporary --clearTags` clears all tags, including `temporary`.
 
 #### Locating students by name: `find`
 
@@ -136,6 +141,9 @@ Format: `find KEYWORD [MORE_KEYWORDS]...`
 * The search considers only names.
 * Only full words match; for example, `Han` does not match `Hans`.
 * Students matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
+* At least one keyword must contain only letters and digits, following the student-name format.
+  Searches such as `find !!!` or `find Alice! Bob?` show an error and command usage.
+  Mixed input such as `find Alice !!!` still searches for `Alice`.
 
 Examples:
 * `find John` returns `john` and `John Doe`
@@ -177,9 +185,10 @@ Add a new workout plan to the list of workout plans of the specified student
 Format: `addPlan TITLE --plan DESCRIPTION --date DDMMYYYY [--tag TAG]...`
 
 * Displays the updated list of workout plans of the specified student, after the new plan is added
-* Title and description of the workout plan cannot be empty
+* Title and description of the workout plan cannot be empty.
+* Description cannot exceed 500 characters.
 * Date field must be provided in `DDMMYYYY` format
-
+  
 Examples:
 * `addPlan Leg Day --plan Squats 100kg 10 reps x5; Leg curls 80kg 10 reps x3 --date 20102026`
 * `addPlan Chest Day --plan Bench press 80kg 15 reps x3 --date 31102026`
@@ -188,26 +197,30 @@ Examples:
 
 Edits an existing workout plan from the student's list of workout plans
 
-Format: `editPlan PLAN_ID [--name TITLE] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... `
+Format: `editPlan PLAN_ID [--name TITLE] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... [--clearTags]`
+
+Dates follow the same calendar validation as `addPlan`, including leap-year checks.
 
 * Edits the plan at the specified `PLAN_ID`. 
   The plan id refers to the index number shown in the displayed list of workout plans. 
   The plan id **must be a positive integer** 1, 2, 3, ...
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
+* A new description cannot exceed 500 characters.
 * When editing tags, all of the workout plan's existing tags are removed; adding tags is not cumulative.
-* To remove all of a workout plan's tags, enter `--tag` without a tag after it.
+* To remove all of a workout plan's tags, enter `--clearTags` without a value.
+* If both `--tag TAG` and `--clearTags` are supplied, all tags are cleared after the tag values are validated.
 
 Examples:
 * `editPlan 2 --plan Bicep Curls 15kg 10 reps x3 --date 06072027`: 
    Edits the description and date of the second workout plan of the student's list of workout plans 
    to `Bicep Curls 15kg 10 reps x3` and `06072027`
-* `editPlan 3 --tag`: Clears all tags for the third workout plan of the student's list of workout plans
+* `editPlan 3 --clearTags`: Clears all tags for the third workout plan of the student's list of workout plans
 
 #### Changing statuses of commands: `markPlan` and `unmarkPlan`
 
 By default, workout plans have a `PENDING` status, which will change to `OVERDUE` when the `workoutDate` has passed.
-* Workout plan statuses will be refreshed only when `viewStudent` runs
+
 * The status remains at `PENDING` when the current date is equal to the `workoutDate`,
   only changing to `OVERDUE` on the next day
 
@@ -216,6 +229,7 @@ By default, workout plans have a `PENDING` status, which will change to `OVERDUE
 Format: `markPlan PLAN_ID`
 
 * Marks the workout plan at the specified `PLAN_ID` as `COMPLETED` 
+* Shows an error if the workout plan is already marked as completed
 * The plan id refers to the index number shown in the displayed list of workout plans
 * The plan id **must be a positive integer** 1, 2, 3, ...
 
@@ -224,18 +238,25 @@ Format: `markPlan PLAN_ID`
 Format: `unmarkPlan PLAN_ID`
 
 * Reverts the status of the workout plan at the specified `PLAN_ID`
+* Shows an error if the workout plan is already unmarked (`PENDING` or `OVERDUE`)
 * The plan id refers to the index number shown in the displayed list of workout plans
 * The plan id **must be a positive integer** 1, 2, 3, ...
 
 #### Viewing details of a workout plan: `viewPlan`
 
-Displays the details of the workout plan of a student
+Opens the selected workout plan and its exercises for the current student.
 
 Format: `viewPlan PLAN_ID`
 
-* Displays the description of the workout plan at the specified `PLAN_ID`.
+* Displays the plan's title, date, status, description, tags, and numbered exercises. An empty plan shows a message instead of exercise entries.
 * The plan id refers to the index number shown in the displayed list of workout plans of the student.
 * The plan id **must be a positive integer** 1, 2, 3, ...
+* Run `viewPlan` again to switch plans, or `viewStudent` to return to the student's plan list. Exercise IDs follow the order displayed in the selected plan.
+
+Example: `viewStudent 1` followed by `viewPlan 2` opens the second plan and highlights it above its exercises.
+
+![Example selected workout plan with sample exercises](images/selectedPlanView.png)
+
 
 #### Deleting a workout plan: `deletePlan`
 
@@ -246,6 +267,52 @@ Format: `deletePlan PLAN_ID`
 * Deletes the workout plan at the specified `PLAN_ID`.
 * The plan id refers to the index number shown in the displayed list of workout plans of the student.
 * The plan id **must be a positive integer** 1, 2, 3, ...
+
+### Exercise-related commands
+
+Workout plans set the focus of a training session. Exercises specify the movements to perform during that session.
+
+<box type="important">
+
+Select a student with `viewStudent`, then select one of their workout plans with `viewPlan` before adding an exercise.
+
+</box>
+
+#### Add an exercise to a workout plan: `addExercise`
+
+Format: `addExercise TITLE --description DESCRIPTION`
+
+* Both title and description are required and cannot be blank. The description can contain up to 500 characters.
+* The exercise is appended to the selected workout plan. An identical title and description cannot be added twice.
+* A workout plan can contain up to 100 exercises.
+
+Example: `addExercise Squats --description Barbell back squat`
+
+
+#### Editing an exercise: `editExercise`
+
+Edits one exercise in the selected workout plan.
+
+Format: `editExercise EXERCISE_ID [--name NAME] [--description DESCRIPTION]`
+
+* First select a student with `viewStudent STUDENT_ID`, then a workout plan with `viewPlan PLAN_ID`.
+* `EXERCISE_ID` is the positive number shown beside the exercise in the selected plan view.
+* Supply at least one field. An omitted field keeps its existing value and the exercise stays in the same position.
+* Repeated or unsupported fields, invalid values, and edits that duplicate an existing exercise are rejected without changing the plan.
+
+Example: `editExercise 2 --name Goblet Squat --description 3 sets of 10 reps`
+
+#### Deleting an exercise: `deleteExercise`
+
+Deletes one exercise from the selected workout plan.
+
+Format: `deleteExercise EXERCISE_ID`
+
+* First select a student with `viewStudent STUDENT_ID`, then a plan with `viewPlan PLAN_ID`.
+* `EXERCISE_ID` is the positive number shown beside the exercise in the selected plan.
+* An invalid or out-of-range ID leaves the plan unchanged. The remaining exercises keep their order and are renumbered.
+
+Example: `deleteExercise 2` removes the second exercise from the selected plan.
 
 ### Clearing all entries: `clear`
 
@@ -309,7 +376,7 @@ Student-related commands
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add Student**    | `addStudent NAME --hp PHONE_NUMBER --email EMAIL --addr ADDRESS [--tag TAG]... ` <br> e.g., `addStudent James Ho --hp 22224444 --email jamesho@example.com --addr 123, Clementi Rd, 1234665 --tag friend --tag colleague`
-**Edit Student**   | `editStudent STUDENT_ID [--name NAME] [--hp PHONE_NUMBER] [--email EMAIL] [--addr ADDRESS] [--tag TAG]... `<br> e.g.,`editStudent 2 --name James Lee --email jameslee@example.com`
+**Edit Student**   | `editStudent STUDENT_ID [--name NAME] [--hp PHONE_NUMBER] [--email EMAIL] [--addr ADDRESS] [--tag TAG]... [--clearTags]`<br> e.g.,`editStudent 2 --name James Lee --email jameslee@example.com`
 **View Student** | `viewStudent STUDENT_ID`<br> e.g., `viewStudent 2`
 **Find Student**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **Delete Student** | `deleteStudent STUDENT_ID`<br> e.g., `deleteStudent 3`
@@ -320,9 +387,17 @@ Workout plan-related commands
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add Workout Plan**    | `addPlan TITLE --plan DESCRIPTION --date DDMMYYYY [--tag TAG]... ` <br> e.g., `addPlan Leg Day --plan Squats 100kg 5 reps x5; Leg curls 80kg 10 reps x3 --date 20102026`
-**Edit Workout Plan**   | `editPlan PLAN_ID [--name NAME] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... `<br> e.g.,`editPlan 2 --date 06072027`
+**Edit Workout Plan**   | `editPlan PLAN_ID [--name NAME] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... [--clearTags]`<br> e.g.,`editPlan 2 --date 06072027`
 **Mark Workout Plan** | `markPlan PLAN_ID` <br> e.g. `markPlan 2`
 **Unmark Workout Plan** | `unmarkPlan PLAN_ID` <br> e.g. `unmarkPlan 2`
 **View Workout Plan** | `viewPlan PLAN_ID`<br> e.g., `viewPlan 2`
 **Delete Workout Plan** | `deletePlan PLAN_ID`<br> e.g., `deletePlan 3`
+
+Exercise-related commands
+
+Action     | Format, Examples
+-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+**Add Exercise** | `addExercise TITLE --description DESCRIPTION`<br> e.g., `addExercise Squats --description Barbell back squat`
+**Edit Exercise** | `editExercise EXERCISE_ID [--name NAME] [--description DESCRIPTION]`<br> e.g., `editExercise 1 --description 3 sets of 10 reps`
+**Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `viewStudent 1`, `viewPlan 2`, `deleteExercise 1`
 

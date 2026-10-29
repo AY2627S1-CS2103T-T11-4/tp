@@ -6,13 +6,17 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
+import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.exercise.ExerciseDescription;
+import seedu.address.model.exercise.ExerciseName;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
@@ -29,18 +33,51 @@ import seedu.address.model.workoutplan.WorkoutTitle;
  */
 public class ParserUtil {
 
-    public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
+    public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer between 1 and "
+            + Integer.MAX_VALUE + ", without leading zeros.";
+
+    /**
+     * Parses and validates an exercise title.
+     *
+     * @param name Exercise title to parse.
+     * @return The parsed exercise name.
+     * @throws ParseException If the title is invalid.
+     */
+    public static ExerciseName parseExerciseName(String name) throws ParseException {
+        requireNonNull(name);
+        String trimmedName = name.trim();
+        if (!ExerciseName.isValidName(trimmedName)) {
+            throw new FieldValueInvalidException(ExerciseName.MESSAGE_CONSTRAINTS);
+        }
+        return new ExerciseName(trimmedName);
+    }
+
+    /**
+     * Parses and validates an exercise description.
+     *
+     * @param description Exercise description to parse.
+     * @return The parsed exercise description.
+     * @throws ParseException If the description is invalid.
+     */
+    public static ExerciseDescription parseExerciseDescription(String description) throws ParseException {
+        requireNonNull(description);
+        String trimmedDescription = description.trim();
+        if (!ExerciseDescription.isValidExerciseDescription(trimmedDescription)) {
+            throw new FieldValueInvalidException(ExerciseDescription.MESSAGE_CONSTRAINTS);
+        }
+        return new ExerciseDescription(trimmedDescription);
+    }
 
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be
      * trimmed.
-     * @throws ParseException if the specified index is invalid (not a non-zero unsigned integer).
+     * @throws ParseException if the index is outside the positive integer range or has leading zeros.
      */
     public static Index parseIndex(String oneBasedIndex) throws ParseException {
         requireNonNull(oneBasedIndex);
 
         String trimmedIndex = oneBasedIndex.trim();
-        if (!StringUtil.isNonZeroUnsignedInteger(trimmedIndex)) {
+        if (trimmedIndex.startsWith("0") || !StringUtil.isNonZeroUnsignedInteger(trimmedIndex)) {
             throw new FieldValueInvalidException(MESSAGE_INVALID_INDEX);
         }
         return Index.fromOneBased(Integer.parseInt(trimmedIndex));
@@ -59,6 +96,21 @@ public class ParserUtil {
             throw new FieldValueInvalidException(Name.MESSAGE_CONSTRAINTS);
         }
         return new Name(trimmedName);
+    }
+
+    /**
+     * Parses whitespace-separated name search keywords, trimming leading and trailing whitespace.
+     * Keeps all keywords when at least one can match a valid student name.
+     *
+     * @throws FieldValueInvalidException if no keyword can match a valid student name.
+     */
+    public static List<String> parseNameKeywords(String queries) throws FieldValueInvalidException {
+        requireNonNull(queries);
+        List<String> nameKeywords = List.of(queries.trim().split("\\s+"));
+        if (nameKeywords.stream().noneMatch(Name::isValidName)) {
+            throw new FieldValueInvalidException(FindCommand.MESSAGE_INVALID_KEYWORDS);
+        }
+        return nameKeywords;
     }
 
     /**
@@ -132,6 +184,9 @@ public class ParserUtil {
         for (String tagName : tags) {
             tagSet.add(parseTag(tagName, tagConstructor));
         }
+        if (!Tag.isValidTagCount(tagSet.size())) {
+            throw new FieldValueInvalidException(Tag.MESSAGE_TAG_LIMIT);
+        }
         return tagSet;
     }
 
@@ -192,5 +247,16 @@ public class ParserUtil {
             throw new FieldValueInvalidException(WorkoutDate.MESSAGE_CONSTRAINTS, e);
         }
         return WorkoutDate.fromLocalDate(dateObject);
+    }
+
+    /**
+     * Checks that {@code emptyField} is an empty string
+     *
+     * @throws ParseException with {@code errorMessage} if {@code} emptyField is not an empty string
+     */
+    public static void validateEmptyField(String emptyField, String errorMessage) throws ParseException {
+        if (!emptyField.isEmpty()) {
+            throw new FieldValueInvalidException(errorMessage);
+        }
     }
 }

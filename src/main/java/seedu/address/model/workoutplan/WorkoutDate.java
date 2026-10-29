@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.Date;
 
 /**
@@ -14,13 +15,14 @@ import java.util.Date;
 public final class WorkoutDate {
 
     public static final String MESSAGE_CONSTRAINTS =
-            "Dates should be formatted only in DDMMYYYY format";
+            "Dates must be valid calendar dates in DDMMYYYY format";
     /*
      * Date strings have to be 8 numeric characters long
      */
     public static final String VALIDATION_REGEX = "^\\d{8}$";
 
-    public static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ofPattern("ddMMyyyy");
+    public static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ofPattern("ddMMuuuu")
+            .withResolverStyle(ResolverStyle.STRICT);
 
     private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
             DateTimeFormatter.ofPattern("dd-MM-uuuu");
