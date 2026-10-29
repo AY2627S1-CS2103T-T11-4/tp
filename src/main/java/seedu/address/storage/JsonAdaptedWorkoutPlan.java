@@ -15,6 +15,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExercisesList;
+import seedu.address.model.exercise.exceptions.DuplicateExerciseException;
+import seedu.address.model.exercise.exceptions.ExerciseListFullException;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
@@ -31,6 +35,7 @@ class JsonAdaptedWorkoutPlan {
     public static final String MISSING_FIELD_MESSAGE_FORMAT = "Workout plan's %s field is missing!";
     public static final String INVALID_STATUS_MESSAGE =
             "Workout plan status must be PENDING, COMPLETED, or OVERDUE.";
+    public static final String NULL_EXERCISE_MESSAGE = "Exercises list contains a null exercise.";
     private static final DateTimeFormatter STORAGE_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
 
     private final String title;
@@ -38,13 +43,15 @@ class JsonAdaptedWorkoutPlan {
     private final String date;
     private final String status;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
+    private final List<JsonAdaptedExercise> exercises = new ArrayList<>();
 
     @JsonCreator
     public JsonAdaptedWorkoutPlan(@JsonProperty("title") String title,
                                   @JsonProperty("workoutDescription") String workoutDescription,
                                   @JsonProperty("date") String date,
                                   @JsonProperty("tags") List<JsonAdaptedTag> tags,
-                                  @JsonProperty("status") String status) {
+                                  @JsonProperty("status") String status,
+                                  @JsonProperty("exercises") List<JsonAdaptedExercise> exercises) {
         this.title = title;
         this.workoutDescription = workoutDescription;
         this.date = date;
@@ -52,6 +59,15 @@ class JsonAdaptedWorkoutPlan {
         if (tags != null) {
             this.tags.addAll(tags);
         }
+        if (exercises != null) {
+            this.exercises.addAll(exercises);
+        }
+    }
+
+    /** Creates an adapted workout plan without exercises, for legacy data. */
+    public JsonAdaptedWorkoutPlan(String title, String workoutDescription, String date,
+                                  List<JsonAdaptedTag> tags, String status) {
+        this(title, workoutDescription, date, tags, status, null);
     }
 
     /** Creates an adapted workout plan without a stored status, for legacy data. */
@@ -73,6 +89,9 @@ class JsonAdaptedWorkoutPlan {
         status = source.getStatus().name();
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
+                .collect(Collectors.toList()));
+        exercises.addAll(source.getExercisesList().getExerciseList().stream()
+                .map(JsonAdaptedExercise::new)
                 .collect(Collectors.toList()));
     }
 
@@ -157,7 +176,21 @@ class JsonAdaptedWorkoutPlan {
             throw new IllegalValueException(INVALID_STATUS_MESSAGE);
         }
 
+        List<Exercise> modelExercises = new ArrayList<>();
+        for (JsonAdaptedExercise exercise : exercises) {
+            if (exercise == null) {
+                throw new IllegalValueException(NULL_EXERCISE_MESSAGE);
+            }
+            modelExercises.add(exercise.toModelType());
+        }
+        final ExercisesList modelExercisesList;
+        try {
+            modelExercisesList = new ExercisesList(modelExercises);
+        } catch (DuplicateExerciseException | ExerciseListFullException e) {
+            throw new IllegalValueException(e.getMessage());
+        }
+
         return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription(workoutDescription),
-                modelDate, modelTags, modelStatus);
+                modelDate, modelTags, modelStatus, modelExercisesList);
     }
 }

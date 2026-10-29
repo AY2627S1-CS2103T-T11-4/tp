@@ -22,6 +22,10 @@ import seedu.address.commons.exceptions.DataLoadingException;
 import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.BrotherGym;
 import seedu.address.model.ReadOnlyBrotherGym;
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseDescription;
+import seedu.address.model.exercise.ExerciseName;
+import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.student.Student;
 import seedu.address.model.tag.StudentTag;
 import seedu.address.model.tag.WorkoutPlanTag;
@@ -36,6 +40,43 @@ public class JsonBrotherGymStorageTest {
 
     @TempDir
     public Path testFolder;
+
+    @Test
+    public void readAndSaveBrotherGym_exercises_preservesValuesAndOrder() throws Exception {
+        Path filePath = testFolder.resolve("Exercises.json");
+        Exercise squat = new Exercise(new ExerciseName("Squat"), new ExerciseDescription("Barbell"));
+        Exercise press = new Exercise(new ExerciseName("Press"), new ExerciseDescription("Dumbbell"));
+        WorkoutPlan plan = new WorkoutPlan(new WorkoutTitle("Strength"), new WorkoutDescription("Leg day"),
+                JsonAdaptedWorkoutPlan.formatDateForModel("2026-10-14"), Set.of(), WorkoutPlanStatus.PENDING,
+                new ExercisesList(List.of(squat, press)));
+        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(), ALICE.getAddress(),
+                ALICE.getTags(), new WorkoutPlansList(List.of(plan)));
+        BrotherGym original = new BrotherGym();
+        original.addStudent(student);
+        JsonBrotherGymStorage storage = new JsonBrotherGymStorage(filePath);
+
+        storage.saveBrotherGym(original);
+        ReadOnlyBrotherGym restored = storage.readBrotherGym().orElseThrow();
+
+        assertEquals(List.of(squat, press), restored.getStudentList().get(0).getWorkoutPlansList()
+                .getWorkoutPlan(0).getExercisesList().getExerciseList());
+    }
+
+    @Test
+    public void readBrotherGym_corruptExercise_throwsDataLoadingException() throws Exception {
+        Path filePath = testFolder.resolve("InvalidExercise.json");
+        JsonBrotherGymStorage storage = new JsonBrotherGymStorage(filePath);
+        Files.writeString(filePath, """
+                {"students":[{"name":"Benson Meier","phone":"98765432","email":"johnd@example.com",
+                  "address":"Clementi","tags":[],"workoutPlans":[{
+                    "title":"Strength","workoutDescription":"Squats","date":"2023-11-15",
+                    "exercises":[{"name":"Squat","description":"Barbell"},
+                                 {"name":"Squat","description":"Barbell"}]
+                  }]}]}
+                """);
+
+        assertThrows(DataLoadingException.class, storage::readBrotherGym);
+    }
 
     @Test
     public void constructor_nullFilePath_throwsNullPointerException() {
