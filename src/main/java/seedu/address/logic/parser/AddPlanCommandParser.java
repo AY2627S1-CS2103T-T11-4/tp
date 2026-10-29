@@ -67,7 +67,8 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
         WorkoutTitle title = ParserUtil.parseTitle(argMultimap.getPreamble());
         WorkoutDescription desc = ParserUtil.parseDescription(argMultimap.getValue(PREFIX_PLAN).get());
         WorkoutDate date = ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get());
-        Set<WorkoutPlanTag> tagList = ParserUtil.parseWorkoutPlanTags(argMultimap.getAllValues(PREFIX_TAG));
+        Set<WorkoutPlanTag> tagList = ParserUtil.parseTagsIfPresent(
+                argMultimap.getAllValues(PREFIX_TAG), WorkoutPlanTag::new).orElse(Set.of());
 
         return new WorkoutPlan(title, desc, date, tagList);
     }

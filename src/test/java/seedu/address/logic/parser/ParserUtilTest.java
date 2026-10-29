@@ -256,55 +256,54 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseTag_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> ParserUtil.parseTag(null, TagStub::new));
+    public void parseTagsIfPresent_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseTagsIfPresent(null, TagStub::new));
     }
 
     @Test
-    public void parseTag_invalidValue_throwsParseException() {
-        assertThrows(ParseException.class, () -> ParserUtil.parseTag(INVALID_TAG, TagStub::new));
+    public void parseTagsIfPresent_invalidValue_throwsParseException() {
+        assertThrows(ParseException.class, () ->
+                ParserUtil.parseTagsIfPresent(List.of(INVALID_TAG), TagStub::new));
     }
 
     @Test
-    public void parseTag_emptyValue_throwsParseException() {
+    public void parseTagsIfPresent_emptyValue_throwsParseException() {
         assertThrows(ParseException.class, Tag.MESSAGE_CONSTRAINTS, ()
-                -> ParserUtil.parseTag("", TagStub::new));
+                -> ParserUtil.parseTagsIfPresent(List.of(""), TagStub::new));
     }
 
     @Test
-    public void parseTag_validValueWithoutWhitespace_returnsTag() throws Exception {
-        TagStub expectedTag = new TagStub(VALID_TAG_1);
-        assertEquals(expectedTag, ParserUtil.parseTag(VALID_TAG_1, TagStub::new));
+    public void parseTagsIfPresent_validValueWithoutWhitespace_returnsTagSet() throws Exception {
+        Set<TagStub> expectedTagSet = Set.of(new TagStub(VALID_TAG_1));
+        assertEquals(expectedTagSet,
+                ParserUtil.parseTagsIfPresent(List.of(VALID_TAG_1), TagStub::new).orElseThrow());
     }
 
     @Test
-    public void parseTag_validValueWithWhitespace_returnsTrimmedTag() throws Exception {
+    public void parseTagsIfPresent_validValueWithWhitespace_returnsTrimmedTag() throws Exception {
         String tagWithWhitespace = WHITESPACE + VALID_TAG_1 + WHITESPACE;
-        TagStub expectedTag = new TagStub(VALID_TAG_1);
-        assertEquals(expectedTag, ParserUtil.parseTag(tagWithWhitespace, TagStub::new));
+        Set<TagStub> expectedTagSet = Set.of(new TagStub(VALID_TAG_1));
+        assertEquals(expectedTagSet,
+                ParserUtil.parseTagsIfPresent(List.of(tagWithWhitespace), TagStub::new).orElseThrow());
     }
 
     @Test
-    public void parseTags_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> ParserUtil.parseTags(null, TagStub::new));
+    public void parseTagsIfPresent_emptyCollection_returnsEmptyOptional() throws Exception {
+        assertTrue(ParserUtil.parseTagsIfPresent(List.of(), TagStub::new).isEmpty());
     }
 
     @Test
-    public void parseTags_collectionWithInvalidTags_throwsParseException() {
-        assertThrows(ParseException.class, () -> ParserUtil.parseTags(List.of(VALID_TAG_1, INVALID_TAG), TagStub::new));
-    }
-
-    @Test
-    public void parseTags_emptyCollection_returnsEmptySet() throws Exception {
-        assertTrue(ParserUtil.parseTags(List.of(), TagStub::new).isEmpty());
-    }
-
-    @Test
-    public void parseTags_collectionWithValidTags_returnsTagSet() throws Exception {
-        Set<TagStub> actualTagSet = ParserUtil.parseTags(List.of(VALID_TAG_1, VALID_TAG_2), TagStub::new);
+    public void parseTagsIfPresent_collectionWithValidTags_returnsOptionalTagSet() throws Exception {
         Set<TagStub> expectedTagSet = Set.of(new TagStub(VALID_TAG_1), new TagStub(VALID_TAG_2));
 
-        assertEquals(expectedTagSet, actualTagSet);
+        assertEquals(expectedTagSet,
+                ParserUtil.parseTagsIfPresent(List.of(VALID_TAG_1, VALID_TAG_2), TagStub::new).orElseThrow());
+    }
+
+    @Test
+    public void parseTagsIfPresent_collectionWithInvalidTags_throwsParseException() {
+        assertThrows(ParseException.class, () ->
+                ParserUtil.parseTagsIfPresent(List.of(VALID_TAG_1, INVALID_TAG), TagStub::new));
     }
 
     @Test
@@ -320,18 +319,33 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseTags_tagsAtLimit_returnsTagSet() throws Exception {
-        List<String> tags = createTagNames(Tag.MAX_TAG_COUNT);
-
-        assertEquals(Tag.MAX_TAG_COUNT, ParserUtil.parseTags(tags, TagStub::new).size());
+    public void validateEmptyPrefixValue_emptyValue_success() throws Exception {
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(" " + PREFIX_CLEAR_TAGS);
+        ParserUtil.validateEmptyPrefixValue(argMultimap, PREFIX_CLEAR_TAGS);
     }
 
     @Test
-    public void parseTags_tooManyTags_throwsParseException() {
+    public void validateEmptyPrefixValue_nonEmptyValue_throwsFieldValueInvalidException() {
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(" " + PREFIX_CLEAR_TAGS + " value");
+        String errorMessage = Messages.getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS);
+
+        assertThrows(FieldValueInvalidException.class, errorMessage, () ->
+                ParserUtil.validateEmptyPrefixValue(argMultimap, PREFIX_CLEAR_TAGS));
+    }
+
+    @Test
+    public void parseTagsIfPresent_tagsAtLimit_returnsTagSet() throws Exception {
+        List<String> tags = createTagNames(Tag.MAX_TAG_COUNT);
+
+        assertEquals(Tag.MAX_TAG_COUNT, ParserUtil.parseTagsIfPresent(tags, TagStub::new).orElseThrow().size());
+    }
+
+    @Test
+    public void parseTagsIfPresent_tooManyTags_throwsParseException() {
         List<String> tags = createTagNames(Tag.MAX_TAG_COUNT + 1);
 
         assertThrows(ParseException.class, Tag.MESSAGE_TAG_LIMIT, ()
-            -> ParserUtil.parseTags(tags, TagStub::new));
+            -> ParserUtil.parseTagsIfPresent(tags, TagStub::new));
     }
 
     @Test

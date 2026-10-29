@@ -1,15 +1,12 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.Messages.getErrorMessageForExtraValues;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
-import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -62,9 +59,7 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
             throw pe.withMessage(Messages.formatParserError(pe.getMessage(), EditPlanCommand.MESSAGE_USAGE));
         }
 
-        if (!editPlanDescriptor.isAnyFieldEdited()) {
-            throw new NoFieldsToEditException(EditPlanCommand.MESSAGE_NOT_EDITED);
-        }
+        validateAtLeastOneFieldEdited(editPlanDescriptor);
 
         return new EditPlanCommand(index, editPlanDescriptor);
     }
@@ -87,35 +82,21 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
         if (argMultimap.getValue(PREFIX_DATE).isPresent()) {
             editPlanDescriptor.setDate(ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get()));
         }
-        parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editPlanDescriptor::setWorkoutPlanTags);
+        ParserUtil.parseTagsIfPresent(argMultimap.getAllValues(PREFIX_TAG), WorkoutPlanTag::new)
+                .ifPresent(editPlanDescriptor::setWorkoutPlanTags);
 
         if (argMultimap.getValue(PREFIX_CLEAR_TAGS).isPresent()) {
-            verifyClearTag(argMultimap);
+            ParserUtil.validateEmptyPrefixValue(argMultimap, PREFIX_CLEAR_TAGS);
             editPlanDescriptor.setWorkoutPlanTags(Set.of());
         }
 
         return editPlanDescriptor;
     }
 
-    /**
-     * Parses {@code Collection<String> tags} into a {@code Set<WorkoutPlanTag>} if {@code tags} is non-empty.
-     * If {@code tags} contains only one element which is an empty string, it will be parsed into a
-     * {@code Set<StudentTag>} containing zero tags.
-     */
-    private Optional<Set<WorkoutPlanTag>> parseTagsForEdit(Collection<String> tags) throws ParseException {
-        assert tags != null;
-
-        if (tags.isEmpty()) {
-            return Optional.empty();
+    private void validateAtLeastOneFieldEdited(
+            EditPlanCommand.EditPlanDescriptor editPlanDescriptor) throws NoFieldsToEditException {
+        if (!editPlanDescriptor.isAnyFieldEdited()) {
+            throw new NoFieldsToEditException(EditPlanCommand.MESSAGE_NOT_EDITED);
         }
-        return Optional.of(ParserUtil.parseWorkoutPlanTags(tags));
-    }
-
-    /**
-     * Ensures that {@code emptyString} is empty, then produces an empty set of {@code WorkoutPlanTag}s
-     */
-    public static void verifyClearTag(ArgumentMultimap argMultiMap) throws ParseException {
-        ParserUtil.validateEmptyField(
-                argMultiMap.getValue(PREFIX_CLEAR_TAGS).get(), getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS));
     }
 }
