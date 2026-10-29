@@ -41,10 +41,17 @@ public class ModelManagerTest {
     // At least once: cover each date boundary and status without testing every combination.
     @Test
     public void addWorkoutPlanForStudent_storesExpectedStatus() {
-        // assertAddRefresh(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
-        // assertAddRefresh(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
-        // assertAddRefresh(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
-        // assertAddRefresh(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
+        // A pending workout plan scheduled in the past (-1 day) should automatically become overdue.
+        assertAddRefresh(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
+
+        // A workout plan scheduled for today (0 days) cannot be overdue, so it should be corrected to pending.
+        assertAddRefresh(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
+
+        // A pending workout plan scheduled in the future (1 day) should remain pending.
+        assertAddRefresh(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
+
+        // A completed workout plan scheduled in the past (-1 day) should remain completed (and not become overdue).
+        assertAddRefresh(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
     }
 
     private void assertAddRefresh(int days, WorkoutPlanStatus status, WorkoutPlanStatus expectedStatus) {
@@ -71,10 +78,17 @@ public class ModelManagerTest {
 
     @Test
     public void setWorkoutPlanForStudent_storesExpectedStatus() {
-        // assertSetRefresh(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
-        // assertSetRefresh(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
-        // assertSetRefresh(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
-        // assertSetRefresh(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
+        // Setting a pending workout plan to a past date (-1 day) should automatically mark it as overdue.
+        assertSetRefresh(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
+
+        // Setting a workout plan to today (0 days) means it cannot be overdue; it should be corrected to pending.
+        assertSetRefresh(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
+
+        // Setting a pending workout plan to a future date (1 day) should allow it to remain pending.
+        assertSetRefresh(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
+
+        // Setting a completed workout plan to a past date (-1 day) should keep it completed (it does not revert to overdue).
+        assertSetRefresh(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
     }
 
     private void assertSetRefresh(int days, WorkoutPlanStatus status, WorkoutPlanStatus expectedStatus) {
