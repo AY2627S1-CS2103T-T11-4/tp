@@ -1,15 +1,15 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.Messages.getErrorMessageForExtraValues;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_ADD_TAG;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DELETE_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -27,11 +27,11 @@ import seedu.address.model.tag.StudentTag;
 public class EditStudentCommandParser implements Parser<EditStudentCommand> {
 
     private static final Set<Prefix> VALID_PREFIXES =
-            Set.of(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG);
+            Set.of(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS,
+                    PREFIX_ADD_TAG, PREFIX_DELETE_TAG, PREFIX_CLEAR_TAGS);
     private static final Set<Prefix> REQUIRED_PREFIXES = Set.of();
     private static final Set<Prefix> NO_REPEAT_PREFIXES =
-            Set.of(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS);
-
+            Set.of(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_CLEAR_TAGS);
     private static final Logger logger = LogsCenter.getLogger(EditStudentCommandParser.class);
 
     /**
@@ -42,7 +42,8 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
     public EditStudentCommand parse(String args) throws ParseException {
         requireNonNull(args);
 
-        ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
+        ArgumentValidator argValidator = new ArgumentValidator(true, VALID_PREFIXES, NO_REPEAT_PREFIXES,
+                REQUIRED_PREFIXES);
         Index index;
         EditStudentCommand.EditStudentDescriptor editStudentDescriptor;
 
@@ -91,24 +92,30 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
         if (argMultimap.getValue(PREFIX_ADDRESS).isPresent()) {
             editStudentDescriptor.setAddress(ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get()));
         }
-        parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editStudentDescriptor::setTags);
+
+        Set<StudentTag> tagsToAdd = ParserUtil.parseStudentTags(argMultimap.getAllValues(PREFIX_ADD_TAG));
+        Set<StudentTag> tagsToDelete = ParserUtil.parseStudentTags(argMultimap.getAllValues(PREFIX_DELETE_TAG));
+        ParserUtil.validateNoTagConflicts(tagsToAdd, tagsToDelete);
+        if (!tagsToAdd.isEmpty()) {
+            editStudentDescriptor.setTagsToAdd(tagsToAdd);
+        }
+        if (!tagsToDelete.isEmpty()) {
+            editStudentDescriptor.setTagsToDelete(tagsToDelete);
+        }
+        if (argMultimap.getValue(PREFIX_CLEAR_TAGS).isPresent()) {
+            verifyClearTag(argMultimap);
+            editStudentDescriptor.setClearTags(true);
+        }
 
         return editStudentDescriptor;
     }
 
     /**
-     * Parses {@code Collection<String> tags} into a {@code Set<StudentTag>} if {@code tags} is non-empty.
-     * If {@code tags} contains only one element which is an empty string, it will be parsed into a
-     * {@code Set<StudentTag>} containing zero tags.
+     * Ensures that {@code emptyString} is empty, then produces an empty set of {@code StudentTag}s.
      */
-    private Optional<Set<StudentTag>> parseTagsForEdit(Collection<String> tags) throws ParseException {
-        assert tags != null;
-
-        if (tags.isEmpty()) {
-            return Optional.empty();
-        }
-        Collection<String> tagSet = tags.size() == 1 && tags.contains("") ? Collections.emptySet() : tags;
-        return Optional.of(ParserUtil.parseStudentTags(tagSet));
+    public static void verifyClearTag(ArgumentMultimap argMultiMap) throws ParseException {
+        ParserUtil.validateEmptyField(
+                argMultiMap.getValue(PREFIX_CLEAR_TAGS).get(), getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS));
     }
 
 }

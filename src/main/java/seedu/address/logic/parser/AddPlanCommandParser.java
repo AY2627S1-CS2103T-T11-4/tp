@@ -1,9 +1,9 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_ADD_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Set;
 import java.util.logging.Logger;
@@ -23,7 +23,7 @@ import seedu.address.model.workoutplan.WorkoutTitle;
  */
 public class AddPlanCommandParser implements Parser<AddPlanCommand> {
 
-    private static final Set<Prefix> VALID_PREFIXES = Set.of(PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
+    private static final Set<Prefix> VALID_PREFIXES = Set.of(PREFIX_PLAN, PREFIX_DATE, PREFIX_ADD_TAG);
     private static final Set<Prefix> REQUIRED_PREFIXES = Set.of(PREFIX_PLAN, PREFIX_DATE);
     private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_PLAN, PREFIX_DATE);
 
@@ -67,7 +67,7 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
         WorkoutTitle title = ParserUtil.parseTitle(argMultimap.getPreamble());
         WorkoutDescription desc = ParserUtil.parseDescription(argMultimap.getValue(PREFIX_PLAN).get());
         WorkoutDate date = ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get());
-        Set<WorkoutPlanTag> tagList = ParserUtil.parseWorkoutPlanTags(argMultimap.getAllValues(PREFIX_TAG));
+        Set<WorkoutPlanTag> tagList = ParserUtil.parseWorkoutPlanTags(argMultimap.getAllValues(PREFIX_ADD_TAG));
 
         return new WorkoutPlan(title, desc, date, tagList);
     }

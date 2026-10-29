@@ -7,6 +7,7 @@ import static seedu.address.logic.commands.CommandTestUtil.DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
@@ -16,7 +17,9 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND;
 import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 import static seedu.address.testutil.TypicalWorkouts.LEG_DAY;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +32,7 @@ import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
+import seedu.address.model.tag.StudentTag;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
 import seedu.address.testutil.StudentBuilder;
@@ -44,6 +48,7 @@ public class EditStudentCommandTest {
     public void execute_allFieldsSpecifiedUnfilteredList_success() {
         Student editedStudent = new StudentBuilder().build();
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder(editedStudent).build();
+        descriptor.setClearTags(true);
         EditStudentCommand editStudentCommand = new EditStudentCommand(INDEX_FIRST, descriptor);
 
         String expectedMessage = String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS,
@@ -66,7 +71,7 @@ public class EditStudentCommandTest {
 
         EditStudentCommand.EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder()
                 .withName(VALID_NAME_BOB)
-                .withPhone(VALID_PHONE_BOB).withTags(VALID_TAG_HUSBAND).build();
+                .withPhone(VALID_PHONE_BOB).withTagsToAdd(VALID_TAG_HUSBAND).build();
         EditStudentCommand editStudentCommand = new EditStudentCommand(indexLastStudent, descriptor);
 
         String expectedMessage = String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS,
@@ -76,6 +81,81 @@ public class EditStudentCommandTest {
         expectedModel.setStudent(lastStudent, editedStudent);
 
         assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_explicitEmptyTagSet_clearsTags() {
+        Student studentToEdit = model.getFilteredStudentList().get(INDEX_FIRST.getZeroBased());
+        EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withClearTags().build();
+        EditStudentCommand editStudentCommand = new EditStudentCommand(INDEX_FIRST, descriptor);
+
+        Student editedStudent = new Student(studentToEdit.getName(), studentToEdit.getPhone(),
+                studentToEdit.getEmail(), studentToEdit.getAddress(), Set.of(),
+                studentToEdit.getWorkoutPlansList());
+        String expectedMessage = String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS,
+                Messages.format(editedStudent));
+
+        Model expectedModel = new ModelManager(new BrotherGym(model.getBrotherGym()), new UserPrefs());
+        expectedModel.setStudent(studentToEdit, editedStudent);
+
+        assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_addTags_preservesExistingAndIgnoresExistingTags() {
+        Student studentToEdit = model.getFilteredStudentList().get(INDEX_FIRST.getZeroBased());
+        EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder()
+                .withTagsToAdd(VALID_TAG_FRIEND, VALID_TAG_HUSBAND).build();
+        EditStudentCommand editStudentCommand = new EditStudentCommand(INDEX_FIRST, descriptor);
+
+        Set<StudentTag> expectedTags = new HashSet<>(studentToEdit.getTags());
+        expectedTags.addAll(descriptor.getTagsToAdd().orElseThrow());
+        Student editedStudent = new Student(studentToEdit.getName(), studentToEdit.getPhone(),
+                studentToEdit.getEmail(), studentToEdit.getAddress(),
+                expectedTags,
+                studentToEdit.getWorkoutPlansList());
+        Model expectedModel = new ModelManager(new BrotherGym(model.getBrotherGym()), new UserPrefs());
+        expectedModel.setStudent(studentToEdit, editedStudent);
+
+        assertCommandSuccess(editStudentCommand, model,
+                String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS, Messages.format(editedStudent)),
+                expectedModel);
+    }
+
+    @Test
+    public void execute_deleteTags_removesExistingAndIgnoresAbsentTags() {
+        Student studentToEdit = model.getFilteredStudentList().get(INDEX_FIRST.getZeroBased());
+        EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder()
+                .withTagsToDelete("friends", "absent").build();
+        EditStudentCommand editStudentCommand = new EditStudentCommand(INDEX_FIRST, descriptor);
+
+        Student editedStudent = new Student(studentToEdit.getName(), studentToEdit.getPhone(),
+                studentToEdit.getEmail(), studentToEdit.getAddress(), Set.of(),
+                studentToEdit.getWorkoutPlansList());
+        Model expectedModel = new ModelManager(new BrotherGym(model.getBrotherGym()), new UserPrefs());
+        expectedModel.setStudent(studentToEdit, editedStudent);
+
+        assertCommandSuccess(editStudentCommand, model,
+                String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS, Messages.format(editedStudent)),
+                expectedModel);
+    }
+
+    @Test
+    public void execute_clearTagsWithDeleteAndAdd_clearsBeforeAdding() {
+        Student studentToEdit = model.getFilteredStudentList().get(INDEX_FIRST.getZeroBased());
+        EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder()
+                .withTagsToDelete("friends").withTagsToAdd(VALID_TAG_HUSBAND).withClearTags().build();
+        EditStudentCommand editStudentCommand = new EditStudentCommand(INDEX_FIRST, descriptor);
+
+        Student editedStudent = new Student(studentToEdit.getName(), studentToEdit.getPhone(),
+                studentToEdit.getEmail(), studentToEdit.getAddress(), Set.of(new StudentTag(VALID_TAG_HUSBAND)),
+                studentToEdit.getWorkoutPlansList());
+        Model expectedModel = new ModelManager(new BrotherGym(model.getBrotherGym()), new UserPrefs());
+        expectedModel.setStudent(studentToEdit, editedStudent);
+
+        assertCommandSuccess(editStudentCommand, model,
+                String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS, Messages.format(editedStudent)),
+                expectedModel);
     }
 
     @Test

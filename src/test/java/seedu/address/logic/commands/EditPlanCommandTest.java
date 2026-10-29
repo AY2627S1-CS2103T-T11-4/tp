@@ -86,15 +86,15 @@ public class EditPlanCommandTest {
     }
 
     @Test
-    public void execute_tagsSpecified_replacesTags() throws Exception {
+    public void execute_tagsSpecified_addsTags() throws Exception {
         Model model = createModelWithPlans(FIRST_PLAN);
         Student currentStudent = model.getFilteredStudentList().get(0);
         model.setCurrentStudent(currentStudent);
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
-        descriptor.setWorkoutPlanTags(Set.of(new WorkoutPlanTag("new")));
+        descriptor.setTagsToAdd(Set.of(new WorkoutPlanTag("old"), new WorkoutPlanTag("new")));
 
         WorkoutPlan expectedPlan = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getWorkouts(),
-                FIRST_PLAN.getDate(), Set.of(new WorkoutPlanTag("new")));
+                FIRST_PLAN.getDate(), Set.of(new WorkoutPlanTag("old"), new WorkoutPlanTag("new")));
         Student expectedStudent = withPlans(currentStudent, expectedPlan);
         Model expectedModel = modelWithStudent(expectedStudent);
 
@@ -103,15 +103,51 @@ public class EditPlanCommandTest {
     }
 
     @Test
-    public void execute_emptyTagsSpecified_clearsTags() throws Exception {
+    public void execute_explicitEmptyTagSet_clearsTags() throws Exception {
         Model model = createModelWithPlans(FIRST_PLAN);
         Student currentStudent = model.getFilteredStudentList().get(0);
         model.setCurrentStudent(currentStudent);
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
-        descriptor.setWorkoutPlanTags(Set.of());
+        descriptor.setClearTags(true);
 
         WorkoutPlan expectedPlan = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getWorkouts(),
                 FIRST_PLAN.getDate(), Set.of());
+        Student expectedStudent = withPlans(currentStudent, expectedPlan);
+        Model expectedModel = modelWithStudent(expectedStudent);
+
+        CommandTestUtil.assertCommandSuccess(new EditPlanCommand(Index.fromOneBased(1), descriptor), model,
+                String.format(EditPlanCommand.MESSAGE_SUCCESS, expectedPlan), expectedModel);
+    }
+
+    @Test
+    public void execute_deleteTags_removesExistingAndIgnoresAbsentTags() throws Exception {
+        Model model = createModelWithPlans(FIRST_PLAN);
+        Student currentStudent = model.getFilteredStudentList().get(0);
+        model.setCurrentStudent(currentStudent);
+        EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
+        descriptor.setTagsToDelete(Set.of(new WorkoutPlanTag("old"), new WorkoutPlanTag("absent")));
+
+        WorkoutPlan expectedPlan = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getWorkouts(),
+                FIRST_PLAN.getDate(), Set.of());
+        Student expectedStudent = withPlans(currentStudent, expectedPlan);
+        Model expectedModel = modelWithStudent(expectedStudent);
+
+        CommandTestUtil.assertCommandSuccess(new EditPlanCommand(Index.fromOneBased(1), descriptor), model,
+                String.format(EditPlanCommand.MESSAGE_SUCCESS, expectedPlan), expectedModel);
+    }
+
+    @Test
+    public void execute_clearTagsWithDeleteAndAdd_clearsBeforeAdding() throws Exception {
+        Model model = createModelWithPlans(FIRST_PLAN);
+        Student currentStudent = model.getFilteredStudentList().get(0);
+        model.setCurrentStudent(currentStudent);
+        EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
+        descriptor.setTagsToDelete(Set.of(new WorkoutPlanTag("old")));
+        descriptor.setTagsToAdd(Set.of(new WorkoutPlanTag("new")));
+        descriptor.setClearTags(true);
+
+        WorkoutPlan expectedPlan = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getWorkouts(),
+                FIRST_PLAN.getDate(), Set.of(new WorkoutPlanTag("new")));
         Student expectedStudent = withPlans(currentStudent, expectedPlan);
         Model expectedModel = modelWithStudent(expectedStudent);
 
@@ -166,7 +202,7 @@ public class EditPlanCommandTest {
         descriptor.setTitle(SECOND_PLAN.getTitle());
         descriptor.setDescription(SECOND_PLAN.getWorkouts());
         descriptor.setDate(SECOND_PLAN.getDate());
-        descriptor.setWorkoutPlanTags(SECOND_PLAN.getTags());
+        descriptor.setClearTags(true);
 
         CommandTestUtil.assertCommandFailure(new EditPlanCommand(Index.fromOneBased(1), descriptor), model,
                 EditPlanCommand.MESSAGE_DUPLICATE_PLAN);
