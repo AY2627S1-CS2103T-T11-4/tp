@@ -110,7 +110,7 @@ public class Messages {
         StringBuilder builder = new StringBuilder()
                 .append(workoutPlan.getTitle().getValue())
                 .append(" - ")
-                .append(workoutPlan.getWorkouts().getValue())
+                .append(workoutPlan.getDescription().getValue())
                 .append(" (")
                 .append(formattedDate)
                 .append(")");
