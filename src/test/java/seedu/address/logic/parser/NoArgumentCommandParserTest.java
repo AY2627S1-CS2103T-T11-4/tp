@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.parser.exceptions.InputFormatInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 public class NoArgumentCommandParserTest {
@@ -26,9 +27,9 @@ public class NoArgumentCommandParserTest {
     }
 
     @Test
-    public void parse_unexpectedArguments_throwsParseException() {
+    public void parse_unexpectedArguments_throwsInputFormatInvalidException() {
         String expectedMessage = Messages.formatParserError(MESSAGE_UNEXPECTED_PARAMETERS, MESSAGE_USAGE);
-        assertThrows(ParseException.class, expectedMessage, () -> parser.parse("unexpected"));
+        assertThrows(InputFormatInvalidException.class, expectedMessage, () -> parser.parse("unexpected"));
     }
 
     @Test

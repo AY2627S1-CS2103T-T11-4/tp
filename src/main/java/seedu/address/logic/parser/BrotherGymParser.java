@@ -52,6 +52,8 @@ public class BrotherGymParser {
     private static final EditPlanCommandParser EDIT_PLAN_PARSER = new EditPlanCommandParser();
     private static final EditExerciseCommandParser EDIT_EXERCISE_PARSER = new EditExerciseCommandParser();
     private static final FindCommandParser FIND_COMMAND_PARSER = new FindCommandParser();
+
+    // No-argument parsers
     private static final NoArgumentCommandParser<ClearCommand> CLEAR_PARSER =
             new NoArgumentCommandParser<>(ClearCommand::new, ClearCommand.MESSAGE_USAGE);
     private static final NoArgumentCommandParser<HomeCommand> HOME_PARSER =
@@ -60,6 +62,8 @@ public class BrotherGymParser {
             new NoArgumentCommandParser<>(ExitCommand::new, ExitCommand.MESSAGE_USAGE);
     private static final NoArgumentCommandParser<HelpCommand> HELP_PARSER =
             new NoArgumentCommandParser<>(HelpCommand::new, HelpCommand.MESSAGE_USAGE);
+
+    // Single index command parsers
     private static final SingleIndexCommandParser<MarkPlanCommand> MARK_PLAN_PARSER =
             new SingleIndexCommandParser<>(
                     MarkPlanCommand::new, MarkPlanCommand.MESSAGE_USAGE, MarkPlanCommand.COMMAND_WORD);

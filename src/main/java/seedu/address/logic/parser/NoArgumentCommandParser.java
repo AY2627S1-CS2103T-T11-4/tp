@@ -2,13 +2,11 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
-import static seedu.address.logic.Messages.MESSAGE_UNEXPECTED_PARAMETERS;
 
 import java.util.function.Supplier;
 
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.Command;
-import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -40,10 +38,14 @@ public class NoArgumentCommandParser<C extends Command> implements Parser<C> {
     @Override
     public C parse(String args) throws ParseException {
         requireNonNull(args);
-        if (!args.isBlank()) {
-            throw new FieldValueInvalidException(
-                    Messages.formatParserError(MESSAGE_UNEXPECTED_PARAMETERS, commandMessageUsage));
+
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+        try {
+            ArgumentValidator.verifyNoArgs(argMultimap);
+        } catch (ParseException pe) {
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), commandMessageUsage));
         }
+
         return commandConstructor.get();
     }
 }
