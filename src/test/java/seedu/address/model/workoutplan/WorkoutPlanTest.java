@@ -46,6 +46,30 @@ public class WorkoutPlanTest {
     private static final ExercisesList EXERCISES = new ExercisesList(List.of(EXERCISE));
 
     @Test
+    public void withExercises_newExercises_returnsCopyWithOtherFieldsUnchanged() {
+        WorkoutPlan original = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(new WorkoutPlanTag("strength")), WorkoutPlanStatus.COMPLETED);
+
+        WorkoutPlan copy = original.withExercises(EXERCISES);
+
+        assertNotSame(original, copy);
+        assertSame(EXERCISES, copy.getExercisesList());
+        assertEquals(new ExercisesList(), original.getExercisesList());
+        assertEquals(original.getTitle(), copy.getTitle());
+        assertEquals(original.getWorkouts(), copy.getWorkouts());
+        assertEquals(original.getDate(), copy.getDate());
+        assertEquals(original.getTags(), copy.getTags());
+        assertEquals(original.getStatus(), copy.getStatus());
+    }
+
+    @Test
+    public void withExercises_nullExercises_throwsNullPointerException() {
+        WorkoutPlan original = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID);
+
+        assertThrows(NullPointerException.class, () -> original.withExercises(null));
+    }
+
+    @Test
     public void constructor_nullTitle_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new WorkoutPlan(null, DESCRIPTION_VALID, DATE_VALID));
     }

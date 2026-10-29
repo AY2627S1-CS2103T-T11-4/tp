@@ -30,6 +30,24 @@ public class ExercisesListTest {
             new ExerciseDescription("Conventional deadlift"));
 
     @Test
+    public void withExercises_newExercises_returnsNewListWithoutChangingOriginal() {
+        ExercisesList original = new ExercisesList(List.of(FIRST));
+
+        ExercisesList copy = original.withExercises(List.of(SECOND));
+
+        assertNotSame(original, copy);
+        assertEquals(List.of(FIRST), original.getExerciseList());
+        assertEquals(List.of(SECOND), copy.getExerciseList());
+    }
+
+    @Test
+    public void withExercises_nullExercises_throwsNullPointerException() {
+        ExercisesList original = new ExercisesList(List.of(FIRST));
+
+        assertThrows(NullPointerException.class, () -> original.withExercises(null));
+    }
+
+    @Test
     public void constructors_rejectNullsAndCopyInput() {
         assertEquals(List.of(), new ExercisesList().getExerciseList());
         assertThrows(NullPointerException.class, () -> new ExercisesList(null));

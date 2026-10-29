@@ -97,6 +97,11 @@ public final class WorkoutPlan {
         return exercises;
     }
 
+    /** Returns a new plan with the given exercises and all other fields unchanged. */
+    public WorkoutPlan withExercises(ExercisesList exercises) {
+        return new WorkoutPlan(title, workouts, date, tags, status, exercises);
+    }
+
     /**
      * Returns this plan marked as completed.
      *

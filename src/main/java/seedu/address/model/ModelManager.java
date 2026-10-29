@@ -198,8 +198,7 @@ public class ModelManager implements Model {
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         WorkoutPlan storedPlan = storedStudent.getWorkoutPlansList().getWorkoutPlan(plan);
         ExercisesList updatedExercises = storedPlan.getExercisesList().addExercise(exercise);
-        WorkoutPlan updatedPlan = new WorkoutPlan(storedPlan.getTitle(), storedPlan.getWorkouts(),
-                storedPlan.getDate(), storedPlan.getTags(), storedPlan.getStatus(), updatedExercises);
+        WorkoutPlan updatedPlan = storedPlan.withExercises(updatedExercises);
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList()
                 .setWorkoutPlan(storedPlan, updatedPlan);
         Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
@@ -220,8 +219,7 @@ public class ModelManager implements Model {
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         WorkoutPlan storedPlan = storedStudent.getWorkoutPlansList().getWorkoutPlan(plan);
         ExercisesList updatedExercises = storedPlan.getExercisesList().setExercise(target, editedExercise);
-        WorkoutPlan updatedPlan = new WorkoutPlan(storedPlan.getTitle(), storedPlan.getWorkouts(),
-                storedPlan.getDate(), storedPlan.getTags(), storedPlan.getStatus(), updatedExercises);
+        WorkoutPlan updatedPlan = storedPlan.withExercises(updatedExercises);
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList()
                 .setWorkoutPlan(storedPlan, updatedPlan);
         Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
@@ -240,8 +238,7 @@ public class ModelManager implements Model {
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         WorkoutPlan storedPlan = storedStudent.getWorkoutPlansList().getWorkoutPlan(plan);
         ExercisesList updatedExercises = storedPlan.getExercisesList().removeExercise(target);
-        WorkoutPlan updatedPlan = new WorkoutPlan(storedPlan.getTitle(), storedPlan.getWorkouts(),
-                storedPlan.getDate(), storedPlan.getTags(), storedPlan.getStatus(), updatedExercises);
+        WorkoutPlan updatedPlan = storedPlan.withExercises(updatedExercises);
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList()
                 .setWorkoutPlan(storedPlan, updatedPlan);
         Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
