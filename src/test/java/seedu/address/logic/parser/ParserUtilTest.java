@@ -298,13 +298,9 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseDate_zeroYear_reportsYearError() {
-        assertThrows(ParseException.class, WorkoutDate.MESSAGE_INVALID_YEAR, () -> ParserUtil.parseDate("01010000"));
-    }
-
-    @Test
     public void parseDate_validCalendarBoundaries_preservesInputAndDisplay() throws Exception {
-        for (String date : List.of("28022026", "29022024", "29022000", "30042026", "31122026")) {
+        for (String date : List.of("01010000", "29020000", "01010001", "31129999",
+                "28022026", "29022024", "29022000", "30042026", "31122026")) {
             WorkoutDate parsed = ParserUtil.parseDate(date);
             assertEquals(date, parsed.toInputString());
             assertEquals(date.substring(0, 2) + "-" + date.substring(2, 4) + "-" + date.substring(4),

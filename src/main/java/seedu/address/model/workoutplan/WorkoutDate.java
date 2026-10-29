@@ -20,7 +20,6 @@ public final class WorkoutDate {
             "Invalid month: %1$02d. Month must be between 01 and 12.";
     public static final String MESSAGE_INVALID_DAY =
             "Invalid day: %1$02d. For %2$02d/%3$04d, day must be between 01 and %4$02d.";
-    public static final String MESSAGE_INVALID_YEAR = "Invalid year: year must be between 0001 and 9999.";
     /*
      * Date strings have to be 8 numeric characters long
      */

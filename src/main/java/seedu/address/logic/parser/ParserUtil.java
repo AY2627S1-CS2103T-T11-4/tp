@@ -187,9 +187,6 @@ public class ParserUtil {
         int day = Integer.parseInt(date.substring(0, 2));
         int month = Integer.parseInt(date.substring(2, 4));
         int year = Integer.parseInt(date.substring(4, 8));
-        if (year == 0) {
-            throw new FieldValueInvalidException(WorkoutDate.MESSAGE_INVALID_YEAR);
-        }
         if (month < 1 || month > 12) {
             throw new FieldValueInvalidException(String.format(WorkoutDate.MESSAGE_INVALID_MONTH, month));
         }
