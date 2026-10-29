@@ -47,9 +47,9 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
         EditPlanCommand.EditPlanDescriptor editPlanDescriptor;
 
         ParsingStage stage = ParsingStage.TOKENIZATION;
-        try {
-            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
+        try {
             stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
 

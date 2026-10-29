@@ -31,13 +31,16 @@ public class EditExerciseCommandParser implements Parser<EditExerciseCommand> {
         EditExerciseCommand.EditExerciseDescriptor descriptor;
 
         ParsingStage stage = ParsingStage.TOKENIZATION;
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+
         try {
-            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
             stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
+
             stage = ParsingStage.FIELD_PARSING;
             index = ParserUtil.parseIndex(argMultimap.getPreamble());
             descriptor = parseValidEditFields(argMultimap);
+
         } catch (ParseException pe) {
             logger.finer("Parsing of editExercise command failed at " + stage.getMessage());
             throw pe.withMessage(Messages.formatParserError(pe.getMessage(), EditExerciseCommand.MESSAGE_USAGE));

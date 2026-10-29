@@ -30,14 +30,15 @@ public class AddExerciseCommandParser implements Parser<AddExerciseCommand> {
         Exercise exercise;
 
         ParsingStage stage = ParsingStage.TOKENIZATION;
-        try {
-            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
+        try {
             stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
 
             stage = ParsingStage.FIELD_PARSING;
             exercise = parseValidFields(argMultimap);
+
         } catch (ParseException pe) {
             logger.finer("Parsing of addExercise command failed at " + stage.getMessage());
             throw pe.withMessage(Messages.formatParserError(pe.getMessage(), AddExerciseCommand.MESSAGE_USAGE));

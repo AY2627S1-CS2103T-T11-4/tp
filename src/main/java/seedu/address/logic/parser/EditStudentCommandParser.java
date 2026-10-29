@@ -47,9 +47,8 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
         EditStudentCommand.EditStudentDescriptor editStudentDescriptor;
 
         ParsingStage stage = ParsingStage.TOKENIZATION;
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
         try {
-            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
-
             stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
 
