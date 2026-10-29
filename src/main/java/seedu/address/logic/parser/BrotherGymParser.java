@@ -54,6 +54,7 @@ public class BrotherGymParser {
     private static final EditStudentCommandParser EDIT_STUDENT_PARSER = new EditStudentCommandParser();
     private static final EditPlanCommandParser EDIT_PLAN_PARSER = new EditPlanCommandParser();
     private static final EditExerciseCommandParser EDIT_EXERCISE_PARSER = new EditExerciseCommandParser();
+    private static final FindCommandParser FIND_COMMAND_PARSER = new FindCommandParser();
     private static final SingleIndexCommandParser<MarkPlanCommand> MARK_PLAN_PARSER =
             new SingleIndexCommandParser<>(
                     MarkPlanCommand::new, MarkPlanCommand.MESSAGE_USAGE, MarkPlanCommand.COMMAND_WORD);
@@ -116,7 +117,7 @@ public class BrotherGymParser {
             case ViewPlanCommand.COMMAND_WORD -> VIEW_PLAN_PARSER.parse(arguments);
             case ClearCommand.COMMAND_WORD ->
                 parseCommandWithoutArguments(arguments, ClearCommand.MESSAGE_USAGE, new ClearCommand());
-            case FindCommand.COMMAND_WORD -> new FindCommandParser().parse(arguments);
+            case FindCommand.COMMAND_WORD -> FIND_COMMAND_PARSER.parse(arguments);
             case HomeCommand.COMMAND_WORD ->
                 parseCommandWithoutArguments(arguments, HomeCommand.MESSAGE_USAGE, new HomeCommand());
             case ExitCommand.COMMAND_WORD ->
