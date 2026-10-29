@@ -317,6 +317,8 @@ public class ParserUtilTest {
     @Test
     public void parseDescription_invalidValue_throwsParseException() {
         assertThrows(ParseException.class, () -> ParserUtil.parseDescription(INVALID_DESC));
+        assertThrows(ParseException.class, () -> ParserUtil.parseDescription(
+                "a".repeat(WorkoutDescription.MAX_LENGTH + 1)));
     }
 
     @Test

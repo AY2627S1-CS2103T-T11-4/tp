@@ -143,6 +143,15 @@ public class JsonAdaptedWorkoutPlanTest {
     }
 
     @Test
+    public void toModelType_tooLongDescription_throwsIllegalValueException() {
+        String description = "a".repeat(WorkoutDescription.MAX_LENGTH + 1);
+        JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan("Strength", description, "2023-11-15");
+
+        IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
+        assertEquals(WorkoutDescription.MESSAGE_CONSTRAINTS, exception.getMessage());
+    }
+
+    @Test
     public void toModelType_missingFields_throwsIllegalValueException() {
         assertThrows(IllegalValueException.class, () -> new JsonAdaptedWorkoutPlan(null, "Squats", "2023-11-15")
                 .toModelType());

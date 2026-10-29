@@ -185,7 +185,8 @@ Add a new workout plan to the list of workout plans of the specified student
 Format: `addPlan TITLE --plan DESCRIPTION --date DDMMYYYY [--tag TAG]...`
 
 * Displays the updated list of workout plans of the specified student, after the new plan is added
-* Title and description of the workout plan cannot be empty
+* Title and description of the workout plan cannot be empty.
+* Description cannot exceed 500 characters.
 * Date field must be provided in `DDMMYYYY` format
   
 Examples:
@@ -205,6 +206,7 @@ Dates follow the same calendar validation as `addPlan`, including leap-year chec
   The plan id **must be a positive integer** 1, 2, 3, ...
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
+* A new description cannot exceed 500 characters.
 * When editing tags, all of the workout plan's existing tags are removed; adding tags is not cumulative.
 * To remove all of a workout plan's tags, enter `--clearTags` without a value.
 * If both `--tag TAG` and `--clearTags` are supplied, all tags are cleared after the tag values are validated.
