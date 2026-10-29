@@ -1,0 +1,65 @@
+package seedu.address.logic.parser;
+
+import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
+
+import java.util.Set;
+import java.util.logging.Logger;
+
+import seedu.address.commons.core.LogsCenter;
+import seedu.address.commons.core.index.Index;
+import seedu.address.logic.Messages;
+import seedu.address.logic.commands.EditExerciseCommand;
+import seedu.address.logic.parser.exceptions.NoFieldsToEditException;
+import seedu.address.logic.parser.exceptions.ParseException;
+
+/** Parses arguments for {@link EditExerciseCommand}. */
+public class EditExerciseCommandParser implements Parser<EditExerciseCommand> {
+
+    private static final Set<Prefix> VALID_PREFIXES = Set.of(PREFIX_NAME, PREFIX_DESCRIPTION);
+    private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_NAME, PREFIX_DESCRIPTION);
+    private static final Set<Prefix> REQUIRED_PREFIXES = Set.of();
+    private static final Logger logger = LogsCenter.getLogger(EditExerciseCommandParser.class);
+
+    @Override
+    public EditExerciseCommand parse(String args) throws ParseException {
+        requireNonNull(args);
+        ArgumentValidator validator = new ArgumentValidator(
+                VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
+        Index index;
+        EditExerciseCommand.EditExerciseDescriptor descriptor;
+
+        ParsingStage stage = ParsingStage.TOKENIZATION;
+        try {
+            ArgumentMultimap arguments = ArgumentTokenizer.tokenize(args);
+            stage = ParsingStage.ARGUMENT_VALIDATION;
+            validator.verifyArgs(arguments);
+            stage = ParsingStage.FIELD_PARSING;
+            index = ParserUtil.parseIndex(arguments.getPreamble());
+            descriptor = parseFields(arguments);
+        } catch (ParseException e) {
+            logger.finer("Parsing of editExercise command failed at " + stage.getMessage());
+            throw e.withMessage(Messages.formatParserError(e.getMessage(), EditExerciseCommand.MESSAGE_USAGE));
+        }
+
+        if (!descriptor.isAnyFieldEdited()) {
+            throw new NoFieldsToEditException(EditExerciseCommand.MESSAGE_NOT_EDITED);
+        }
+        return new EditExerciseCommand(index, descriptor);
+    }
+
+    private EditExerciseCommand.EditExerciseDescriptor parseFields(ArgumentMultimap arguments)
+            throws ParseException {
+        EditExerciseCommand.EditExerciseDescriptor descriptor =
+                new EditExerciseCommand.EditExerciseDescriptor();
+        if (arguments.getValue(PREFIX_NAME).isPresent()) {
+            descriptor.setName(ParserUtil.parseExerciseName(arguments.getValue(PREFIX_NAME).get()));
+        }
+        if (arguments.getValue(PREFIX_DESCRIPTION).isPresent()) {
+            descriptor.setDescription(ParserUtil.parseExerciseDescription(
+                    arguments.getValue(PREFIX_DESCRIPTION).get()));
+        }
+        return descriptor;
+    }
+}

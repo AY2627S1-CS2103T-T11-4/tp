@@ -242,6 +242,19 @@ Example: `viewStudent 1` followed by `viewPlan 2` opens the second plan and high
 
 ![Example selected workout plan with sample exercises](images/selectedPlanView.png)
 
+#### Editing an exercise: `editExercise`
+
+Edits one exercise in the selected workout plan.
+
+Format: `editExercise EXERCISE_ID [--name NAME] [--description DESCRIPTION]`
+
+* First select a student with `viewStudent STUDENT_ID`, then a workout plan with `viewPlan PLAN_ID`.
+* `EXERCISE_ID` is the positive number shown beside the exercise in the selected plan view.
+* Supply at least one field. An omitted field keeps its existing value and the exercise stays in the same position.
+* Repeated or unsupported fields, invalid values, and edits that duplicate an existing exercise are rejected without changing the plan.
+
+Example: `editExercise 2 --name Goblet Squat --description 3 sets of 10 reps`
+
 #### Deleting an exercise: `deleteExercise`
 
 Deletes one exercise from the selected workout plan.
@@ -362,6 +375,7 @@ Action     | Format, Examples
 **Unmark Workout Plan** | `unmarkPlan PLAN_ID` <br> e.g. `unmarkPlan 2`
 **View Workout Plan** | `viewPlan PLAN_ID`<br> e.g., `viewPlan 2`
 **Delete Workout Plan** | `deletePlan PLAN_ID`<br> e.g., `deletePlan 3`
+**Edit Exercise** | `editExercise EXERCISE_ID [--name NAME] [--description DESCRIPTION]`<br> e.g., `editExercise 1 --description 3 sets of 10 reps`
 **Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `viewStudent 1`, `viewPlan 2`, `deleteExercise 1`
 
 Exercise-related commands
