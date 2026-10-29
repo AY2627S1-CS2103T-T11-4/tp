@@ -3,12 +3,12 @@ package seedu.address.ui;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import seedu.address.model.student.Student;
 
@@ -21,20 +21,12 @@ public class StudentListPanel extends UiPart<Region> {
     @FXML
     private ListView<Student> studentListView;
 
-    /** Creates a panel whose highlight follows the student selected through commands. */
-    public StudentListPanel(ObservableList<Student> studentList,
-            Supplier<Optional<Student>> currentStudentSupplier) {
+    /** Creates a panel whose highlight is controlled through commands. */
+    public StudentListPanel(ObservableList<Student> studentList) {
         super(FXML);
         requireNonNull(studentList);
-        requireNonNull(currentStudentSupplier);
         studentListView.setItems(studentList);
         studentListView.setCellFactory(listView -> new StudentListViewCell());
-        studentListView.getSelectionModel().selectedItemProperty().addListener((observable, oldStudent, newStudent) -> {
-            Optional<Student> currentStudent = requireNonNull(currentStudentSupplier.get());
-            if (!currentStudent.equals(Optional.ofNullable(newStudent))) {
-                selectStudent(currentStudent);
-            }
-        });
     }
 
     /** Highlights the selected student, or clears the selection when there is none. */
@@ -52,6 +44,10 @@ public class StudentListPanel extends UiPart<Region> {
      * Custom {@code ListCell} that displays the graphics of a {@code Student} using a {@code StudentCard}.
      */
     class StudentListViewCell extends ListCell<Student> {
+        StudentListViewCell() {
+            addEventFilter(MouseEvent.MOUSE_PRESSED, event -> event.consume());
+        }
+
         @Override
         protected void updateItem(Student student, boolean empty) {
             super.updateItem(student, empty);
