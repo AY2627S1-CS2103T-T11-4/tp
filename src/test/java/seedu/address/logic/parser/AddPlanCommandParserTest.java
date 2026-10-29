@@ -112,16 +112,16 @@ public class AddPlanCommandParserTest {
     }
 
     @Test
-    public void parse_invalidCalendarDate_reportsSpecificError() {
+    public void parse_invalidCalendarDate_reportsGenericDateError() {
         String input = TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + " --date ";
         assertParseFailure(parser, input + "01132026",
-                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_MONTH, 13)));
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
         assertParseFailure(parser, input + "32122026",
-                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_DAY, 32, 12, 2026, 31)));
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
         assertParseFailure(parser, input + "31022026",
-                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_DAY, 31, 2, 2026, 28)));
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
         assertParseFailure(parser, input + "29022026",
-                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_DAY, 29, 2, 2026, 28)));
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
     }
 
     @Test
@@ -141,6 +141,6 @@ public class AddPlanCommandParserTest {
     @Test
     public void parse_leapDayInCenturyNotDivisibleBy400_failure() {
         assertParseFailure(parser, TITLE_PREAMBLE_LEGS + PLAN_DESC_LEGS + " --date 29021900",
-                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_DAY, 29, 2, 1900, 28)));
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
     }
 }

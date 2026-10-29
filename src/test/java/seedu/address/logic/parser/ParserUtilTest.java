@@ -304,28 +304,23 @@ public class ParserUtilTest {
     @Test
     public void parseDate_invalidCalendarValue_throwsFieldValueInvalidException() {
         assertThrows(FieldValueInvalidException.class,
-                String.format(WorkoutDate.MESSAGE_INVALID_MONTH, 13), ()
+                WorkoutDate.MESSAGE_CONSTRAINTS, ()
                     -> ParserUtil.parseDate(INVALID_DATE_CALENDAR_VALUE));
     }
 
     @Test
-    public void parseDate_invalidMonth_reportsMonthError() {
+    public void parseDate_invalidMonth_reportsGenericDateError() {
         for (String date : List.of("01132026", "01002026")) {
-            int month = Integer.parseInt(date.substring(2, 4));
-            assertThrows(ParseException.class, String.format(WorkoutDate.MESSAGE_INVALID_MONTH, month), ()
+            assertThrows(FieldValueInvalidException.class, WorkoutDate.MESSAGE_CONSTRAINTS, ()
                 -> ParserUtil.parseDate(date));
         }
     }
 
     @Test
-    public void parseDate_invalidDay_reportsActualMonthLength() {
+    public void parseDate_invalidDay_reportsGenericDateError() {
         for (String date : List.of("32122026", "00012026", "31022026", "29022026", "31042026", "29022100")) {
-            int day = Integer.parseInt(date.substring(0, 2));
-            int month = Integer.parseInt(date.substring(2, 4));
-            int year = Integer.parseInt(date.substring(4, 8));
-            int lastDay = month == 2 ? 28 : month == 4 ? 30 : 31;
-            assertThrows(ParseException.class,
-                    String.format(WorkoutDate.MESSAGE_INVALID_DAY, day, month, year, lastDay), ()
+            assertThrows(FieldValueInvalidException.class,
+                    WorkoutDate.MESSAGE_CONSTRAINTS, ()
                     -> ParserUtil.parseDate(date));
         }
     }

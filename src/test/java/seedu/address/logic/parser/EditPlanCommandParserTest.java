@@ -53,15 +53,15 @@ public class EditPlanCommandParserTest {
     }
 
     @Test
-    public void parse_invalidCalendarDate_reportsSpecificError() {
+    public void parse_invalidCalendarDate_reportsGenericDateError() {
         assertParseFailure(parser, "1 --date 01132026",
-                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_MONTH, 13)));
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
         assertParseFailure(parser, "1 --date 32122026",
-                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_DAY, 32, 12, 2026, 31)));
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
         assertParseFailure(parser, "1 --date 31022026",
-                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_DAY, 31, 2, 2026, 28)));
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
         assertParseFailure(parser, "1 --date 29022026",
-                this.formatParserError(String.format(WorkoutDate.MESSAGE_INVALID_DAY, 29, 2, 2026, 28)));
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
     }
 
     @Test

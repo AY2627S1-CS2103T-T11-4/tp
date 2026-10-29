@@ -15,11 +15,7 @@ import java.util.Date;
 public final class WorkoutDate {
 
     public static final String MESSAGE_CONSTRAINTS =
-            "Dates should be formatted only in DDMMYYYY format";
-    public static final String MESSAGE_INVALID_MONTH =
-            "Invalid month: %1$02d. Month must be between 01 and 12.";
-    public static final String MESSAGE_INVALID_DAY =
-            "Invalid day: %1$02d. For %2$02d/%3$04d, day must be between 01 and %4$02d.";
+            "Dates must be valid calendar dates in DDMMYYYY format";
     /*
      * Date strings have to be 8 numeric characters long
      */
