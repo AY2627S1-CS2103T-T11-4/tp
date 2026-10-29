@@ -151,8 +151,7 @@ public class ModelManager implements Model {
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         WorkoutPlan refreshedPlan = plan.updateState(LocalDate.now());
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().addWorkoutPlan(refreshedPlan);
-        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
-                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
         setStudent(storedStudent, updatedStudent);
 
         logger.info(() -> "Workout plan added for student " + student.getName() + ": " + plan.getTitle()
@@ -166,8 +165,7 @@ public class ModelManager implements Model {
 
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().removeWorkoutPlan(plan);
-        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
-                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
         setStudent(storedStudent, updatedStudent);
 
         logger.info(() -> "Workout plan removed for student " + student.getName() + ": " + plan.getTitle()
@@ -184,8 +182,7 @@ public class ModelManager implements Model {
         WorkoutPlan storedPlan = storedStudent.getWorkoutPlansList().getWorkoutPlan(target);
         WorkoutPlan refreshedPlan = editedPlan.updateState(LocalDate.now());
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().setWorkoutPlan(storedPlan, refreshedPlan);
-        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
-                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
         setStudentWithPlanReplacement(storedStudent, storedPlan, refreshedPlan, updatedStudent);
 
         logger.info(() -> "Workout plan set for student " + student.getName() + ": "
@@ -205,8 +202,7 @@ public class ModelManager implements Model {
                 storedPlan.getDate(), storedPlan.getTags(), storedPlan.getStatus(), updatedExercises);
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList()
                 .setWorkoutPlan(storedPlan, updatedPlan);
-        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
-                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
         setStudentWithPlanReplacement(storedStudent, storedPlan, updatedPlan, updatedStudent);
 
         logger.info(() -> "Exercise added for student " + student.getName() + " in workout plan "
@@ -228,8 +224,7 @@ public class ModelManager implements Model {
                 storedPlan.getDate(), storedPlan.getTags(), storedPlan.getStatus(), updatedExercises);
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList()
                 .setWorkoutPlan(storedPlan, updatedPlan);
-        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
-                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
         setStudentWithPlanReplacement(storedStudent, storedPlan, updatedPlan, updatedStudent);
 
         logger.info(() -> "Exercise set for student " + student.getName() + " in workout plan "
@@ -249,8 +244,7 @@ public class ModelManager implements Model {
                 storedPlan.getDate(), storedPlan.getTags(), storedPlan.getStatus(), updatedExercises);
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList()
                 .setWorkoutPlan(storedPlan, updatedPlan);
-        Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
-                storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
+        Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
         setStudentWithPlanReplacement(storedStudent, storedPlan, updatedPlan, updatedStudent);
 
         logger.info(() -> "Exercise removed for student " + student.getName() + " in workout plan "
