@@ -305,14 +305,14 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseTags_collectionAtLimit_returnsTagSet() throws Exception {
+    public void parseTags_tagsAtLimit_returnsTagSet() throws Exception {
         List<String> tags = createTagNames(Tag.MAX_TAG_COUNT);
 
         assertEquals(Tag.MAX_TAG_COUNT, ParserUtil.parseTags(tags, TagStub::new).size());
     }
 
     @Test
-    public void parseTags_collectionExceedingLimit_throwsParseException() {
+    public void parseTags_tooManyTags_throwsParseException() {
         List<String> tags = createTagNames(Tag.MAX_TAG_COUNT + 1);
 
         assertThrows(ParseException.class, Tag.MESSAGE_TAG_LIMIT, ()
