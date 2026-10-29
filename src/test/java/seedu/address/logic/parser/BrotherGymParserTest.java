@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.commands.AddExerciseCommand;
 import seedu.address.logic.Messages;
+import seedu.address.logic.commands.AddExerciseCommand;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;

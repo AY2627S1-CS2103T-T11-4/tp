@@ -194,7 +194,7 @@ public class WorkoutPlansListTest {
         assertEquals(List.of(FIRST), original.getWorkoutList());
         assertEquals(List.of(FIRST_WITH_EXERCISES), updated.getWorkoutList());
     }
-  
+
     @Test
     public void setWorkoutPlan_titleEditMatchesOverduePlan_throwsDuplicateWorkoutPlanException() {
         assertTitleEditMatchingPlanIsRejected(WorkoutPlanStatus.OVERDUE);
