@@ -26,6 +26,7 @@ import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.HomeCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.metadata.CommandMetadataCatalog;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -80,6 +81,11 @@ public class LogicManagerTest {
     public void execute_validCommand_success() throws Exception {
         String listCommand = HomeCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand, HomeCommand.MESSAGE_SUCCESS, model);
+    }
+
+    @Test
+    public void getCommandCategories_returnsCatalogCategories() {
+        assertSame(CommandMetadataCatalog.allCommandCategories(), logic.getCommandCategories());
     }
 
     @Test

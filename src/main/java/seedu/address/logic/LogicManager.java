@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +16,8 @@ import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.metadata.CommandCategory;
+import seedu.address.logic.metadata.CommandMetadataCatalog;
 import seedu.address.logic.parser.BrotherGymParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
@@ -86,6 +89,11 @@ public class LogicManager implements Logic {
     @Override
     public ReadOnlyObjectProperty<WorkoutPlan> currentWorkoutPlanProperty() {
         return model.currentWorkoutPlanProperty();
+    }
+
+    @Override
+    public List<CommandCategory> getCommandCategories() {
+        return CommandMetadataCatalog.allCommandCategories();
     }
 
     @Override
