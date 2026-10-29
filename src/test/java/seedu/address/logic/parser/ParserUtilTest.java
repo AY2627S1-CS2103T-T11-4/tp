@@ -2,20 +2,25 @@ package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
+import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.core.index.Index;
+import seedu.address.logic.Messages;
+import seedu.address.logic.commands.FindCommand;
+import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.exercise.ExerciseDescription;
 import seedu.address.model.exercise.ExerciseName;
@@ -42,7 +47,7 @@ public class ParserUtilTest {
     private static final String INVALID_DATE_CALENDAR_VALUE = "31132026";
 
     private static final String VALID_NAME = "Rachel Walker";
-    private static final String VALID_PHONE = "123456";
+    private static final String VALID_PHONE = "1234567";
     private static final String VALID_ADDRESS = "123 Main Street #0505";
     private static final String VALID_EMAIL = "rachel@example.com";
     private static final String VALID_TAG_1 = "friend";
@@ -93,12 +98,23 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseIndex_leadingZeros_throwsParseException() {
+        String paddedIndex = "0".repeat(24) + "1";
+        assertThrows(ParseException.class, MESSAGE_INVALID_INDEX, () -> ParserUtil.parseIndex("01"));
+        assertThrows(ParseException.class, MESSAGE_INVALID_INDEX, () -> ParserUtil.parseIndex(paddedIndex));
+    }
+
+    @Test
     public void parseIndex_validInput_success() throws Exception {
         // No whitespaces
         assertEquals(INDEX_FIRST, ParserUtil.parseIndex("1"));
 
         // Leading and trailing whitespaces
         assertEquals(INDEX_FIRST, ParserUtil.parseIndex("  1  "));
+        assertEquals(INDEX_SECOND, ParserUtil.parseIndex("2"));
+
+        // Largest supported one-based index
+        assertEquals(Index.fromOneBased(Integer.MAX_VALUE), ParserUtil.parseIndex(Integer.toString(Integer.MAX_VALUE)));
     }
 
     @Test
@@ -122,6 +138,39 @@ public class ParserUtilTest {
         String nameWithWhitespace = WHITESPACE + VALID_NAME + WHITESPACE;
         Name expectedName = new Name(VALID_NAME);
         assertEquals(expectedName, ParserUtil.parseName(nameWithWhitespace));
+    }
+
+    @Test
+    public void parseNameKeywords_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseNameKeywords(null));
+    }
+
+    @Test
+    public void parseNameKeywords_blank_throwsFieldValueInvalidException() {
+        assertThrows(FieldValueInvalidException.class, FindCommand.MESSAGE_INVALID_KEYWORDS, ()
+            -> ParserUtil.parseNameKeywords(WHITESPACE));
+    }
+
+    @Test
+    public void parseNameKeywords_allInvalid_throwsFieldValueInvalidException() {
+        assertThrows(FieldValueInvalidException.class, FindCommand.MESSAGE_INVALID_KEYWORDS, ()
+            -> ParserUtil.parseNameKeywords("Alice! Bob?"));
+    }
+
+    @Test
+    public void parseNameKeywords_mixedValidity_keepsAllKeywords() throws Exception {
+        assertEquals(List.of("!!!", "Alice", "Bob?"), ParserUtil.parseNameKeywords("!!! Alice Bob?"));
+    }
+
+    @Test
+    public void parseNameKeywords_alphanumeric_returnsKeywords() throws Exception {
+        assertEquals(List.of("Alice123", "123"), ParserUtil.parseNameKeywords("Alice123 123"));
+    }
+
+    @Test
+    public void parseNameKeywords_whitespace_returnsTrimmedKeywords() throws Exception {
+        assertEquals(List.of("Alice", "Bob"),
+                ParserUtil.parseNameKeywords(WHITESPACE + "Alice" + WHITESPACE + "Bob" + WHITESPACE));
     }
 
     @Test
@@ -217,6 +266,12 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseTag_emptyValue_throwsParseException() {
+        assertThrows(ParseException.class, Tag.MESSAGE_CONSTRAINTS, ()
+                -> ParserUtil.parseTag("", TagStub::new));
+    }
+
+    @Test
     public void parseTag_validValueWithoutWhitespace_returnsTag() throws Exception {
         TagStub expectedTag = new TagStub(VALID_TAG_1);
         assertEquals(expectedTag, ParserUtil.parseTag(VALID_TAG_1, TagStub::new));
@@ -253,6 +308,33 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void validateEmptyField_emptyValue_success() throws Exception {
+        ParserUtil.validateEmptyField("", Messages.getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS));
+    }
+
+    @Test
+    public void validateEmptyField_nonEmptyValue_throwsFieldValueInvalidException() {
+        String errorMessage = Messages.getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS);
+        assertThrows(FieldValueInvalidException.class, errorMessage, () ->
+                ParserUtil.validateEmptyField("value", errorMessage));
+    }
+
+    @Test
+    public void parseTags_tagsAtLimit_returnsTagSet() throws Exception {
+        List<String> tags = createTagNames(Tag.MAX_TAG_COUNT);
+
+        assertEquals(Tag.MAX_TAG_COUNT, ParserUtil.parseTags(tags, TagStub::new).size());
+    }
+
+    @Test
+    public void parseTags_tooManyTags_throwsParseException() {
+        List<String> tags = createTagNames(Tag.MAX_TAG_COUNT + 1);
+
+        assertThrows(ParseException.class, Tag.MESSAGE_TAG_LIMIT, ()
+            -> ParserUtil.parseTags(tags, TagStub::new));
+    }
+
+    @Test
     public void parseTitle_invalidValue_throwsParseException() {
         assertThrows(ParseException.class, () -> ParserUtil.parseTitle(INVALID_TITLE));
     }
@@ -266,6 +348,8 @@ public class ParserUtilTest {
     @Test
     public void parseDescription_invalidValue_throwsParseException() {
         assertThrows(ParseException.class, () -> ParserUtil.parseDescription(INVALID_DESC));
+        assertThrows(ParseException.class, () -> ParserUtil.parseDescription(
+                "a".repeat(WorkoutDescription.MAX_LENGTH + 1)));
     }
 
     @Test
@@ -285,15 +369,49 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseDate_invalidCalendarValue_throwsParseExceptionWithCause() {
-        ParseException exception =
-                Assertions.assertThrows(ParseException.class, () -> ParserUtil.parseDate(INVALID_DATE_CALENDAR_VALUE));
-        assertTrue(exception.getCause() instanceof DateTimeParseException);
+    public void parseDate_invalidCalendarValue_throwsFieldValueInvalidException() {
+        assertThrows(FieldValueInvalidException.class,
+                WorkoutDate.MESSAGE_CONSTRAINTS, ()
+                    -> ParserUtil.parseDate(INVALID_DATE_CALENDAR_VALUE));
+    }
+
+    @Test
+    public void parseDate_invalidMonth_reportsGenericDateError() {
+        for (String date : List.of("01132026", "01002026")) {
+            assertThrows(FieldValueInvalidException.class, WorkoutDate.MESSAGE_CONSTRAINTS, ()
+                -> ParserUtil.parseDate(date));
+        }
+    }
+
+    @Test
+    public void parseDate_invalidDay_reportsGenericDateError() {
+        for (String date : List.of("32122026", "00012026", "31022026", "29022026", "31042026", "29022100")) {
+            assertThrows(FieldValueInvalidException.class,
+                    WorkoutDate.MESSAGE_CONSTRAINTS, ()
+                    -> ParserUtil.parseDate(date));
+        }
+    }
+
+    @Test
+    public void parseDate_validCalendarBoundaries_preservesInputAndDisplay() throws Exception {
+        for (String date : List.of("01010000", "29020000", "01010001", "31129999",
+                "28022026", "29022024", "29022000", "30042026", "31122026")) {
+            WorkoutDate parsed = ParserUtil.parseDate(date);
+            assertEquals(date, parsed.toInputString());
+            assertEquals(date.substring(0, 2) + "-" + date.substring(2, 4) + "-" + date.substring(4),
+                    parsed.toDisplayString());
+        }
     }
 
     @Test
     public void parseDate_validValue_returnsWorkoutDate() throws Exception {
         WorkoutDate expectedDate = new WorkoutDate(VALID_DATE_OBJECT);
         assertEquals(expectedDate, ParserUtil.parseDate(VALID_DATE));
+    }
+
+    private static List<String> createTagNames(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(index -> "tag" + index)
+                .toList();
     }
 }

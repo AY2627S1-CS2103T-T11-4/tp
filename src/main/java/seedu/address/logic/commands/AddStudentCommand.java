@@ -11,6 +11,7 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.exceptions.StudentListFullException;
 
 /**
  * Adds a student to the student list.
@@ -19,21 +20,26 @@ public class AddStudentCommand extends Command {
 
     public static final String COMMAND_WORD = "addStudent";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a student to the student list. \n"
-            + "Parameters: NAME "
+    public static final String MESSAGE_DESCRIPTION = "Adds a student to the student list.";
+    public static final String MESSAGE_PARAMETERS = "NAME "
             + PREFIX_PHONE + " PHONE "
             + PREFIX_EMAIL + " EMAIL "
             + PREFIX_ADDRESS + " ADDRESS "
-            + "[" + PREFIX_TAG + " TAG]...\n"
-            + "Example: " + COMMAND_WORD + " John Doe "
+            + "[" + PREFIX_TAG + " TAG]...";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " John Doe "
             + PREFIX_PHONE + " 98765432 "
             + PREFIX_EMAIL + " johnd@example.com "
             + PREFIX_ADDRESS + " 311, Clementi Ave 2, #02-25 "
             + PREFIX_TAG + " friends "
             + PREFIX_TAG + " owesMoney";
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + " \n"
+            + "Parameters: " + MESSAGE_PARAMETERS + "\n"
+            + "Example: " + MESSAGE_EXAMPLE;
 
     public static final String MESSAGE_SUCCESS = "New student added: %1$s";
     public static final String MESSAGE_DUPLICATE_STUDENT = "This student already exists in the student list.";
+    public static final String MESSAGE_STUDENT_LIST_FULL = "The student list is full. "
+            + "Delete a student before adding another.";
 
     private final Student toAdd;
 
@@ -53,7 +59,11 @@ public class AddStudentCommand extends Command {
             throw new CommandException(MESSAGE_DUPLICATE_STUDENT);
         }
 
-        model.addStudent(toAdd);
+        try {
+            model.addStudent(toAdd);
+        } catch (StudentListFullException e) {
+            throw new CommandException(MESSAGE_STUDENT_LIST_FULL, e);
+        }
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
     }
 

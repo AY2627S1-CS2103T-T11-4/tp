@@ -11,10 +11,12 @@ import static seedu.address.testutil.TypicalStudents.BOB;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.student.exceptions.DuplicateStudentException;
+import seedu.address.model.student.exceptions.StudentListFullException;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.testutil.StudentBuilder;
 
@@ -55,6 +57,17 @@ public class UniqueStudentListTest {
     public void add_duplicateStudent_throwsDuplicateStudentException() {
         uniqueStudentList.add(ALICE);
         assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.add(ALICE));
+        Student sameNameDifferentCase = new StudentBuilder(ALICE).withName(ALICE.getName().fullName.toLowerCase())
+                .build();
+        assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.add(sameNameDifferentCase));
+    }
+
+    @Test
+    public void add_studentToFullList_throwsStudentListFullException() {
+        uniqueStudentList.setStudents(createStudents(UniqueStudentList.MAX_STUDENTS));
+
+        assertThrows(StudentListFullException.class, ()
+            -> uniqueStudentList.add(new StudentBuilder().withName("ExtraStudent").build()));
     }
 
     @Test
@@ -93,6 +106,14 @@ public class UniqueStudentListTest {
     }
 
     @Test
+    public void setStudent_editedStudentNameDiffersOnlyByCase_success() {
+        uniqueStudentList.add(ALICE);
+        Student editedAlice = new StudentBuilder(ALICE).withName(ALICE.getName().fullName.toLowerCase()).build();
+        uniqueStudentList.setStudent(ALICE, editedAlice);
+        assertEquals(List.of(editedAlice), uniqueStudentList.asUnmodifiableObservableList());
+    }
+
+    @Test
     public void setStudent_editedStudentHasDifferentIdentity_success() {
         uniqueStudentList.add(ALICE);
         uniqueStudentList.setStudent(ALICE, BOB);
@@ -102,10 +123,12 @@ public class UniqueStudentListTest {
     }
 
     @Test
-    public void setStudent_editedStudentHasNonUniqueIdentity_throwsDuplicateStudentException() {
+    public void setStudent_duplicateStudent_throwsDuplicateStudentException() {
         uniqueStudentList.add(ALICE);
         uniqueStudentList.add(BOB);
         assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudent(ALICE, BOB));
+        Student editedBob = new StudentBuilder(BOB).withName(ALICE.getName().fullName.toLowerCase()).build();
+        assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudent(BOB, editedBob));
     }
 
     @Test
@@ -160,9 +183,18 @@ public class UniqueStudentListTest {
     @Test
     public void setStudents_listWithDuplicateStudents_throwsDuplicateStudentException() {
         uniqueStudentList.add(BOB);
-        List<Student> listWithDuplicateStudents = List.of(ALICE, ALICE);
+        Student sameNameDifferentCase = new StudentBuilder(ALICE).withName(ALICE.getName().fullName.toLowerCase())
+                .build();
+        List<Student> listWithDuplicateStudents = List.of(ALICE, sameNameDifferentCase);
         assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudents(listWithDuplicateStudents));
         assertEquals(List.of(BOB), uniqueStudentList.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void setStudents_listExceedingLimit_throwsStudentListFullException() {
+        List<Student> students = createStudents(UniqueStudentList.MAX_STUDENTS + 1);
+
+        assertThrows(StudentListFullException.class, () -> uniqueStudentList.setStudents(students));
     }
 
     @Test
@@ -194,5 +226,11 @@ public class UniqueStudentListTest {
     @Test
     public void toStringMethod() {
         assertEquals(uniqueStudentList.asUnmodifiableObservableList().toString(), uniqueStudentList.toString());
+    }
+
+    private static List<Student> createStudents(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(index -> new StudentBuilder().withName("Student" + index).build())
+                .toList();
     }
 }

@@ -1,6 +1,5 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_EMPTY_PREFIX;
 import static seedu.address.logic.Messages.MESSAGE_MISSING_PREAMBLE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
@@ -34,8 +33,31 @@ public class FindCommandParserTest {
     }
 
     @Test
-    public void parse_emptyPrefix_throwsParseException() {
-        assertParseFailure(parser, "Alice -- Bob", this.formatParserError(MESSAGE_EMPTY_PREFIX));
+    public void parse_bareDashes_returnsFindCommand() {
+        FindCommand expectedFindCommand =
+                new FindCommand(new NameContainsKeywordsPredicate(List.of("Alice", "--", "Bob")));
+        assertParseSuccess(parser, "Alice -- Bob", expectedFindCommand);
+    }
+
+    @Test
+    public void parse_allKeywordsInvalid_throwsParseException() {
+        for (String input : List.of("!!!", "!!! ???", "Alice! Bob?", "A_B", "O'Neil", " \t !!! \t ??? ")) {
+            assertParseFailure(parser, input, this.formatParserError(FindCommand.MESSAGE_INVALID_KEYWORDS));
+        }
+    }
+
+    @Test
+    public void parse_mixedValidAndInvalidKeywords_returnsFindCommand() {
+        assertParseSuccess(parser, "Alice !!!",
+                new FindCommand(new NameContainsKeywordsPredicate(List.of("Alice", "!!!"))));
+        assertParseSuccess(parser, "!!! Bob? Alice",
+                new FindCommand(new NameContainsKeywordsPredicate(List.of("!!!", "Bob?", "Alice"))));
+    }
+
+    @Test
+    public void parse_alphanumericKeywords_returnsFindCommand() {
+        assertParseSuccess(parser, "Alice123 123",
+                new FindCommand(new NameContainsKeywordsPredicate(List.of("Alice123", "123"))));
     }
 
     @Test

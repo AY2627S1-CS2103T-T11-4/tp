@@ -10,6 +10,7 @@ import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
+import seedu.address.model.workoutplan.exceptions.AlreadyMarkedException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 
 /**
@@ -19,12 +20,16 @@ public class MarkPlanCommand extends SingleIndexCommand {
 
     public static final String COMMAND_WORD = "markPlan";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Marks a workout plan belonging to the student currently being viewed as completed.\n"
-            + "Parameters: PLAN_ID (must be a positive integer)\n"
-            + "Example: " + COMMAND_WORD + " 1";
+    public static final String MESSAGE_DESCRIPTION =
+            "Marks a workout plan belonging to the student currently being viewed as completed.";
+    public static final String MESSAGE_PARAMETERS = "PLAN_ID (must be a positive integer)";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1";
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
+            + "Parameters: " + MESSAGE_PARAMETERS + "\n"
+            + "Example: " + MESSAGE_EXAMPLE;
 
     public static final String MESSAGE_SUCCESS = "Marked workout as done: %1$s";
+    public static final String MESSAGE_ALREADY_MARKED = "This workout plan is already marked as completed.";
     public static final String MESSAGE_NO_STUDENT_SELECTED =
             "No student is currently selected. Use viewStudent first.";
     public static final String MESSAGE_INVALID_WORKOUT_ID =
@@ -49,6 +54,8 @@ public class MarkPlanCommand extends SingleIndexCommand {
         final WorkoutPlansList updatedPlans;
         try {
             updatedPlans = currentStudent.getWorkoutPlansList().markWorkoutPlan(targetIndex.getZeroBased());
+        } catch (AlreadyMarkedException e) {
+            throw new CommandException(MESSAGE_ALREADY_MARKED, e);
         } catch (WorkoutPlanIndexOutOfBoundsException e) {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }

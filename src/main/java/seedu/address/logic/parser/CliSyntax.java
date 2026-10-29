@@ -8,6 +8,7 @@ public class CliSyntax {
     /* Common Prefixes */
     public static final Prefix PREFIX_NAME = new Prefix("--name");
     public static final Prefix PREFIX_TAG = new Prefix("--tag");
+    public static final Prefix PREFIX_CLEAR_TAGS = new Prefix("--clearTags");
 
     /* Student Prefixes */
     public static final Prefix PREFIX_PHONE = new Prefix("--hp");

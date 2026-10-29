@@ -20,6 +20,7 @@ import seedu.address.model.exercise.Exercise;
 import seedu.address.model.exercise.ExerciseDescription;
 import seedu.address.model.exercise.ExerciseName;
 import seedu.address.model.exercise.ExercisesList;
+import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
@@ -148,6 +149,17 @@ public class JsonAdaptedWorkoutPlanTest {
     }
 
     @Test
+    public void toModelType_tooManyTags_throwsIllegalValueException() {
+        List<JsonAdaptedTag> tags = IntStream.range(0, Tag.MAX_TAG_COUNT + 1)
+                .mapToObj(index -> new JsonAdaptedTag("tag" + index))
+                .toList();
+        JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan("Strength", "Squats", "2023-11-15", tags);
+
+        IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
+        assertEquals(Tag.MESSAGE_TAG_LIMIT, exception.getMessage());
+    }
+
+    @Test
     public void toModelType_validPlan_returnsPlan() throws Exception {
         JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan(
                 "Strength", "Squats", "2023-11-15");
@@ -197,6 +209,15 @@ public class JsonAdaptedWorkoutPlanTest {
             IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
             assertEquals(WorkoutDescription.MESSAGE_CONSTRAINTS, exception.getMessage());
         }
+    }
+
+    @Test
+    public void toModelType_tooLongDescription_throwsIllegalValueException() {
+        String description = "a".repeat(WorkoutDescription.MAX_LENGTH + 1);
+        JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan("Strength", description, "2023-11-15");
+
+        IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
+        assertEquals(WorkoutDescription.MESSAGE_CONSTRAINTS, exception.getMessage());
     }
 
     @Test

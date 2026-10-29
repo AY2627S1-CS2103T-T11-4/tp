@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_UNEXPECTED_PARAMETERS;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 
 import java.util.logging.Logger;
@@ -10,6 +11,7 @@ import java.util.regex.Pattern;
 
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.AddExerciseCommand;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
@@ -28,6 +30,7 @@ import seedu.address.logic.commands.MarkPlanCommand;
 import seedu.address.logic.commands.UnmarkPlanCommand;
 import seedu.address.logic.commands.ViewPlanCommand;
 import seedu.address.logic.commands.ViewStudentCommand;
+import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.InputFormatInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 
@@ -111,11 +114,15 @@ public class BrotherGymParser {
             case DeleteExerciseCommand.COMMAND_WORD -> DELETE_EXERCISE_PARSER.parse(arguments);
             case EditExerciseCommand.COMMAND_WORD -> EDIT_EXERCISE_PARSER.parse(arguments);
             case ViewPlanCommand.COMMAND_WORD -> VIEW_PLAN_PARSER.parse(arguments);
-            case ClearCommand.COMMAND_WORD -> new ClearCommand();
+            case ClearCommand.COMMAND_WORD ->
+                parseCommandWithoutArguments(arguments, ClearCommand.MESSAGE_USAGE, new ClearCommand());
             case FindCommand.COMMAND_WORD -> new FindCommandParser().parse(arguments);
-            case HomeCommand.COMMAND_WORD -> new HomeCommand();
-            case ExitCommand.COMMAND_WORD -> new ExitCommand();
-            case HelpCommand.COMMAND_WORD -> new HelpCommand();
+            case HomeCommand.COMMAND_WORD ->
+                parseCommandWithoutArguments(arguments, HomeCommand.MESSAGE_USAGE, new HomeCommand());
+            case ExitCommand.COMMAND_WORD ->
+                parseCommandWithoutArguments(arguments, ExitCommand.MESSAGE_USAGE, new ExitCommand());
+            case HelpCommand.COMMAND_WORD ->
+                parseCommandWithoutArguments(arguments, HelpCommand.MESSAGE_USAGE, new HelpCommand());
             default -> {
                 logger.finer("Unknown command word for input: " + userInput);
                 throw new InputFormatInvalidException(MESSAGE_UNKNOWN_COMMAND);
@@ -125,6 +132,19 @@ public class BrotherGymParser {
         logger.info("Parsed user input to generate: " + parsedCommand);
 
         return parsedCommand;
+    }
+
+    /**
+     * Rejects arguments for a command that does not accept parameters.
+     *
+     * @throws FieldValueInvalidException If non-whitespace arguments are present.
+     */
+    private Command parseCommandWithoutArguments(String arguments, String usage, Command command)
+            throws FieldValueInvalidException {
+        if (!arguments.isBlank()) {
+            throw new FieldValueInvalidException(Messages.formatParserError(MESSAGE_UNEXPECTED_PARAMETERS, usage));
+        }
+        return command;
     }
 
 }

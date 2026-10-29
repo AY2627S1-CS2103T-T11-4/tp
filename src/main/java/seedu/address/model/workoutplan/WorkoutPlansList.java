@@ -116,7 +116,7 @@ public final class WorkoutPlansList {
             throw new WorkoutPlanNotFoundException(target);
         }
         for (int i = 0; i < plans.size(); i++) {
-            if (i != index && plans.get(i).equals(editedPlan)) {
+            if (i != index && plans.get(i).isSamePlan(editedPlan)) {
                 throw new DuplicateWorkoutPlanException();
             }
         }
@@ -137,7 +137,7 @@ public final class WorkoutPlansList {
      */
     public WorkoutPlansList addWorkoutPlan(WorkoutPlan plan) {
         Objects.requireNonNull(plan);
-        if (plans.contains(plan)) {
+        if (plans.stream().anyMatch(existingPlan -> existingPlan.isSamePlan(plan))) {
             throw new DuplicateWorkoutPlanException();
         }
         List<WorkoutPlan> updated = new ArrayList<>(plans);

@@ -38,6 +38,11 @@ public class Name {
         return test.matches(VALIDATION_REGEX);
     }
 
+    /** Returns true if this name is the same as {@code other} regardless of case. */
+    public boolean isSameName(Name other) {
+        return other != null && fullName.equalsIgnoreCase(other.fullName);
+    }
+
 
     @Override
     public String toString() {

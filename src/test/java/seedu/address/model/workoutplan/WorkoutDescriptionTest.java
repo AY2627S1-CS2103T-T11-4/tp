@@ -37,9 +37,11 @@ public class WorkoutDescriptionTest {
         // invalid description
         assertFalse(WorkoutDescription.isValidWorkoutDescription("")); // empty string
         assertFalse(WorkoutDescription.isValidWorkoutDescription(" ")); // spaces only
+        assertFalse(WorkoutDescription.isValidWorkoutDescription("a".repeat(WorkoutDescription.MAX_LENGTH + 1)));
 
         // valid description
         assertTrue(WorkoutDescription.isValidWorkoutDescription(DESCRIPTION_VALID));
+        assertTrue(WorkoutDescription.isValidWorkoutDescription("a".repeat(WorkoutDescription.MAX_LENGTH)));
     }
 
     @Test

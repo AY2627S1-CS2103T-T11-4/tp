@@ -32,6 +32,14 @@ public class TagTest {
     }
 
     @Test
+    public void isValidTagCount() {
+        assertFalse(Tag.isValidTagCount(-1));
+        assertTrue(Tag.isValidTagCount(0));
+        assertTrue(Tag.isValidTagCount(Tag.MAX_TAG_COUNT));
+        assertFalse(Tag.isValidTagCount(Tag.MAX_TAG_COUNT + 1));
+    }
+
+    @Test
     public void equals() {
         Tag tag = new TestTag("strength");
 

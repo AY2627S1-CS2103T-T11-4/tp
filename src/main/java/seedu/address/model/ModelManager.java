@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.List;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -148,7 +149,8 @@ public class ModelManager implements Model {
         logger.fine(() -> "Attempting to add workout plan for student " + student.getName() + ": " + plan);
 
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
-        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().addWorkoutPlan(plan);
+        WorkoutPlan refreshedPlan = plan.updateState(LocalDate.now());
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().addWorkoutPlan(refreshedPlan);
         Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
                 storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
         setStudent(storedStudent, updatedStudent);
@@ -180,10 +182,11 @@ public class ModelManager implements Model {
 
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         WorkoutPlan storedPlan = storedStudent.getWorkoutPlansList().getWorkoutPlan(target);
-        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().setWorkoutPlan(storedPlan, editedPlan);
+        WorkoutPlan refreshedPlan = editedPlan.updateState(LocalDate.now());
+        WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().setWorkoutPlan(storedPlan, refreshedPlan);
         Student updatedStudent = new Student(storedStudent.getName(), storedStudent.getPhone(),
                 storedStudent.getEmail(), storedStudent.getAddress(), storedStudent.getTags(), updatedPlans);
-        setStudentWithPlanReplacement(storedStudent, storedPlan, editedPlan, updatedStudent);
+        setStudentWithPlanReplacement(storedStudent, storedPlan, refreshedPlan, updatedStudent);
 
         logger.info(() -> "Workout plan set for student " + student.getName() + ": "
                 + target.getTitle() + " -> " + editedPlan.getTitle());
