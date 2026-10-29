@@ -42,8 +42,7 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
     public EditPlanCommand parse(String args) throws ParseException {
         requireNonNull(args);
 
-        ArgumentValidator argValidator = new ArgumentValidator(true, VALID_PREFIXES, NO_REPEAT_PREFIXES,
-                REQUIRED_PREFIXES);
+        ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
         Index index;
         EditPlanCommand.EditPlanDescriptor editPlanDescriptor;
 
