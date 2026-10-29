@@ -56,7 +56,7 @@ public class WorkoutPlanTest {
         assertSame(EXERCISES, copy.getExercisesList());
         assertEquals(new ExercisesList(), original.getExercisesList());
         assertEquals(original.getTitle(), copy.getTitle());
-        assertEquals(original.getWorkouts(), copy.getWorkouts());
+        assertEquals(original.getDescription(), copy.getDescription());
         assertEquals(original.getDate(), copy.getDate());
         assertEquals(original.getTags(), copy.getTags());
         assertEquals(original.getStatus(), copy.getStatus());
@@ -88,7 +88,7 @@ public class WorkoutPlanTest {
     public void constructor_validFields_storesValues() {
         WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID);
         assertEquals(TITLE_VALID, plan.getTitle());
-        assertEquals(DESCRIPTION_VALID, plan.getWorkouts());
+        assertEquals(DESCRIPTION_VALID, plan.getDescription());
         assertEquals(DATE_VALID, plan.getDate());
         assertTrue(plan.getTags().isEmpty());
         assertEquals(WorkoutPlanStatus.PENDING, plan.getStatus());
@@ -231,7 +231,7 @@ public class WorkoutPlanTest {
         assertFalse(plan.equals(new WorkoutPlan(new WorkoutTitle(TITLE_TEXT_OTHER),
                 DESCRIPTION_VALID, DATE_VALID)));
 
-        // different workouts -> returns false
+        // different description -> returns false
         assertFalse(plan.equals(new WorkoutPlan(TITLE_VALID,
                 new WorkoutDescription(DESCRIPTION_TEXT_OTHER), DATE_VALID)));
 
@@ -291,6 +291,10 @@ public class WorkoutPlanTest {
                 Set.of(new WorkoutPlanTag("strength")));
         assertTrue(plan.isSamePlan(tagged));
         assertTrue(tagged.isSamePlan(plan));
+
+        WorkoutPlan withExercises = plan.withExercises(EXERCISES);
+        assertTrue(plan.isSamePlan(withExercises));
+        assertTrue(withExercises.isSamePlan(plan));
     }
 
     @Test

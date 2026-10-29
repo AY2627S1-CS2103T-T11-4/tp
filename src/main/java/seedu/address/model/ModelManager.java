@@ -22,7 +22,7 @@ import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 
 /**
- * Represents the in-memory model of the address book data.
+ * Represents the in-memory model of BrotherGym's data.
  */
 public class ModelManager implements Model {
     private static final Logger logger = LogsCenter.getLogger(ModelManager.class);
@@ -39,7 +39,7 @@ public class ModelManager implements Model {
     public ModelManager(ReadOnlyBrotherGym brotherGym, ReadOnlyUserPrefs userPrefs) {
         requireAllNonNull(brotherGym, userPrefs);
 
-        logger.fine(() -> "Initializing with address book: " + brotherGym + " and user prefs " + userPrefs);
+        logger.fine(() -> "Initializing with BrotherGym data: " + brotherGym + " and user prefs " + userPrefs);
 
         this.brotherGym = new BrotherGym(brotherGym);
         this.userPrefs = new UserPrefs(userPrefs);

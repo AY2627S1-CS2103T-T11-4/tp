@@ -25,7 +25,7 @@ public final class WorkoutPlan {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     private final WorkoutTitle title;
-    private final WorkoutDescription workouts;
+    private final WorkoutDescription description;
     private final WorkoutDate date;
     private final Set<WorkoutPlanTag> tags;
     private final WorkoutPlanStatus status;
@@ -35,35 +35,35 @@ public final class WorkoutPlan {
      * Constructs a workout plan with validated, non-null fields.
      */
     @Deprecated
-    public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date) {
-        this(title, workouts, date, Set.of());
+    public WorkoutPlan(WorkoutTitle title, WorkoutDescription description, WorkoutDate date) {
+        this(title, description, date, Set.of());
     }
 
     /**
      * Constructs a workout plan with validated, non-null fields.
      */
-    public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date,
+    public WorkoutPlan(WorkoutTitle title, WorkoutDescription description, WorkoutDate date,
             Set<WorkoutPlanTag> tags) {
-        this(title, workouts, date, tags, WorkoutPlanStatus.PENDING);
+        this(title, description, date, tags, WorkoutPlanStatus.PENDING);
     }
 
     /**
      * Constructs a workout plan with validated, non-null fields and the given status.
      */
-    public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date,
+    public WorkoutPlan(WorkoutTitle title, WorkoutDescription description, WorkoutDate date,
             Set<WorkoutPlanTag> tags, WorkoutPlanStatus status) {
-        this(title, workouts, date, tags, status, new ExercisesList());
+        this(title, description, date, tags, status, new ExercisesList());
     }
 
     /**
      * Constructs a workout plan with validated, non-null fields and the given status and exercises.
      */
-    public WorkoutPlan(WorkoutTitle title, WorkoutDescription workouts, WorkoutDate date,
+    public WorkoutPlan(WorkoutTitle title, WorkoutDescription description, WorkoutDate date,
             Set<WorkoutPlanTag> tags, WorkoutPlanStatus status, ExercisesList exercises) {
-        requireAllNonNull(title, workouts, date, tags, status, exercises);
+        requireAllNonNull(title, description, date, tags, status, exercises);
         checkArgument(Tag.isValidTagCount(tags.size()), Tag.MESSAGE_TAG_LIMIT);
         this.title = title;
-        this.workouts = workouts;
+        this.description = description;
         this.date = date;
         this.tags = Set.copyOf(tags);
         this.status = status;
@@ -74,8 +74,8 @@ public final class WorkoutPlan {
         return title;
     }
 
-    public WorkoutDescription getWorkouts() {
-        return workouts;
+    public WorkoutDescription getDescription() {
+        return description;
     }
 
     public WorkoutDate getDate() {
@@ -99,7 +99,7 @@ public final class WorkoutPlan {
 
     /** Returns a new plan with the given exercises and all other fields unchanged. */
     public WorkoutPlan withExercises(ExercisesList exercises) {
-        return new WorkoutPlan(title, workouts, date, tags, status, exercises);
+        return new WorkoutPlan(title, description, date, tags, status, exercises);
     }
 
     /**
@@ -136,7 +136,7 @@ public final class WorkoutPlan {
     private WorkoutPlan withStatus(WorkoutPlanStatus updatedStatus) {
         return status == updatedStatus
                 ? this
-                : new WorkoutPlan(title, workouts, date, tags, updatedStatus, exercises);
+                : new WorkoutPlan(title, description, date, tags, updatedStatus, exercises);
     }
 
     /**
@@ -149,7 +149,8 @@ public final class WorkoutPlan {
     }
 
     /**
-     * Returns true if both plans have the same title, workouts, and date, regardless of tags or status.
+     * Returns true if both plans have the same title, description, and date,
+     * regardless of tags, status, or exercises.
      * This defines the identity used to prevent duplicate plans for a student.
      */
     public boolean isSamePlan(WorkoutPlan otherPlan) {
@@ -158,7 +159,7 @@ public final class WorkoutPlan {
         }
         return otherPlan != null
                 && title.equals(otherPlan.title)
-                && workouts.equals(otherPlan.workouts)
+                && description.equals(otherPlan.description)
                 && date.equals(otherPlan.date);
     }
 
@@ -171,7 +172,7 @@ public final class WorkoutPlan {
             return false;
         }
         return title.equals(otherPlan.title)
-                && workouts.equals(otherPlan.workouts)
+                && description.equals(otherPlan.description)
                 && date.equals(otherPlan.date)
                 && tags.equals(otherPlan.tags)
                 && status.equals(otherPlan.status)
@@ -180,7 +181,7 @@ public final class WorkoutPlan {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, workouts, date, tags, status, exercises);
+        return Objects.hash(title, description, date, tags, status, exercises);
     }
 
     @Override
@@ -189,7 +190,7 @@ public final class WorkoutPlan {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()
                 .format(DATE_FORMATTER);
-        String planDetails = title.getValue() + " - " + workouts.getValue() + " (" + formattedDate + ")";
+        String planDetails = title.getValue() + " - " + description.getValue() + " (" + formattedDate + ")";
         if (tags.isEmpty()) {
             return planDetails;
         }
