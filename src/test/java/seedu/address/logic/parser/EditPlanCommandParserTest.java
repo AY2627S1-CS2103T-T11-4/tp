@@ -28,6 +28,8 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND;
 import static seedu.address.testutil.TypicalIndexes.INDEX_THIRD;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
@@ -48,6 +50,25 @@ public class EditPlanCommandParserTest {
 
     private String formatParserError(String errorMessage) {
         return Messages.formatParserError(errorMessage, EditPlanCommand.MESSAGE_USAGE);
+    }
+
+    @Test
+    public void parse_invalidCalendarDate_reportsGenericDateError() {
+        assertParseFailure(parser, "1 --date 01132026",
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
+        assertParseFailure(parser, "1 --date 32122026",
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
+        assertParseFailure(parser, "1 --date 31022026",
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
+        assertParseFailure(parser, "1 --date 29022026",
+                this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
+    }
+
+    @Test
+    public void parse_validLeapDay_success() {
+        EditPlanCommand.EditPlanDescriptor descriptor =
+                new EditPlanDescriptorBuilder().withDate(LocalDate.of(2024, 2, 29)).build();
+        assertParseSuccess(parser, "1 --date 29022024", new EditPlanCommand(INDEX_FIRST, descriptor));
     }
 
 

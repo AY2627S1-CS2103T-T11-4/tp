@@ -10,12 +10,10 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
@@ -338,10 +336,38 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseDate_invalidCalendarValue_throwsParseExceptionWithCause() {
-        ParseException exception =
-                Assertions.assertThrows(ParseException.class, () -> ParserUtil.parseDate(INVALID_DATE_CALENDAR_VALUE));
-        assertTrue(exception.getCause() instanceof DateTimeParseException);
+    public void parseDate_invalidCalendarValue_throwsFieldValueInvalidException() {
+        assertThrows(FieldValueInvalidException.class,
+                WorkoutDate.MESSAGE_CONSTRAINTS, ()
+                    -> ParserUtil.parseDate(INVALID_DATE_CALENDAR_VALUE));
+    }
+
+    @Test
+    public void parseDate_invalidMonth_reportsGenericDateError() {
+        for (String date : List.of("01132026", "01002026")) {
+            assertThrows(FieldValueInvalidException.class, WorkoutDate.MESSAGE_CONSTRAINTS, ()
+                -> ParserUtil.parseDate(date));
+        }
+    }
+
+    @Test
+    public void parseDate_invalidDay_reportsGenericDateError() {
+        for (String date : List.of("32122026", "00012026", "31022026", "29022026", "31042026", "29022100")) {
+            assertThrows(FieldValueInvalidException.class,
+                    WorkoutDate.MESSAGE_CONSTRAINTS, ()
+                    -> ParserUtil.parseDate(date));
+        }
+    }
+
+    @Test
+    public void parseDate_validCalendarBoundaries_preservesInputAndDisplay() throws Exception {
+        for (String date : List.of("01010000", "29020000", "01010001", "31129999",
+                "28022026", "29022024", "29022000", "30042026", "31122026")) {
+            WorkoutDate parsed = ParserUtil.parseDate(date);
+            assertEquals(date, parsed.toInputString());
+            assertEquals(date.substring(0, 2) + "-" + date.substring(2, 4) + "-" + date.substring(4),
+                    parsed.toDisplayString());
+        }
     }
 
     @Test

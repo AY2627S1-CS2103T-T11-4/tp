@@ -187,7 +187,7 @@ Format: `addPlan TITLE --plan DESCRIPTION --date DDMMYYYY [--tag TAG]...`
 * Displays the updated list of workout plans of the specified student, after the new plan is added
 * Title and description of the workout plan cannot be empty
 * Date field must be provided in `DDMMYYYY` format
-
+  
 Examples:
 * `addPlan Leg Day --plan Squats 100kg 10 reps x5; Leg curls 80kg 10 reps x3 --date 20102026`
 * `addPlan Chest Day --plan Bench press 80kg 15 reps x3 --date 31102026`
@@ -197,6 +197,8 @@ Examples:
 Edits an existing workout plan from the student's list of workout plans
 
 Format: `editPlan PLAN_ID [--name TITLE] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... [--clearTags]`
+
+Dates follow the same calendar validation as `addPlan`, including leap-year checks.
 
 * Edits the plan at the specified `PLAN_ID`. 
   The plan id refers to the index number shown in the displayed list of workout plans. 
