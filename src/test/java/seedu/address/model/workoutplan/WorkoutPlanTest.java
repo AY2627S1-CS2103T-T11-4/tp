@@ -150,7 +150,6 @@ public class WorkoutPlanTest {
         assertEquals(WorkoutPlanStatus.PENDING, pending.getStatus());
         assertEquals(pending.getDate(), marked.getDate());
         assertEquals(EXERCISES, marked.getExercisesList());
-        assertSame(marked, marked.mark());
         assertThrows(AlreadyMarkedException.class, marked::mark);
         assertEquals(WorkoutPlanStatus.COMPLETED, marked.getStatus());
     }
