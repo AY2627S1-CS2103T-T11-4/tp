@@ -180,6 +180,28 @@ public class WorkoutPlanTest {
     }
 
     @Test
+    public void isSamePlan() {
+        WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID);
+        for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
+            WorkoutPlan other = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID, Set.of(), status);
+            assertTrue(plan.isSamePlan(other));
+            assertTrue(other.isSamePlan(plan));
+        }
+
+        assertFalse(plan.isSamePlan(null));
+        assertFalse(plan.isSamePlan(new WorkoutPlan(new WorkoutTitle(TITLE_TEXT_OTHER),
+                DESCRIPTION_VALID, DATE_VALID)));
+        assertFalse(plan.isSamePlan(new WorkoutPlan(TITLE_VALID,
+                new WorkoutDescription(DESCRIPTION_TEXT_OTHER), DATE_VALID)));
+        assertFalse(plan.isSamePlan(new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
+                new WorkoutDate(new Date(DATE_TIME_OTHER)))));
+        WorkoutPlan tagged = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(new WorkoutPlanTag("strength")));
+        assertTrue(plan.isSamePlan(tagged));
+        assertTrue(tagged.isSamePlan(plan));
+    }
+
+    @Test
     public void toStringMethod() {
         WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID);
         String formattedDate = DATE_VALID.getValue().toInstant()
