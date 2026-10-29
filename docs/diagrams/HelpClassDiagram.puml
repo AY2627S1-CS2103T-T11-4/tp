@@ -1,0 +1,24 @@
+@startuml
+!include style.puml
+!pragma layout smetana
+skinparam arrowThickness 1.1
+skinparam arrowColor UI_COLOR_T4
+skinparam classBackgroundColor UI_COLOR
+
+
+package Help {
+    class HelpSearch
+    class HelpWindow
+    class HelpCommandCard
+    class HelpFieldControl
+    class HelpInput
+}
+
+MainWindow --> " 0..1  " HelpWindow
+
+HelpWindow *-left-> "   1" HelpSearch : <<searches>>
+HelpWindow *-down-> " * " HelpCommandCard : <<renders>>
+HelpCommandCard *-down-> " *  " HelpFieldControl
+HelpCommandCard ..right..> HelpInput : <<builds>>
+
+@enduml

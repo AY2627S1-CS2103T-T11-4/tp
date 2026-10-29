@@ -72,7 +72,12 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/se-
 
 <puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
 
-The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `StudentListPanel`, `WorkoutPlanListPanel`, `StatusBarFooter`, and the `seedu.address.ui.help` feature package. `StudentListPanel` displays students using `StudentCard` objects, while `WorkoutPlanListPanel` displays the current student's plans using `WorkoutPlanCard` objects. The Help package contains `HelpWindow`, `HelpCommandCard`, and `HelpFieldControl` for rendering and interacting with command cards, while `HelpSearch` owns the command catalog and command-word filtering and `HelpInput` validates structured form values and constructs command strings without executing them. `MainWindow` is the integration point that opens Help and receives selected command formats. All visible GUI parts, including `MainWindow` and `HelpWindow`, inherit from the abstract `UiPart` class.
+The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `StudentListPanel`, `WorkoutPlanListPanel`, `StatusBarFooter`, and the `seedu.address.ui.help` feature package. 
+
+`StudentListPanel` displays students using `StudentCard` objects, while `WorkoutPlanListPanel` displays the current student's plans using `WorkoutPlanCard` objects.
+
+`MainWindow` is the integration point that opens Help and receives selected command formats. 
+All visible GUI parts, including `MainWindow` and `HelpWindow`, inherit from the abstract `UiPart` class.
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/MainWindow.java).
 
@@ -82,6 +87,16 @@ The `UI` component,
 * listens for changes to `Model` data so that the UI can be updated with the modified data. In particular, `MainWindow` observes `Logic#currentStudentProperty()` and updates `WorkoutPlanListPanel` when the current student changes.
 * keeps a reference to the `Logic` component, because the `UI` relies on the `Logic` to execute commands.
 * depends on some classes in the `Model` component because it displays `Student` and `WorkoutPlan` objects from the model.
+
+#### Help package
+
+<puml src="diagrams/HelpClassDiagram.puml" alt="Structure of the Help UI component" width="650" />
+
+The Help package facilitates the running and rendering of the help page, and consists of
+- `HelpWindow`, which renders commands instructions in `HelpCommandCard` objects
+- `HelpFieldControl`, which creates the input fields for each command in the respective `HelpCommandCard` objects
+- `HelpSearch`, which owns the command catalog and command-word filtering
+- `HelpInput`, which validates structured form values and constructs command strings without executing them.
 
 ### Logic component
 

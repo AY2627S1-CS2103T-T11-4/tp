@@ -20,11 +20,7 @@ Class StudentCard
 Class WorkoutPlanCard
 
 package Help <<Rectangle>> {
-Class HelpWindow
-Class HelpCommandCard
-Class HelpFieldControl
-Class HelpSearch
-Class HelpInput
+Class HiddenLogic #FFFFFF
 }
 }
 
@@ -42,18 +38,14 @@ HiddenOutside ..> Ui
 UiManager .up.|> Ui
 UiManager -down-> "1" MainWindow
 
-MainWindow -left-|> UiPart
+MainWindow -up-|> UiPart
 
 MainWindow *-down-> "1" CommandBox
 MainWindow *-down-> "1" ResultDisplay
 MainWindow *-down-> "1" StudentListPanel
 MainWindow *-down-> "1" WorkoutPlanListPanel
 MainWindow *-down-> "1" StatusBarFooter
-MainWindow --> "0..1" HelpWindow
-HelpWindow *-down-> "1" HelpSearch
-HelpWindow *-down-> "1" HelpInput
-HelpWindow *-down-> "*" HelpCommandCard
-HelpCommandCard *-down-> "*" HelpFieldControl
+MainWindow -up-> "\n0..1" Help
 
 StudentListPanel *-down-> "*" StudentCard
 WorkoutPlanListPanel *-down-> "*" WorkoutPlanCard
@@ -67,10 +59,7 @@ CommandBox -[hidden]right- ResultDisplay
 ResultDisplay -[hidden]right- StudentListPanel
 StudentListPanel -[hidden]right- WorkoutPlanListPanel
 WorkoutPlanListPanel -[hidden]right- StatusBarFooter
-StatusBarFooter -[hidden]right- HelpWindow
-HelpWindow -[hidden]right- HelpSearch
-HelpSearch -[hidden]right- HelpInput
-HelpCommandCard -[hidden]right- HelpFieldControl
+CommandBox -[hidden]up- Help
 StudentCard -[hidden]right- WorkoutPlanCard
 
 @enduml
