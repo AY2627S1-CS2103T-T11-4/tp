@@ -186,6 +186,7 @@ public class ParserUtil {
         if (!WorkoutDate.isValidDateString(date)) {
             throw new FieldValueInvalidException(WorkoutDate.MESSAGE_CONSTRAINTS);
         }
+        LocalDate dateObject;
         try {
             dateObject = LocalDate.parse(date, WorkoutDate.INPUT_DATE_FORMAT);
         } catch (DateTimeParseException e) {
