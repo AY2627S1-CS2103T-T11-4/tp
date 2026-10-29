@@ -360,6 +360,12 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseTitle_validValueWithWhitespace_returnsTrimmedTitle() throws Exception {
+        WorkoutTitle expectedTitle = new WorkoutTitle(VALID_TITLE);
+        assertEquals(expectedTitle, ParserUtil.parseTitle(WHITESPACE + VALID_TITLE + WHITESPACE));
+    }
+
+    @Test
     public void parseDescription_invalidValue_throwsParseException() {
         assertThrows(ParseException.class, () -> ParserUtil.parseDescription(INVALID_DESC));
         assertThrows(ParseException.class, () -> ParserUtil.parseDescription(
@@ -370,6 +376,12 @@ public class ParserUtilTest {
     public void parseDescription_validValue_returnsWorkoutDescription() throws Exception {
         WorkoutDescription expectedDesc = new WorkoutDescription(VALID_DESC);
         assertEquals(expectedDesc, ParserUtil.parseDescription(VALID_DESC));
+    }
+
+    @Test
+    public void parseDescription_validValueWithWhitespace_returnsTrimmedDescription() throws Exception {
+        WorkoutDescription expectedDesc = new WorkoutDescription(VALID_DESC);
+        assertEquals(expectedDesc, ParserUtil.parseDescription(WHITESPACE + VALID_DESC + WHITESPACE));
     }
 
     @Test

@@ -213,10 +213,11 @@ public class ParserUtil {
      */
     public static WorkoutTitle parseTitle(String title) throws ParseException {
         requireNonNull(title);
-        if (!WorkoutTitle.isValidWorkoutTitle(title)) {
+        String trimmedTitle = title.trim();
+        if (!WorkoutTitle.isValidWorkoutTitle(trimmedTitle)) {
             throw new FieldValueInvalidException(WorkoutTitle.MESSAGE_CONSTRAINTS);
         }
-        return new WorkoutTitle(title);
+        return new WorkoutTitle(trimmedTitle);
     }
 
     /**
@@ -224,12 +225,13 @@ public class ParserUtil {
      *
      * @throws ParseException if the given {@code description} is invalid
      */
-    public static WorkoutDescription parseDescription(String desc) throws ParseException {
-        requireNonNull(desc);
-        if (!WorkoutDescription.isValidWorkoutDescription(desc)) {
+    public static WorkoutDescription parseDescription(String description) throws ParseException {
+        requireNonNull(description);
+        String trimmedDescription = description.trim();
+        if (!WorkoutDescription.isValidWorkoutDescription(trimmedDescription)) {
             throw new FieldValueInvalidException(WorkoutDescription.MESSAGE_CONSTRAINTS);
         }
-        return new WorkoutDescription(desc);
+        return new WorkoutDescription(trimmedDescription);
     }
 
     /**
