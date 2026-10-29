@@ -257,6 +257,38 @@ Example: `viewStudent 1` followed by `viewPlan 2` opens the second plan and high
 
 ![Example selected workout plan with sample exercises](images/selectedPlanView.png)
 
+
+#### Deleting a workout plan: `deletePlan`
+
+Deletes the specified workout plan from the list of workouts of the selected student.
+
+Format: `deletePlan PLAN_ID`
+
+* Deletes the workout plan at the specified `PLAN_ID`.
+* The plan id refers to the index number shown in the displayed list of workout plans of the student.
+* The plan id **must be a positive integer** 1, 2, 3, ...
+
+### Exercise-related commands
+
+Workout plans set the focus of a training session. Exercises specify the movements to perform during that session.
+
+<box type="important">
+
+Select a student with `viewStudent`, then select one of their workout plans with `viewPlan` before adding an exercise.
+
+</box>
+
+#### Add an exercise to a workout plan: `addExercise`
+
+Format: `addExercise TITLE --description DESCRIPTION`
+
+* Both title and description are required and cannot be blank. The description can contain up to 500 characters.
+* The exercise is appended to the selected workout plan. An identical title and description cannot be added twice.
+* A workout plan can contain up to 100 exercises.
+
+Example: `addExercise Squats --description Barbell back squat`
+
+
 #### Editing an exercise: `editExercise`
 
 Edits one exercise in the selected workout plan.
@@ -281,36 +313,6 @@ Format: `deleteExercise EXERCISE_ID`
 * An invalid or out-of-range ID leaves the plan unchanged. The remaining exercises keep their order and are renumbered.
 
 Example: `deleteExercise 2` removes the second exercise from the selected plan.
-
-#### Deleting a workout plan: `deletePlan`
-
-Deletes the specified workout plan from the list of workouts of the selected student.
-
-Format: `deletePlan PLAN_ID`
-
-* Deletes the workout plan at the specified `PLAN_ID`.
-* The plan id refers to the index number shown in the displayed list of workout plans of the student.
-* The plan id **must be a positive integer** 1, 2, 3, ...
-
-### Exercise-related commands
-
-Workout plans set the focus of a training session. Exercises specify the movements to perform during that session.
-
-<box type="important">
-
-Select a student with `viewStudent`, then select one of their workout plans with `viewPlan` before adding an exercise.
-
-</box>
-
-#### Add an exercise to a workout plan: `addExercise`
-
-Format: `addExercise EXERCISE_TITLE --description DESCRIPTION`
-
-* Both title and description are required and cannot be blank. The description can contain up to 500 characters.
-* The exercise is appended to the selected workout plan. An identical title and description cannot be added twice.
-* A workout plan can contain up to 100 exercises.
-
-Example: `addExercise Squats --description Barbell back squat`
 
 ### Clearing all entries: `clear`
 
@@ -390,12 +392,12 @@ Action     | Format, Examples
 **Unmark Workout Plan** | `unmarkPlan PLAN_ID` <br> e.g. `unmarkPlan 2`
 **View Workout Plan** | `viewPlan PLAN_ID`<br> e.g., `viewPlan 2`
 **Delete Workout Plan** | `deletePlan PLAN_ID`<br> e.g., `deletePlan 3`
-**Edit Exercise** | `editExercise EXERCISE_ID [--name NAME] [--description DESCRIPTION]`<br> e.g., `editExercise 1 --description 3 sets of 10 reps`
-**Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `viewStudent 1`, `viewPlan 2`, `deleteExercise 1`
 
 Exercise-related commands
 
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add Exercise** | `addExercise EXERCISE_TITLE --description DESCRIPTION`<br> e.g., `addExercise Squats --description Barbell back squat`
+**Add Exercise** | `addExercise TITLE --description DESCRIPTION`<br> e.g., `addExercise Squats --description Barbell back squat`
+**Edit Exercise** | `editExercise EXERCISE_ID [--name NAME] [--description DESCRIPTION]`<br> e.g., `editExercise 1 --description 3 sets of 10 reps`
+**Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `viewStudent 1`, `viewPlan 2`, `deleteExercise 1`
 
