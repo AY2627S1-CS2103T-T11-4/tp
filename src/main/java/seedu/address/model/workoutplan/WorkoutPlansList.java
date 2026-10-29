@@ -152,10 +152,12 @@ public final class WorkoutPlansList {
      */
     public WorkoutPlansList removeWorkoutPlan(WorkoutPlan plan) {
         Objects.requireNonNull(plan);
-        List<WorkoutPlan> updated = new ArrayList<>(plans);
-        if (!updated.remove(plan)) {
+        int index = findTargetIndex(plan);
+        if (index < 0) {
             throw new WorkoutPlanNotFoundException(plan);
         }
+        List<WorkoutPlan> updated = new ArrayList<>(plans);
+        updated.remove(index);
         return new WorkoutPlansList(updated);
     }
 

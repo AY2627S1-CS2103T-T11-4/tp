@@ -194,6 +194,26 @@ public class AddStudentCommandTest {
         }
 
         @Override
+        public Optional<WorkoutPlan> getCurrentWorkoutPlan() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public ReadOnlyObjectProperty<WorkoutPlan> currentWorkoutPlanProperty() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void setCurrentWorkoutPlan(WorkoutPlan plan) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void clearCurrentWorkoutPlan() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public ObservableList<Student> getFilteredStudentList() {
             throw new AssertionError("This method should not be called.");
         }

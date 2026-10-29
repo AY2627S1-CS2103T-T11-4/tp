@@ -139,6 +139,18 @@ public interface Model {
     /** Clears the current student selection. */
     void clearCurrentStudent();
 
+    /** Returns the workout plan selected within the current student, if any. */
+    Optional<WorkoutPlan> getCurrentWorkoutPlan();
+
+    /** Returns the selected workout plan as an observable, read-only property. */
+    ReadOnlyObjectProperty<WorkoutPlan> currentWorkoutPlanProperty();
+
+    /** Selects a workout plan belonging to the current student. */
+    void setCurrentWorkoutPlan(WorkoutPlan plan);
+
+    /** Clears the current workout plan selection. */
+    void clearCurrentWorkoutPlan();
+
     /** Returns an unmodifiable view of the filtered student list */
     ObservableList<Student> getFilteredStudentList();
 

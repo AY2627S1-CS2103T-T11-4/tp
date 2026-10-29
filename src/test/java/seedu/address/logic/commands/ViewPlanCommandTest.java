@@ -46,8 +46,10 @@ public class ViewPlanCommandTest {
         model.setCurrentStudent(studentWithPlans);
 
         assertCommandSuccess(command, model,
-                String.format(ViewPlanCommand.MESSAGE_SUCCESS, SECOND_PLAN), model);
+                String.format(ViewPlanCommand.MESSAGE_SUCCESS, SECOND_PLAN,
+                        ViewPlanCommand.MESSAGE_NO_EXERCISES), model);
         assertEquals(studentWithPlans, model.getCurrentStudent().orElseThrow());
+        assertEquals(SECOND_PLAN, model.getCurrentWorkoutPlan().orElseThrow());
     }
 
     @Test

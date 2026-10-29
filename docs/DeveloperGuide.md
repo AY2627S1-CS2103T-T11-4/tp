@@ -294,11 +294,13 @@ This section describes some noteworthy details on how certain features are imple
 
 #### Implementation
 
-The workout plan display is facilitated by `WorkoutPlanListPanel` and `WorkoutPlanCard`. `MainWindow` obtains the current student as a read-only observable property through `Logic#currentStudentProperty()` and registers a listener when initializing its UI parts.
+The workout plan display is facilitated by `WorkoutPlanListPanel` and `WorkoutPlanCard`. `MainWindow` observes the current student and selected plan through `Logic#currentStudentProperty()` and `Logic#currentWorkoutPlanProperty()`.
 
 Workout-plan statuses are refreshed explicitly when `viewStudent` is executed. `ViewStudentCommand` calls `Model#updateStudentWorkoutsState()` to recalculate each plan as pending or overdue for the current date, then calls `Model#setCurrentStudent()` with the refreshed student. This command-triggered refresh avoids a background timer and gives status changes a clear point in the application flow.
 
-Changing the current student notifies `MainWindow` through the observable property. The listener passes the selected student to `WorkoutPlanListPanel#showStudent()`, which clears its `FlowPane` and creates one `WorkoutPlanCard` for each plan. The same observable flow redraws the panel after commands such as `markPlan` and `unmarkPlan` replace the selected student. If there is no current student, the panel clears its cards and prompts the user to select a student.
+Changing either selection notifies `MainWindow`, which passes both to `WorkoutPlanListPanel#showStudent()`. With no selected plan, the panel shows the student's plan cards. `viewPlan` selects a plan and the panel shows its card above numbered exercise entries. An empty plan shows an empty message. With no current student, the panel prompts the user to select one.
+
+`ModelManager` rebinds the selected plan when an edit or exercise change replaces it with an immutable object. It clears the selection when its plan or student is removed, or navigation leaves that student. This keeps the view and subsequent exercise commands on the same stored plan.
 
 Each `WorkoutPlanCard` reads the plan's title, date, workout description, tags, and status through `WorkoutPlan` getters. Tags are sorted by name and rendered individually as labels, giving a stable display order without relying on `WorkoutPlan#toString()`. The card maps the status to visible `DONE`, `OVERDUE`, or `PENDING` text and applies matching CSS classes to both the badge and card.
 
@@ -319,9 +321,9 @@ The following sequence diagram shows how the panel is updated when the user exec
 
 **Aspect: Keeping the workout plan panel synchronized with the current student:**
 
-* **Alternative 1 (current choice):** Observe `Logic#currentStudentProperty()`.
-  * Pros: The panel updates for every command that changes the current student without requiring command-specific UI logic.
-  * Cons: Commands and `Model` operations must update the current-student property correctly for the listener to be notified.
+* **Alternative 1 (current choice):** Observe the selected student and plan properties in `Logic`.
+  * Pros: The panel updates when navigation or immutable replacements change either selection.
+  * Cons: Commands and `Model` operations must update both properties correctly for listeners to be notified.
 * **Alternative 2:** Call `WorkoutPlanListPanel#showStudent()` manually after every successful command.
   * Pros: The refresh is explicit in the command-execution flow.
   * Cons: The UI is refreshed even for unrelated commands, and new commands can fail to refresh the panel if the manual call is omitted.

@@ -229,13 +229,18 @@ Format: `unmarkPlan PLAN_ID`
 
 #### Viewing details of a workout plan: `viewPlan`
 
-Displays the details of the workout plan of a student
+Opens the selected workout plan and its exercises for the current student.
 
 Format: `viewPlan PLAN_ID`
 
-* Displays the description of the workout plan at the specified `PLAN_ID`.
+* Displays the plan's title, date, status, description, tags, and numbered exercises. An empty plan shows a message instead of exercise entries.
 * The plan id refers to the index number shown in the displayed list of workout plans of the student.
 * The plan id **must be a positive integer** 1, 2, 3, ...
+* Run `viewPlan` again to switch plans, or `viewStudent` to return to the student's plan list. Exercise IDs follow the order displayed in the selected plan.
+
+Example: `viewStudent 1` followed by `viewPlan 2` opens the second plan and highlights it above its exercises.
+
+![Example selected workout plan with sample exercises](images/selectedPlanView.png)
 
 #### Deleting a workout plan: `deletePlan`
 
