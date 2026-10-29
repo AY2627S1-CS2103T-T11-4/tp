@@ -46,7 +46,7 @@ public final class WorkoutPlansList {
 
     /**
      * Returns the stored plan matching {@code target}.
-     * Prefers the exact target instance when equal-valued plans are present.
+     * Prefers the exact target instance when plans with matching details are present.
      *
      * @throws WorkoutPlanNotFoundException If no matching plan is present.
      */
@@ -104,7 +104,7 @@ public final class WorkoutPlansList {
 
     /**
      * Returns a list with {@code target} replaced by {@code editedPlan} at the same position.
-     * Prefers the exact target instance when equal-valued plans are present.
+     * Prefers the exact target instance when plans with matching details are present.
      *
      * @throws WorkoutPlanNotFoundException If no matching plan is present.
      */
@@ -129,7 +129,15 @@ public final class WorkoutPlansList {
                 return i;
             }
         }
-        return plans.indexOf(target);
+        for (int i = 0; i < plans.size(); i++) {
+            WorkoutPlan candidate = plans.get(i);
+            if (candidate.isSamePlan(target)
+                    && candidate.getTags().equals(target.getTags())
+                    && candidate.getStatus() == target.getStatus()) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -146,7 +154,7 @@ public final class WorkoutPlansList {
     }
 
     /**
-     * Returns a new list with one plan equal to {@code plan} removed.
+     * Returns a new list with one plan matching {@code plan}'s details removed.
      *
      * @throws WorkoutPlanNotFoundException If no matching plan is present.
      */

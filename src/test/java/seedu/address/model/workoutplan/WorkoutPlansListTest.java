@@ -77,6 +77,7 @@ public class WorkoutPlansListTest {
 
         assertSame(equalFirst, plans.getWorkoutPlan(equalFirst));
         assertSame(FIRST, plans.getWorkoutPlan(equalExternal));
+        assertSame(FIRST, plans.getWorkoutPlan(FIRST_WITH_EXERCISES));
         assertThrows(NullPointerException.class, () -> plans.getWorkoutPlan(null));
         assertThrows(WorkoutPlanNotFoundException.class, () -> plans.getWorkoutPlan(
                 new WorkoutPlan(new WorkoutTitle("Missing"), new WorkoutDescription("Missing"),

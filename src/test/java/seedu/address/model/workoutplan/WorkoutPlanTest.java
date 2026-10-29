@@ -227,10 +227,10 @@ public class WorkoutPlanTest {
                 Set.of(), WorkoutPlanStatus.OVERDUE);
         assertFalse(plan.equals(overdue));
 
-        // different exercises -> still returns true because exercises are nested data
+        // different exercises -> returns false because exercises are part of the plan's data
         WorkoutPlan withExercises = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
                 Set.of(), WorkoutPlanStatus.PENDING, EXERCISES);
-        assertTrue(plan.equals(withExercises));
+        assertFalse(plan.equals(withExercises));
     }
 
     @Test
@@ -240,9 +240,11 @@ public class WorkoutPlanTest {
                 new WorkoutDescription(DESCRIPTION_TEXT_VALID), new WorkoutDate(DATE_VALID.getValue()));
         assertEquals(first.hashCode(), second.hashCode());
 
-        WorkoutPlan differentStatusAndExercises = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
-                Set.of(), WorkoutPlanStatus.OVERDUE, EXERCISES);
-        assertEquals(first.hashCode(), differentStatusAndExercises.hashCode());
+        WorkoutPlan sameValuesWithExercises = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(), WorkoutPlanStatus.PENDING, EXERCISES);
+        WorkoutPlan sameValuesWithExercisesCopy = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(), WorkoutPlanStatus.PENDING, new ExercisesList(List.of(EXERCISE)));
+        assertEquals(sameValuesWithExercises.hashCode(), sameValuesWithExercisesCopy.hashCode());
     }
 
     @Test

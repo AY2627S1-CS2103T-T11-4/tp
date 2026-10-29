@@ -169,12 +169,13 @@ public final class WorkoutPlan {
                 && workouts.equals(otherPlan.workouts)
                 && date.equals(otherPlan.date)
                 && tags.equals(otherPlan.tags)
-                && status.equals(otherPlan.status);
+                && status.equals(otherPlan.status)
+                && exercises.equals(otherPlan.exercises);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, workouts, date, tags);
+        return Objects.hash(title, workouts, date, tags, status, exercises);
     }
 
     @Override
