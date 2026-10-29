@@ -17,6 +17,7 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_STRENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_DATE_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_PLAN_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_TITLE_LEGS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
@@ -43,6 +44,7 @@ import seedu.address.testutil.EditPlanDescriptorBuilder;
 public class EditPlanCommandParserTest {
 
     private static final String TAG_EMPTY = " " + PREFIX_TAG;
+    private static final String CLEAR_TAGS = " " + PREFIX_CLEAR_TAGS;
 
     private EditPlanCommandParser parser = new EditPlanCommandParser();
 
@@ -105,20 +107,15 @@ public class EditPlanCommandParserTest {
                 this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS)); // invalid date (invalid letters)
         assertParseFailure(parser, "1" + INVALID_DATE_DESC_LENGTH,
                 this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS)); // invalid date (too long)
-        assertParseFailure(parser, "1" + INVALID_TAG_DESC,
+        assertParseFailure(parser, "1" + INVALID_TAG_DESC + CLEAR_TAGS,
                 this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS)); // invalid tag
 
         // invalid plan followed by valid date
         assertParseFailure(parser, "1" + INVALID_PLAN_DESC + DATE_DESC_LEGS,
                 this.formatParserError(WorkoutDescription.MESSAGE_CONSTRAINTS));
 
-        // while parsing {@code PREFIX_TAG} alone will reset the tags of the {@code WorkoutPlan} being edited,
-        // parsing it together with a valid tag results in error
-        assertParseFailure(parser, "1" + TAG_DESC_STRENGTH + TAG_DESC_HIIT + TAG_EMPTY,
-                this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS));
-        assertParseFailure(parser, "1" + TAG_DESC_STRENGTH + TAG_EMPTY + TAG_DESC_HIIT,
-                this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS));
-        assertParseFailure(parser, "1" + TAG_EMPTY + TAG_DESC_STRENGTH + TAG_DESC_HIIT,
+        // an empty tag remains invalid since --clearTags is available for clearing tags
+        assertParseFailure(parser, "1" + TAG_EMPTY,
                 this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS));
 
         // multiple invalid values, but only the first invalid value is captured
@@ -201,13 +198,37 @@ public class EditPlanCommandParserTest {
     }
 
     @Test
-    public void parse_resetTags_success() {
+    public void parse_clearTags_success() {
         Index targetIndex = INDEX_THIRD;
-        String userInput = targetIndex.getOneBased() + TAG_EMPTY;
+        String userInput = targetIndex.getOneBased() + CLEAR_TAGS;
 
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder().withTags().build();
         EditPlanCommand expectedCommand = new EditPlanCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
+
+    @Test
+    public void parse_clearTagsWithOtherField_success() {
+        Index targetIndex = INDEX_THIRD;
+        String userInput = targetIndex.getOneBased() + TITLE_DESC_LEGS + CLEAR_TAGS;
+
+        EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder()
+                .withTitle(VALID_WORKOUT_TITLE_LEGS).withTags().build();
+        EditPlanCommand expectedCommand = new EditPlanCommand(targetIndex, descriptor);
+
+        assertParseSuccess(parser, userInput, expectedCommand);
+    }
+
+    @Test
+    public void parse_tagAndClearTags_success() {
+        Index targetIndex = INDEX_THIRD;
+        String userInput = targetIndex.getOneBased() + TAG_DESC_STRENGTH + CLEAR_TAGS;
+
+        EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder().withTags().build();
+        EditPlanCommand expectedCommand = new EditPlanCommand(targetIndex, descriptor);
+
+        assertParseSuccess(parser, userInput, expectedCommand);
+    }
+
 }

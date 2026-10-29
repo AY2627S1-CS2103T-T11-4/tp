@@ -30,7 +30,7 @@ public class MarkPlanCommandTest {
 
     @Test
     public void execute_validIndex_updatesOnlySelectedPlan() throws Exception {
-        for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
+        for (WorkoutPlanStatus status : List.of(WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE)) {
             assertTransition(LocalDate.now().minusDays(1), status, WorkoutPlanStatus.COMPLETED);
         }
     }
@@ -60,8 +60,21 @@ public class MarkPlanCommandTest {
         assertEquals(initialStatus, target.getStatus());
         assertEquals(String.format(MarkPlanCommand.MESSAGE_SUCCESS, expectedPlan), result.getFeedbackToUser());
 
-        command.execute(model);
-        assertEquals(updated, model.getCurrentStudent().orElseThrow());
+        assertCommandFailure(command, model, MarkPlanCommand.MESSAGE_ALREADY_MARKED);
+        assertSame(updated, model.getCurrentStudent().orElseThrow());
+    }
+
+    @Test
+    public void execute_completedPlan_throwsCommandExceptionWithoutChangingSelection() {
+        Student student = withPlans(ALICE, List.of(
+                plan("Target", LocalDate.now(), WorkoutPlanStatus.COMPLETED)));
+        Model model = new ModelManager();
+        model.addStudent(student);
+        model.setCurrentStudent(student);
+
+        assertCommandFailure(new MarkPlanCommand(Index.fromOneBased(1)), model,
+                MarkPlanCommand.MESSAGE_ALREADY_MARKED);
+        assertSame(student, model.getCurrentStudent().orElseThrow());
     }
 
     @Test

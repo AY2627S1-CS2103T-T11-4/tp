@@ -16,6 +16,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.tag.WorkoutPlanTag;
+import seedu.address.model.workoutplan.exceptions.AlreadyMarkedException;
+import seedu.address.model.workoutplan.exceptions.AlreadyUnmarkedException;
 
 public class WorkoutPlanTest {
 
@@ -105,7 +107,8 @@ public class WorkoutPlanTest {
         assertEquals(WorkoutPlanStatus.COMPLETED, marked.getStatus());
         assertEquals(WorkoutPlanStatus.PENDING, pending.getStatus());
         assertEquals(pending.getDate(), marked.getDate());
-        assertSame(marked, marked.mark());
+        assertThrows(AlreadyMarkedException.class, marked::mark);
+        assertEquals(WorkoutPlanStatus.COMPLETED, marked.getStatus());
     }
 
     @Test
@@ -121,7 +124,16 @@ public class WorkoutPlanTest {
         assertEquals(WorkoutPlanStatus.COMPLETED, past.getStatus());
 
         WorkoutPlan unmarked = past.unmark();
-        assertSame(unmarked, unmarked.unmark());
+        assertThrows(AlreadyUnmarkedException.class, unmarked::unmark);
+        assertEquals(WorkoutPlanStatus.OVERDUE, unmarked.getStatus());
+    }
+
+    @Test
+    public void unmark_pendingPlan_throwsAlreadyUnmarkedException() {
+        WorkoutPlan pending = planForDate(LocalDate.now().minusDays(1), WorkoutPlanStatus.PENDING);
+
+        assertThrows(AlreadyUnmarkedException.class, pending::unmark);
+        assertEquals(WorkoutPlanStatus.PENDING, pending.getStatus());
     }
 
     private static WorkoutPlan planForDate(LocalDate deadline, WorkoutPlanStatus status) {
@@ -177,6 +189,28 @@ public class WorkoutPlanTest {
         WorkoutPlan second = new WorkoutPlan(new WorkoutTitle(TITLE_TEXT_VALID),
                 new WorkoutDescription(DESCRIPTION_TEXT_VALID), new WorkoutDate(DATE_VALID.getValue()));
         assertEquals(first.hashCode(), second.hashCode());
+    }
+
+    @Test
+    public void isSamePlan() {
+        WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID);
+        for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
+            WorkoutPlan other = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID, Set.of(), status);
+            assertTrue(plan.isSamePlan(other));
+            assertTrue(other.isSamePlan(plan));
+        }
+
+        assertFalse(plan.isSamePlan(null));
+        assertFalse(plan.isSamePlan(new WorkoutPlan(new WorkoutTitle(TITLE_TEXT_OTHER),
+                DESCRIPTION_VALID, DATE_VALID)));
+        assertFalse(plan.isSamePlan(new WorkoutPlan(TITLE_VALID,
+                new WorkoutDescription(DESCRIPTION_TEXT_OTHER), DATE_VALID)));
+        assertFalse(plan.isSamePlan(new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
+                new WorkoutDate(new Date(DATE_TIME_OTHER)))));
+        WorkoutPlan tagged = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(new WorkoutPlanTag("strength")));
+        assertTrue(plan.isSamePlan(tagged));
+        assertTrue(tagged.isSamePlan(plan));
     }
 
     @Test

@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import seedu.address.model.tag.WorkoutPlanTag;
+import seedu.address.model.workoutplan.exceptions.AlreadyMarkedException;
+import seedu.address.model.workoutplan.exceptions.AlreadyUnmarkedException;
 
 /**
  * Represents a workout plan in BrotherGym.
@@ -77,16 +79,28 @@ public final class WorkoutPlan {
         return status;
     }
 
-    /** Returns this plan marked as completed. */
+    /**
+     * Returns this plan marked as completed.
+     *
+     * @throws AlreadyMarkedException If this plan is already completed.
+     */
     public WorkoutPlan mark() {
+        if (status == WorkoutPlanStatus.COMPLETED) {
+            throw new AlreadyMarkedException();
+        }
         return withStatus(WorkoutPlanStatus.COMPLETED);
     }
 
     /**
      * Returns this plan unmarked, with its status determined by today's date.
      * Uses the same date rule as {@link #updateState(LocalDate)}.
+     *
+     * @throws AlreadyUnmarkedException If this plan is pending or overdue.
      */
     public WorkoutPlan unmark() {
+        if (status != WorkoutPlanStatus.COMPLETED) {
+            throw new AlreadyUnmarkedException();
+        }
         return withStatus(statusForDate(LocalDate.now()));
     }
 
@@ -107,6 +121,20 @@ public final class WorkoutPlan {
     public WorkoutPlan updateState(LocalDate today) {
         Objects.requireNonNull(today);
         return status == WorkoutPlanStatus.COMPLETED ? this : withStatus(statusForDate(today));
+    }
+
+    /**
+     * Returns true if both plans have the same title, workouts, and date, regardless of tags or status.
+     * This defines the identity used to prevent duplicate plans for a student.
+     */
+    public boolean isSamePlan(WorkoutPlan otherPlan) {
+        if (otherPlan == this) {
+            return true;
+        }
+        return otherPlan != null
+                && title.equals(otherPlan.title)
+                && workouts.equals(otherPlan.workouts)
+                && date.equals(otherPlan.date);
     }
 
     @Override
