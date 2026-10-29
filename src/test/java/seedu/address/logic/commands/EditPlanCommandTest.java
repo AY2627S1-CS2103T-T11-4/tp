@@ -40,7 +40,7 @@ public class EditPlanCommandTest {
             new WorkoutTitle("Strength"), new WorkoutDescription("Upper body"),
             WorkoutDate.fromLocalDate(LocalDate.now().plusDays(1)),
             Set.of(new WorkoutPlanTag("old")), WorkoutPlanStatus.PENDING, EXERCISES);
-  
+
     private static final WorkoutPlan SECOND_PLAN = new WorkoutPlan(
             new WorkoutTitle("Cardio"), new WorkoutDescription("Running"),
             WorkoutDate.fromLocalDate(LocalDate.now().plusDays(2)));
