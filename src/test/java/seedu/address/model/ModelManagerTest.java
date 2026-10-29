@@ -38,13 +38,12 @@ public class ModelManagerTest {
 
     private ModelManager modelManager = new ModelManager();
 
-   /**
-     * Verifies that when a workout plan is added for a student, its status is 
+    /**
+     * Verifies that when a workout plan is added for a student, its status is
      * correctly evaluated and updated based on its scheduled date relative to today.
      */
     @Test
     public void addWorkoutPlanForStudent_storesExpectedStatus() {
-     
         assertAddRefresh(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
         assertAddRefresh(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
         assertAddRefresh(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
@@ -72,8 +71,9 @@ public class ModelManagerTest {
         assertEquals(List.of(unchanged), student.getWorkoutPlansList().getWorkoutList());
         assertEquals(status, added.getStatus());
     }
+
     /**
-     * Verifies that when a student's workout plan is updated (set), its status is 
+     * Verifies that when a student's workout plan is updated (set), its status is
      * correctly re-evaluated and stored based on its scheduled date relative to today.
      */
     @Test
