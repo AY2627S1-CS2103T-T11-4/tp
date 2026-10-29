@@ -241,12 +241,13 @@ public class ParserUtil {
      */
     public static WorkoutDate parseDate(String date) throws ParseException {
         requireNonNull(date);
-        if (!WorkoutDate.isValidDateString(date)) {
+        String trimmedDate = date.trim();
+        if (!WorkoutDate.isValidDateString(trimmedDate)) {
             throw new FieldValueInvalidException(WorkoutDate.MESSAGE_CONSTRAINTS);
         }
         LocalDate dateObject;
         try {
-            dateObject = LocalDate.parse(date, WorkoutDate.INPUT_DATE_FORMAT);
+            dateObject = LocalDate.parse(trimmedDate, WorkoutDate.INPUT_DATE_FORMAT);
         } catch (DateTimeParseException e) {
             throw new FieldValueInvalidException(WorkoutDate.MESSAGE_CONSTRAINTS, e);
         }

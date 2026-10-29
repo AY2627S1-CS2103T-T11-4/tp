@@ -395,10 +395,19 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseDate_whitespaceOnly_throwsFieldValueInvalidException() {
+        assertThrows(FieldValueInvalidException.class, WorkoutDate.MESSAGE_CONSTRAINTS, () ->
+                ParserUtil.parseDate(WHITESPACE));
+    }
+
+    @Test
     public void parseDate_invalidCalendarValue_throwsFieldValueInvalidException() {
         assertThrows(FieldValueInvalidException.class,
                 WorkoutDate.MESSAGE_CONSTRAINTS, ()
                     -> ParserUtil.parseDate(INVALID_DATE_CALENDAR_VALUE));
+        assertThrows(FieldValueInvalidException.class,
+                WorkoutDate.MESSAGE_CONSTRAINTS, ()
+                    -> ParserUtil.parseDate(WHITESPACE + INVALID_DATE_CALENDAR_VALUE + WHITESPACE));
     }
 
     @Test
@@ -433,6 +442,12 @@ public class ParserUtilTest {
     public void parseDate_validValue_returnsWorkoutDate() throws Exception {
         WorkoutDate expectedDate = new WorkoutDate(VALID_DATE_OBJECT);
         assertEquals(expectedDate, ParserUtil.parseDate(VALID_DATE));
+    }
+
+    @Test
+    public void parseDate_validValueWithWhitespace_returnsWorkoutDate() throws Exception {
+        WorkoutDate expectedDate = new WorkoutDate(VALID_DATE_OBJECT);
+        assertEquals(expectedDate, ParserUtil.parseDate(WHITESPACE + VALID_DATE + WHITESPACE));
     }
 
     private static List<String> createTagNames(int count) {
