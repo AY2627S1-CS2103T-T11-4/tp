@@ -31,11 +31,11 @@ public class EditPlanCommandTest {
 
     private static final WorkoutPlan FIRST_PLAN = new WorkoutPlan(
             new WorkoutTitle("Strength"), new WorkoutDescription("Upper body"),
-            WorkoutDate.fromLocalDate(LocalDate.of(2026, 10, 15)),
+            WorkoutDate.fromLocalDate(LocalDate.now().plusDays(1)),
             Set.of(new WorkoutPlanTag("old")));
     private static final WorkoutPlan SECOND_PLAN = new WorkoutPlan(
             new WorkoutTitle("Cardio"), new WorkoutDescription("Running"),
-            WorkoutDate.fromLocalDate(LocalDate.of(2026, 10, 16)));
+            WorkoutDate.fromLocalDate(LocalDate.now().plusDays(2)));
 
     @Test
     public void constructor_nullArguments_throwsNullPointerException() {
@@ -83,6 +83,45 @@ public class EditPlanCommandTest {
                 String.format(EditPlanCommand.MESSAGE_SUCCESS, expectedPlan), expectedModel);
         assertEquals(WorkoutPlanStatus.COMPLETED,
                 model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutList().get(0).getStatus());
+    }
+
+    // At least once: cover each date boundary and status without testing every combination.
+    @Test
+    public void execute_dateEditedPastPending_refreshesStatus() throws Exception {
+        assertDateEdit(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
+    }
+
+    @Test
+    public void execute_dateEditedDueTodayOverdue_refreshesStatus() throws Exception {
+        assertDateEdit(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
+    }
+
+    @Test
+    public void execute_dateEditedFuturePending_refreshesStatus() throws Exception {
+        assertDateEdit(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
+    }
+
+    @Test
+    public void execute_dateEditedPastCompleted_refreshesStatus() throws Exception {
+        assertDateEdit(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
+    }
+
+    private void assertDateEdit(int days, WorkoutPlanStatus status, WorkoutPlanStatus expectedStatus) throws Exception {
+        LocalDate dueDate = LocalDate.now().plusDays(days);
+        WorkoutPlan original = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getWorkouts(),
+                FIRST_PLAN.getDate(), FIRST_PLAN.getTags(), status);
+        Model model = createModelWithPlans(original, SECOND_PLAN);
+        model.setCurrentStudent(model.getFilteredStudentList().get(0));
+        EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
+        descriptor.setDate(WorkoutDate.fromLocalDate(dueDate));
+
+        new EditPlanCommand(Index.fromOneBased(1), descriptor).execute(model);
+
+        WorkoutPlan edited = model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutPlan(0);
+        assertEquals(expectedStatus, edited.getStatus());
+        assertEquals(WorkoutDate.fromLocalDate(dueDate), edited.getDate());
+        assertEquals(SECOND_PLAN,
+                model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutPlan(1));
     }
 
     @Test

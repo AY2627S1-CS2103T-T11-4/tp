@@ -8,6 +8,7 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -53,7 +54,8 @@ public class AddPlanCommandTest {
 
         Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(),
-                new WorkoutPlansList(List.of(PLAN)));
+                new WorkoutPlansList(List.of(new WorkoutPlan(PLAN.getTitle(), PLAN.getWorkouts(), PLAN.getDate(),
+                        PLAN.getTags(), WorkoutPlanStatus.OVERDUE))));
         Model expectedModel = new ModelManager(model.getBrotherGym(), new UserPrefs());
         expectedModel.setStudent(currentStudent, updatedStudent);
 
@@ -82,7 +84,10 @@ public class AddPlanCommandTest {
 
         WorkoutPlan storedPlan = model.getCurrentStudent().orElseThrow()
                 .getWorkoutPlansList().getWorkoutList().get(0);
-        assertEquals(taggedPlan, storedPlan);
+        assertEquals(WorkoutPlanStatus.OVERDUE, storedPlan.getStatus());
+        assertEquals(taggedPlan.getTitle(), storedPlan.getTitle());
+        assertEquals(taggedPlan.getWorkouts(), storedPlan.getWorkouts());
+        assertEquals(taggedPlan.getDate(), storedPlan.getDate());
         assertEquals(Set.of(new WorkoutPlanTag("strength"), new WorkoutPlanTag("upperbody")),
                 storedPlan.getTags());
     }
@@ -91,21 +96,16 @@ public class AddPlanCommandTest {
     public void execute_duplicateWorkoutPlan_throwsCommandException() {
         Student baseStudent = new ModelManager(getTypicalBrotherGym(), new UserPrefs())
                 .getFilteredStudentList().get(0);
-        for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
-            Set<WorkoutPlanTag> existingTags = status == WorkoutPlanStatus.PENDING
-                    ? PLAN.getTags() : Set.of(new WorkoutPlanTag("different"));
-            WorkoutPlan existing = new WorkoutPlan(PLAN.getTitle(), PLAN.getWorkouts(), PLAN.getDate(),
-                    existingTags, status);
-            Student studentWithPlan = new Student(baseStudent.getName(), baseStudent.getPhone(),
-                    baseStudent.getEmail(), baseStudent.getAddress(), baseStudent.getTags(),
-                    new WorkoutPlansList(List.of(existing)));
-            BrotherGym brotherGym = new BrotherGym();
-            brotherGym.addStudent(studentWithPlan);
-            Model model = new ModelManager(brotherGym, new UserPrefs());
-            model.setCurrentStudent(studentWithPlan);
+        Student studentWithPlan = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
+                baseStudent.getAddress(), baseStudent.getTags(),
+                new WorkoutPlansList(List.of(PLAN.updateState(LocalDate.now()))));
+        BrotherGym brotherGym = new BrotherGym();
+        brotherGym.addStudent(studentWithPlan);
+        Model model = new ModelManager(brotherGym, new UserPrefs());
+        model.setCurrentStudent(studentWithPlan);
+        AddPlanCommand command = new AddPlanCommand(PLAN);
 
-            assertCommandFailure(new AddPlanCommand(PLAN), model, AddPlanCommand.MESSAGE_DUPLICATE_PLAN);
-        }
+        assertCommandFailure(command, model, AddPlanCommand.MESSAGE_DUPLICATE_PLAN);
     }
 
     @Test
