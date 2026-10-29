@@ -150,6 +150,9 @@ public class ParserUtil {
         for (String tagName : tags) {
             tagSet.add(parseTag(tagName, tagConstructor));
         }
+        if (!Tag.isValidTagCount(tagSet.size())) {
+            throw new FieldValueInvalidException(Tag.MESSAGE_TAG_LIMIT);
+        }
         return tagSet;
     }
 
