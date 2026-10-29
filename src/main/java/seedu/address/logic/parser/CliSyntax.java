@@ -18,6 +18,9 @@ public class CliSyntax {
     public static final Prefix PREFIX_PLAN = new Prefix("--plan");
     public static final Prefix PREFIX_DATE = new Prefix("--date");
 
+    /* Exercise Prefixes */
+    public static final Prefix PREFIX_DESCRIPTION = new Prefix("--description");
+
     /* Invalid Prefixes */
     public static final Prefix PREFIX_INVALID = new Prefix("--invalid");
     public static final Prefix PREFIX_UNKNOWN = new Prefix("--unknown");

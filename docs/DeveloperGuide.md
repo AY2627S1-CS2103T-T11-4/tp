@@ -122,7 +122,7 @@ Here are the classes dedicated to parsing the arguments of the command strings:
 
 How the parsing works:
 * When called upon to parse a user command, the `BrotherGymParser` class creates either an `XYZCommandParser` or a `SingleIndexCommandParser`
-  * `addStudent`, `addPlan`, `editStudent` and `editPlan` commands each have a dedicated `XYZCommandParser`
+  * `addStudent`, `addPlan`, `addExercise`, `editStudent` and `editPlan` commands each have a dedicated `XYZCommandParser`
     (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`),
   * `viewStudent`, `viewPlan`, `deleteStudent`, `deletePlan`, and `deleteExercise` commands are `SingleIndexCommand`s that only parse a single index,
     hence they use the same generic `SingleIndexCommandParser`

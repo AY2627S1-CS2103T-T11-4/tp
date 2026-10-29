@@ -14,6 +14,8 @@ import static seedu.address.testutil.TypicalStudents.AMY;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +31,14 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyBrotherGym;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseDescription;
+import seedu.address.model.exercise.ExerciseName;
 import seedu.address.model.student.Student;
+import seedu.address.model.workoutplan.WorkoutDate;
+import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutTitle;
 import seedu.address.storage.JsonBrotherGymStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
 import seedu.address.storage.StorageManager;
@@ -71,6 +80,29 @@ public class LogicManagerTest {
     public void execute_validCommand_success() throws Exception {
         String listCommand = HomeCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand, HomeCommand.MESSAGE_SUCCESS, model);
+    }
+
+    @Test
+    public void execute_addExercise_savesSelectedPlanExercise() throws Exception {
+        Student student = new StudentBuilder().build();
+        model.addStudent(student);
+        model.setCurrentStudent(student);
+        WorkoutPlan plan = new WorkoutPlan(new WorkoutTitle("Leg day"),
+                new WorkoutDescription("Lower body"), WorkoutDate.fromLocalDate(LocalDate.of(2026, 10, 29)));
+        model.addWorkoutPlanForStudent(student, plan);
+        model.setCurrentWorkoutPlan(model.getCurrentStudent().orElseThrow()
+                .getWorkoutPlansList().getWorkoutList().get(0));
+
+        CommandResult result = logic.execute("addExercise Squats --description Barbell back squat");
+
+        Exercise expected = new Exercise(new ExerciseName("Squats"),
+                new ExerciseDescription("Barbell back squat"));
+        assertEquals("New exercise added: " + expected, result.getFeedbackToUser());
+        assertEquals(List.of(expected), model.getCurrentWorkoutPlan().orElseThrow()
+                .getExercisesList().getExerciseList());
+        ReadOnlyBrotherGym restored = storage.readBrotherGym().orElseThrow();
+        assertEquals(List.of(expected), restored.getStudentList().get(0)
+                .getWorkoutPlansList().getWorkoutList().get(0).getExercisesList().getExerciseList());
     }
 
     @Test

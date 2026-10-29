@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.AddExerciseCommand;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
@@ -30,6 +31,9 @@ import seedu.address.logic.commands.UnmarkPlanCommand;
 import seedu.address.logic.commands.ViewPlanCommand;
 import seedu.address.logic.commands.ViewStudentCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseDescription;
+import seedu.address.model.exercise.ExerciseName;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -98,6 +102,15 @@ public class BrotherGymParserTest {
         WorkoutPlan workout = new WorkoutBuilder().build();
         AddPlanCommand command = (AddPlanCommand) parser.parseCommand(WorkoutUtil.getAddPlanCommand(workout));
         assertEquals(new AddPlanCommand(workout), command);
+    }
+
+    @Test
+    public void parseCommand_addExercise() throws Exception {
+        Exercise exercise = new Exercise(new ExerciseName("Squats"),
+                new ExerciseDescription("Barbell back squat"));
+        AddExerciseCommand command = (AddExerciseCommand) parser.parseCommand(
+                "addExercise Squats --description Barbell back squat");
+        assertEquals(new AddExerciseCommand(exercise), command);
     }
 
     @Test
