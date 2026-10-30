@@ -78,7 +78,9 @@ public interface Model {
     void addWorkoutPlanForStudent(Student student, WorkoutPlan plan);
 
     /**
-     * Removes the first plan equal to {@code plan} and stores an updated student value.
+     * Removes the matching plan and stores an updated student value.
+     * Prefers the same plan instance; otherwise matches title, description, date, tags, and status,
+     * ignoring exercises. If several plans match, removes the first one.
      *
      * @throws StudentNotFoundException If the student is not in the model.
      * @throws WorkoutPlanNotFoundException If the student has no matching plan.

@@ -39,6 +39,27 @@ public class StudentTest {
             new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
 
     @Test
+    public void withWorkoutPlans_newPlans_returnsCopyWithOtherFieldsUnchanged() {
+        WorkoutPlansList newPlans = new WorkoutPlansList(List.of(WORKOUT_PLAN));
+
+        Student copy = ALICE.withWorkoutPlans(newPlans);
+
+        assertNotSame(ALICE, copy);
+        assertSame(newPlans, copy.getWorkoutPlansList());
+        assertEquals(List.of(), ALICE.getWorkoutPlansList().getWorkoutList());
+        assertEquals(ALICE.getName(), copy.getName());
+        assertEquals(ALICE.getPhone(), copy.getPhone());
+        assertEquals(ALICE.getEmail(), copy.getEmail());
+        assertEquals(ALICE.getAddress(), copy.getAddress());
+        assertEquals(ALICE.getTags(), copy.getTags());
+    }
+
+    @Test
+    public void withWorkoutPlans_nullPlans_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ALICE.withWorkoutPlans(null));
+    }
+
+    @Test
     public void updateWorkoutsState_returnsNewStudentWhenAPlanChanges() {
         Student original = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getAddress(), ALICE.getTags(), new WorkoutPlansList(List.of(WORKOUT_PLAN)));

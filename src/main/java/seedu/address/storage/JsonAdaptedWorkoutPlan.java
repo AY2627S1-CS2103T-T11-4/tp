@@ -84,7 +84,7 @@ class JsonAdaptedWorkoutPlan {
 
     public JsonAdaptedWorkoutPlan(WorkoutPlan source) {
         title = source.getTitle().getValue();
-        workoutDescription = source.getWorkouts().getValue();
+        workoutDescription = source.getDescription().getValue();
         date = formatDateForStorage(source.getDate().getValue());
         status = source.getStatus().name();
         tags.addAll(source.getTags().stream()

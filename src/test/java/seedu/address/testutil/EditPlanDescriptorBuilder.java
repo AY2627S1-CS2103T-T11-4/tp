@@ -33,7 +33,7 @@ public class EditPlanDescriptorBuilder {
     public EditPlanDescriptorBuilder(WorkoutPlan plan) {
         descriptor = new EditPlanDescriptor();
         descriptor.setTitle(plan.getTitle());
-        descriptor.setDescription(plan.getWorkouts());
+        descriptor.setDescription(plan.getDescription());
         descriptor.setDate(plan.getDate());
         descriptor.setWorkoutPlanTags(plan.getTags());
     }
