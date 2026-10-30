@@ -46,9 +46,7 @@ public class EditExerciseCommandParser implements Parser<EditExerciseCommand> {
             throw pe.withMessage(Messages.formatParserError(pe.getMessage(), EditExerciseCommand.MESSAGE_USAGE));
         }
 
-        if (!descriptor.isAnyFieldEdited()) {
-            throw new NoFieldsToEditException(EditExerciseCommand.MESSAGE_NOT_EDITED);
-        }
+        validateAtLeastOneFieldEdited(descriptor);
         return new EditExerciseCommand(index, descriptor);
     }
 
@@ -64,5 +62,12 @@ public class EditExerciseCommandParser implements Parser<EditExerciseCommand> {
                     argMultimap.getValue(PREFIX_DESCRIPTION).get()));
         }
         return descriptor;
+    }
+
+    private void validateAtLeastOneFieldEdited(
+            EditExerciseCommand.EditExerciseDescriptor descriptor) throws NoFieldsToEditException {
+        if (!descriptor.isAnyFieldEdited()) {
+            throw new NoFieldsToEditException(EditExerciseCommand.MESSAGE_NOT_EDITED);
+        }
     }
 }

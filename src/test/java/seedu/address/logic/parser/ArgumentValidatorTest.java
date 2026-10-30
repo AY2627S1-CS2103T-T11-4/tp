@@ -154,6 +154,37 @@ public class ArgumentValidatorTest {
     }
 
     @Test
+    public void verifyNoArgs_emptyInput_success() throws ParseException {
+        ArgumentValidator.verifyNoArgs(tokenize(""));
+    }
+
+    @Test
+    public void verifyNoArgs_whitespaceInput_success() throws ParseException {
+        ArgumentValidator.verifyNoArgs(tokenize(" \t\n"));
+    }
+
+    @Test
+    public void verifyNoArgs_preamble_failure() {
+        ParseException exception = assertThrows(
+                ParseException.class, () -> ArgumentValidator.verifyNoArgs(tokenize("unexpected")));
+
+        assertEquals(Messages.MESSAGE_UNEXPECTED_PARAMETERS, exception.getMessage());
+    }
+
+    @Test
+    public void verifyNoArgs_prefix_failure() {
+        ParseException exception = assertThrows(
+                ParseException.class, () -> ArgumentValidator.verifyNoArgs(tokenize(" --unexpected value")));
+
+        assertEquals(Messages.MESSAGE_UNEXPECTED_PARAMETERS, exception.getMessage());
+    }
+
+    @Test
+    public void verifyNoArgs_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ArgumentValidator.verifyNoArgs(null));
+    }
+
+    @Test
     public void verifyArgs_emptyFieldValues_success() {
         verifySuccessfully(
                 VALIDATOR,

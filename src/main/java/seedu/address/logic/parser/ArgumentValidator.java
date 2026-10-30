@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import static seedu.address.logic.Messages.MESSAGE_MISSING_PREAMBLE;
+import static seedu.address.logic.Messages.MESSAGE_UNEXPECTED_PARAMETERS;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -80,6 +81,22 @@ public class ArgumentValidator {
         return this.requiredPrefixes.stream()
                 .filter(prefix -> !argPrefixes.contains(prefix))
                 .toArray(Prefix[]::new);
+    }
+
+    /**
+     * Verifies that the supplied {@code argMultimap} contains no arguments.
+     *
+     * @throws ParseException if a preamble or prefix is present
+     */
+    public static void verifyNoArgs(ArgumentMultimap argMultimap) throws ParseException {
+        requireNonNull(argMultimap);
+
+        boolean hasPreamble = !argMultimap.getPreamble().isEmpty();
+        boolean hasPrefix = argMultimap.getPrefixSet().stream()
+                .anyMatch(prefix -> !prefix.getPrefix().isEmpty());
+        if (hasPreamble || hasPrefix) {
+            throw new InputFormatInvalidException(MESSAGE_UNEXPECTED_PARAMETERS);
+        }
     }
 
     /**

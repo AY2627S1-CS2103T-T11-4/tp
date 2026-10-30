@@ -231,4 +231,10 @@ public class EditPlanCommandParserTest {
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 
+    @Test
+    public void parse_clearTagsWithValue_failure() {
+        assertParseFailure(parser, "1" + CLEAR_TAGS + " unexpected",
+                this.formatParserError(Messages.getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS)));
+    }
+
 }
