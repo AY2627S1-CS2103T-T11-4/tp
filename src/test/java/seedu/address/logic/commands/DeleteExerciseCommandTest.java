@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.testutil.ExerciseTestUtil.modelWith;
+import static seedu.address.testutil.ExerciseTestUtil.withPlans;
 import static seedu.address.testutil.TypicalExercises.LUNGES;
 import static seedu.address.testutil.TypicalExercises.PUSH_UPS;
 import static seedu.address.testutil.TypicalExercises.SQUATS;
@@ -20,18 +22,12 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.exceptions.CommandException;
-import seedu.address.model.BrotherGym;
 import seedu.address.model.ModelManager;
-import seedu.address.model.UserPrefs;
 import seedu.address.model.exercise.Exercise;
-import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
-import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanStatus;
-import seedu.address.model.workoutplan.WorkoutPlansList;
-import seedu.address.model.workoutplan.WorkoutTitle;
+import seedu.address.testutil.ExerciseTestUtil;
 
 /** Tests exercise deletion through the selected student and workout plan. */
 public class DeleteExerciseCommandTest {
@@ -197,6 +193,15 @@ public class DeleteExerciseCommandTest {
     }
 
     @Test
+    public void hashCode_equalCommands_haveSameHashCode() {
+        DeleteExerciseCommand first = new DeleteExerciseCommand(Index.fromOneBased(1));
+        DeleteExerciseCommand copy = new DeleteExerciseCommand(Index.fromZeroBased(0));
+
+        assertEquals(first.hashCode(), copy.hashCode());
+        assertTrue(Set.of(first).contains(copy));
+    }
+
+    @Test
     public void toStringMethod() {
         Index targetIndex = Index.fromOneBased(1);
         DeleteExerciseCommand command = new DeleteExerciseCommand(targetIndex);
@@ -206,21 +211,6 @@ public class DeleteExerciseCommandTest {
     }
 
     private static WorkoutPlan plan(String title, List<Exercise> exercises) {
-        return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription("Plan notes"),
-                new WorkoutDate(new Date(0)), Set.of(), WorkoutPlanStatus.PENDING,
-                new ExercisesList(exercises));
-    }
-
-    private static Student withPlans(Student base, WorkoutPlan... plans) {
-        return new Student(base.getName(), base.getPhone(), base.getEmail(), base.getAddress(),
-                base.getTags(), new WorkoutPlansList(List.of(plans)));
-    }
-
-    private static ModelManager modelWith(Student... students) {
-        BrotherGym data = new BrotherGym();
-        for (Student student : students) {
-            data.addStudent(student);
-        }
-        return new ModelManager(data, new UserPrefs());
+        return ExerciseTestUtil.plan(title, "Plan notes", new WorkoutDate(new Date(0)), exercises);
     }
 }
