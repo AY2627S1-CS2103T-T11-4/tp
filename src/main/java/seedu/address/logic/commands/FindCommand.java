@@ -36,6 +36,9 @@ public class FindCommand extends Command {
     public CommandResult execute(Model model) {
         requireNonNull(model);
         model.updateFilteredStudentList(predicate);
+        model.getCurrentStudent()
+                .filter(student -> !model.getFilteredStudentList().contains(student))
+                .ifPresent(unused -> model.clearCurrentStudent());
         return new CommandResult(
                 String.format(Messages.MESSAGE_STUDENTS_LISTED_OVERVIEW, model.getFilteredStudentList().size()));
     }

@@ -39,7 +39,7 @@ public class WorkoutBuilder {
      */
     public WorkoutBuilder(WorkoutPlan workoutToCopy) {
         title = workoutToCopy.getTitle();
-        desc = workoutToCopy.getWorkouts();
+        desc = workoutToCopy.getDescription();
         date = workoutToCopy.getDate();
         tags = new HashSet<>(workoutToCopy.getTags());
     }

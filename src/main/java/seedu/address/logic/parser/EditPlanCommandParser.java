@@ -42,15 +42,14 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
     public EditPlanCommand parse(String args) throws ParseException {
         requireNonNull(args);
 
-        ArgumentValidator argValidator = new ArgumentValidator(true, VALID_PREFIXES, NO_REPEAT_PREFIXES,
-                REQUIRED_PREFIXES);
+        ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
         Index index;
         EditPlanCommand.EditPlanDescriptor editPlanDescriptor;
 
         ParsingStage stage = ParsingStage.TOKENIZATION;
-        try {
-            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
+        try {
             stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
 

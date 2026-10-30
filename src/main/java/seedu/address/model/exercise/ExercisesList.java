@@ -38,6 +38,11 @@ public final class ExercisesList {
         return exercises;
     }
 
+    /** Returns a new list containing the given exercises. */
+    public ExercisesList withExercises(List<Exercise> exercises) {
+        return new ExercisesList(exercises);
+    }
+
     /** Returns the exercise at the given zero-based index. */
     public Exercise getExercise(int index) {
         checkIndex(index);
@@ -55,7 +60,7 @@ public final class ExercisesList {
         }
         List<Exercise> updated = new ArrayList<>(exercises);
         updated.add(exercise);
-        return new ExercisesList(updated);
+        return withExercises(updated);
     }
 
     /**
@@ -74,7 +79,7 @@ public final class ExercisesList {
 
         List<Exercise> updated = new ArrayList<>(exercises);
         updated.set(index, replacement);
-        return new ExercisesList(updated);
+        return withExercises(updated);
     }
 
     /** Returns a new list with the first exercise equal to {@code target} removed. */
@@ -87,7 +92,7 @@ public final class ExercisesList {
 
         List<Exercise> updated = new ArrayList<>(exercises);
         updated.remove(index);
-        return new ExercisesList(updated);
+        return withExercises(updated);
     }
 
     private void checkIndex(int index) {

@@ -41,9 +41,9 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
         WorkoutPlan workout;
 
         ParsingStage stage = ParsingStage.TOKENIZATION;
-        try {
-            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
+        try {
             stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
 

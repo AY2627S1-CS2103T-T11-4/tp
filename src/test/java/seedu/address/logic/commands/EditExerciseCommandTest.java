@@ -71,7 +71,7 @@ public class EditExerciseCommandTest {
         assertEquals(String.format(EditExerciseCommand.MESSAGE_SUCCESS, expected), result.getFeedbackToUser());
         assertEquals(List.of(expected, PUSH_UPS), updatedPlan.getExercisesList().getExerciseList());
         assertEquals(selectedPlan.getTitle(), updatedPlan.getTitle());
-        assertEquals(selectedPlan.getWorkouts(), updatedPlan.getWorkouts());
+        assertEquals(selectedPlan.getDescription(), updatedPlan.getDescription());
         assertEquals(selectedPlan.getDate(), updatedPlan.getDate());
         assertEquals(selectedPlan.getTags(), updatedPlan.getTags());
         assertEquals(selectedPlan.getStatus(), updatedPlan.getStatus());
