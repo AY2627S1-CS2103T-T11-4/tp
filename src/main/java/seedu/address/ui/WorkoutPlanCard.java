@@ -80,7 +80,7 @@ public class WorkoutPlanCard extends UiPart<Region> {
     }
 
     private void setDescription(WorkoutPlan workoutPlan) {
-        String fullDescription = workoutPlan.getWorkouts().getValue();
+        String fullDescription = workoutPlan.getDescription().getValue();
         description.setText(getDescriptionPreview(fullDescription));
         description.setTooltip(createTooltip(fullDescription));
     }
