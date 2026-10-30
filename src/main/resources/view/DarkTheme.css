@@ -373,6 +373,10 @@
     -fx-background-radius: 7px;
 }
 
+.workout-plan-summary {
+    -fx-background-color: transparent;
+}
+
 .workout-plan-card:hover {
     -fx-background-color: #15242b;
 }
@@ -464,11 +468,32 @@
     -fx-border-width: 0 0 0 4px;
 }
 
+.workout-plan-card.workout-plan-selected:hover {
+    -fx-background-color: #24371d;
+}
+
+.exercise-section {
+    -fx-padding: 0 10 10 63;
+}
+
+.exercise-divider {
+    -fx-min-height: 1px;
+    -fx-pref-height: 1px;
+    -fx-max-height: 1px;
+    -fx-background-color: #49613d;
+}
+
 .exercise-section-heading {
-    -fx-padding: 12 0 4 0;
+    -fx-padding: 7 0 4 0;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: #f4f8f9;
+}
+
+.exercise-empty-message {
+    -fx-padding: 8 4 8 4;
+    -fx-font-size: 12px;
+    -fx-text-fill: #9dafb7;
 }
 
 .exercise-entry {

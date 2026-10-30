@@ -5,14 +5,13 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import java.util.Optional;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import seedu.address.model.exercise.Exercise;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
 
@@ -36,6 +35,12 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
     @FXML
     private VBox workoutPlanList;
 
+    private Student renderedStudent;
+    private WorkoutPlan renderedSelectedPlan;
+    private int renderedSelectedPlanIndex = -1;
+    private int renderedWorkoutPlanCount;
+    private long renderGeneration;
+
     /** Creates a panel in its initial state, before a student has been selected. */
     public WorkoutPlanListPanel() {
         super(FXML);
@@ -47,36 +52,53 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
         showStudent(student, Optional.empty());
     }
 
-    /** Displays either the student's plans or the selected plan's exercises. */
+    /** Displays all of the student's plans and expands the selected plan's exercises, if any. */
     public void showStudent(Optional<Student> student, Optional<WorkoutPlan> selectedPlan) {
         requireNonNull(student);
         requireNonNull(selectedPlan);
+        long currentRenderGeneration = ++renderGeneration;
         if (student.isEmpty()) {
             heading.setText("Workout Plans");
             subtitle.setManaged(false);
             subtitle.setVisible(false);
             workoutPlanList.getChildren().clear();
             showEmptyMessage("Select a student to view workout plans.");
+            clearRenderedState();
             return;
         }
 
+        double previousScrollOffset = getScrollOffset();
+        Student previousStudent = renderedStudent;
+        WorkoutPlan previousSelectedPlan = renderedSelectedPlan;
+        int previousSelectedPlanIndex = renderedSelectedPlanIndex;
+        int previousWorkoutPlanCount = renderedWorkoutPlanCount;
         Student selectedStudent = student.get();
         String studentName = selectedStudent.getName().toString();
         List<WorkoutPlan> workoutPlans = selectedStudent.getWorkoutPlansList().getWorkoutList();
         int selectedPlanIndex = selectedPlan.map(value -> indexOfInstance(workoutPlans, value)).orElse(-1);
+        boolean sameStudentContext = hasSameStudentDetails(previousStudent, selectedStudent);
+        boolean retainedSelection = selectedPlanIndex >= 0
+                && (selectedPlan.get() == previousSelectedPlan
+                        || sameStudentContext && selectedPlanIndex == previousSelectedPlanIndex);
+        boolean selectedPlanWasDeleted = selectedPlanIndex < 0 && previousSelectedPlan != null
+                && sameStudentContext && workoutPlans.size() < previousWorkoutPlanCount
+                && indexOfInstance(workoutPlans, previousSelectedPlan) < 0;
+
         heading.setText(studentName);
         subtitle.setText(selectedPlanIndex < 0 ? "Workout plans"
-                : "Plan #" + (selectedPlanIndex + 1) + ": " + selectedPlan.get().getTitle());
+                : "Workout plans · #" + (selectedPlanIndex + 1) + " selected");
         subtitle.setManaged(true);
         subtitle.setVisible(true);
-        if (selectedPlanIndex >= 0) {
-            showSelectedPlan(workoutPlans.get(selectedPlanIndex), selectedPlanIndex + 1);
-            return;
-        }
         workoutPlanList.getChildren().clear();
+        Region selectedCard = null;
         for (int index = 0; index < workoutPlans.size(); index++) {
             WorkoutPlan workoutPlan = workoutPlans.get(index);
-            workoutPlanList.getChildren().add(new WorkoutPlanCard(workoutPlan, index + 1).getRoot());
+            boolean isExpanded = index == selectedPlanIndex;
+            Region planCard = new WorkoutPlanCard(workoutPlan, index + 1, isExpanded).getRoot();
+            workoutPlanList.getChildren().add(planCard);
+            if (isExpanded) {
+                selectedCard = planCard;
+            }
         }
 
         if (workoutPlans.isEmpty()) {
@@ -87,52 +109,25 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
             workoutPlanScrollPane.setManaged(true);
             workoutPlanScrollPane.setVisible(true);
         }
-    }
 
-    private void showSelectedPlan(WorkoutPlan selectedPlan, int displayedIndex) {
-        workoutPlanList.getChildren().clear();
-        Region planCard = new WorkoutPlanCard(selectedPlan, displayedIndex).getRoot();
-        planCard.getStyleClass().add("workout-plan-selected");
-        workoutPlanList.getChildren().add(planCard);
-
-        Label exercisesHeading = new Label("Exercises");
-        exercisesHeading.getStyleClass().add("exercise-section-heading");
-        workoutPlanList.getChildren().add(exercisesHeading);
-        List<Exercise> exercises = selectedPlan.getExercisesList().getExerciseList();
-        if (exercises.isEmpty()) {
-            Label noExercises = new Label("No exercises in this workout plan.");
-            noExercises.getStyleClass().add("empty-message");
-            workoutPlanList.getChildren().add(noExercises);
+        renderedStudent = selectedStudent;
+        renderedSelectedPlan = selectedPlanIndex < 0 ? null : selectedPlan.get();
+        renderedSelectedPlanIndex = selectedPlanIndex;
+        renderedWorkoutPlanCount = workoutPlans.size();
+        if (selectedCard != null && !retainedSelection) {
+            revealCard(selectedCard, currentRenderGeneration);
+        } else if (retainedSelection || selectedPlanWasDeleted
+                || previousSelectedPlan == null && sameStudentContext) {
+            restoreScrollOffset(previousScrollOffset, currentRenderGeneration);
         } else {
-            for (int index = 0; index < exercises.size(); index++) {
-                workoutPlanList.getChildren().add(createExerciseEntry(exercises.get(index), index + 1));
-            }
+            workoutPlanScrollPane.setVvalue(0);
         }
-        emptyMessage.setManaged(false);
-        emptyMessage.setVisible(false);
-        workoutPlanScrollPane.setManaged(true);
-        workoutPlanScrollPane.setVisible(true);
     }
 
-    private static HBox createExerciseEntry(Exercise exercise, int displayedIndex) {
-        HBox entry = new HBox(10);
-        entry.setMaxWidth(Double.MAX_VALUE);
-        entry.getStyleClass().add("exercise-entry");
-
-        Label number = new Label(displayedIndex + ".");
-        number.getStyleClass().add("exercise-number");
-        Label name = new Label(exercise.getName().getValue());
-        name.setWrapText(true);
-        name.getStyleClass().add("exercise-name");
-        Label description = new Label(exercise.getDescription().getValue());
-        description.setWrapText(true);
-        description.getStyleClass().add("exercise-description");
-
-        VBox text = new VBox(3, name, description);
-        text.setMinWidth(0);
-        HBox.setHgrow(text, Priority.ALWAYS);
-        entry.getChildren().addAll(number, text);
-        return entry;
+    /** Resets the outer workout-list viewport before navigation refreshes the panel. */
+    void resetScrollPosition() {
+        renderGeneration++;
+        workoutPlanScrollPane.setVvalue(0);
     }
 
     private static int indexOfInstance(List<WorkoutPlan> workoutPlans, WorkoutPlan selectedPlan) {
@@ -150,5 +145,78 @@ public class WorkoutPlanListPanel extends UiPart<Region> {
         emptyMessage.setVisible(true);
         workoutPlanScrollPane.setManaged(false);
         workoutPlanScrollPane.setVisible(false);
+    }
+
+    private void clearRenderedState() {
+        renderedStudent = null;
+        renderedSelectedPlan = null;
+        renderedSelectedPlanIndex = -1;
+        renderedWorkoutPlanCount = 0;
+        workoutPlanScrollPane.setVvalue(0);
+    }
+
+    private double getScrollOffset() {
+        double scrollableHeight = Math.max(0,
+                workoutPlanList.getBoundsInLocal().getHeight()
+                        - workoutPlanScrollPane.getViewportBounds().getHeight());
+        return workoutPlanScrollPane.getVvalue() * scrollableHeight;
+    }
+
+    private void restoreScrollOffset(double scrollOffset, long scheduledGeneration) {
+        Platform.runLater(() -> {
+            if (scheduledGeneration != renderGeneration) {
+                return;
+            }
+            refreshLayout();
+            double scrollableHeight = Math.max(0,
+                    workoutPlanList.getBoundsInLocal().getHeight()
+                            - workoutPlanScrollPane.getViewportBounds().getHeight());
+            workoutPlanScrollPane.setVvalue(scrollableHeight == 0
+                    ? 0 : clamp(scrollOffset / scrollableHeight));
+        });
+    }
+
+    private void revealCard(Region card, long scheduledGeneration) {
+        Platform.runLater(() -> {
+            if (scheduledGeneration != renderGeneration) {
+                return;
+            }
+            refreshLayout();
+            double viewportHeight = workoutPlanScrollPane.getViewportBounds().getHeight();
+            double contentHeight = workoutPlanList.getBoundsInLocal().getHeight();
+            double scrollableHeight = Math.max(0, contentHeight - viewportHeight);
+            if (scrollableHeight == 0) {
+                workoutPlanScrollPane.setVvalue(0);
+                return;
+            }
+
+            Bounds cardBounds = card.getBoundsInParent();
+            double currentOffset = workoutPlanScrollPane.getVvalue() * scrollableHeight;
+            double targetOffset = currentOffset;
+            if (cardBounds.getHeight() >= viewportHeight || cardBounds.getMinY() < currentOffset) {
+                targetOffset = cardBounds.getMinY();
+            } else if (cardBounds.getMaxY() > currentOffset + viewportHeight) {
+                targetOffset = cardBounds.getMaxY() - viewportHeight;
+            }
+            workoutPlanScrollPane.setVvalue(clamp(targetOffset / scrollableHeight));
+        });
+    }
+
+    private void refreshLayout() {
+        getRoot().applyCss();
+        getRoot().layout();
+    }
+
+    private static boolean hasSameStudentDetails(Student first, Student second) {
+        return first != null
+                && first.getName().equals(second.getName())
+                && first.getPhone().equals(second.getPhone())
+                && first.getEmail().equals(second.getEmail())
+                && first.getAddress().equals(second.getAddress())
+                && first.getTags().equals(second.getTags());
+    }
+
+    private static double clamp(double value) {
+        return Math.max(0, Math.min(1, value));
     }
 }

@@ -244,16 +244,18 @@ Format: `unmarkPlan PLAN_ID`
 
 #### Viewing details of a workout plan: `viewPlan`
 
-Opens the selected workout plan and its exercises for the current student.
+Expands the selected workout plan and its exercises within the current student's workout list.
 
 Format: `viewPlan PLAN_ID`
 
-* Displays the plan's title, date, status, description, tags, and numbered exercises. An empty plan shows a message instead of exercise entries.
+* Keeps all of the student's workout plans visible in their original order and expands the selected plan in place.
+* Displays the selected plan's title, date, status, description, tags, and numbered exercises. An empty plan shows `Exercises (0)` and an empty message.
 * The plan id refers to the index number shown in the displayed list of workout plans of the student.
 * The plan id **must be a positive integer** 1, 2, 3, ...
-* Run `viewPlan` again to switch plans, or `viewStudent` to return to the student's plan list. Exercise IDs follow the order displayed in the selected plan.
+* Run `viewPlan` again to expand a different plan, or `viewStudent` to collapse the selected plan. Exercise IDs follow the order displayed inside the expanded plan.
+* The workout panel remains one scrollable list, so plans above and below the expanded plan remain accessible.
 
-Example: `viewStudent 1` followed by `viewPlan 2` opens the second plan and highlights it above its exercises.
+Example: `viewStudent 1` followed by `viewPlan 2` expands the second plan in place while retaining the surrounding workout cards.
 
 ![Example selected workout plan with sample exercises](images/selectedPlanView.png)
 

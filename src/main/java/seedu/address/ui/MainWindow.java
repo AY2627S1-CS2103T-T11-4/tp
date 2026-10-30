@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
@@ -18,6 +19,7 @@ import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.Logic;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.ViewStudentCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Student;
@@ -43,6 +45,7 @@ public class MainWindow extends UiPart<Stage> {
     private ResultDisplay resultDisplay;
     private CommandBox commandBox;
     private HelpWindow helpWindow;
+    private boolean workoutPlanRefreshPending;
 
     @FXML
     private StackPane commandBoxPlaceholder;
@@ -135,12 +138,11 @@ public class MainWindow extends UiPart<Stage> {
         studentListPanel.selectStudent(initialStudent);
         logic.currentStudentProperty().addListener((observable, oldStudent, newStudent) -> {
             Optional<Student> selectedStudent = Optional.ofNullable(newStudent);
-            Optional<WorkoutPlan> selectedWorkoutPlan = Optional.ofNullable(logic.currentWorkoutPlanProperty().get());
-            workoutPlanListPanel.showStudent(selectedStudent, selectedWorkoutPlan);
+            requestWorkoutPlanPanelRefresh();
             studentListPanel.selectStudent(selectedStudent);
         });
         logic.currentWorkoutPlanProperty().addListener((observable, oldPlan, newPlan) ->
-                workoutPlanListPanel.showStudent(logic.getCurrentStudent(), Optional.ofNullable(newPlan)));
+                requestWorkoutPlanPanelRefresh());
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
@@ -150,6 +152,19 @@ public class MainWindow extends UiPart<Stage> {
 
         commandBox = new CommandBox(this::executeCommand);
         commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
+    }
+
+    private void requestWorkoutPlanPanelRefresh() {
+        if (workoutPlanRefreshPending) {
+            return;
+        }
+        workoutPlanRefreshPending = true;
+        Platform.runLater(() -> {
+            workoutPlanRefreshPending = false;
+            Optional<WorkoutPlan> selectedWorkoutPlan =
+                    Optional.ofNullable(logic.currentWorkoutPlanProperty().get());
+            workoutPlanListPanel.showStudent(logic.getCurrentStudent(), selectedWorkoutPlan);
+        });
     }
 
     /**
@@ -218,6 +233,10 @@ public class MainWindow extends UiPart<Stage> {
     private CommandResult executeCommand(String commandText) throws CommandException, ParseException {
         try {
             CommandResult commandResult = logic.execute(commandText);
+            if (isViewStudentCommand(commandText)) {
+                workoutPlanListPanel.resetScrollPosition();
+                requestWorkoutPlanPanelRefresh();
+            }
             logger.info("Result: " + commandResult.getFeedbackToUser());
             resultDisplay.setCommandResult(commandText, commandResult.getFeedbackToUser());
 
@@ -235,5 +254,10 @@ public class MainWindow extends UiPart<Stage> {
             resultDisplay.setCommandResult(commandText, e.getMessage());
             throw e;
         }
+    }
+
+    private static boolean isViewStudentCommand(String commandText) {
+        String[] commandParts = commandText.strip().split("\\s+", 2);
+        return commandParts.length > 0 && commandParts[0].equals(ViewStudentCommand.COMMAND_WORD);
     }
 }
