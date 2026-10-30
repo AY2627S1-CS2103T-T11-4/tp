@@ -41,6 +41,7 @@ public class JsonBrotherGymStorageTest {
     @TempDir
     public Path testFolder;
 
+    // EP: ordered exercises survive storage round trip (valid).
     @Test
     public void readAndSaveBrotherGym_exercises_preservesValuesAndOrder() throws Exception {
         Path filePath = testFolder.resolve("Exercises.json");
@@ -62,6 +63,7 @@ public class JsonBrotherGymStorageTest {
                 .getWorkoutPlan(0).getExercisesList().getExerciseList());
     }
 
+    // One invalid input at a time: only the stored exercise is corrupt.
     @Test
     public void readBrotherGym_corruptExercise_throwsDataLoadingException() throws Exception {
         Path filePath = testFolder.resolve("InvalidExercise.json");
@@ -78,11 +80,13 @@ public class JsonBrotherGymStorageTest {
         assertThrows(DataLoadingException.class, storage::readBrotherGym);
     }
 
+    // EP: storage path is null (invalid).
     @Test
     public void constructor_nullFilePath_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new JsonBrotherGymStorage(null));
     }
 
+    // One invalid input at a time: only the stored workout plan is invalid.
     @Test
     public void readBrotherGym_invalidWorkoutPlans_throwsDataLoadingException() throws IOException {
         Path filePath = testFolder.resolve("InvalidWorkoutPlans.json");
@@ -100,6 +104,7 @@ public class JsonBrotherGymStorageTest {
         }
     }
 
+    // EP: read path is null (invalid).
     @Test
     public void readBrotherGym_nullFilePath_throwsNullPointerException() {
         JsonBrotherGymStorage storage = new JsonBrotherGymStorage(testFolder.resolve("brothergym.json"));
@@ -116,26 +121,31 @@ public class JsonBrotherGymStorageTest {
                 : null;
     }
 
+    // EP: no stored data exists (missing file).
     @Test
     public void read_missingFile_emptyResult() throws Exception {
         assertFalse(readBrotherGym("NonExistentFile.json").isPresent());
     }
 
+    // EP: stored data is not JSON (malformed file).
     @Test
     public void read_notJsonFormat_exceptionThrown() {
         assertThrows(DataLoadingException.class, () -> readBrotherGym("notJsonFormatBrotherGym.json"));
     }
 
+    // EP: stored student is invalid (invalid).
     @Test
     public void readBrotherGym_invalidStudentBrotherGym_throwDataLoadingException() {
         assertThrows(DataLoadingException.class, () -> readBrotherGym("invalidStudentBrotherGym.json"));
     }
 
+    // EP: one invalid student among valid students (invalid).
     @Test
     public void readBrotherGym_invalidAndValidStudentBrotherGym_throwDataLoadingException() {
         assertThrows(DataLoadingException.class, () -> readBrotherGym("invalidAndValidStudentBrotherGym.json"));
     }
 
+    // EP: complete data survives storage round trip (valid).
     @Test
     public void readAndSaveBrotherGym_allInOrder_success() throws Exception {
         Path filePath = testFolder.resolve("TempBrotherGym.json");
@@ -162,6 +172,7 @@ public class JsonBrotherGymStorageTest {
 
     }
 
+    // Each valid input at least once: both tag types survive storage round trip.
     @Test
     public void readAndSaveBrotherGym_typedTags_preservesStudentAndWorkoutPlanTags() throws Exception {
         Path filePath = testFolder.resolve("TaggedBrotherGym.json");
@@ -186,6 +197,7 @@ public class JsonBrotherGymStorageTest {
         assertEquals(plan.getTags(), restored.getWorkoutPlansList().getWorkoutList().get(0).getTags());
     }
 
+    // Each valid input at least once: every status survives storage round trip.
     @Test
     public void readAndSaveBrotherGym_workoutStatuses_preservesAllStatusesWithoutRefreshing() throws Exception {
         Path filePath = testFolder.resolve("WorkoutStatuses.json");
@@ -212,6 +224,7 @@ public class JsonBrotherGymStorageTest {
         assertThrows(DataLoadingException.class, storage::readBrotherGym);
     }
 
+    // One invalid input at a time: only the data object is null.
     @Test
     public void saveBrotherGym_nullBrotherGym_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> saveBrotherGym(null, "SomeFile.json"));
@@ -229,6 +242,7 @@ public class JsonBrotherGymStorageTest {
         }
     }
 
+    // One invalid input at a time: only the save path is null.
     @Test
     public void saveBrotherGym_nullFilePath_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> saveBrotherGym(new BrotherGym(), null));

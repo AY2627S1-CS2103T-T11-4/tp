@@ -45,6 +45,7 @@ public class ViewStudentCommandTest {
 
     private final Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
 
+    // BV: count = 0 (valid).
     @Test
     public void execute_validIndexNoWorkoutPlans_success() {
         ViewStudentCommand command = new ViewStudentCommand(INDEX_FIRST);
@@ -58,6 +59,7 @@ public class ViewStudentCommandTest {
         assertEquals(TypicalStudents.ALICE, model.getCurrentStudent().orElseThrow());
     }
 
+    // EP: selected student has workout plans (valid).
     @Test
     public void execute_validIndexWithWorkoutPlans_success() {
         WorkoutPlan plan = new WorkoutPlan(new WorkoutTitle("Strength"),
@@ -85,6 +87,7 @@ public class ViewStudentCommandTest {
         assertEquals(refreshedStudent, modelWithPlan.getCurrentStudent().orElseThrow());
     }
 
+    // EP: selected student remains canonical (filtered list).
     @Test
     public void execute_filteredStudent_refreshesOnlySelectedStudentAndPreservesCompletedPlans() throws Exception {
         LocalDate today = LocalDate.now();
@@ -124,6 +127,7 @@ public class ViewStudentCommandTest {
         assertSame(refreshed, refreshModel.getCurrentStudent().orElseThrow());
     }
 
+    // BV: index > size (invalid).
     @Test
     public void execute_invalidIndex_throwsCommandException() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
@@ -132,6 +136,7 @@ public class ViewStudentCommandTest {
         assertCommandFailure(command, model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
     }
 
+    // EP: student index is null (invalid).
     @Test
     public void constructor_nullIndex_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new ViewStudentCommand(null));

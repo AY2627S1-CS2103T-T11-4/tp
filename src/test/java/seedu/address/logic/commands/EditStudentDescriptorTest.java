@@ -18,6 +18,7 @@ import seedu.address.testutil.EditStudentDescriptorBuilder;
 
 public class EditStudentDescriptorTest {
 
+    // EP: Edit-descriptor fields (equivalent/non-equivalent).
     @Test
     public void equals() {
         // same values -> returns true

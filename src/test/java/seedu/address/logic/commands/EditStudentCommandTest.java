@@ -41,6 +41,7 @@ public class EditStudentCommandTest {
 
     private Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
 
+    // Each valid input at least once: all editable student fields succeed.
     @Test
     public void execute_allFieldsSpecifiedUnfilteredList_success() {
         Student editedStudent = new StudentBuilder().build();
@@ -56,6 +57,7 @@ public class EditStudentCommandTest {
         assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
     }
 
+    // EP: a subset of student fields is edited (valid).
     @Test
     public void execute_someFieldsSpecifiedUnfilteredList_success() {
         Index indexLastStudent = Index.fromOneBased(model.getFilteredStudentList().size());
@@ -79,6 +81,7 @@ public class EditStudentCommandTest {
         assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
     }
 
+    // BV: 0 <= count <= MAX_TAG_COUNT (valid).
     @Test
     public void execute_explicitEmptyTagSet_clearsTags() {
         Student studentToEdit = model.getFilteredStudentList().get(INDEX_FIRST.getZeroBased());
@@ -97,6 +100,7 @@ public class EditStudentCommandTest {
         assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
     }
 
+    // EP: student has existing workout plans (valid).
     @Test
     public void execute_editStudentWithWorkoutPlans_preservesWorkoutPlans() {
         Student originalStudent = model.getFilteredStudentList().get(INDEX_FIRST.getZeroBased());
@@ -123,6 +127,7 @@ public class EditStudentCommandTest {
                 .getWorkoutPlansList().getWorkoutList());
     }
 
+    // BV: count >= 0 (valid).
     @Test
     public void execute_noFieldSpecifiedUnfilteredList_success() {
         EditStudentCommand editStudentCommand = new EditStudentCommand(INDEX_FIRST,
@@ -137,6 +142,7 @@ public class EditStudentCommandTest {
         assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
     }
 
+    // EP: target is in a filtered student list (valid).
     @Test
     public void execute_filteredList_success() {
         showStudentAtIndex(model, INDEX_FIRST);
@@ -155,6 +161,7 @@ public class EditStudentCommandTest {
         assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
     }
 
+    // EP: edit duplicates an unfiltered student (invalid).
     @Test
     public void execute_duplicateStudentUnfilteredList_failure() {
         Student firstStudent = model.getFilteredStudentList().get(INDEX_FIRST.getZeroBased());
@@ -164,6 +171,7 @@ public class EditStudentCommandTest {
         assertCommandFailure(editStudentCommand, model, EditStudentCommand.MESSAGE_DUPLICATE_STUDENT);
     }
 
+    // EP: edit duplicates a filtered student (invalid).
     @Test
     public void execute_duplicateStudentFilteredList_failure() {
         showStudentAtIndex(model, INDEX_FIRST);
@@ -176,6 +184,7 @@ public class EditStudentCommandTest {
         assertCommandFailure(editStudentCommand, model, EditStudentCommand.MESSAGE_DUPLICATE_STUDENT);
     }
 
+    // BV: index > size (invalid).
     @Test
     public void execute_invalidStudentIndexUnfilteredList_failure() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
@@ -189,6 +198,7 @@ public class EditStudentCommandTest {
      * Edit filtered list where index is larger than size of filtered list,
      * but smaller than size of BrotherGym student list
      */
+    // BV: index > size (invalid).
     @Test
     public void execute_invalidStudentIndexFilteredList_failure() {
         showStudentAtIndex(model, INDEX_FIRST);

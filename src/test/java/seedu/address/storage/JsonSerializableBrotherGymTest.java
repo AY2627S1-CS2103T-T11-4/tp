@@ -23,6 +23,7 @@ public class JsonSerializableBrotherGymTest {
     private static final Path INVALID_STUDENT_FILE = TEST_DATA_FOLDER.resolve("invalidStudentBrotherGym.json");
     private static final Path DUPLICATE_STUDENT_FILE = TEST_DATA_FOLDER.resolve("duplicateStudentBrotherGym.json");
 
+    // One invalid input at a time: the serialized list contains one null student.
     @Test
     public void toModelType_nullStudent_throwsIllegalValueException() {
         JsonSerializableBrotherGym adapted = new JsonSerializableBrotherGym(
@@ -30,11 +31,13 @@ public class JsonSerializableBrotherGymTest {
         assertThrows(IllegalValueException.class, adapted::toModelType);
     }
 
+    // EP: null source list becomes an empty model (empty model).
     @Test
     public void constructor_nullStudents_createsEmptyModel() throws Exception {
         assertEquals(new BrotherGym(), new JsonSerializableBrotherGym((List<JsonAdaptedStudent>) null).toModelType());
     }
 
+    // EP: typical serialized students convert successfully (valid).
     @Test
     public void toModelType_typicalStudentsFile_success() throws Exception {
         JsonSerializableBrotherGym dataFromFile = JsonUtil.readJsonFile(TYPICAL_STUDENTS_FILE,
@@ -44,6 +47,7 @@ public class JsonSerializableBrotherGymTest {
         assertEquals(brotherGymFromFile, typicalStudentsBrotherGym);
     }
 
+    // EP: serialized student is invalid (invalid).
     @Test
     public void toModelType_invalidStudentFile_throwsIllegalValueException() throws Exception {
         JsonSerializableBrotherGym dataFromFile = JsonUtil.readJsonFile(INVALID_STUDENT_FILE,
@@ -51,6 +55,7 @@ public class JsonSerializableBrotherGymTest {
         assertThrows(IllegalValueException.class, dataFromFile::toModelType);
     }
 
+    // EP: serialized students contain a duplicate identity (invalid).
     @Test
     public void toModelType_duplicateStudents_throwsIllegalValueException() throws Exception {
         JsonSerializableBrotherGym dataFromFile = JsonUtil.readJsonFile(DUPLICATE_STUDENT_FILE,

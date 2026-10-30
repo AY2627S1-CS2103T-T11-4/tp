@@ -52,9 +52,13 @@ public class ModelManagerTest {
      */
     @Test
     public void addWorkoutPlanForStudent_storesExpectedStatus() {
+        // BV: date < today (valid).
         assertAddRefresh(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
+        // BV: date = today (valid).
         assertAddRefresh(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
+        // BV: date > today (valid).
         assertAddRefresh(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
+        // Each valid input at least once: completed status remains completed.
         assertAddRefresh(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
     }
 
@@ -86,9 +90,13 @@ public class ModelManagerTest {
      */
     @Test
     public void setWorkoutPlanForStudent_storesExpectedStatus() {
+        // BV: date < today (valid).
         assertSetRefresh(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
+        // BV: date = today (valid).
         assertSetRefresh(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
+        // BV: date > today (valid).
         assertSetRefresh(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
+        // Each valid input at least once: completed replacement remains completed.
         assertSetRefresh(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
     }
 
@@ -115,6 +123,7 @@ public class ModelManagerTest {
         assertEquals(status, edited.getStatus());
     }
 
+    // EP: refreshed workout plan duplicates an existing plan (invalid).
     @Test
     public void workoutPlanOperations_duplicateAfterStatusRefresh_doesNotChangeModel() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
@@ -167,6 +176,7 @@ public class ModelManagerTest {
         assertEquals(List.of(second), removed.getWorkoutPlansList().getWorkoutList());
     }
 
+    // EP: workout-plan operation targets are not stored (absent).
     @Test
     public void workoutPlanOperations_missingTargetsDoNotChangeModel() {
         WorkoutPlan plan = plan("Plan", LocalDate.now(), WorkoutPlanStatus.PENDING);
@@ -283,6 +293,7 @@ public class ModelManagerTest {
         assertSame(ALICE, modelManager.getBrotherGym().getStudentList().get(0));
     }
 
+    // EP: exercise operations receive duplicate or absent exercises (invalid).
     @Test
     public void exerciseOperations_invalidExercises_leaveModelUnchanged() {
         WorkoutPlan plan = planWithExercises("Plan", LocalDate.now(), WorkoutPlanStatus.PENDING,
@@ -310,14 +321,19 @@ public class ModelManagerTest {
     public void exerciseOperations_nullArguments_throwNullPointerException() {
         WorkoutPlan plan = plan("Plan", LocalDate.now(), WorkoutPlanStatus.PENDING);
 
+        // One invalid input at a time: only the target student is null during addition.
         assertThrows(NullPointerException.class, () ->
                 modelManager.addExerciseForWorkoutPlan(null, plan, SQUATS));
+        // One invalid input at a time: only the target plan is null during addition.
         assertThrows(NullPointerException.class, () ->
                 modelManager.addExerciseForWorkoutPlan(ALICE, null, SQUATS));
+        // One invalid input at a time: only the exercise is null during addition.
         assertThrows(NullPointerException.class, () ->
                 modelManager.addExerciseForWorkoutPlan(ALICE, plan, null));
+        // One invalid input at a time: only the target exercise is null during replacement.
         assertThrows(NullPointerException.class, () ->
                 modelManager.setExerciseForWorkoutPlan(ALICE, plan, null, PUSH_UPS));
+        // One invalid input at a time: only the exercise is null during removal.
         assertThrows(NullPointerException.class, () ->
                 modelManager.removeExerciseForWorkoutPlan(ALICE, plan, null));
     }
@@ -349,11 +365,13 @@ public class ModelManagerTest {
         assertSame(updated, model.updateStudentWorkoutsState(updated));
     }
 
+    // EP: student state-update target is null (invalid).
     @Test
     public void updateStudentWorkoutsState_nullStudent_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> modelManager.updateStudentWorkoutsState(null));
     }
 
+    // EP: state-update target is not stored (absent).
     @Test
     public void updateStudentWorkoutsState_studentNotInModel_throwsStudentNotFoundException() {
         assertThrows(StudentNotFoundException.class, () -> modelManager.updateStudentWorkoutsState(ALICE));
@@ -396,11 +414,13 @@ public class ModelManagerTest {
         assertEquals(oldUserPrefs, modelManager.getUserPrefs());
     }
 
+    // EP: GUI settings are null (invalid).
     @Test
     public void setGuiSettings_nullGuiSettings_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> modelManager.setGuiSettings(null));
     }
 
+    // EP: GUI settings are non-null (valid).
     @Test
     public void setGuiSettings_validGuiSettings_setsGuiSettings() {
         GuiSettings guiSettings = new GuiSettings(1, 2, 3, 4);
@@ -408,16 +428,19 @@ public class ModelManagerTest {
         assertEquals(guiSettings, modelManager.getGuiSettings());
     }
 
+    // EP: student lookup is null (invalid).
     @Test
     public void hasStudent_nullStudent_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> modelManager.hasStudent(null));
     }
 
+    // EP: student is not stored (absent).
     @Test
     public void hasStudent_studentNotInBrotherGym_returnsFalse() {
         assertFalse(modelManager.hasStudent(ALICE));
     }
 
+    // EP: student is stored (present).
     @Test
     public void hasStudent_studentInBrotherGym_returnsTrue() {
         modelManager.addStudent(ALICE);
@@ -449,11 +472,13 @@ public class ModelManagerTest {
         assertEquals(List.of(Optional.of(ALICE), Optional.of(BENSON), Optional.empty()), observedSelections);
     }
 
+    // EP: current-student selection is null (invalid).
     @Test
     public void setCurrentStudent_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> modelManager.setCurrentStudent(null));
     }
 
+    // EP: selected student is not stored (absent).
     @Test
     public void setCurrentStudent_missingStudent_throwsStudentNotFoundException() {
         assertThrows(StudentNotFoundException.class, () -> modelManager.setCurrentStudent(ALICE));

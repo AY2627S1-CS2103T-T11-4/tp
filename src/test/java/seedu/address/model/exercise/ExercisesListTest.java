@@ -29,6 +29,7 @@ public class ExercisesListTest {
     private static final Exercise REPLACEMENT = new Exercise(new ExerciseName("Deadlift"),
             new ExerciseDescription("Conventional deadlift"));
 
+    // EP: non-null replacement exercise list (valid).
     @Test
     public void withExercises_newExercises_returnsNewListWithoutChangingOriginal() {
         ExercisesList original = new ExercisesList(List.of(FIRST));
@@ -40,6 +41,7 @@ public class ExercisesListTest {
         assertEquals(List.of(SECOND), copy.getExerciseList());
     }
 
+    // One invalid input at a time: only the replacement exercise list is null.
     @Test
     public void withExercises_nullExercises_throwsNullPointerException() {
         ExercisesList original = new ExercisesList(List.of(FIRST));
@@ -49,11 +51,14 @@ public class ExercisesListTest {
 
     @Test
     public void constructors_rejectNullsAndCopyInput() {
+        // BV: 0 <= count <= MAX_EXERCISES (valid).
         assertEquals(List.of(), new ExercisesList().getExerciseList());
+        // EP: exercise-list reference is null (invalid).
         assertThrows(NullPointerException.class, () -> new ExercisesList(null));
 
         List<Exercise> inputWithNull = new ArrayList<>(List.of(FIRST));
         inputWithNull.add(null);
+        // One invalid input at a time: the exercise list contains one null exercise.
         assertThrows(NullPointerException.class, () -> new ExercisesList(inputWithNull));
 
         List<Exercise> input = new ArrayList<>(List.of(FIRST));
@@ -66,14 +71,17 @@ public class ExercisesListTest {
 
         Exercise equalFirst = new Exercise(new ExerciseName("Squats"),
                 new ExerciseDescription("Barbell back squat"));
+        // EP: two equivalent exercises in one list (invalid).
         assertThrows(DuplicateExerciseException.class, () ->
                 new ExercisesList(List.of(FIRST, equalFirst)));
 
         List<Exercise> exercisesAtCapacity = createNumberedExercises(ExercisesList.MAX_EXERCISES);
+        // BV: 0 <= count <= MAX_EXERCISES (valid).
         assertEquals(ExercisesList.MAX_EXERCISES,
                 new ExercisesList(exercisesAtCapacity).getExerciseList().size());
 
         List<Exercise> exercisesOverCapacity = createNumberedExercises(ExercisesList.MAX_EXERCISES + 1);
+        // BV: count > MAX_EXERCISES (invalid).
         assertThrows(ExerciseListFullException.class, () -> new ExercisesList(exercisesOverCapacity));
     }
 
@@ -89,22 +97,29 @@ public class ExercisesListTest {
         assertEquals(List.of(FIRST), original.getExerciseList());
         assertEquals(List.of(FIRST, SECOND), updated.getExerciseList());
 
+        // EP: exercise input is null (invalid).
         assertThrows(NullPointerException.class, () -> original.addExercise(null));
+        // EP: the same exercise object is already present (invalid).
         assertThrows(DuplicateExerciseException.class, () -> original.addExercise(FIRST));
+        // EP: an equivalent exercise is already present (invalid).
         assertThrows(DuplicateExerciseException.class, () -> original.addExercise(equalFirst));
 
         ExercisesList nearlyFull = new ExercisesList(
                 createNumberedExercises(ExercisesList.MAX_EXERCISES - 1));
+        // BV: result <= MAX_EXERCISES (valid).
         assertEquals(ExercisesList.MAX_EXERCISES,
                 nearlyFull.addExercise(REPLACEMENT).getExerciseList().size());
 
         ExercisesList full = new ExercisesList(createNumberedExercises(ExercisesList.MAX_EXERCISES));
+        // BV: result > MAX_EXERCISES (invalid).
         assertThrows(ExerciseListFullException.class, () -> full.addExercise(REPLACEMENT));
+        // EP: adding a duplicate to a full list (invalid).
         assertThrows(DuplicateExerciseException.class, () -> full.addExercise(full.getExercise(0)));
         assertEquals(ExercisesList.MAX_EXERCISES, full.getExerciseList().size());
 
         Exercise sameNameDifferentDescription = new Exercise(new ExerciseName("Squats"),
                 new ExerciseDescription("Goblet squat"));
+        // EP: same name with a different description is unique (valid).
         assertEquals(List.of(FIRST, sameNameDifferentDescription),
                 original.addExercise(sameNameDifferentDescription).getExerciseList());
     }
@@ -122,13 +137,18 @@ public class ExercisesListTest {
         assertEquals(List.of(REPLACEMENT, SECOND, THIRD), updated.getExerciseList());
         assertSame(SECOND, updated.getExerciseList().get(1));
 
+        // EP: replacement duplicates another stored exercise (invalid).
         assertThrows(DuplicateExerciseException.class, () -> original.setExercise(FIRST, SECOND));
+        // One invalid input at a time: only the target exercise is null.
         assertThrows(NullPointerException.class, () -> original.setExercise(null, REPLACEMENT));
+        // One invalid input at a time: only the replacement exercise is null.
         assertThrows(NullPointerException.class, () -> original.setExercise(FIRST, null));
+        // EP: target exercise is absent from the list (invalid).
         assertThrows(ExerciseNotFoundException.class, () ->
                 original.setExercise(REPLACEMENT, FIRST));
     }
 
+    // EP: Target and replacement exercises are equal (equivalent).
     @Test
     public void setExercise_equalTargetAndReplacement_returnsOriginal() {
         ExercisesList original = new ExercisesList(List.of(FIRST, SECOND));
@@ -152,7 +172,9 @@ public class ExercisesListTest {
         assertEquals(List.of(FIRST, SECOND, THIRD), original.getExerciseList());
         assertEquals(List.of(FIRST, THIRD), updated.getExerciseList());
 
+        // EP: exercise removal target is null (invalid).
         assertThrows(NullPointerException.class, () -> original.removeExercise(null));
+        // EP: exercise is absent from the list (invalid).
         assertThrows(ExerciseNotFoundException.class, () -> original.removeExercise(REPLACEMENT));
     }
 
@@ -160,8 +182,11 @@ public class ExercisesListTest {
     public void indexedAccess_invalidIndex_throwsExerciseIndexOutOfBoundsException() {
         ExercisesList exercises = new ExercisesList(List.of(FIRST, SECOND));
 
+        // BV: 0 <= index < size (valid).
         assertSame(SECOND, exercises.getExercise(1));
+        // BV: index < 0 (invalid).
         assertThrows(ExerciseIndexOutOfBoundsException.class, () -> exercises.getExercise(-1));
+        // BV: index >= size (invalid).
         assertThrows(ExerciseIndexOutOfBoundsException.class, () -> exercises.getExercise(2));
     }
 
@@ -171,10 +196,15 @@ public class ExercisesListTest {
         ExercisesList sameValues = new ExercisesList(List.of(FIRST, SECOND));
         ExercisesList reversed = new ExercisesList(List.of(SECOND, FIRST));
 
+        // EP: The same exercise-list object (equivalent).
         assertTrue(first.equals(first));
+        // EP: Another list with equal ordered elements (equivalent).
         assertTrue(first.equals(sameValues));
+        // EP: Equal elements in a different order (non-equivalent).
         assertFalse(first.equals(reversed));
+        // EP: Null (non-equivalent).
         assertFalse(first.equals(null));
+        // EP: An object of another type (non-equivalent).
         assertFalse(first.equals(FIRST));
     }
 

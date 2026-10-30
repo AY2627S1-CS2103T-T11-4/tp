@@ -29,11 +29,13 @@ public class ArgumentValidatorTest {
 
     private static final ArgumentValidator DEFAULT_VALIDATOR = new ArgumentValidator();
 
+    // EP: tokenized arguments are null (invalid).
     @Test
     public void verifyArgs_null_throwsNullPointerException() {
         Assert.assertThrows(NullPointerException.class, () -> VALIDATOR.verifyArgs(null));
     }
 
+    // Each valid input at least once: valid preamble and prefixes pass validation.
     @Test
     public void verifyArgs_validInput_success() {
         verifySuccessfully(
@@ -42,6 +44,7 @@ public class ArgumentValidatorTest {
                         + "--single one --repeatable first --repeatable second");
     }
 
+    // One invalid input at a time: only the required preamble is missing.
     @Test
     public void verifyArgs_missingPreamble_failure() {
         String message = getValidationError(
@@ -51,6 +54,7 @@ public class ArgumentValidatorTest {
         assertTrue(message.startsWith(Messages.MESSAGE_MISSING_PREAMBLE));
     }
 
+    // One invalid input at a time: only one required prefix is missing.
     @Test
     public void verifyArgs_oneRequiredPrefixMissing_failure() {
         String message = getValidationError(
@@ -60,6 +64,7 @@ public class ArgumentValidatorTest {
         assertTrue(message.contains(SECOND_REQUIRED_PREFIX.toString()));
     }
 
+    // Invalid inputs combined after separate tests: multiple required prefixes are missing.
     @Test
     public void verifyArgs_multipleRequiredPrefixesMissing_failure() {
         String message = getValidationError(VALIDATOR, "John");
@@ -68,6 +73,7 @@ public class ArgumentValidatorTest {
         assertTrue(message.contains(SECOND_REQUIRED_PREFIX.toString()));
     }
 
+    // EP: a single-value prefix is repeated (invalid).
     @Test
     public void verifyArgs_duplicateSingleValuePrefix_failure() {
         String message = getValidationError(
@@ -80,6 +86,7 @@ public class ArgumentValidatorTest {
                 message);
     }
 
+    // Invalid inputs combined after separate tests: multiple single-value prefixes repeat.
     @Test
     public void verifyArgs_multipleDuplicatePrefixes_failure() {
         String message = getValidationError(
@@ -91,6 +98,7 @@ public class ArgumentValidatorTest {
         assertTrue(message.contains(SECOND_REQUIRED_PREFIX.toString()));
     }
 
+    // One invalid input at a time: only one prefix is unknown.
     @Test
     public void verifyArgs_invalidPrefix_failure() {
         String message = getValidationError(
@@ -102,6 +110,7 @@ public class ArgumentValidatorTest {
                 message);
     }
 
+    // Invalid inputs combined after separate tests: multiple prefixes are unknown.
     @Test
     public void verifyArgs_multipleInvalidPrefixes_failure() {
         Prefix anotherInvalidPrefix = new Prefix("--anotherinvalid");
@@ -115,6 +124,7 @@ public class ArgumentValidatorTest {
         assertTrue(message.contains(anotherInvalidPrefix.toString()));
     }
 
+    // EP: the same unknown prefix is repeated (invalid).
     @Test
     public void verifyArgs_repeatedInvalidPrefix_failure() {
         String message = getValidationError(
@@ -127,6 +137,7 @@ public class ArgumentValidatorTest {
                 message);
     }
 
+    // Invalid inputs combined after separate tests: missing, duplicate, and unknown fields coexist.
     @Test
     public void verifyArgs_multipleProblems_reportsAllErrors() {
         String message = getValidationError(
@@ -142,6 +153,7 @@ public class ArgumentValidatorTest {
         assertTrue(lines[3].contains(INVALID_PREFIX.toString()));
     }
 
+    // EP: validator permits a missing optional preamble (valid).
     @Test
     public void verifyArgs_preambleNotRequired_success() {
         ArgumentValidator validator = new ArgumentValidator(
@@ -153,16 +165,19 @@ public class ArgumentValidatorTest {
         verifySuccessfully(validator, " --repeatable value");
     }
 
+    // BV: length = 0 (valid).
     @Test
     public void verifyNoArgs_emptyInput_success() throws ParseException {
         ArgumentValidator.verifyNoArgs(tokenize(""));
     }
 
+    // EP: whitespace-only input (valid).
     @Test
     public void verifyNoArgs_whitespaceInput_success() throws ParseException {
         ArgumentValidator.verifyNoArgs(tokenize(" \t\n"));
     }
 
+    // EP: non-prefix preamble text (invalid).
     @Test
     public void verifyNoArgs_preamble_failure() {
         ParseException exception = assertThrows(
@@ -171,6 +186,7 @@ public class ArgumentValidatorTest {
         assertEquals(Messages.MESSAGE_UNEXPECTED_PARAMETERS, exception.getMessage());
     }
 
+    // EP: unexpected prefix argument (invalid).
     @Test
     public void verifyNoArgs_prefix_failure() {
         ParseException exception = assertThrows(
@@ -179,6 +195,7 @@ public class ArgumentValidatorTest {
         assertEquals(Messages.MESSAGE_UNEXPECTED_PARAMETERS, exception.getMessage());
     }
 
+    // EP: tokenized arguments are null (invalid).
     @Test
     public void verifyNoArgs_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> ArgumentValidator.verifyNoArgs(null));
@@ -191,6 +208,7 @@ public class ArgumentValidatorTest {
                 "John --required --alsorequired --single --repeatable");
     }
 
+    // EP: default validator receives a prefix (invalid).
     @Test
     public void defaultValidator_rejectsPrefixes() {
         String message = getValidationError(
@@ -202,29 +220,34 @@ public class ArgumentValidatorTest {
                 message);
     }
 
+    // EP: default validator receives preamble only (valid).
     @Test
     public void defaultValidator_acceptsPreambleWithoutPrefixes() {
         verifySuccessfully(DEFAULT_VALIDATOR, "1");
     }
 
+    // One invalid input at a time: only valid-prefix configuration is null.
     @Test
     public void constructor_nullValidPrefixes_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
                 new ArgumentValidator(true, null, Set.of(), Set.of()));
     }
 
+    // One invalid input at a time: only no-repeat configuration is null.
     @Test
     public void constructor_nullNoRepeatPrefixes_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
                 new ArgumentValidator(true, Set.of(), null, Set.of()));
     }
 
+    // One invalid input at a time: only required-prefix configuration is null.
     @Test
     public void constructor_nullRequiredPrefixes_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
                 new ArgumentValidator(true, Set.of(), Set.of(), null));
     }
 
+    // EP: no-repeat prefix is absent from valid prefixes (invalid).
     @Test
     public void constructor_noRepeatPrefixNotValid_throwsIllegalArgumentException() {
         Prefix undeclaredPrefix = new Prefix("--undeclared");
@@ -238,6 +261,7 @@ public class ArgumentValidatorTest {
                 exception.getMessage());
     }
 
+    // EP: required prefix is absent from valid prefixes (invalid).
     @Test
     public void constructor_requiredPrefixNotValid_throwsIllegalArgumentException() {
         Prefix undeclaredPrefix = new Prefix("--undeclared");
@@ -251,6 +275,7 @@ public class ArgumentValidatorTest {
                 exception.getMessage());
     }
 
+    // EP: non-empty valid-prefix configuration (valid).
     @Test
     public void constructor_copiesValidPrefixes() {
         Set<Prefix> validPrefixes = new HashSet<>(Set.of(REQUIRED_PREFIX));
@@ -267,6 +292,7 @@ public class ArgumentValidatorTest {
                 message);
     }
 
+    // EP: non-empty required-prefix configuration (valid).
     @Test
     public void constructor_copiesRequiredPrefixes() {
         Set<Prefix> requiredPrefixes = new HashSet<>(Set.of(REQUIRED_PREFIX));
@@ -282,6 +308,7 @@ public class ArgumentValidatorTest {
                 message);
     }
 
+    // EP: non-empty no-repeat-prefix configuration (valid).
     @Test
     public void constructor_copiesNoRepeatPrefixes() {
         Set<Prefix> noRepeatPrefixes = new HashSet<>(Set.of(REQUIRED_PREFIX));

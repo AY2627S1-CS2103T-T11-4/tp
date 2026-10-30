@@ -28,9 +28,11 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 /** Tests status changes and validation for {@link MarkPlanCommand}. */
 public class MarkPlanCommandTest {
 
+    // EP: selected workout-plan index exists (valid).
     @Test
     public void execute_validIndex_updatesOnlySelectedPlan() throws Exception {
         for (WorkoutPlanStatus status : List.of(WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE)) {
+            // Each valid input at least once: pending and overdue plans can both be marked.
             assertTransition(LocalDate.now().minusDays(1), status, WorkoutPlanStatus.COMPLETED);
         }
     }
@@ -64,6 +66,7 @@ public class MarkPlanCommandTest {
         assertSame(updated, model.getCurrentStudent().orElseThrow());
     }
 
+    // EP: selected plan is already completed (invalid).
     @Test
     public void execute_completedPlan_throwsCommandExceptionWithoutChangingSelection() {
         Student student = withPlans(ALICE, List.of(
@@ -77,6 +80,7 @@ public class MarkPlanCommandTest {
         assertSame(student, model.getCurrentStudent().orElseThrow());
     }
 
+    // EP: no current student is selected (invalid).
     @Test
     public void execute_noStudentSelected_throwsCommandException() {
         Model model = new ModelManager();
@@ -85,6 +89,7 @@ public class MarkPlanCommandTest {
                 MarkPlanCommand.MESSAGE_NO_STUDENT_SELECTED);
     }
 
+    // BV: index > size (invalid).
     @Test
     public void execute_invalidIndex_throwsCommandExceptionWithoutChangingSelection() {
         Model model = new ModelManager();
@@ -98,6 +103,7 @@ public class MarkPlanCommandTest {
         assertSame(student, model.getCurrentStudent().orElseThrow());
     }
 
+    // BV: count < 1 (invalid).
     @Test
     public void execute_emptyPlans_throwsCommandException() {
         Model model = new ModelManager();
@@ -109,7 +115,9 @@ public class MarkPlanCommandTest {
 
     @Test
     public void nullArguments_throwNullPointerException() {
+        // One invalid input at a time: only the command index is null.
         assertThrows(NullPointerException.class, () -> new MarkPlanCommand(null));
+        // One invalid input at a time: only the model is null.
         assertThrows(NullPointerException.class, () ->
                 new MarkPlanCommand(Index.fromOneBased(1)).execute(null));
     }

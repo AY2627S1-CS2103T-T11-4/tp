@@ -12,22 +12,22 @@ public class WorkoutPlanTagTest {
     public void equals() {
         WorkoutPlanTag tag = new WorkoutPlanTag("strength");
 
-        // same values -> returns true
+        // EP: Same workout-plan tag name (equivalent).
         assertTrue(tag.equals(new WorkoutPlanTag("strength")));
 
-        // same object -> returns true
+        // EP: The same workout-plan tag object (equivalent).
         assertTrue(tag.equals(tag));
 
-        // null -> returns false
+        // EP: Null (non-equivalent).
         assertFalse(tag.equals(null));
 
-        // different type -> returns false
+        // EP: A non-tag object (non-equivalent).
         assertFalse(tag.equals("strength"));
 
-        // different tag name -> returns false
+        // EP: A different workout-plan tag name (non-equivalent).
         assertFalse(tag.equals(new WorkoutPlanTag("cardio")));
 
-        // same name but different tag type -> returns false
+        // EP: Same name on a student tag (non-equivalent).
         assertFalse(tag.equals(new StudentTag("strength")));
     }
 

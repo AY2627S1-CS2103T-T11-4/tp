@@ -36,6 +36,7 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 /** Regression tests for nested exercises during existing parent operations. */
 public class ExerciseParentOperationsTest {
 
+    // EP: parent edits preserve nested exercises (valid).
     @Test
     public void editAndStatusOperations_preserveExercisesAndSelection() throws CommandException {
         WorkoutPlan selected = plan("Selected", List.of(SQUATS, PUSH_UPS));
@@ -67,6 +68,7 @@ public class ExerciseParentOperationsTest {
         assertExercisesAndIsolation(model, benson);
     }
 
+    // EP: date refresh preserves nested exercises (valid).
     @Test
     public void dateRefresh_preservesExercisesAndSelection() {
         WorkoutPlan overdue = new WorkoutPlan(new WorkoutTitle("Past plan"),
@@ -84,6 +86,7 @@ public class ExerciseParentOperationsTest {
                 .getExercisesList().getExerciseList());
     }
 
+    // EP: descendant selection becomes stale (removed parent).
     @Test
     public void parentDeletionAndClear_removeOnlyDescendantsAndClearStaleSelection() throws CommandException {
         WorkoutPlan first = plan("First", List.of(SQUATS));

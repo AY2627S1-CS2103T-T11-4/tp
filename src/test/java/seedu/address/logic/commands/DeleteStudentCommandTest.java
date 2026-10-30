@@ -27,6 +27,7 @@ public class DeleteStudentCommandTest {
 
     private Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
 
+    // EP: index exists in an unfiltered list (valid).
     @Test
     public void execute_validIndexUnfilteredList_success() {
         Student studentToDelete = model.getFilteredStudentList().get(INDEX_FIRST.getZeroBased());
@@ -41,6 +42,7 @@ public class DeleteStudentCommandTest {
         assertCommandSuccess(deleteStudentCommand, model, expectedMessage, expectedModel);
     }
 
+    // BV: index > size (invalid).
     @Test
     public void execute_invalidIndexUnfilteredList_throwsCommandException() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
@@ -49,6 +51,7 @@ public class DeleteStudentCommandTest {
         assertCommandFailure(deleteStudentCommand, model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
     }
 
+    // EP: index exists in a filtered list (valid).
     @Test
     public void execute_validIndexFilteredList_success() {
         showStudentAtIndex(model, INDEX_FIRST);
@@ -66,6 +69,7 @@ public class DeleteStudentCommandTest {
         assertCommandSuccess(deleteStudentCommand, model, expectedMessage, expectedModel);
     }
 
+    // BV: index > size (invalid).
     @Test
     public void execute_invalidIndexFilteredList_throwsCommandException() {
         showStudentAtIndex(model, INDEX_FIRST);

@@ -11,29 +11,33 @@ public class IndexTest {
 
     @Test
     public void createOneBasedIndex() {
-        // invalid index
+        // BV: index < 1 (invalid).
         assertThrows(IndexOutOfBoundsException.class, () -> Index.fromOneBased(0));
 
-        // check equality using the same base
+        // BV: index >= 1 (valid).
         assertEquals(1, Index.fromOneBased(1).getOneBased());
+        // EP: index > 1 (valid).
         assertEquals(5, Index.fromOneBased(5).getOneBased());
 
-        // convert from one-based index to zero-based index
+        // BV: index >= 1 (valid).
         assertEquals(0, Index.fromOneBased(1).getZeroBased());
+        // EP: index > 1 (valid).
         assertEquals(4, Index.fromOneBased(5).getZeroBased());
     }
 
     @Test
     public void createZeroBasedIndex() {
-        // invalid index
+        // BV: index < 0 (invalid).
         assertThrows(IndexOutOfBoundsException.class, () -> Index.fromZeroBased(-1));
 
-        // check equality using the same base
+        // BV: index >= 0 (valid).
         assertEquals(0, Index.fromZeroBased(0).getZeroBased());
+        // EP: index > 0 (valid).
         assertEquals(5, Index.fromZeroBased(5).getZeroBased());
 
-        // convert from zero-based index to one-based index
+        // BV: index >= 0 (valid).
         assertEquals(1, Index.fromZeroBased(0).getOneBased());
+        // EP: index > 0 (valid).
         assertEquals(6, Index.fromZeroBased(5).getOneBased());
     }
 
@@ -41,20 +45,21 @@ public class IndexTest {
     public void equals() {
         final Index fifthStudentIndex = Index.fromOneBased(5);
 
-        // same values -> returns true
+        // EP: Indexes with the same one-based value (equivalent).
         assertTrue(fifthStudentIndex.equals(Index.fromOneBased(5)));
+        // EP: Equal indexes created using different bases (equivalent).
         assertTrue(fifthStudentIndex.equals(Index.fromZeroBased(4)));
 
-        // same object -> returns true
+        // EP: The same index object (equivalent).
         assertTrue(fifthStudentIndex.equals(fifthStudentIndex));
 
-        // null -> returns false
+        // EP: Null (non-equivalent).
         assertFalse(fifthStudentIndex.equals(null));
 
-        // different types -> returns false
+        // EP: An object of another type (non-equivalent).
         assertFalse(fifthStudentIndex.equals(5.0f));
 
-        // different index -> returns false
+        // EP: A different index value (non-equivalent).
         assertFalse(fifthStudentIndex.equals(Index.fromOneBased(1)));
     }
 

@@ -53,6 +53,7 @@ public class FindCommandTest {
         assertFalse(findFirstCommand.equals(findSecondCommand));
     }
 
+    // BV: count = 0 (valid).
     @Test
     public void execute_zeroKeywords_noStudentFound() {
         String expectedMessage = String.format(MESSAGE_STUDENTS_LISTED_OVERVIEW, 0);
@@ -63,6 +64,7 @@ public class FindCommandTest {
         assertEquals(List.of(), model.getFilteredStudentList());
     }
 
+    // EP: multiple keywords match multiple students (valid).
     @Test
     public void execute_multipleKeywords_multipleStudentsFound() {
         String expectedMessage = String.format(MESSAGE_STUDENTS_LISTED_OVERVIEW, 3);
@@ -73,6 +75,7 @@ public class FindCommandTest {
         assertEquals(List.of(CARL, ELLE, FIONA), model.getFilteredStudentList());
     }
 
+    // EP: selected student is excluded from filtered results (selection cleared).
     @Test
     public void execute_selectedStudentExcluded_clearsSelection() {
         NameContainsKeywordsPredicate predicate = preparePredicate("Elle");

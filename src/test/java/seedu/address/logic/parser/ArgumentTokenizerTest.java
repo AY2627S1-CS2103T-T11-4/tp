@@ -15,6 +15,7 @@ public class ArgumentTokenizerTest {
     private final Prefix ddashT = new Prefix("--t");
     private final Prefix ddashQ = new Prefix("--Q");
 
+    // BV: length >= 0 (valid).
     @Test
     public void tokenize_emptyArgsString_noValues() {
         String argsString = "  ";
@@ -54,6 +55,7 @@ public class ArgumentTokenizerTest {
         assertFalse(argMultimap.getValue(prefix).isPresent());
     }
 
+    // EP: input contains preamble only (valid).
     @Test
     public void tokenize_noPrefixes_allTakenAsPreamble() {
         String argsString = "  some random string tag with leading and trailing spaces ";
@@ -64,6 +66,7 @@ public class ArgumentTokenizerTest {
 
     }
 
+    // EP: bare dashes are not prefixes (valid).
     @Test
     public void tokenize_bareDashTokens_areNotPrefixes() {
         String argsString = " some random string -- some text ---";
@@ -74,6 +77,7 @@ public class ArgumentTokenizerTest {
         assertEquals(argMultimap.getPreamble(), argsString.trim());
     }
 
+    // EP: malformed prefixes remain preamble text (valid).
     @Test
     public void tokenize_malformedPrefixes_areIgnored() {
         String malformedArgsString = "Preamble --name- ignored --_ ignored --! ignored --A1 valid";
@@ -88,6 +92,7 @@ public class ArgumentTokenizerTest {
         assertArgumentPresent(argMultimap, new Prefix("--A1"), "valid --name- remains ordinary text");
     }
 
+    // BV: count >= 1 (valid).
     @Test
     public void tokenize_oneArgument() {
         // Preamble present
@@ -104,6 +109,7 @@ public class ArgumentTokenizerTest {
 
     }
 
+    // EP: multiple distinct prefixed arguments (valid).
     @Test
     public void tokenize_multipleArguments() {
         // Only two arguments are present
@@ -132,6 +138,7 @@ public class ArgumentTokenizerTest {
         assertArgumentAbsent(argMultimap, ddashP);
     }
 
+    // EP: a prefix occurs multiple times (valid).
     @Test
     public void tokenize_multipleArgumentsWithRepeats() {
         // Two arguments repeated, some have empty values
@@ -143,6 +150,7 @@ public class ArgumentTokenizerTest {
         assertArgumentPresent(argMultimap, ddashQ, "", "");
     }
 
+    // EP: adjacent prefix-value pairs (valid).
     @Test
     public void tokenize_multipleArgumentsJoined() {
         String argsString = "SomePreambleString--p ddashP joined--tjoined --t not joined--Qjoined";

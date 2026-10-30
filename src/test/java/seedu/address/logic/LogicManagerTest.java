@@ -64,24 +64,28 @@ public class LogicManagerTest {
         logic = new LogicManager(model, storage);
     }
 
+    // EP: command violates parser format (invalid).
     @Test
     public void execute_invalidCommandFormat_throwsParseException() {
         String invalidCommand = "uicfhmowqewca";
         assertParseException(invalidCommand, MESSAGE_UNKNOWN_COMMAND);
     }
 
+    // EP: parsed command cannot execute (invalid).
     @Test
     public void execute_commandExecutionError_throwsCommandException() {
         String deleteStudentCommand = "deleteStudent 9";
         assertCommandException(deleteStudentCommand, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
     }
 
+    // EP: command parses and executes (valid).
     @Test
     public void execute_validCommand_success() throws Exception {
         String listCommand = HomeCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand, HomeCommand.MESSAGE_SUCCESS, model);
     }
 
+    // EP: nested exercise persists (valid).
     @Test
     public void execute_addExercise_savesSelectedPlanExercise() throws Exception {
         Student student = new StudentBuilder().build();
@@ -105,12 +109,14 @@ public class LogicManagerTest {
                 .getWorkoutPlansList().getWorkoutList().get(0).getExercisesList().getExerciseList());
     }
 
+    // EP: save throws IOException (invalid).
     @Test
     public void execute_storageThrowsIoException_throwsCommandException() {
         assertCommandFailureForExceptionFromStorage(DUMMY_IO_EXCEPTION, String.format(
                 LogicManager.FILE_OPS_ERROR_FORMAT, DUMMY_IO_EXCEPTION.getMessage()));
     }
 
+    // EP: save throws application-data exception (invalid).
     @Test
     public void execute_storageThrowsAdException_throwsCommandException() {
         assertCommandFailureForExceptionFromStorage(DUMMY_AD_EXCEPTION, String.format(

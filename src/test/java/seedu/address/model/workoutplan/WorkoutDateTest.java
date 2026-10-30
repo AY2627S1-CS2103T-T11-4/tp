@@ -17,17 +17,20 @@ public class WorkoutDateTest {
     private static final long TIME_OTHER = 1_800_000_000_000L;
     private static final long TIME_EPOCH = 0L;
 
+    // EP: workout date is null (invalid).
     @Test
     public void constructor_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new WorkoutDate(null));
     }
 
+    // EP: workout date is non-null (valid).
     @Test
     public void constructor_validDate_storesValue() {
         WorkoutDate date = new WorkoutDate(new Date(TIME_VALID));
         assertEquals(new Date(TIME_VALID), date.getValue());
     }
 
+    // EP: unix epoch date (valid).
     @Test
     public void constructor_epochDate_storesValue() {
         WorkoutDate date = new WorkoutDate(new Date(TIME_EPOCH));
@@ -57,19 +60,19 @@ public class WorkoutDateTest {
     public void equals() {
         WorkoutDate date = new WorkoutDate(new Date(TIME_VALID));
 
-        // same values -> returns true
+        // EP: Another workout date with the same value (equivalent).
         assertTrue(date.equals(new WorkoutDate(new Date(TIME_VALID))));
 
-        // same object -> returns true
+        // EP: The same workout-date object (equivalent).
         assertTrue(date.equals(date));
 
-        // null -> returns false
+        // EP: Null (non-equivalent).
         assertFalse(date.equals(null));
 
-        // different type -> returns false
+        // EP: A raw Date object (non-equivalent).
         assertFalse(date.equals(new Date(TIME_VALID)));
 
-        // different values -> returns false
+        // EP: A different date value (non-equivalent).
         assertFalse(date.equals(new WorkoutDate(new Date(TIME_OTHER))));
     }
 

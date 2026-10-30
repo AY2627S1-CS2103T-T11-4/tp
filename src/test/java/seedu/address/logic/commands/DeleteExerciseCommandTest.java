@@ -39,6 +39,7 @@ public class DeleteExerciseCommandTest {
     @Test
     public void execute_firstMiddleLastExercise_removesOnlyRequestedExercise() throws CommandException {
         List<Exercise> original = List.of(SQUATS, PUSH_UPS, LUNGES);
+        // BV: 0 <= index < size (valid).
         for (int index = 0; index < original.size(); index++) {
             WorkoutPlan selectedPlan = plan("Selected", original);
             WorkoutPlan otherPlan = plan("Other", List.of(SQUATS));
@@ -62,6 +63,7 @@ public class DeleteExerciseCommandTest {
         }
     }
 
+    // BV: count >= 0 (valid).
     @Test
     public void execute_onlyExercise_leavesEmptySelectedPlan() throws CommandException {
         WorkoutPlan plan = plan("Selected", List.of(SQUATS));
@@ -76,6 +78,7 @@ public class DeleteExerciseCommandTest {
         assertEquals(1, model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutList().size());
     }
 
+    // EP: indexes are recalculated after each deletion (valid).
     @Test
     public void execute_sequentialDeletions_useUpdatedNumbering() throws CommandException {
         WorkoutPlan plan = plan("Selected", List.of(SQUATS, PUSH_UPS, LUNGES));
@@ -91,6 +94,7 @@ public class DeleteExerciseCommandTest {
                 .getExercisesList().getExerciseList());
     }
 
+    // EP: displayed indexes refresh after deletion (valid).
     @Test
     public void execute_afterViewPlan_updatesDisplayedIndexes() throws CommandException {
         WorkoutPlan plan = plan("Selected", List.of(SQUATS, PUSH_UPS, LUNGES));
@@ -115,12 +119,15 @@ public class DeleteExerciseCommandTest {
         ModelManager model = modelWith(student);
         DeleteExerciseCommand command = new DeleteExerciseCommand(Index.fromOneBased(1));
 
+        // EP: no current student is selected (invalid).
         assertEquals(DeleteExerciseCommand.MESSAGE_NO_STUDENT_SELECTED,
                 assertThrows(CommandException.class, () -> command.execute(model)).getMessage());
         model.setCurrentStudent(student);
+        // EP: no workout plan is selected (invalid).
         assertEquals(DeleteExerciseCommand.MESSAGE_NO_PLAN_SELECTED,
                 assertThrows(CommandException.class, () -> command.execute(model)).getMessage());
         model.setCurrentWorkoutPlan(plan);
+        // BV: index > size (invalid).
         assertEquals(DeleteExerciseCommand.MESSAGE_INVALID_EXERCISE_ID,
                 assertThrows(CommandException.class, () ->
                         new DeleteExerciseCommand(Index.fromOneBased(2)).execute(model)).getMessage());
@@ -129,6 +136,7 @@ public class DeleteExerciseCommandTest {
         assertEquals(List.of(SQUATS), plan.getExercisesList().getExerciseList());
     }
 
+    // EP: deletion targets the newly selected plan (selected plan).
     @Test
     public void execute_afterSelectingDifferentPlan_targetsNewPlanOnly() throws CommandException {
         WorkoutPlan first = plan("First", List.of(SQUATS));
@@ -145,6 +153,7 @@ public class DeleteExerciseCommandTest {
         assertTrue(model.getCurrentWorkoutPlan().orElseThrow().getExercisesList().getExerciseList().isEmpty());
     }
 
+    // EP: switching students clears the selected plan (invalid).
     @Test
     public void execute_afterSwitchingStudent_requiresNewPlanSelection() {
         WorkoutPlan first = plan("First", List.of(SQUATS));
@@ -163,6 +172,7 @@ public class DeleteExerciseCommandTest {
         assertSame(second, benson.getWorkoutPlansList().getWorkoutPlan(0));
     }
 
+    // EP: exercise index is null (invalid).
     @Test
     public void constructor_nullIndex_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new DeleteExerciseCommand(null));
@@ -174,10 +184,15 @@ public class DeleteExerciseCommandTest {
         DeleteExerciseCommand copy = new DeleteExerciseCommand(Index.fromOneBased(1));
         DeleteExerciseCommand different = new DeleteExerciseCommand(Index.fromOneBased(2));
 
+        // EP: The same command object (equivalent).
         assertTrue(first.equals(first));
+        // EP: Another command with the same index (equivalent).
         assertTrue(first.equals(copy));
+        // EP: A different exercise index (non-equivalent).
         assertFalse(first.equals(different));
+        // EP: Null (non-equivalent).
         assertFalse(first.equals(null));
+        // EP: An object of another type (non-equivalent).
         assertFalse(first.equals(1));
     }
 

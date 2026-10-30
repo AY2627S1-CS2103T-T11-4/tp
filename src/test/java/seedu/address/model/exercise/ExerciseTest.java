@@ -16,9 +16,11 @@ public class ExerciseTest {
 
     @Test
     public void constructor_nullFields_throwsNullPointerException() {
+        // One invalid input at a time: only the exercise name is null.
         assertThrows(NullPointerException.class, () ->
                 new Exercise(null, DESCRIPTION_VALID));
 
+        // One invalid input at a time: only the exercise description is null.
         assertThrows(NullPointerException.class, () ->
                 new Exercise(NAME_VALID, null));
     }
@@ -35,25 +37,25 @@ public class ExerciseTest {
     public void isSameExercise() {
         Exercise exercise = new Exercise(NAME_VALID, DESCRIPTION_VALID);
 
-        // same object -> returns true
+        // EP: the same exercise object (same identity).
         assertTrue(exercise.isSameExercise(exercise));
 
-        // same values -> returns true
+        // EP: equal name and description (same identity).
         assertTrue(exercise.isSameExercise(
                 new Exercise(NAME_VALID, DESCRIPTION_VALID)));
 
-        // null -> returns false
+        // EP: null (different identity).
         assertFalse(exercise.isSameExercise(null));
 
-        // different name -> returns false
+        // EP: only the exercise name differs (different identity).
         assertFalse(exercise.isSameExercise(
                 new Exercise(NAME_OTHER, DESCRIPTION_VALID)));
 
-        // different description -> returns false
+        // EP: only the exercise description differs (different identity).
         assertFalse(exercise.isSameExercise(
                 new Exercise(NAME_VALID, DESCRIPTION_OTHER)));
 
-        // case-sensitive name comparison -> returns false
+        // EP: exercise name differs only by case (different identity).
         assertFalse(exercise.isSameExercise(
                 new Exercise(new ExerciseName("squats"), DESCRIPTION_VALID)));
     }
@@ -62,22 +64,22 @@ public class ExerciseTest {
     public void equals() {
         Exercise exercise = new Exercise(NAME_VALID, DESCRIPTION_VALID);
 
-        // same values -> returns true
+        // EP: Another exercise with equal fields (equivalent).
         assertTrue(exercise.equals(new Exercise(NAME_VALID, DESCRIPTION_VALID)));
 
-        // same object -> returns true
+        // EP: The same exercise object (equivalent).
         assertTrue(exercise.equals(exercise));
 
-        // null -> returns false
+        // EP: Null (non-equivalent).
         assertFalse(exercise.equals(null));
 
-        // different type -> returns false
+        // EP: An object of another type (non-equivalent).
         assertFalse(exercise.equals(NAME_VALID));
 
-        // different name -> returns false
+        // EP: Only the exercise name differs (non-equivalent).
         assertFalse(exercise.equals(new Exercise(NAME_OTHER, DESCRIPTION_VALID)));
 
-        // different description -> returns false
+        // EP: Only the exercise description differs (non-equivalent).
         assertFalse(exercise.equals(new Exercise(NAME_VALID, DESCRIPTION_OTHER)));
     }
 

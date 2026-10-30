@@ -45,8 +45,10 @@ public class EditExerciseCommandTest {
         ExerciseName editedName = new ExerciseName("Front Squats");
         ExerciseDescription editedDescription = new ExerciseDescription("Four controlled sets");
 
+        // Each valid input at least once: a name-only edit succeeds.
         assertPartialEdit(editedName, null,
                 new Exercise(editedName, SQUATS.getDescription()));
+        // Each valid input at least once: a description-only edit succeeds.
         assertPartialEdit(null, editedDescription,
                 new Exercise(SQUATS.getName(), editedDescription));
     }
@@ -81,6 +83,7 @@ public class EditExerciseCommandTest {
         assertEquals(List.of(SQUATS, PUSH_UPS), selectedPlan.getExercisesList().getExerciseList());
     }
 
+    // EP: edited exercise duplicates another stored exercise (invalid).
     @Test
     public void execute_duplicateEdit_failsWithoutChangingModel() {
         WorkoutPlan selectedPlan = plan("Selected", List.of(SQUATS, PUSH_UPS));
@@ -107,15 +110,19 @@ public class EditExerciseCommandTest {
         EditExerciseDescriptor descriptor = descriptor(new ExerciseName("Edited"), null);
         EditExerciseCommand command = new EditExerciseCommand(Index.fromOneBased(1), descriptor);
 
+        // EP: no current student is selected (invalid).
         assertEquals(EditExerciseCommand.MESSAGE_NO_STUDENT_SELECTED,
                 assertThrows(CommandException.class, () -> command.execute(model)).getMessage());
         model.setCurrentStudent(student);
+        // EP: no workout plan is selected (invalid).
         assertEquals(EditExerciseCommand.MESSAGE_NO_PLAN_SELECTED,
                 assertThrows(CommandException.class, () -> command.execute(model)).getMessage());
         model.setCurrentWorkoutPlan(selectedPlan);
+        // BV: index > size (invalid).
         assertEquals(EditExerciseCommand.MESSAGE_INVALID_EXERCISE_ID,
                 assertThrows(CommandException.class, () -> new EditExerciseCommand(
                         Index.fromOneBased(2), descriptor).execute(model)).getMessage());
+        // BV: count < 1 (invalid).
         assertEquals(EditExerciseCommand.MESSAGE_NOT_EDITED,
                 assertThrows(CommandException.class, () -> new EditExerciseCommand(
                         Index.fromOneBased(1), new EditExerciseDescriptor()).execute(model)).getMessage());
@@ -130,11 +137,14 @@ public class EditExerciseCommandTest {
         EditExerciseCommand command = new EditExerciseCommand(Index.fromOneBased(1),
                 descriptor(new ExerciseName("Edited"), null));
 
+        // One invalid input at a time: only the student reference is stale.
         assertSetExerciseFailure(student, selectedPlan, command, new StudentNotFoundException(),
                 EditExerciseCommand.MESSAGE_PLAN_NO_LONGER_AVAILABLE);
+        // One invalid input at a time: only the workout-plan reference is stale.
         assertSetExerciseFailure(student, selectedPlan, command,
                 new WorkoutPlanNotFoundException(selectedPlan),
                 EditExerciseCommand.MESSAGE_PLAN_NO_LONGER_AVAILABLE);
+        // One invalid input at a time: only the exercise reference is stale.
         assertSetExerciseFailure(student, selectedPlan, command,
                 new ExerciseNotFoundException(SQUATS),
                 EditExerciseCommand.MESSAGE_INVALID_EXERCISE_ID);
@@ -145,11 +155,16 @@ public class EditExerciseCommandTest {
         EditExerciseDescriptor descriptor = descriptor(new ExerciseName("Edited"), null);
         EditExerciseCommand command = new EditExerciseCommand(Index.fromOneBased(1), descriptor);
 
+        // One invalid input at a time: only the command index is null.
         assertThrows(NullPointerException.class, () -> new EditExerciseCommand(null, descriptor));
+        // One invalid input at a time: only the edit descriptor is null.
         assertThrows(NullPointerException.class, () -> new EditExerciseCommand(Index.fromOneBased(1), null));
+        // EP: Another command with equal fields (equivalent).
         assertEquals(command, new EditExerciseCommand(Index.fromOneBased(1), descriptor));
         assertEquals(descriptor.hashCode(), new EditExerciseDescriptor(descriptor).hashCode());
+        // EP: A different exercise index (non-equivalent).
         assertFalse(command.equals(new EditExerciseCommand(Index.fromOneBased(2), descriptor)));
+        // EP: Null (non-equivalent).
         assertFalse(command.equals(null));
         assertEquals(EditExerciseCommand.class.getCanonicalName() + "{targetIndex="
                 + Index.fromOneBased(1) + ", editExerciseDescriptor=" + descriptor + "}", command.toString());
