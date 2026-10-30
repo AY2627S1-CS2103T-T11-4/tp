@@ -35,7 +35,7 @@ public class JsonAdaptedExerciseTest {
         assertThrows(IllegalValueException.class, () -> new JsonAdaptedExercise("Squat", null).toModelType());
         // One invalid input at a time: only the exercise description is blank.
         assertThrows(IllegalValueException.class, () -> new JsonAdaptedExercise("Squat", "\t").toModelType());
-        // BV: length > MAX_LENGTH (invalid).      
+        // BV: length > MAX_LENGTH (invalid).
         assertThrows(IllegalValueException.class, () -> new JsonAdaptedExercise("Squat",
                 "x".repeat(ExerciseDescription.MAX_LENGTH + 1))
                 .toModelType());
