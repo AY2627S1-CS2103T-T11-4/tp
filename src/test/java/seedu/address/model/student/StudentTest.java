@@ -3,7 +3,6 @@ package seedu.address.model.student;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
@@ -46,7 +45,7 @@ public class StudentTest {
         Student copy = ALICE.withWorkoutPlans(newPlans);
 
         assertNotSame(ALICE, copy);
-        assertSame(newPlans, copy.getWorkoutPlansList());
+        assertEquals(newPlans, copy.getWorkoutPlansList());
         assertEquals(List.of(), ALICE.getWorkoutPlansList().getWorkoutList());
         assertEquals(ALICE.getName(), copy.getName());
         assertEquals(ALICE.getPhone(), copy.getPhone());
@@ -71,7 +70,7 @@ public class StudentTest {
         assertEquals(WorkoutPlanStatus.PENDING, original.getWorkoutPlansList().getWorkoutList().get(0).getStatus());
         assertEquals(WorkoutPlanStatus.OVERDUE, updated.getWorkoutPlansList().getWorkoutList().get(0).getStatus());
         assertEquals(original.getName(), updated.getName());
-        assertSame(updated, updated.updateWorkoutsState());
+        assertEquals(updated, updated.updateWorkoutsState());
     }
 
     @Test

@@ -10,6 +10,7 @@ import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
@@ -42,11 +43,8 @@ public class AddExerciseCommandTest {
     // EP: a workout plan is selected (valid).
     @Test
     public void execute_validSelectedPlan_addsExercise() {
-        Model model = createModelWithSelectedPlan();
-        Model expectedModel = new ModelManager(model.getBrotherGym(), new UserPrefs());
-        Student expectedStudent = expectedModel.getFilteredStudentList().get(0);
-        WorkoutPlan expectedPlan = expectedStudent.getWorkoutPlansList().getWorkoutList().get(0);
-        expectedModel.addExerciseForWorkoutPlan(expectedStudent, expectedPlan, EXERCISE);
+        Model model = createModelWithSelectedPlan(List.of());
+        Model expectedModel = createModelWithSelectedPlan(List.of(EXERCISE));
 
         assertCommandSuccess(new AddExerciseCommand(EXERCISE), model,
                 String.format(AddExerciseCommand.MESSAGE_SUCCESS, EXERCISE), expectedModel);
@@ -69,23 +67,20 @@ public class AddExerciseCommandTest {
 
     // EP: exercise duplicates a stored exercise (invalid).
     @Test
-    public void execute_duplicateExercise_throwsCommandException() throws Exception {
-        Model model = createModelWithSelectedPlan();
+    public void execute_duplicateExercise_throwsCommandException() {
+        Model model = createModelWithSelectedPlan(List.of(EXERCISE));
         AddExerciseCommand command = new AddExerciseCommand(EXERCISE);
-        command.execute(model);
         assertCommandFailure(command, model, AddExerciseCommand.MESSAGE_DUPLICATE_EXERCISE);
     }
 
     // BV: result > MAX_EXERCISES (invalid).
     @Test
     public void execute_fullExerciseList_throwsCommandException() {
-        Model model = createModelWithSelectedPlan();
-        for (int i = 0; i < ExercisesList.MAX_EXERCISES; i++) {
-            Student student = model.getCurrentStudent().orElseThrow();
-            WorkoutPlan plan = model.getCurrentWorkoutPlan().orElseThrow();
-            model.addExerciseForWorkoutPlan(student, plan,
-                    new Exercise(new ExerciseName("Exercise " + i), new ExerciseDescription("Description " + i)));
-        }
+        List<Exercise> exercises = IntStream.range(0, ExercisesList.MAX_EXERCISES)
+                .mapToObj(index -> new Exercise(new ExerciseName("Exercise " + index),
+                        new ExerciseDescription("Description " + index)))
+                .toList();
+        Model model = createModelWithSelectedPlan(exercises);
         assertCommandFailure(new AddExerciseCommand(EXERCISE), model,
                 AddExerciseCommand.MESSAGE_EXERCISE_LIST_FULL);
     }
@@ -111,11 +106,11 @@ public class AddExerciseCommandTest {
                 command.toString());
     }
 
-    private static Model createModelWithSelectedPlan() {
+    private static Model createModelWithSelectedPlan(List<Exercise> exercises) {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
         Student student = model.getFilteredStudentList().get(0);
         model.setCurrentStudent(student);
-        model.addWorkoutPlanForStudent(student, PLAN);
+        model.addWorkoutPlanForStudent(student, PLAN.withExercises(new ExercisesList(exercises)));
         model.setCurrentWorkoutPlan(model.getCurrentStudent().orElseThrow()
                 .getWorkoutPlansList().getWorkoutList().get(0));
         return model;
