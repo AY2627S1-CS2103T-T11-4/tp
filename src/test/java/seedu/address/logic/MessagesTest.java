@@ -14,6 +14,7 @@ import seedu.address.testutil.WorkoutBuilder;
  */
 public class MessagesTest {
 
+    // BV: 0 <= count <= MAX_TAG_COUNT (valid).
     @Test
     public void format_workoutPlanWithoutTags_formatsDetails() {
         WorkoutPlan plan = new WorkoutBuilder()
@@ -25,6 +26,7 @@ public class MessagesTest {
         assertEquals("Leg Day - Squats and lunges (09 Oct 2026)", Messages.format(plan));
     }
 
+    // EP: workout plan has multiple unsorted tags (valid).
     @Test
     public void format_workoutPlanWithTags_formatsSortedTags() {
         WorkoutPlan plan = new WorkoutBuilder()

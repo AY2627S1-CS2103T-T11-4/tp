@@ -54,16 +54,21 @@ public class EditPlanCommandParserTest {
 
     @Test
     public void parse_invalidCalendarDate_reportsGenericDateError() {
+        // EP: month exceeds 12 (invalid).
         assertParseFailure(parser, "1 --date 01132026",
                 this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
+        // EP: day exceeds 31 (invalid).
         assertParseFailure(parser, "1 --date 32122026",
                 this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
+        // EP: day is invalid for February (invalid).
         assertParseFailure(parser, "1 --date 31022026",
                 this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
+        // BV: 29 February in a non-leap year (invalid).
         assertParseFailure(parser, "1 --date 29022026",
                 this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS));
     }
 
+    // BV: 29 February in a leap year (valid).
     @Test
     public void parse_validLeapDay_success() {
         EditPlanCommand.EditPlanDescriptor descriptor =
@@ -74,55 +79,61 @@ public class EditPlanCommandParserTest {
 
     @Test
     public void parse_missingParts_failure() {
-        // no index specified
+        // One invalid input at a time: only the index is missing.
         assertParseFailure(parser, VALID_WORKOUT_TITLE_LEGS, this.formatParserError(MESSAGE_INVALID_INDEX));
 
-        // no field specified
+        // One invalid input at a time: only the edit field is missing.
         assertParseFailure(parser, "1", EditPlanCommand.MESSAGE_NOT_EDITED);
 
     }
 
     @Test
     public void parse_invalidPreamble_failure() {
-        // negative index
+        // EP: negative index (invalid).
         assertParseFailure(parser, "-5" + TITLE_DESC_LEGS, this.formatParserError(MESSAGE_INVALID_INDEX));
 
-        // zero index
+        // BV: index < 1 (invalid).
         assertParseFailure(parser, "0" + TITLE_DESC_LEGS, this.formatParserError(MESSAGE_INVALID_INDEX));
 
-        // invalid arguments being parsed as preamble
+        // EP: non-index preamble text (invalid).
         assertParseFailure(parser, "1 some random string", this.formatParserError(MESSAGE_INVALID_INDEX));
 
-        // invalid prefix being parsed as preamble
+        // EP: malformed prefix in the preamble (invalid).
         assertParseFailure(parser, "1 i/ string", this.formatParserError(MESSAGE_INVALID_INDEX));
     }
 
     @Test
     public void parse_invalidValue_failure() {
+        // One invalid input at a time: only the workout title is invalid.
         assertParseFailure(parser, "1" + INVALID_TITLE_DESC,
                 this.formatParserError(WorkoutTitle.MESSAGE_CONSTRAINTS)); // invalid title
+        // One invalid input at a time: only the workout description is invalid.
         assertParseFailure(parser, "1" + INVALID_PLAN_DESC,
                 this.formatParserError(WorkoutDescription.MESSAGE_CONSTRAINTS)); // invalid description
+        // One invalid input at a time: only the date characters are invalid.
         assertParseFailure(parser, "1" + INVALID_DATE_DESC_LETTERS,
                 this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS)); // invalid date (invalid letters)
+        // One invalid input at a time: only the date length is invalid.
         assertParseFailure(parser, "1" + INVALID_DATE_DESC_LENGTH,
                 this.formatParserError(WorkoutDate.MESSAGE_CONSTRAINTS)); // invalid date (too long)
+        // One invalid input at a time: only the tag is invalid.
         assertParseFailure(parser, "1" + INVALID_TAG_DESC + CLEAR_TAGS,
                 this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS)); // invalid tag
 
-        // invalid plan followed by valid date
+        // One invalid input at a time: description is invalid while date remains valid.
         assertParseFailure(parser, "1" + INVALID_PLAN_DESC + DATE_DESC_LEGS,
                 this.formatParserError(WorkoutDescription.MESSAGE_CONSTRAINTS));
 
-        // an empty tag remains invalid since --clearTags is available for clearing tags
+        // One invalid input at a time: only the tag is empty.
         assertParseFailure(parser, "1" + TAG_EMPTY,
                 this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS));
 
-        // multiple invalid values, but only the first invalid value is captured
+        // Invalid inputs combined after separate tests: title and description are invalid.
         assertParseFailure(parser, "1" + INVALID_TITLE_DESC + INVALID_PLAN_DESC + DATE_DESC_LEGS,
                 this.formatParserError(WorkoutTitle.MESSAGE_CONSTRAINTS));
     }
 
+    // Each valid input at least once: all editable workout-plan fields parse successfully.
     @Test
     public void parse_allFieldsSpecified_success() {
         Index targetIndex = INDEX_SECOND;
@@ -138,6 +149,7 @@ public class EditPlanCommandParserTest {
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 
+    // EP: a subset of editable workout-plan fields (valid).
     @Test
     public void parse_someFieldsSpecified_success() {
         Index targetIndex = INDEX_FIRST;
@@ -153,7 +165,7 @@ public class EditPlanCommandParserTest {
 
     @Test
     public void parse_oneFieldSpecified_success() {
-        // title
+        // Each valid input at least once: title succeeds in an edit test.
         Index targetIndex = INDEX_THIRD;
         String userInput = targetIndex.getOneBased() + TITLE_DESC_LEGS;
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder()
@@ -161,25 +173,26 @@ public class EditPlanCommandParserTest {
         EditPlanCommand expectedCommand = new EditPlanCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
-        // description
+        // Each valid input at least once: description succeeds in an edit test.
         userInput = targetIndex.getOneBased() + PLAN_DESC_LEGS;
         descriptor = new EditPlanDescriptorBuilder().withDescription(VALID_WORKOUT_PLAN_LEGS).build();
         expectedCommand = new EditPlanCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
-        // date
+        // Each valid input at least once: date succeeds in an edit test.
         userInput = targetIndex.getOneBased() + DATE_DESC_LEGS;
         descriptor = new EditPlanDescriptorBuilder().withDate(VALID_WORKOUT_DATE_LEGS).build();
         expectedCommand = new EditPlanCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
-        // tags
+        // Each valid input at least once: tags succeed in an edit test.
         userInput = targetIndex.getOneBased() + TAG_DESC_STRENGTH;
         descriptor = new EditPlanDescriptorBuilder().withTags(VALID_TAG_STRENGTH).build();
         expectedCommand = new EditPlanCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 
+    // EP: repeated non-repeatable workout-plan field (invalid).
     @Test
     public void parse_multipleRepeatedFields_failure() {
         Index targetIndex = INDEX_FIRST;
@@ -191,12 +204,13 @@ public class EditPlanCommandParserTest {
 
     @Test
     public void parse_invalidField_failure() {
-        // invalid prefix alone
+        // One invalid input at a time: only the prefix is unknown.
         assertParseFailure(parser, "1" + INVALID_PREFIX_DESC,
                 this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
     }
 
+    // BV: 0 <= count <= MAX_TAG_COUNT (valid).
     @Test
     public void parse_clearTags_success() {
         Index targetIndex = INDEX_THIRD;

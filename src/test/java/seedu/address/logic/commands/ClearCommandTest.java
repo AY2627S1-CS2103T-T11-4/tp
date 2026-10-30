@@ -12,6 +12,7 @@ import seedu.address.model.UserPrefs;
 
 public class ClearCommandTest {
 
+    // BV: count >= 0 (valid).
     @Test
     public void execute_emptyBrotherGym_success() {
         Model model = new ModelManager();
@@ -20,6 +21,7 @@ public class ClearCommandTest {
         assertCommandSuccess(new ClearCommand(), model, ClearCommand.MESSAGE_SUCCESS, expectedModel);
     }
 
+    // EP: clearing a non-empty data set (valid).
     @Test
     public void execute_nonEmptyBrotherGym_success() {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());

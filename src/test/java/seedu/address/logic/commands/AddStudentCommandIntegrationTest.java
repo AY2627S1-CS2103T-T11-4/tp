@@ -26,6 +26,7 @@ public class AddStudentCommandIntegrationTest {
         model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
     }
 
+    // EP: student identity is unique (valid).
     @Test
     public void execute_newStudent_success() {
         Student validStudent = new StudentBuilder().build();
@@ -38,6 +39,7 @@ public class AddStudentCommandIntegrationTest {
                 expectedModel);
     }
 
+    // EP: student identity already exists (invalid).
     @Test
     public void execute_duplicateStudent_throwsCommandException() {
         Student studentInList = model.getBrotherGym().getStudentList().get(0);

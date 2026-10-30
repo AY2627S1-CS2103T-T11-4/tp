@@ -53,6 +53,7 @@ public class BrotherGymParserTest {
 
     private final BrotherGymParser parser = new BrotherGymParser();
 
+    // Each valid input at least once: add-student command is recognized.
     @Test
     public void parseCommand_addStudent() throws Exception {
         Student student = new StudentBuilder().build();
@@ -60,6 +61,7 @@ public class BrotherGymParserTest {
         assertEquals(new AddStudentCommand(student), command);
     }
 
+    // Each valid input at least once: clear command is recognized.
     @Test
     public void parseCommand_clear() throws Exception {
         assertTrue(parser.parseCommand(ClearCommand.COMMAND_WORD) instanceof ClearCommand);
@@ -67,6 +69,7 @@ public class BrotherGymParserTest {
         assertUnexpectedArgumentsRejected(ClearCommand.COMMAND_WORD, ClearCommand.MESSAGE_USAGE);
     }
 
+    // Each valid input at least once: delete-student command is recognized.
     @Test
     public void parseCommand_deleteStudent() throws Exception {
         DeleteStudentCommand command = (DeleteStudentCommand) parser.parseCommand(
@@ -74,6 +77,7 @@ public class BrotherGymParserTest {
         assertEquals(new DeleteStudentCommand(INDEX_FIRST), command);
     }
 
+    // Each valid input at least once: edit-student command is recognized.
     @Test
     public void parseCommand_editStudent() throws Exception {
         Student student = new StudentBuilder().build();
@@ -83,6 +87,7 @@ public class BrotherGymParserTest {
         assertEquals(new EditStudentCommand(INDEX_FIRST, descriptor), command);
     }
 
+    // Each valid input at least once: delete-plan command is recognized.
     @Test
     public void parseCommand_deletePlan() throws Exception {
         DeletePlanCommand command = (DeletePlanCommand) parser.parseCommand(
@@ -90,6 +95,7 @@ public class BrotherGymParserTest {
         assertEquals(new DeletePlanCommand(INDEX_FIRST), command);
     }
 
+    // Each valid input at least once: delete-exercise command is recognized.
     @Test
     public void parseCommand_deleteExercise() throws Exception {
         DeleteExerciseCommand command = (DeleteExerciseCommand) parser.parseCommand(
@@ -97,12 +103,14 @@ public class BrotherGymParserTest {
         assertEquals(new DeleteExerciseCommand(INDEX_FIRST), command);
     }
 
+    // BV: index < 1 (invalid).
     @Test
     public void parseCommand_deleteExerciseInvalidIndex_throwsParseException() {
         assertThrows(ParseException.class, () -> parser.parseCommand(DeleteExerciseCommand.COMMAND_WORD + " 0"));
         assertThrows(ParseException.class, () -> parser.parseCommand(DeleteExerciseCommand.COMMAND_WORD + " abc"));
     }
 
+    // Each valid input at least once: edit-exercise command is recognized.
     @Test
     public void parseCommand_editExercise() throws Exception {
         EditExerciseDescriptor descriptor = new EditExerciseDescriptor();
@@ -114,6 +122,7 @@ public class BrotherGymParserTest {
         assertEquals(new EditExerciseCommand(INDEX_FIRST, descriptor), command);
     }
 
+    // Each valid input at least once: add-plan command is recognized.
     @Test
     public void parseCommand_addPlan() throws Exception {
         WorkoutPlan workout = new WorkoutBuilder().build();
@@ -121,6 +130,7 @@ public class BrotherGymParserTest {
         assertEquals(new AddPlanCommand(workout), command);
     }
 
+    // Each valid input at least once: add-exercise command is recognized.
     @Test
     public void parseCommand_addExercise() throws Exception {
         Exercise exercise = new Exercise(new ExerciseName("Squats"),
@@ -130,6 +140,7 @@ public class BrotherGymParserTest {
         assertEquals(new AddExerciseCommand(exercise), command);
     }
 
+    // Each valid input at least once: edit-plan command is recognized.
     @Test
     public void parseCommand_editPlan() throws Exception {
         WorkoutPlan plan = new WorkoutBuilder().build();
@@ -139,6 +150,7 @@ public class BrotherGymParserTest {
         assertEquals(new EditPlanCommand(INDEX_FIRST, descriptor), command);
     }
 
+    // Each valid input at least once: mark-plan command is recognized.
     @Test
     public void parseCommand_markPlan() throws Exception {
         MarkPlanCommand command = (MarkPlanCommand) parser.parseCommand(
@@ -146,6 +158,7 @@ public class BrotherGymParserTest {
         assertEquals(new MarkPlanCommand(INDEX_FIRST), command);
     }
 
+    // Each valid input at least once: unmark-plan command is recognized.
     @Test
     public void parseCommand_unmarkPlan() throws Exception {
         UnmarkPlanCommand command = (UnmarkPlanCommand) parser.parseCommand(
@@ -153,6 +166,7 @@ public class BrotherGymParserTest {
         assertEquals(new UnmarkPlanCommand(INDEX_FIRST), command);
     }
 
+    // Each valid input at least once: view-student command is recognized.
     @Test
     public void parseCommand_viewStudent() throws Exception {
         ViewStudentCommand command = (ViewStudentCommand) parser.parseCommand(
@@ -160,6 +174,7 @@ public class BrotherGymParserTest {
         assertEquals(new ViewStudentCommand(INDEX_FIRST), command);
     }
 
+    // Each valid input at least once: view-plan command is recognized.
     @Test
     public void parseCommand_viewPlan() throws Exception {
         ViewPlanCommand command = (ViewPlanCommand) parser.parseCommand(
@@ -167,6 +182,7 @@ public class BrotherGymParserTest {
         assertEquals(new ViewPlanCommand(INDEX_FIRST), command);
     }
 
+    // Each valid input at least once: exit command is recognized.
     @Test
     public void parseCommand_exit() throws Exception {
         assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD) instanceof ExitCommand);
@@ -174,6 +190,7 @@ public class BrotherGymParserTest {
         assertUnexpectedArgumentsRejected(ExitCommand.COMMAND_WORD, ExitCommand.MESSAGE_USAGE);
     }
 
+    // Each valid input at least once: find command is recognized.
     @Test
     public void parseCommand_find() throws Exception {
         List<String> keywords = List.of("foo", "bar", "baz");
@@ -182,6 +199,7 @@ public class BrotherGymParserTest {
         assertEquals(new FindCommand(new NameContainsKeywordsPredicate(keywords)), command);
     }
 
+    // EP: every find keyword is invalid (invalid).
     @Test
     public void parseCommand_findInvalidKeywords_throwsParseException() {
         assertThrows(ParseException.class,
@@ -189,6 +207,7 @@ public class BrotherGymParserTest {
                     -> parser.parseCommand("find !!!"));
     }
 
+    // Each valid input at least once: help command is recognized.
     @Test
     public void parseCommand_help() throws Exception {
         assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD) instanceof HelpCommand);
@@ -196,6 +215,7 @@ public class BrotherGymParserTest {
         assertUnexpectedArgumentsRejected(HelpCommand.COMMAND_WORD, HelpCommand.MESSAGE_USAGE);
     }
 
+    // Each valid input at least once: home command is recognized.
     @Test
     public void parseCommand_home() throws Exception {
         assertTrue(parser.parseCommand(HomeCommand.COMMAND_WORD) instanceof HomeCommand);
@@ -211,12 +231,14 @@ public class BrotherGymParserTest {
         }
     }
 
+    // BV: length < 1 (invalid).
     @Test
     public void parseCommand_unrecognisedInput_throwsParseException() {
         assertThrows(ParseException.class, String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE), ()
             -> parser.parseCommand(""));
     }
 
+    // EP: unknown command word (invalid).
     @Test
     public void parseCommand_unknownCommand_throwsParseException() {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () -> parser.parseCommand("unknownCommand"));

@@ -47,12 +47,15 @@ public class EditPlanCommandTest {
 
     @Test
     public void constructor_nullArguments_throwsNullPointerException() {
+        // One invalid input at a time: only the workout-plan index is null.
         assertThrows(NullPointerException.class, () ->
                 new EditPlanCommand(null, new EditPlanCommand.EditPlanDescriptor()));
+        // One invalid input at a time: only the edit descriptor is null.
         assertThrows(NullPointerException.class, () ->
                 new EditPlanCommand(Index.fromOneBased(1), null));
     }
 
+    // Each valid input at least once: title-only edit succeeds.
     @Test
     public void execute_fieldSpecified_preservesOtherFieldsAndTags() throws Exception {
         Model model = createModelWithPlans(FIRST_PLAN, SECOND_PLAN);
@@ -72,6 +75,7 @@ public class EditPlanCommandTest {
         assertEquals(expectedStudent, model.getCurrentStudent().orElseThrow());
     }
 
+    // EP: editing a completed plan (valid).
     @Test
     public void execute_fieldSpecified_preservesCompletedStatus() throws Exception {
         WorkoutPlan completedPlan = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getWorkouts(),
@@ -96,22 +100,25 @@ public class EditPlanCommandTest {
                 model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutList().get(0).getStatus());
     }
 
-    // At least once: cover each date boundary and status without testing every combination.
+    // BV: date < today (valid).
     @Test
     public void execute_dateEditedPastPending_refreshesStatus() throws Exception {
         assertDateEdit(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
     }
 
+    // BV: date = today (valid).
     @Test
     public void execute_dateEditedDueTodayOverdue_refreshesStatus() throws Exception {
         assertDateEdit(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
     }
 
+    // BV: date > today (valid).
     @Test
     public void execute_dateEditedFuturePending_refreshesStatus() throws Exception {
         assertDateEdit(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
     }
 
+    // EP: status = COMPLETED and date < today; status stays completed (valid).
     @Test
     public void execute_dateEditedPastCompleted_refreshesStatus() throws Exception {
         assertDateEdit(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
@@ -135,6 +142,7 @@ public class EditPlanCommandTest {
                 model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutPlan(1));
     }
 
+    // Each valid input at least once: non-empty replacement tags succeed.
     @Test
     public void execute_tagsSpecified_replacesTags() throws Exception {
         Model model = createModelWithPlans(FIRST_PLAN);
@@ -153,6 +161,7 @@ public class EditPlanCommandTest {
                 String.format(EditPlanCommand.MESSAGE_SUCCESS, expectedPlan), expectedModel);
     }
 
+    // BV: 0 <= count <= MAX_TAG_COUNT (valid).
     @Test
     public void execute_explicitEmptyTagSet_clearsTags() throws Exception {
         Model model = createModelWithPlans(FIRST_PLAN);
@@ -170,6 +179,7 @@ public class EditPlanCommandTest {
                 String.format(EditPlanCommand.MESSAGE_SUCCESS, expectedPlan), expectedModel);
     }
 
+    // EP: no current student is selected (invalid).
     @Test
     public void execute_noCurrentStudent_throwsCommandException() {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
@@ -180,6 +190,7 @@ public class EditPlanCommandTest {
                 EditPlanCommand.MESSAGE_NO_STUDENT_SELECTED);
     }
 
+    // EP: model input is null (invalid).
     @Test
     public void execute_nullModel_throwsNullPointerException() {
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
@@ -189,6 +200,7 @@ public class EditPlanCommandTest {
         assertThrows(NullPointerException.class, () -> command.execute(null));
     }
 
+    // BV: index > size (invalid).
     @Test
     public void execute_invalidWorkoutId_throwsCommandException() {
         Model model = createModelWithPlans(FIRST_PLAN);
@@ -200,6 +212,7 @@ public class EditPlanCommandTest {
                 EditPlanCommand.MESSAGE_INVALID_WORKOUT_ID);
     }
 
+    // BV: count < 1 (invalid).
     @Test
     public void execute_noFieldsSpecified_throwsCommandException() {
         Model model = createModelWithPlans(FIRST_PLAN);
@@ -209,6 +222,7 @@ public class EditPlanCommandTest {
                 new EditPlanCommand.EditPlanDescriptor()), model, EditPlanCommand.MESSAGE_NOT_EDITED);
     }
 
+    // EP: every status still rejects matching plan details (duplicate).
     @Test
     public void execute_duplicatePlan_throwsCommandException() {
         for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {

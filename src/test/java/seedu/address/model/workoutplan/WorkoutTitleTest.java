@@ -12,17 +12,20 @@ public class WorkoutTitleTest {
     private static final String TITLE_VALID = "Strength training";
     private static final String TITLE_OTHER = "Cardio";
 
+    // EP: workout title is null (invalid).
     @Test
     public void constructor_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new WorkoutTitle(null));
     }
 
+    // BV: length < 1 (invalid).
     @Test
     public void constructor_invalidWorkoutTitle_throwsIllegalArgumentException() {
         String invalidWorkoutTitle = "";
         assertThrows(IllegalArgumentException.class, () -> new WorkoutTitle(invalidWorkoutTitle));
     }
 
+    // EP: non-blank workout title (valid).
     @Test
     public void constructor_validTitle_storesValue() {
         WorkoutTitle title = new WorkoutTitle(TITLE_VALID);
@@ -31,14 +34,15 @@ public class WorkoutTitleTest {
 
     @Test
     public void isValidWorkoutTitle() {
-        // null title
+        // EP: workout title is null (invalid).
         assertThrows(NullPointerException.class, () -> WorkoutTitle.isValidWorkoutTitle(null));
 
-        // invalid title
-        assertFalse(WorkoutTitle.isValidWorkoutTitle("")); // empty string
-        assertFalse(WorkoutTitle.isValidWorkoutTitle(" ")); // spaces only
+        // BV: length < 1 (invalid).
+        assertFalse(WorkoutTitle.isValidWorkoutTitle(""));
+        // EP: space-only workout title (invalid).
+        assertFalse(WorkoutTitle.isValidWorkoutTitle(" "));
 
-        // valid title
+        // Each valid input at least once: a typical workout title is accepted.
         assertTrue(WorkoutTitle.isValidWorkoutTitle(TITLE_VALID));
     }
 
@@ -46,19 +50,19 @@ public class WorkoutTitleTest {
     public void equals() {
         WorkoutTitle title = new WorkoutTitle(TITLE_VALID);
 
-        // same values -> returns true
+        // EP: Another title with the same value (equivalent).
         assertTrue(title.equals(new WorkoutTitle(TITLE_VALID)));
 
-        // same object -> returns true
+        // EP: The same title object (equivalent).
         assertTrue(title.equals(title));
 
-        // null -> returns false
+        // EP: Null (non-equivalent).
         assertFalse(title.equals(null));
 
-        // different type -> returns false
+        // EP: An object of another type (non-equivalent).
         assertFalse(title.equals(TITLE_VALID));
 
-        // different values -> returns false
+        // EP: A different title value (non-equivalent).
         assertFalse(title.equals(new WorkoutTitle(TITLE_OTHER)));
     }
 

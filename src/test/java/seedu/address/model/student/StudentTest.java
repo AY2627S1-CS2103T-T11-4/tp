@@ -53,12 +53,15 @@ public class StudentTest {
 
     @Test
     public void constructors_workoutPlansList() {
+        // BV: count = 0 (valid).
         assertEquals(List.of(), ALICE.getWorkoutPlansList().getWorkoutList());
 
         WorkoutPlansList plans = new WorkoutPlansList(List.of(WORKOUT_PLAN));
         Student aliceWithPlan = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getAddress(), ALICE.getTags(), plans);
+        // BV: count >= 0 (valid).
         assertEquals(plans, aliceWithPlan.getWorkoutPlansList());
+        // One invalid input at a time: only the workout-plan list is null.
         assertThrows(NullPointerException.class, () -> new Student(ALICE.getName(), ALICE.getPhone(),
                 ALICE.getEmail(), ALICE.getAddress(), ALICE.getTags(), null));
     }
@@ -69,6 +72,7 @@ public class StudentTest {
         assertThrows(UnsupportedOperationException.class, () -> student.getTags().remove(0));
     }
 
+    // EP: a student with one non-null tag (valid).
     @Test
     public void constructor_acceptsStudentTags() {
         Set<StudentTag> tags = Set.of(new StudentTag("friend"));
@@ -79,6 +83,7 @@ public class StudentTest {
         assertEquals(Set.of(new StudentTag("friend")), storedTags);
     }
 
+    // One invalid input at a time: the tag set contains one null tag.
     @Test
     public void constructor_nullTag_throwsNullPointerException() {
         Set<StudentTag> tags = new HashSet<>();
@@ -88,6 +93,7 @@ public class StudentTest {
                 ALICE.getEmail(), ALICE.getAddress(), tags));
     }
 
+    // BV: 0 <= count <= MAX_TAG_COUNT (valid).
     @Test
     public void constructor_tagsAtLimit_success() {
         Set<StudentTag> tags = createStudentTags(Tag.MAX_TAG_COUNT);
@@ -98,6 +104,7 @@ public class StudentTest {
         assertEquals(tags, student.getTags());
     }
 
+    // BV: count > MAX_TAG_COUNT (invalid).
     @Test
     public void constructor_tooManyTags_throwsIllegalArgumentException() {
         Set<StudentTag> tags = createStudentTags(Tag.MAX_TAG_COUNT + 1);
@@ -119,31 +126,31 @@ public class StudentTest {
 
     @Test
     public void isSameStudent() {
-        // same object -> returns true
+        // EP: the same student object (same identity).
         assertTrue(ALICE.isSameStudent(ALICE));
 
-        // null -> returns false
+        // EP: null (different identity).
         assertFalse(ALICE.isSameStudent(null));
 
-        // same name, all other attributes different -> returns true
+        // EP: same name with different non-identity fields (same identity).
         Student editedAlice = new StudentBuilder(ALICE).withPhone(VALID_PHONE_BOB).withEmail(VALID_EMAIL_BOB)
                 .withAddress(VALID_ADDRESS_BOB).withTags(VALID_TAG_HUSBAND).build();
         assertTrue(ALICE.isSameStudent(editedAlice));
 
-        // different name, all other attributes same -> returns false
+        // EP: only the name differs (different identity).
         editedAlice = new StudentBuilder(ALICE).withName(VALID_NAME_BOB).build();
         assertFalse(ALICE.isSameStudent(editedAlice));
 
-        // name differs only in case, all other attributes same -> returns true
+        // EP: name differs only by case (same identity).
         Student editedBob = new StudentBuilder(BOB).withName(VALID_NAME_BOB.toLowerCase()).build();
         assertTrue(BOB.isSameStudent(editedBob));
 
-        // name has trailing spaces, all other attributes same -> returns false
+        // EP: name has trailing whitespace (different identity).
         String nameWithTrailingSpaces = VALID_NAME_BOB + " ";
         editedBob = new StudentBuilder(BOB).withName(nameWithTrailingSpaces).build();
         assertFalse(BOB.isSameStudent(editedBob));
 
-        // different workout plans do not change identity
+        // EP: workout plans differ but name is unchanged (same identity).
         Student aliceWithPlan = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getAddress(), ALICE.getTags(), new WorkoutPlansList(List.of(WORKOUT_PLAN)));
         assertTrue(ALICE.isSameStudent(aliceWithPlan));
@@ -151,46 +158,47 @@ public class StudentTest {
 
     @Test
     public void equals() {
-        // same values -> returns true
+        // EP: Another student with equal fields (equivalent).
         Student aliceCopy = new StudentBuilder(ALICE).build();
         assertTrue(ALICE.equals(aliceCopy));
 
-        // same object -> returns true
+        // EP: The same student object (equivalent).
         assertTrue(ALICE.equals(ALICE));
 
-        // null -> returns false
+        // EP: Null (non-equivalent).
         assertFalse(ALICE.equals(null));
 
-        // different type -> returns false
+        // EP: An object of another type (non-equivalent).
         assertFalse(ALICE.equals(5));
 
-        // different student -> returns false
+        // EP: A student with different fields (non-equivalent).
         assertFalse(ALICE.equals(BOB));
 
-        // different name -> returns false
+        // EP: Only the name differs (non-equivalent).
         Student editedAlice = new StudentBuilder(ALICE).withName(VALID_NAME_BOB).build();
         assertFalse(ALICE.equals(editedAlice));
 
-        // different phone -> returns false
+        // EP: Only the phone differs (non-equivalent).
         editedAlice = new StudentBuilder(ALICE).withPhone(VALID_PHONE_BOB).build();
         assertFalse(ALICE.equals(editedAlice));
 
-        // different email -> returns false
+        // EP: Only the email differs (non-equivalent).
         editedAlice = new StudentBuilder(ALICE).withEmail(VALID_EMAIL_BOB).build();
         assertFalse(ALICE.equals(editedAlice));
 
-        // different address -> returns false
+        // EP: Only the address differs (non-equivalent).
         editedAlice = new StudentBuilder(ALICE).withAddress(VALID_ADDRESS_BOB).build();
         assertFalse(ALICE.equals(editedAlice));
 
-        // different tags -> returns false
+        // EP: Only the tags differ (non-equivalent).
         editedAlice = new StudentBuilder(ALICE).withTags(VALID_TAG_HUSBAND).build();
         assertFalse(ALICE.equals(editedAlice));
 
-        // different workout plans -> returns false
+        // EP: Only the workout-plan list differs (non-equivalent).
         Student aliceWithPlan = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getAddress(), ALICE.getTags(), new WorkoutPlansList(List.of(WORKOUT_PLAN)));
         assertFalse(ALICE.equals(aliceWithPlan));
+        // EP: Students with the same single workout plan (equivalent).
         assertEquals(aliceWithPlan, new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getAddress(), ALICE.getTags(), new WorkoutPlansList(List.of(WORKOUT_PLAN))));
     }

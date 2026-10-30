@@ -28,11 +28,15 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 /** Tests status changes and validation for {@link UnmarkPlanCommand}. */
 public class UnmarkPlanCommandTest {
 
+    // EP: selected completed-plan index exists (valid).
     @Test
     public void execute_validIndex_updatesOnlySelectedPlan() throws Exception {
         LocalDate today = LocalDate.now();
+        // BV: date < today (valid).
         assertTransition(today.minusDays(1), WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.OVERDUE);
+        // BV: date = today (valid).
         assertTransition(today, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.PENDING);
+        // BV: date > today (valid).
         assertTransition(today.plusDays(1), WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.PENDING);
     }
 
@@ -65,6 +69,7 @@ public class UnmarkPlanCommandTest {
         assertSame(updated, model.getCurrentStudent().orElseThrow());
     }
 
+    // EP: selected plan is already unmarked (invalid).
     @Test
     public void execute_unmarkedPlan_throwsCommandExceptionWithoutChangingSelection() {
         for (WorkoutPlanStatus status : List.of(WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE)) {
@@ -79,6 +84,7 @@ public class UnmarkPlanCommandTest {
         }
     }
 
+    // EP: no current student is selected (invalid).
     @Test
     public void execute_noStudentSelected_throwsCommandException() {
         Model model = new ModelManager();
@@ -87,6 +93,7 @@ public class UnmarkPlanCommandTest {
                 UnmarkPlanCommand.MESSAGE_NO_STUDENT_SELECTED);
     }
 
+    // BV: index > size (invalid).
     @Test
     public void execute_invalidIndex_throwsCommandExceptionWithoutChangingSelection() {
         Model model = new ModelManager();
@@ -100,6 +107,7 @@ public class UnmarkPlanCommandTest {
         assertSame(student, model.getCurrentStudent().orElseThrow());
     }
 
+    // BV: count < 1 (invalid).
     @Test
     public void execute_emptyPlans_throwsCommandException() {
         Model model = new ModelManager();
@@ -111,7 +119,9 @@ public class UnmarkPlanCommandTest {
 
     @Test
     public void nullArguments_throwNullPointerException() {
+        // One invalid input at a time: only the command index is null.
         assertThrows(NullPointerException.class, () -> new UnmarkPlanCommand(null));
+        // One invalid input at a time: only the model is null.
         assertThrows(NullPointerException.class, () ->
                 new UnmarkPlanCommand(Index.fromOneBased(1)).execute(null));
     }

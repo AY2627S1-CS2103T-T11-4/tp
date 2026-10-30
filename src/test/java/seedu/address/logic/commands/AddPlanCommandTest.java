@@ -40,11 +40,13 @@ public class AddPlanCommandTest {
             new WorkoutDescription("Upper body"),
             new WorkoutDate(new Date(0)));
 
+    // EP: workout-plan input is null (invalid).
     @Test
     public void constructor_nullWorkoutPlan_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new AddPlanCommand(null));
     }
 
+    // EP: a current student is selected (valid).
     @Test
     public void execute_validCurrentStudent_addsPlan() {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
@@ -63,6 +65,7 @@ public class AddPlanCommandTest {
         assertEquals(updatedStudent, model.getCurrentStudent().orElseThrow());
     }
 
+    // EP: no current student is selected (invalid).
     @Test
     public void execute_noCurrentStudent_throwsCommandException() {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
@@ -71,6 +74,7 @@ public class AddPlanCommandTest {
         assertCommandFailure(command, model, AddPlanCommand.MESSAGE_NO_STUDENT_SELECTED);
     }
 
+    // Each valid input at least once: workout-plan tags are preserved.
     @Test
     public void execute_taggedPlan_preservesWorkoutPlanTags() throws Exception {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
@@ -92,6 +96,7 @@ public class AddPlanCommandTest {
                 storedPlan.getTags());
     }
 
+    // EP: workout plan duplicates a stored plan (invalid).
     @Test
     public void execute_duplicateWorkoutPlan_throwsCommandException() {
         Student baseStudent = new ModelManager(getTypicalBrotherGym(), new UserPrefs())

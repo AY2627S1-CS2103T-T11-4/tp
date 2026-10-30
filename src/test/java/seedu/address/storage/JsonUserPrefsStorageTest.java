@@ -23,11 +23,13 @@ public class JsonUserPrefsStorageTest {
     @TempDir
     public Path testFolder;
 
+    // EP: preferences path is null (invalid).
     @Test
     public void constructor_nullFilePath_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new JsonUserPrefsStorage(null));
     }
 
+    // EP: read path is null (invalid).
     @Test
     public void readUserPrefs_nullFilePath_throwsNullPointerException() {
         JsonUserPrefsStorage storage = new JsonUserPrefsStorage(testFolder.resolve("prefs.json"));
@@ -39,11 +41,13 @@ public class JsonUserPrefsStorageTest {
         return new JsonUserPrefsStorage(prefsFilePath).readUserPrefs(prefsFilePath);
     }
 
+    // EP: no preferences file exists (missing file).
     @Test
     public void readUserPrefs_missingFile_emptyResult() throws DataLoadingException {
         assertFalse(readUserPrefs("NonExistentFile.json").isPresent());
     }
 
+    // EP: preferences file is not JSON (malformed file).
     @Test
     public void readUserPrefs_notJsonFormat_exceptionThrown() {
         assertThrows(DataLoadingException.class, () -> readUserPrefs("NotJsonFormatUserPrefs.json"));
@@ -55,6 +59,7 @@ public class JsonUserPrefsStorageTest {
                 : null;
     }
 
+    // EP: complete preferences file (valid).
     @Test
     public void readUserPrefs_fileInOrder_successfullyRead() throws DataLoadingException {
         UserPrefs expected = getTypicalUserPrefs();
@@ -68,12 +73,14 @@ public class JsonUserPrefsStorageTest {
         assertEquals(path, new JsonUserPrefsStorage(path).getUserPrefsFilePath());
     }
 
+    // EP: preference values are missing (legacy).
     @Test
     public void readUserPrefs_valuesMissingFromFile_defaultValuesUsed() throws DataLoadingException {
         UserPrefs actual = readUserPrefs("EmptyUserPrefs.json").get();
         assertEquals(new UserPrefs(), actual);
     }
 
+    // EP: preferences contain extra values (forward-compatible).
     @Test
     public void readUserPrefs_extraValuesInFile_extraValuesIgnored() throws DataLoadingException {
         UserPrefs expected = getTypicalUserPrefs();
@@ -88,11 +95,13 @@ public class JsonUserPrefsStorageTest {
         return userPrefs;
     }
 
+    // One invalid input at a time: only the preferences object is null.
     @Test
     public void savePrefs_nullPrefs_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> saveUserPrefs(null, "SomeFile.json"));
     }
 
+    // One invalid input at a time: only the save path is null.
     @Test
     public void saveUserPrefs_nullFilePath_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> saveUserPrefs(new UserPrefs(), null));
@@ -110,6 +119,7 @@ public class JsonUserPrefsStorageTest {
         }
     }
 
+    // EP: complete preferences survive storage round trip (valid).
     @Test
     public void saveUserPrefs_allInOrder_success() throws DataLoadingException, IOException {
 

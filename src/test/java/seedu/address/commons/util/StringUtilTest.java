@@ -15,33 +15,39 @@ public class StringUtilTest {
     @Test
     public void isNonZeroUnsignedInteger() {
 
-        // EP: empty strings
-        assertFalse(StringUtil.isNonZeroUnsignedInteger("")); // Boundary value
+        // EP: length = 0 (invalid).
+        // BV: length < 1 (invalid).
+        assertFalse(StringUtil.isNonZeroUnsignedInteger(""));
+        // EP: only whitespace characters (invalid).
         assertFalse(StringUtil.isNonZeroUnsignedInteger("  "));
 
-        // EP: not a number
+        // EP: one non-digit character (invalid).
         assertFalse(StringUtil.isNonZeroUnsignedInteger("a"));
+        // EP: multiple non-digit characters (invalid).
         assertFalse(StringUtil.isNonZeroUnsignedInteger("aaa"));
 
-        // EP: zero
+        // BV: value < 1 (invalid).
         assertFalse(StringUtil.isNonZeroUnsignedInteger("0"));
 
-        // EP: zero as prefix
+        // EP: digits with a leading zero; value >= 1 (valid).
         assertTrue(StringUtil.isNonZeroUnsignedInteger("01"));
 
-        // EP: signed numbers
+        // EP: leading minus sign (invalid).
         assertFalse(StringUtil.isNonZeroUnsignedInteger("-1"));
+        // EP: leading plus sign (invalid).
         assertFalse(StringUtil.isNonZeroUnsignedInteger("+1"));
 
-        // EP: numbers with white space
-        assertFalse(StringUtil.isNonZeroUnsignedInteger(" 10 ")); // Leading/trailing spaces
-        assertFalse(StringUtil.isNonZeroUnsignedInteger("1 0")); // Spaces in the middle
+        // EP: digits with surrounding whitespace (invalid).
+        assertFalse(StringUtil.isNonZeroUnsignedInteger(" 10 "));
+        // EP: digits separated by whitespace (invalid).
+        assertFalse(StringUtil.isNonZeroUnsignedInteger("1 0"));
 
-        // EP: number larger than Integer.MAX_VALUE
+        // BV: value > Integer.MAX_VALUE (invalid).
         assertFalse(StringUtil.isNonZeroUnsignedInteger(Long.toString(Integer.MAX_VALUE + 1)));
 
-        // EP: valid numbers, should return true
-        assertTrue(StringUtil.isNonZeroUnsignedInteger("1")); // Boundary value
+        // BV: value >= 1 (valid).
+        assertTrue(StringUtil.isNonZeroUnsignedInteger("1"));
+        // EP: 10 <= value <= Integer.MAX_VALUE (valid).
         assertTrue(StringUtil.isNonZeroUnsignedInteger("10"));
     }
 
@@ -54,23 +60,27 @@ public class StringUtilTest {
      * The four test cases below test one invalid input at a time.
      */
 
+    // One invalid input at a time: only the word is null.
     @Test
     public void containsWordIgnoreCase_nullWord_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> StringUtil.containsWordIgnoreCase("typical sentence", null));
     }
 
+    // One invalid input at a time: only the word is empty.
     @Test
     public void containsWordIgnoreCase_emptyWord_throwsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, "Word parameter cannot be empty", ()
             -> StringUtil.containsWordIgnoreCase("typical sentence", "  "));
     }
 
+    // One invalid input at a time: only the word contains multiple words.
     @Test
     public void containsWordIgnoreCase_multipleWords_throwsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, "Word parameter should be a single word", ()
             -> StringUtil.containsWordIgnoreCase("typical sentence", "aaa BBB"));
     }
 
+    // One invalid input at a time: only the sentence is null.
     @Test
     public void containsWordIgnoreCase_nullSentence_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> StringUtil.containsWordIgnoreCase(null, "abc"));
@@ -104,22 +114,28 @@ public class StringUtilTest {
     @Test
     public void containsWordIgnoreCase_validInputs_correctResult() {
 
-        // Empty sentence
-        assertFalse(StringUtil.containsWordIgnoreCase("", "abc")); // Boundary case
+        // BV: length >= 0 (valid).
+        assertFalse(StringUtil.containsWordIgnoreCase("", "abc"));
+        // EP: only whitespace characters (valid).
         assertFalse(StringUtil.containsWordIgnoreCase("    ", "123"));
 
-        // Matches a partial word only
-        assertFalse(StringUtil.containsWordIgnoreCase("aaa bbb ccc", "bb")); // Sentence word bigger than query word
-        assertFalse(StringUtil.containsWordIgnoreCase("aaa bbb ccc", "bbbb")); // Query word bigger than sentence word
+        // EP: query is only part of a sentence word (no match).
+        assertFalse(StringUtil.containsWordIgnoreCase("aaa bbb ccc", "bb"));
+        // EP: sentence word is only part of the query (no match).
+        assertFalse(StringUtil.containsWordIgnoreCase("aaa bbb ccc", "bbbb"));
 
-        // Matches word in the sentence, different upper/lower case letters
-        assertTrue(StringUtil.containsWordIgnoreCase("aaa bBb ccc", "Bbb")); // First word (boundary case)
-        assertTrue(StringUtil.containsWordIgnoreCase("aaa bBb ccc@1", "CCc@1")); // Last word (boundary case)
-        assertTrue(StringUtil.containsWordIgnoreCase("  AAA   bBb   ccc  ", "aaa")); // Sentence has extra spaces
-        assertTrue(StringUtil.containsWordIgnoreCase("Aaa", "aaa")); // Only one word in sentence (boundary case)
-        assertTrue(StringUtil.containsWordIgnoreCase("aaa bbb ccc", "  ccc  ")); // Leading/trailing spaces
+        // EP: middle word differs only by letter case (match).
+        assertTrue(StringUtil.containsWordIgnoreCase("aaa bBb ccc", "Bbb"));
+        // BV: position <= last (match).
+        assertTrue(StringUtil.containsWordIgnoreCase("aaa bBb ccc@1", "CCc@1"));
+        // EP: sentence contains extra whitespace (match).
+        assertTrue(StringUtil.containsWordIgnoreCase("  AAA   bBb   ccc  ", "aaa"));
+        // BV: count >= 1 (match).
+        assertTrue(StringUtil.containsWordIgnoreCase("Aaa", "aaa"));
+        // EP: query contains surrounding whitespace (match).
+        assertTrue(StringUtil.containsWordIgnoreCase("aaa bbb ccc", "  ccc  "));
 
-        // Matches multiple words in sentence
+        // EP: query occurs multiple times (match).
         assertTrue(StringUtil.containsWordIgnoreCase("AAA bBb ccc  bbb", "bbB"));
     }
 
@@ -129,12 +145,14 @@ public class StringUtilTest {
      * Equivalence Partitions: null, valid throwable object
      */
 
+    // EP: throwable is non-null (valid).
     @Test
     public void getDetails_exceptionGiven() {
         assertTrue(StringUtil.getDetails(new FileNotFoundException("file not found"))
             .contains("java.io.FileNotFoundException: file not found"));
     }
 
+    // EP: throwable is null (invalid).
     @Test
     public void getDetails_nullGiven_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> StringUtil.getDetails(null));

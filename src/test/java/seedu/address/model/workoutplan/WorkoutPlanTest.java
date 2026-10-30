@@ -45,16 +45,19 @@ public class WorkoutPlanTest {
             new ExerciseDescription("Barbell back squat"));
     private static final ExercisesList EXERCISES = new ExercisesList(List.of(EXERCISE));
 
+    // One invalid input at a time: only the workout title is null.
     @Test
     public void constructor_nullTitle_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new WorkoutPlan(null, DESCRIPTION_VALID, DATE_VALID));
     }
 
+    // One invalid input at a time: only the workout description is null.
     @Test
     public void constructor_nullDescription_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new WorkoutPlan(TITLE_VALID, null, DATE_VALID));
     }
 
+    // One invalid input at a time: only the workout date is null.
     @Test
     public void constructor_nullDate_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, null));
@@ -63,11 +66,17 @@ public class WorkoutPlanTest {
     @Test
     public void constructor_validFields_storesValues() {
         WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID);
+        // Each valid input at least once: a valid title is stored.
         assertEquals(TITLE_VALID, plan.getTitle());
+        // Each valid input at least once: a valid description is stored.
         assertEquals(DESCRIPTION_VALID, plan.getWorkouts());
+        // Each valid input at least once: a valid date is stored.
         assertEquals(DATE_VALID, plan.getDate());
+        // BV: 0 <= count <= MAX_TAG_COUNT (valid).
         assertTrue(plan.getTags().isEmpty());
+        // EP: a newly created plan has pending status (valid).
         assertEquals(WorkoutPlanStatus.PENDING, plan.getStatus());
+        // BV: 0 <= count <= MAX_EXERCISES (valid).
         assertEquals(new ExercisesList(), plan.getExercisesList());
     }
 
@@ -76,10 +85,13 @@ public class WorkoutPlanTest {
         WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
                 Set.of(), WorkoutPlanStatus.COMPLETED);
 
+        // Each valid input at least once: completed status is stored.
         assertEquals(WorkoutPlanStatus.COMPLETED, plan.getStatus());
+        // One invalid input at a time: only the workout-plan status is null.
         assertThrows(NullPointerException.class, () -> new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
                 DATE_VALID, Set.of(), null));
 
+        // One invalid input at a time: only the exercise list is null.
         assertThrows(NullPointerException.class, () -> new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
                 DATE_VALID, Set.of(), WorkoutPlanStatus.PENDING, null));
     }
@@ -92,6 +104,7 @@ public class WorkoutPlanTest {
         assertSame(EXERCISES, plan.getExercisesList());
     }
 
+    // BV: 0 <= count <= MAX_TAG_COUNT (valid).
     @Test
     public void constructor_tagsAtLimit_success() {
         Set<WorkoutPlanTag> tags = createWorkoutPlanTags(Tag.MAX_TAG_COUNT);
@@ -101,6 +114,7 @@ public class WorkoutPlanTest {
         assertEquals(tags, plan.getTags());
     }
 
+    // BV: count > MAX_TAG_COUNT (invalid).
     @Test
     public void constructor_tooManyTags_throwsIllegalArgumentException() {
         Set<WorkoutPlanTag> tags = createWorkoutPlanTags(Tag.MAX_TAG_COUNT + 1);
@@ -109,6 +123,7 @@ public class WorkoutPlanTest {
             -> new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID, tags));
     }
 
+    // EP: status = COMPLETED; date changes preserve status (valid).
     @Test
     public void updateState_completedRemainsCompletedRegardlessOfDate() {
         WorkoutPlan completed = planForDate(LocalDate.of(2026, 10, 17), WorkoutPlanStatus.COMPLETED);
@@ -116,6 +131,7 @@ public class WorkoutPlanTest {
         assertSame(completed, completed.updateState(LocalDate.of(2026, 10, 18)));
     }
 
+    // BV: date < today (valid).
     @Test
     public void updateState_pastDateBecomesOverdueWithoutMutatingOriginal() {
         WorkoutPlan pending = planForDate(LocalDate.of(2026, 10, 17), WorkoutPlanStatus.PENDING);
@@ -136,7 +152,9 @@ public class WorkoutPlanTest {
         WorkoutPlan future = planForDate(LocalDate.of(2026, 10, 19), WorkoutPlanStatus.PENDING);
         LocalDate todayDate = LocalDate.of(2026, 10, 18);
 
+        // BV: date = today (valid).
         assertEquals(WorkoutPlanStatus.PENDING, today.updateState(todayDate).getStatus());
+        // BV: date > today (valid).
         assertSame(future, future.updateState(todayDate));
     }
 
@@ -161,8 +179,11 @@ public class WorkoutPlanTest {
         WorkoutPlan dueToday = planForDate(today, WorkoutPlanStatus.COMPLETED);
         WorkoutPlan future = planForDate(today.plusDays(1), WorkoutPlanStatus.COMPLETED);
 
+        // BV: date < today (valid).
         assertEquals(WorkoutPlanStatus.OVERDUE, past.unmark().getStatus());
+        // BV: date = today (valid).
         assertEquals(WorkoutPlanStatus.PENDING, dueToday.unmark().getStatus());
+        // BV: date > today (valid).
         assertEquals(WorkoutPlanStatus.PENDING, future.unmark().getStatus());
         assertEquals(WorkoutPlanStatus.COMPLETED, past.getStatus());
         assertEquals(EXERCISES, past.unmark().getExercisesList());
@@ -189,45 +210,45 @@ public class WorkoutPlanTest {
     public void equals() {
         WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID);
 
-        // same values -> returns true
+        // EP: Another plan with equal identifying fields (equivalent).
         WorkoutPlan copy = new WorkoutPlan(new WorkoutTitle(TITLE_TEXT_VALID),
                 new WorkoutDescription(DESCRIPTION_TEXT_VALID), new WorkoutDate(DATE_VALID.getValue()));
         assertTrue(plan.equals(copy));
 
-        // same object -> returns true
+        // EP: The same workout-plan object (equivalent).
         assertTrue(plan.equals(plan));
 
-        // null -> returns false
+        // EP: Null (non-equivalent).
         assertFalse(plan.equals(null));
 
-        // different type -> returns false
+        // EP: An object of another type (non-equivalent).
         assertFalse(plan.equals(TITLE_TEXT_VALID));
 
-        // different title -> returns false
+        // EP: Only the title differs (non-equivalent).
         assertFalse(plan.equals(new WorkoutPlan(new WorkoutTitle(TITLE_TEXT_OTHER),
                 DESCRIPTION_VALID, DATE_VALID)));
 
-        // different workouts -> returns false
+        // EP: Only the description differs (non-equivalent).
         assertFalse(plan.equals(new WorkoutPlan(TITLE_VALID,
                 new WorkoutDescription(DESCRIPTION_TEXT_OTHER), DATE_VALID)));
 
-        // different date -> returns false
+        // EP: Only the date differs (non-equivalent).
         assertFalse(plan.equals(new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
                 new WorkoutDate(new Date(DATE_TIME_OTHER)))));
 
-        // different tags -> returns false
+        // EP: Only the tags differ (non-equivalent).
         WorkoutPlan strength = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
                 Set.of(new WorkoutPlanTag("strength")));
         WorkoutPlan cardio = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
                 Set.of(new WorkoutPlanTag("cardio")));
         assertFalse(strength.equals(cardio));
 
-        // different status -> returns false
+        // EP: Only the status differs (non-equivalent).
         WorkoutPlan overdue = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
                 Set.of(), WorkoutPlanStatus.OVERDUE);
         assertFalse(plan.equals(overdue));
 
-        // different exercises -> still returns true because exercises are nested data
+        // EP: Nested exercises do not affect plan equality (equivalent).
         WorkoutPlan withExercises = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
                 Set.of(), WorkoutPlanStatus.PENDING, EXERCISES);
         assertTrue(plan.equals(withExercises));
@@ -250,20 +271,28 @@ public class WorkoutPlanTest {
         WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID);
         for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
             WorkoutPlan other = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID, Set.of(), status);
+            // Each valid input at least once: every status preserves the same plan identity.
             assertTrue(plan.isSamePlan(other));
+            // Each valid input at least once: every status is symmetric for plan identity.
             assertTrue(other.isSamePlan(plan));
         }
 
+        // EP: null (different identity).
         assertFalse(plan.isSamePlan(null));
+        // EP: only the title differs (different identity).
         assertFalse(plan.isSamePlan(new WorkoutPlan(new WorkoutTitle(TITLE_TEXT_OTHER),
                 DESCRIPTION_VALID, DATE_VALID)));
+        // EP: only the description differs (different identity).
         assertFalse(plan.isSamePlan(new WorkoutPlan(TITLE_VALID,
                 new WorkoutDescription(DESCRIPTION_TEXT_OTHER), DATE_VALID)));
+        // EP: only the date differs (different identity).
         assertFalse(plan.isSamePlan(new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID,
                 new WorkoutDate(new Date(DATE_TIME_OTHER)))));
         WorkoutPlan tagged = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
                 Set.of(new WorkoutPlanTag("strength")));
+        // EP: tags do not affect plan identity (same identity).
         assertTrue(plan.isSamePlan(tagged));
+        // EP: tag differences are symmetric (same identity).
         assertTrue(tagged.isSamePlan(plan));
     }
 

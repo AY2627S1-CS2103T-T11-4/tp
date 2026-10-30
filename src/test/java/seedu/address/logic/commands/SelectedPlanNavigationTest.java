@@ -38,6 +38,7 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 /** Tests selected-plan navigation and refresh across parent and exercise changes. */
 public class SelectedPlanNavigationTest {
 
+    // EP: commands target the newly selected plan (selected plan).
     @Test
     public void viewPlan_switchesPlanAndUsesDisplayedExerciseIndexes() throws CommandException {
         WorkoutPlan first = plan("First", List.of(SQUATS));
@@ -57,6 +58,7 @@ public class SelectedPlanNavigationTest {
         assertSame(first, model.getCurrentWorkoutPlan().orElseThrow());
     }
 
+    // EP: selected plan rebinds to its replacement (updated parent).
     @Test
     public void exerciseAndParentUpdates_refreshSelectedPlan() throws CommandException {
         WorkoutPlan first = plan("First", List.of(SQUATS));
@@ -97,6 +99,7 @@ public class SelectedPlanNavigationTest {
         assertTrue(selectionChanges.get() >= 6);
     }
 
+    // EP: stale plan selection is cleared.
     @Test
     public void navigationAndFiltering_clearStaleSelection() throws CommandException {
         WorkoutPlan first = plan("First", List.of(SQUATS));
@@ -129,6 +132,7 @@ public class SelectedPlanNavigationTest {
         assertTrue(model.getCurrentWorkoutPlan().isEmpty());
     }
 
+    // EP: only affected selection is cleared (removed parent).
     @Test
     public void parentDeletionAndReplacement_preserveOrClearCorrectPlan() throws CommandException {
         WorkoutPlan first = plan("First", List.of(SQUATS));
@@ -157,6 +161,7 @@ public class SelectedPlanNavigationTest {
         assertTrue(model.getCurrentWorkoutPlan().isEmpty());
     }
 
+    // EP: selection rebinds to the refreshed plan (refreshed parent).
     @Test
     public void dateRefresh_rebindsSelectedPlan() {
         WorkoutPlan overdue = new WorkoutPlan(new WorkoutTitle("Past plan"),
