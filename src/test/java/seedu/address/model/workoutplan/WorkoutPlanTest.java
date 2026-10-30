@@ -46,6 +46,30 @@ public class WorkoutPlanTest {
     private static final ExercisesList EXERCISES = new ExercisesList(List.of(EXERCISE));
 
     @Test
+    public void withExercises_newExercises_returnsCopyWithOtherFieldsUnchanged() {
+        WorkoutPlan original = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(new WorkoutPlanTag("strength")), WorkoutPlanStatus.COMPLETED);
+
+        WorkoutPlan copy = original.withExercises(EXERCISES);
+
+        assertNotSame(original, copy);
+        assertSame(EXERCISES, copy.getExercisesList());
+        assertEquals(new ExercisesList(), original.getExercisesList());
+        assertEquals(original.getTitle(), copy.getTitle());
+        assertEquals(original.getDescription(), copy.getDescription());
+        assertEquals(original.getDate(), copy.getDate());
+        assertEquals(original.getTags(), copy.getTags());
+        assertEquals(original.getStatus(), copy.getStatus());
+    }
+
+    @Test
+    public void withExercises_nullExercises_throwsNullPointerException() {
+        WorkoutPlan original = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID);
+
+        assertThrows(NullPointerException.class, () -> original.withExercises(null));
+    }
+
+    @Test
     public void constructor_nullTitle_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new WorkoutPlan(null, DESCRIPTION_VALID, DATE_VALID));
     }
@@ -64,7 +88,7 @@ public class WorkoutPlanTest {
     public void constructor_validFields_storesValues() {
         WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID);
         assertEquals(TITLE_VALID, plan.getTitle());
-        assertEquals(DESCRIPTION_VALID, plan.getWorkouts());
+        assertEquals(DESCRIPTION_VALID, plan.getDescription());
         assertEquals(DATE_VALID, plan.getDate());
         assertTrue(plan.getTags().isEmpty());
         assertEquals(WorkoutPlanStatus.PENDING, plan.getStatus());
@@ -207,7 +231,7 @@ public class WorkoutPlanTest {
         assertFalse(plan.equals(new WorkoutPlan(new WorkoutTitle(TITLE_TEXT_OTHER),
                 DESCRIPTION_VALID, DATE_VALID)));
 
-        // different workouts -> returns false
+        // different description -> returns false
         assertFalse(plan.equals(new WorkoutPlan(TITLE_VALID,
                 new WorkoutDescription(DESCRIPTION_TEXT_OTHER), DATE_VALID)));
 
@@ -227,10 +251,10 @@ public class WorkoutPlanTest {
                 Set.of(), WorkoutPlanStatus.OVERDUE);
         assertFalse(plan.equals(overdue));
 
-        // different exercises -> still returns true because exercises are nested data
+        // different exercises -> returns false because exercises are part of the plan's data
         WorkoutPlan withExercises = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
                 Set.of(), WorkoutPlanStatus.PENDING, EXERCISES);
-        assertTrue(plan.equals(withExercises));
+        assertFalse(plan.equals(withExercises));
     }
 
     @Test
@@ -240,9 +264,11 @@ public class WorkoutPlanTest {
                 new WorkoutDescription(DESCRIPTION_TEXT_VALID), new WorkoutDate(DATE_VALID.getValue()));
         assertEquals(first.hashCode(), second.hashCode());
 
-        WorkoutPlan differentStatusAndExercises = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
-                Set.of(), WorkoutPlanStatus.OVERDUE, EXERCISES);
-        assertEquals(first.hashCode(), differentStatusAndExercises.hashCode());
+        WorkoutPlan sameValuesWithExercises = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(), WorkoutPlanStatus.PENDING, EXERCISES);
+        WorkoutPlan sameValuesWithExercisesCopy = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
+                Set.of(), WorkoutPlanStatus.PENDING, new ExercisesList(List.of(EXERCISE)));
+        assertEquals(sameValuesWithExercises.hashCode(), sameValuesWithExercisesCopy.hashCode());
     }
 
     @Test
@@ -265,6 +291,10 @@ public class WorkoutPlanTest {
                 Set.of(new WorkoutPlanTag("strength")));
         assertTrue(plan.isSamePlan(tagged));
         assertTrue(tagged.isSamePlan(plan));
+
+        WorkoutPlan withExercises = plan.withExercises(EXERCISES);
+        assertTrue(plan.isSamePlan(withExercises));
+        assertTrue(withExercises.isSamePlan(plan));
     }
 
     @Test

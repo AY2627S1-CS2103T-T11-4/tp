@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox styleClass="workout-plan-card" xmlns="http://javafx.com/javafx/17"
+<VBox maxWidth="Infinity" styleClass="workout-plan-card" xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1">
   <HBox alignment="CENTER_LEFT" spacing="11" styleClass="workout-plan-summary">
     <padding>
@@ -17,7 +17,8 @@
            minHeight="42" prefHeight="42" maxHeight="42" styleClass="plan-id-badge" />
     <VBox alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS">
       <HBox alignment="CENTER_LEFT" spacing="8">
-        <Label fx:id="title" styleClass="workout-plan-title" HBox.hgrow="ALWAYS" />
+        <Label fx:id="title" maxWidth="Infinity" styleClass="workout-plan-title" textOverrun="ELLIPSIS"
+               HBox.hgrow="ALWAYS" />
         <Label fx:id="status" styleClass="workout-status-badge" />
       </HBox>
       <Label fx:id="date" styleClass="workout-plan-date" />

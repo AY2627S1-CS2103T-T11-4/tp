@@ -43,9 +43,9 @@ public class AddStudentCommandParser implements Parser<AddStudentCommand> {
         Student student;
 
         ParsingStage stage = ParsingStage.TOKENIZATION;
-        try {
-            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
+        try {
             stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
 
@@ -70,7 +70,8 @@ public class AddStudentCommandParser implements Parser<AddStudentCommand> {
         Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
         Email email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
         Address address = ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get());
-        Set<StudentTag> tagList = ParserUtil.parseStudentTags(argMultimap.getAllValues(PREFIX_TAG));
+        Set<StudentTag> tagList = ParserUtil.parseTagsIfPresent(
+                argMultimap.getAllValues(PREFIX_TAG), StudentTag::new).orElse(Set.of());
 
         return new Student(name, phone, email, address, tagList);
     }

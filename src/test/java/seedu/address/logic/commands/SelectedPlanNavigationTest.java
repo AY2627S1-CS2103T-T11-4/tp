@@ -83,7 +83,7 @@ public class SelectedPlanNavigationTest {
         EditPlanDescriptor planChanges = new EditPlanDescriptor();
         planChanges.setDescription(new WorkoutDescription("Updated notes"));
         new EditPlanCommand(Index.fromOneBased(1), planChanges).execute(model);
-        assertEquals("Updated notes", model.getCurrentWorkoutPlan().orElseThrow().getWorkouts().getValue());
+        assertEquals("Updated notes", model.getCurrentWorkoutPlan().orElseThrow().getDescription().getValue());
 
         EditStudentDescriptor studentChanges = new EditStudentDescriptor();
         studentChanges.setPhone(new Phone("91234567"));

@@ -11,30 +11,45 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddExerciseCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseDescription;
+import seedu.address.model.exercise.ExerciseName;
 
 /**
  * Parses an addExercise command.
  */
 public class AddExerciseCommandParser implements Parser<AddExerciseCommand> {
-    private static final Set<Prefix> PREFIXES = Set.of(PREFIX_DESCRIPTION);
+    private static final Set<Prefix> VALID_PREFIXES = Set.of(PREFIX_DESCRIPTION);
+    private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_DESCRIPTION);
+    private static final Set<Prefix> REQUIRED_PREFIXES = Set.of(PREFIX_DESCRIPTION);
     private static final Logger logger = LogsCenter.getLogger(AddExerciseCommandParser.class);
 
     @Override
     public AddExerciseCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentValidator validator = new ArgumentValidator(PREFIXES, PREFIXES, PREFIXES);
+        ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
+        Exercise exercise;
+
         ParsingStage stage = ParsingStage.TOKENIZATION;
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+
         try {
-            ArgumentMultimap arguments = ArgumentTokenizer.tokenize(args);
             stage = ParsingStage.ARGUMENT_VALIDATION;
-            validator.verifyArgs(arguments);
+            argValidator.verifyArgs(argMultimap);
+
             stage = ParsingStage.FIELD_PARSING;
-            Exercise exercise = new Exercise(ParserUtil.parseExerciseName(arguments.getPreamble()),
-                    ParserUtil.parseExerciseDescription(arguments.getValue(PREFIX_DESCRIPTION).orElseThrow()));
-            return new AddExerciseCommand(exercise);
-        } catch (ParseException e) {
+            exercise = parseValidFields(argMultimap);
+
+        } catch (ParseException pe) {
             logger.finer("Parsing of addExercise command failed at " + stage.getMessage());
-            throw e.withMessage(Messages.formatParserError(e.getMessage(), AddExerciseCommand.MESSAGE_USAGE));
+            throw pe.withMessage(Messages.formatParserError(pe.getMessage(), AddExerciseCommand.MESSAGE_USAGE));
         }
+
+        return new AddExerciseCommand(exercise);
+    }
+
+    private Exercise parseValidFields(ArgumentMultimap argMultimap) throws ParseException {
+        ExerciseName name = ParserUtil.parseExerciseName(argMultimap.getPreamble());
+        ExerciseDescription desc = ParserUtil.parseExerciseDescription(argMultimap.getValue(PREFIX_DESCRIPTION).get());
+        return new Exercise(name, desc);
     }
 }

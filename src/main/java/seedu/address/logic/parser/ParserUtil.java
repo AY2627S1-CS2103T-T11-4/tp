@@ -7,11 +7,13 @@ import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -21,9 +23,7 @@ import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
-import seedu.address.model.tag.StudentTag;
 import seedu.address.model.tag.Tag;
-import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutTitle;
@@ -164,7 +164,7 @@ public class ParserUtil {
      *
      * @throws ParseException if the given {@code tag} is invalid.
      */
-    protected static <T extends Tag> T parseTag(String tag, Function<String, T> tagConstructor) throws ParseException {
+    private static <T extends Tag> T parseTag(String tag, Function<String, T> tagConstructor) throws ParseException {
         requireNonNull(tag);
         String trimmedTag = tag.trim();
         if (!Tag.isValidTagName(trimmedTag)) {
@@ -176,7 +176,7 @@ public class ParserUtil {
     /**
      * Parses {@code Collection<String> tags} into {@code Set<Tag>} based on {@code tagConstructor}.
      */
-    protected static <T extends Tag> Set<T> parseTags(
+    private static <T extends Tag> Set<T> parseTags(
             Collection<String> tags,
             Function<String, T> tagConstructor) throws ParseException {
         requireNonNull(tags);
@@ -191,17 +191,19 @@ public class ParserUtil {
     }
 
     /**
-     * Parses {@code Collection<String> tags} into {@code Set<WorkoutPlanTag>}.
+     * Parses tags if at least one tag value is supplied.
+     *
+     * @return an empty {@code Optional} when no tag prefix is supplied, or the parsed tags otherwise.
      */
-    public static Set<WorkoutPlanTag> parseWorkoutPlanTags(Collection<String> tags) throws ParseException {
-        return parseTags(tags, WorkoutPlanTag::new);
-    }
+    public static <T extends Tag> Optional<Set<T>> parseTagsIfPresent(
+            Collection<String> tags,
+            Function<String, T> tagConstructor) throws ParseException {
+        requireNonNull(tags);
 
-    /**
-     * Parses {@code Collection<String> tags} into {@code Set<StudentTag>}.
-     */
-    public static Set<StudentTag> parseStudentTags(Collection<String> tags) throws ParseException {
-        return parseTags(tags, StudentTag::new);
+        if (tags.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(parseTags(tags, tagConstructor));
     }
 
     /**
@@ -211,10 +213,11 @@ public class ParserUtil {
      */
     public static WorkoutTitle parseTitle(String title) throws ParseException {
         requireNonNull(title);
-        if (!WorkoutTitle.isValidWorkoutTitle(title)) {
+        String trimmedTitle = title.trim();
+        if (!WorkoutTitle.isValidWorkoutTitle(trimmedTitle)) {
             throw new FieldValueInvalidException(WorkoutTitle.MESSAGE_CONSTRAINTS);
         }
-        return new WorkoutTitle(title);
+        return new WorkoutTitle(trimmedTitle);
     }
 
     /**
@@ -222,12 +225,13 @@ public class ParserUtil {
      *
      * @throws ParseException if the given {@code description} is invalid
      */
-    public static WorkoutDescription parseDescription(String desc) throws ParseException {
-        requireNonNull(desc);
-        if (!WorkoutDescription.isValidWorkoutDescription(desc)) {
+    public static WorkoutDescription parseDescription(String description) throws ParseException {
+        requireNonNull(description);
+        String trimmedDescription = description.trim();
+        if (!WorkoutDescription.isValidWorkoutDescription(trimmedDescription)) {
             throw new FieldValueInvalidException(WorkoutDescription.MESSAGE_CONSTRAINTS);
         }
-        return new WorkoutDescription(desc);
+        return new WorkoutDescription(trimmedDescription);
     }
 
     /**
@@ -237,12 +241,13 @@ public class ParserUtil {
      */
     public static WorkoutDate parseDate(String date) throws ParseException {
         requireNonNull(date);
-        if (!WorkoutDate.isValidDateString(date)) {
+        String trimmedDate = date.trim();
+        if (!WorkoutDate.isValidDateString(trimmedDate)) {
             throw new FieldValueInvalidException(WorkoutDate.MESSAGE_CONSTRAINTS);
         }
         LocalDate dateObject;
         try {
-            dateObject = LocalDate.parse(date, WorkoutDate.INPUT_DATE_FORMAT);
+            dateObject = LocalDate.parse(trimmedDate, WorkoutDate.INPUT_DATE_FORMAT);
         } catch (DateTimeParseException e) {
             throw new FieldValueInvalidException(WorkoutDate.MESSAGE_CONSTRAINTS, e);
         }
@@ -258,5 +263,17 @@ public class ParserUtil {
         if (!emptyField.isEmpty()) {
             throw new FieldValueInvalidException(errorMessage);
         }
+    }
+
+    /**
+     * Validates that the value associated with a prefix is empty.
+     *
+     * @throws ParseException if the prefix has a non-empty value.
+     */
+    public static void validateEmptyPrefixValue(ArgumentMultimap argMultimap, Prefix prefix) throws ParseException {
+        requireNonNull(argMultimap);
+        requireNonNull(prefix);
+        validateEmptyField(argMultimap.getValue(prefix).get(),
+                Messages.getErrorMessageForExtraValues(prefix));
     }
 }

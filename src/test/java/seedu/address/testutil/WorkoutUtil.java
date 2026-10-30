@@ -31,7 +31,7 @@ public class WorkoutUtil {
     public static String getWorkoutDetails(WorkoutPlan workout) {
         StringBuilder sb = new StringBuilder();
         sb.append(workout.getTitle());
-        sb.append(" " + PREFIX_PLAN + " " + workout.getWorkouts());
+        sb.append(" " + PREFIX_PLAN + " " + workout.getDescription());
         sb.append(" " + PREFIX_DATE + " " + workout.getDate().toInputString());
         return sb.toString();
     }
