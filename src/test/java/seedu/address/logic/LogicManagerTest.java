@@ -26,6 +26,7 @@ import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.HomeCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.metadata.CommandMetadataCatalog;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -86,6 +87,11 @@ public class LogicManagerTest {
     }
 
     // EP: nested exercise persists (valid).
+    @Test
+    public void getCommandCategories_returnsCatalogCategories() {
+        assertSame(CommandMetadataCatalog.allCommandCategories(), logic.getCommandCategories());
+    }
+
     @Test
     public void execute_addExercise_savesSelectedPlanExercise() throws Exception {
         Student student = new StudentBuilder().build();

@@ -1,5 +1,6 @@
 package seedu.address.logic;
 
+import java.util.List;
 import java.util.Optional;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -7,6 +8,7 @@ import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.metadata.CommandCategory;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
@@ -35,6 +37,9 @@ public interface Logic {
 
     /** Returns the selected workout plan as a read-only observable property. */
     ReadOnlyObjectProperty<WorkoutPlan> currentWorkoutPlanProperty();
+
+    /** Returns the command categories displayed by the Help window. */
+    List<CommandCategory> getCommandCategories();
 
     /**
      * Returns the user prefs' GUI settings.
