@@ -38,6 +38,29 @@ public class StudentTest {
     private static final WorkoutPlan WORKOUT_PLAN = new WorkoutPlan(new WorkoutTitle("Strength"),
             new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
 
+    // EP: non-null replacement workout-plan list (valid).
+    @Test
+    public void withWorkoutPlans_newPlans_returnsCopyWithOtherFieldsUnchanged() {
+        WorkoutPlansList newPlans = new WorkoutPlansList(List.of(WORKOUT_PLAN));
+
+        Student copy = ALICE.withWorkoutPlans(newPlans);
+
+        assertNotSame(ALICE, copy);
+        assertSame(newPlans, copy.getWorkoutPlansList());
+        assertEquals(List.of(), ALICE.getWorkoutPlansList().getWorkoutList());
+        assertEquals(ALICE.getName(), copy.getName());
+        assertEquals(ALICE.getPhone(), copy.getPhone());
+        assertEquals(ALICE.getEmail(), copy.getEmail());
+        assertEquals(ALICE.getAddress(), copy.getAddress());
+        assertEquals(ALICE.getTags(), copy.getTags());
+    }
+
+    // One invalid input at a time: only the workout-plan list is null.
+    @Test
+    public void withWorkoutPlans_nullPlans_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ALICE.withWorkoutPlans(null));
+    }
+
     @Test
     public void updateWorkoutsState_returnsNewStudentWhenAPlanChanges() {
         Student original = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),

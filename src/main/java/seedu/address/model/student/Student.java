@@ -84,6 +84,11 @@ public class Student {
         return workoutPlansList;
     }
 
+    /** Returns a new student with the given workout plans and all other fields unchanged. */
+    public Student withWorkoutPlans(WorkoutPlansList workoutPlansList) {
+        return new Student(name, phone, email, address, tags, workoutPlansList);
+    }
+
     /** Returns a student whose workout plans have refreshed statuses. */
     public Student updateWorkoutsState() {
         WorkoutPlansList updatedPlans = workoutPlansList.updateState();

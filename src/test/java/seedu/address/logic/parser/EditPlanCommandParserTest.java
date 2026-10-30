@@ -245,4 +245,11 @@ public class EditPlanCommandParserTest {
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 
+    // EP: clear-tags prefix has an unexpected value (invalid).
+    @Test
+    public void parse_clearTagsWithValue_failure() {
+        assertParseFailure(parser, "1" + CLEAR_TAGS + " unexpected",
+                this.formatParserError(Messages.getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS)));
+    }
+
 }

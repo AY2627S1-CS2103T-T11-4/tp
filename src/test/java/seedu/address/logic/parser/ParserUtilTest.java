@@ -287,63 +287,61 @@ public class ParserUtilTest {
 
     // EP: tag input is null (invalid).
     @Test
-    public void parseTag_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> ParserUtil.parseTag(null, TagStub::new));
+    public void parseTagsIfPresent_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseTagsIfPresent(null, TagStub::new));
     }
 
     // EP: tag violates its format constraints (invalid).
     @Test
-    public void parseTag_invalidValue_throwsParseException() {
-        assertThrows(ParseException.class, () -> ParserUtil.parseTag(INVALID_TAG, TagStub::new));
+    public void parseTagsIfPresent_invalidValue_throwsParseException() {
+        assertThrows(ParseException.class, () ->
+                ParserUtil.parseTagsIfPresent(List.of(INVALID_TAG), TagStub::new));
     }
 
     // BV: length < 1 (invalid).
     @Test
-    public void parseTag_emptyValue_throwsParseException() {
+    public void parseTagsIfPresent_emptyValue_throwsParseException() {
         assertThrows(ParseException.class, Tag.MESSAGE_CONSTRAINTS, ()
-                -> ParserUtil.parseTag("", TagStub::new));
+                -> ParserUtil.parseTagsIfPresent(List.of(""), TagStub::new));
     }
 
     // Each valid input at least once: an unpadded valid tag is parsed.
     @Test
-    public void parseTag_validValueWithoutWhitespace_returnsTag() throws Exception {
-        TagStub expectedTag = new TagStub(VALID_TAG_1);
-        assertEquals(expectedTag, ParserUtil.parseTag(VALID_TAG_1, TagStub::new));
+    public void parseTagsIfPresent_validValueWithoutWhitespace_returnsTagSet() throws Exception {
+        Set<TagStub> expectedTagSet = Set.of(new TagStub(VALID_TAG_1));
+        assertEquals(expectedTagSet,
+                ParserUtil.parseTagsIfPresent(List.of(VALID_TAG_1), TagStub::new).orElseThrow());
     }
 
     // Each valid input at least once: surrounding tag whitespace is trimmed.
     @Test
-    public void parseTag_validValueWithWhitespace_returnsTrimmedTag() throws Exception {
+    public void parseTagsIfPresent_validValueWithWhitespace_returnsTrimmedTag() throws Exception {
         String tagWithWhitespace = WHITESPACE + VALID_TAG_1 + WHITESPACE;
-        TagStub expectedTag = new TagStub(VALID_TAG_1);
-        assertEquals(expectedTag, ParserUtil.parseTag(tagWithWhitespace, TagStub::new));
+        Set<TagStub> expectedTagSet = Set.of(new TagStub(VALID_TAG_1));
+        assertEquals(expectedTagSet,
+                ParserUtil.parseTagsIfPresent(List.of(tagWithWhitespace), TagStub::new).orElseThrow());
     }
 
-    // EP: tag collection is null (invalid).
+    // EP: empty tag collection (valid).
     @Test
-    public void parseTags_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> ParserUtil.parseTags(null, TagStub::new));
-    }
-
-    // One invalid input at a time: the collection contains an invalid tag.
-    @Test
-    public void parseTags_collectionWithInvalidTags_throwsParseException() {
-        assertThrows(ParseException.class, () -> ParserUtil.parseTags(List.of(VALID_TAG_1, INVALID_TAG), TagStub::new));
-    }
-
-    // BV: 0 <= count <= MAX_TAG_COUNT (valid).
-    @Test
-    public void parseTags_emptyCollection_returnsEmptySet() throws Exception {
-        assertTrue(ParserUtil.parseTags(List.of(), TagStub::new).isEmpty());
+    public void parseTagsIfPresent_emptyCollection_returnsEmptyOptional() throws Exception {
+        assertTrue(ParserUtil.parseTagsIfPresent(List.of(), TagStub::new).isEmpty());
     }
 
     // Each valid input at least once: all valid tags are parsed into the set.
     @Test
-    public void parseTags_collectionWithValidTags_returnsTagSet() throws Exception {
-        Set<TagStub> actualTagSet = ParserUtil.parseTags(List.of(VALID_TAG_1, VALID_TAG_2), TagStub::new);
+    public void parseTagsIfPresent_collectionWithValidTags_returnsOptionalTagSet() throws Exception {
         Set<TagStub> expectedTagSet = Set.of(new TagStub(VALID_TAG_1), new TagStub(VALID_TAG_2));
 
-        assertEquals(expectedTagSet, actualTagSet);
+        assertEquals(expectedTagSet,
+                ParserUtil.parseTagsIfPresent(List.of(VALID_TAG_1, VALID_TAG_2), TagStub::new).orElseThrow());
+    }
+
+    // One invalid input at a time: the collection contains an invalid tag.
+    @Test
+    public void parseTagsIfPresent_collectionWithInvalidTags_throwsParseException() {
+        assertThrows(ParseException.class, () ->
+                ParserUtil.parseTagsIfPresent(List.of(VALID_TAG_1, INVALID_TAG), TagStub::new));
     }
 
     // BV: length = 0 (valid).
@@ -360,21 +358,38 @@ public class ParserUtilTest {
                 ParserUtil.validateEmptyField("value", errorMessage));
     }
 
-    // BV: 0 <= count <= MAX_TAG_COUNT (valid).
+    // BV: length = 0 (valid).
     @Test
-    public void parseTags_tagsAtLimit_returnsTagSet() throws Exception {
+    public void validateEmptyPrefixValue_emptyValue_success() throws Exception {
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(" " + PREFIX_CLEAR_TAGS);
+        ParserUtil.validateEmptyPrefixValue(argMultimap, PREFIX_CLEAR_TAGS);
+    }
+
+    // BV: length > 0 (invalid).
+    @Test
+    public void validateEmptyPrefixValue_nonEmptyValue_throwsFieldValueInvalidException() {
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(" " + PREFIX_CLEAR_TAGS + " value");
+        String errorMessage = Messages.getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS);
+
+        assertThrows(FieldValueInvalidException.class, errorMessage, () ->
+                ParserUtil.validateEmptyPrefixValue(argMultimap, PREFIX_CLEAR_TAGS));
+    }
+
+    // BV: count = MAX_TAG_COUNT (valid).
+    @Test
+    public void parseTagsIfPresent_tagsAtLimit_returnsTagSet() throws Exception {
         List<String> tags = createTagNames(Tag.MAX_TAG_COUNT);
 
-        assertEquals(Tag.MAX_TAG_COUNT, ParserUtil.parseTags(tags, TagStub::new).size());
+        assertEquals(Tag.MAX_TAG_COUNT, ParserUtil.parseTagsIfPresent(tags, TagStub::new).orElseThrow().size());
     }
 
     // BV: count > MAX_TAG_COUNT (invalid).
     @Test
-    public void parseTags_tooManyTags_throwsParseException() {
+    public void parseTagsIfPresent_tooManyTags_throwsParseException() {
         List<String> tags = createTagNames(Tag.MAX_TAG_COUNT + 1);
 
         assertThrows(ParseException.class, Tag.MESSAGE_TAG_LIMIT, ()
-            -> ParserUtil.parseTags(tags, TagStub::new));
+            -> ParserUtil.parseTagsIfPresent(tags, TagStub::new));
     }
 
     // EP: workout title violates its constraints (invalid).
@@ -390,7 +405,13 @@ public class ParserUtilTest {
         assertEquals(expectedTitle, ParserUtil.parseTitle(VALID_TITLE));
     }
 
-    // EP: workout description violates its constraints (invalid).
+    // Each valid input at least once: surrounding title whitespace is trimmed.
+    @Test
+    public void parseTitle_validValueWithWhitespace_returnsTrimmedTitle() throws Exception {
+        WorkoutTitle expectedTitle = new WorkoutTitle(VALID_TITLE);
+        assertEquals(expectedTitle, ParserUtil.parseTitle(WHITESPACE + VALID_TITLE + WHITESPACE));
+    }
+
     @Test
     public void parseDescription_invalidValue_throwsParseException() {
         assertThrows(ParseException.class, () -> ParserUtil.parseDescription(INVALID_DESC));
@@ -405,7 +426,13 @@ public class ParserUtilTest {
         assertEquals(expectedDesc, ParserUtil.parseDescription(VALID_DESC));
     }
 
-    // EP: date contains non-numeric characters (invalid).
+    // Each valid input at least once: surrounding description whitespace is trimmed.
+    @Test
+    public void parseDescription_validValueWithWhitespace_returnsTrimmedDescription() throws Exception {
+        WorkoutDescription expectedDesc = new WorkoutDescription(VALID_DESC);
+        assertEquals(expectedDesc, ParserUtil.parseDescription(WHITESPACE + VALID_DESC + WHITESPACE));
+    }
+
     @Test
     public void parseDate_invalidValueChar_throwsParseException() {
         assertThrows(ParseException.class, () -> ParserUtil.parseDate(INVALID_DATE_CHARS));
@@ -417,12 +444,21 @@ public class ParserUtilTest {
         assertThrows(ParseException.class, () -> ParserUtil.parseDate(INVALID_DATE_LENGTH));
     }
 
-    // EP: numeric date is not a calendar date (invalid).
+    // EP: whitespace-only date input (invalid).
+    @Test
+    public void parseDate_whitespaceOnly_throwsFieldValueInvalidException() {
+        assertThrows(FieldValueInvalidException.class, WorkoutDate.MESSAGE_CONSTRAINTS, () ->
+                ParserUtil.parseDate(WHITESPACE));
+    }
+
     @Test
     public void parseDate_invalidCalendarValue_throwsFieldValueInvalidException() {
         assertThrows(FieldValueInvalidException.class,
                 WorkoutDate.MESSAGE_CONSTRAINTS, ()
                     -> ParserUtil.parseDate(INVALID_DATE_CALENDAR_VALUE));
+        assertThrows(FieldValueInvalidException.class,
+                WorkoutDate.MESSAGE_CONSTRAINTS, ()
+                    -> ParserUtil.parseDate(WHITESPACE + INVALID_DATE_CALENDAR_VALUE + WHITESPACE));
     }
 
     // BV: month < 1 or month > 12 (invalid).
@@ -461,6 +497,13 @@ public class ParserUtilTest {
     public void parseDate_validValue_returnsWorkoutDate() throws Exception {
         WorkoutDate expectedDate = new WorkoutDate(VALID_DATE_OBJECT);
         assertEquals(expectedDate, ParserUtil.parseDate(VALID_DATE));
+    }
+
+    // Each valid input at least once: surrounding date whitespace is trimmed.
+    @Test
+    public void parseDate_validValueWithWhitespace_returnsWorkoutDate() throws Exception {
+        WorkoutDate expectedDate = new WorkoutDate(VALID_DATE_OBJECT);
+        assertEquals(expectedDate, ParserUtil.parseDate(WHITESPACE + VALID_DATE + WHITESPACE));
     }
 
     private static List<String> createTagNames(int count) {

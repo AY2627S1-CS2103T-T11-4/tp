@@ -241,7 +241,7 @@ public class ModelManagerTest {
         WorkoutPlan afterSetPlan = afterSet.getWorkoutPlansList().getWorkoutPlan(0);
         assertEquals(List.of(SQUATS, DEADLIFTS, LUNGES), afterSetPlan.getExercisesList().getExerciseList());
         assertEquals(first.getTitle(), afterSetPlan.getTitle());
-        assertEquals(first.getWorkouts(), afterSetPlan.getWorkouts());
+        assertEquals(first.getDescription(), afterSetPlan.getDescription());
         assertEquals(first.getDate(), afterSetPlan.getDate());
         assertEquals(first.getTags(), afterSetPlan.getTags());
         assertEquals(first.getStatus(), afterSetPlan.getStatus());
@@ -259,8 +259,9 @@ public class ModelManagerTest {
         WorkoutPlan storedPlan = planWithExercises("First", LocalDate.now(), WorkoutPlanStatus.PENDING, SQUATS);
         Student storedStudent = withPlans(ALICE, storedPlan);
         Student equalStudent = withPlans(ALICE, storedPlan);
-        WorkoutPlan equalPlan = new WorkoutPlan(storedPlan.getTitle(), storedPlan.getWorkouts(), storedPlan.getDate(),
-                storedPlan.getTags(), WorkoutPlanStatus.PENDING, new ExercisesList(List.of(PUSH_UPS)));
+        WorkoutPlan equalPlan = new WorkoutPlan(storedPlan.getTitle(), storedPlan.getDescription(),
+                storedPlan.getDate(), storedPlan.getTags(), WorkoutPlanStatus.PENDING,
+                new ExercisesList(List.of(PUSH_UPS)));
         modelManager.addStudent(storedStudent);
 
         modelManager.addExerciseForWorkoutPlan(equalStudent, equalPlan, LUNGES);

@@ -27,10 +27,11 @@ public class FindCommandParser implements Parser<FindCommand> {
 
         ArgumentValidator argValidator = new ArgumentValidator();
         NameContainsKeywordsPredicate nckp;
-        ParsingStage stage = ParsingStage.TOKENIZATION;
-        try {
-            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
+        ParsingStage stage = ParsingStage.TOKENIZATION;
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+
+        try {
             stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
 

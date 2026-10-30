@@ -55,9 +55,9 @@ public class SingleIndexCommandParser<C extends SingleIndexCommand> implements P
         Index index;
 
         ParsingStage stage = ParsingStage.TOKENIZATION;
-        try {
-            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
+        try {
             stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
 

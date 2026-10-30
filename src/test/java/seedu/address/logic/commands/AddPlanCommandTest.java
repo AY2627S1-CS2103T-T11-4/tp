@@ -56,7 +56,7 @@ public class AddPlanCommandTest {
 
         Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(),
-                new WorkoutPlansList(List.of(new WorkoutPlan(PLAN.getTitle(), PLAN.getWorkouts(), PLAN.getDate(),
+                new WorkoutPlansList(List.of(new WorkoutPlan(PLAN.getTitle(), PLAN.getDescription(), PLAN.getDate(),
                         PLAN.getTags(), WorkoutPlanStatus.OVERDUE))));
         Model expectedModel = new ModelManager(model.getBrotherGym(), new UserPrefs());
         expectedModel.setStudent(currentStudent, updatedStudent);
@@ -90,7 +90,7 @@ public class AddPlanCommandTest {
                 .getWorkoutPlansList().getWorkoutList().get(0);
         assertEquals(WorkoutPlanStatus.OVERDUE, storedPlan.getStatus());
         assertEquals(taggedPlan.getTitle(), storedPlan.getTitle());
-        assertEquals(taggedPlan.getWorkouts(), storedPlan.getWorkouts());
+        assertEquals(taggedPlan.getDescription(), storedPlan.getDescription());
         assertEquals(taggedPlan.getDate(), storedPlan.getDate());
         assertEquals(Set.of(new WorkoutPlanTag("strength"), new WorkoutPlanTag("upperbody")),
                 storedPlan.getTags());

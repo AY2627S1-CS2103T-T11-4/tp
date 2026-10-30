@@ -165,7 +165,42 @@ public class ArgumentValidatorTest {
         verifySuccessfully(validator, " --repeatable value");
     }
 
-    // BV: length >= 0 (valid).
+    // BV: length = 0 (valid).
+    @Test
+    public void verifyNoArgs_emptyInput_success() throws ParseException {
+        ArgumentValidator.verifyNoArgs(tokenize(""));
+    }
+
+    // EP: whitespace-only input (valid).
+    @Test
+    public void verifyNoArgs_whitespaceInput_success() throws ParseException {
+        ArgumentValidator.verifyNoArgs(tokenize(" \t\n"));
+    }
+
+    // EP: non-prefix preamble text (invalid).
+    @Test
+    public void verifyNoArgs_preamble_failure() {
+        ParseException exception = assertThrows(
+                ParseException.class, () -> ArgumentValidator.verifyNoArgs(tokenize("unexpected")));
+
+        assertEquals(Messages.MESSAGE_UNEXPECTED_PARAMETERS, exception.getMessage());
+    }
+
+    // EP: unexpected prefix argument (invalid).
+    @Test
+    public void verifyNoArgs_prefix_failure() {
+        ParseException exception = assertThrows(
+                ParseException.class, () -> ArgumentValidator.verifyNoArgs(tokenize(" --unexpected value")));
+
+        assertEquals(Messages.MESSAGE_UNEXPECTED_PARAMETERS, exception.getMessage());
+    }
+
+    // EP: tokenized arguments are null (invalid).
+    @Test
+    public void verifyNoArgs_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ArgumentValidator.verifyNoArgs(null));
+    }
+
     @Test
     public void verifyArgs_emptyFieldValues_success() {
         verifySuccessfully(

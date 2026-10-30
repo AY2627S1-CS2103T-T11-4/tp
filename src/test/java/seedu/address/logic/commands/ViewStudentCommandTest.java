@@ -77,7 +77,7 @@ public class ViewStudentCommandTest {
                 + OVERDUE_HEADING + "1. " + plan + "\n"
                 + PENDING_HEADING + EMPTY_STATUS_PLANS;
         Model expectedModel = new ModelManager(modelWithPlan.getBrotherGym(), new UserPrefs());
-        WorkoutPlan overduePlan = new WorkoutPlan(plan.getTitle(), plan.getWorkouts(), plan.getDate(),
+        WorkoutPlan overduePlan = new WorkoutPlan(plan.getTitle(), plan.getDescription(), plan.getDate(),
                 plan.getTags(), WorkoutPlanStatus.OVERDUE);
         Student refreshedStudent = withPlans(baseStudent, List.of(overduePlan));
         expectedModel.setStudent(studentWithPlan, refreshedStudent);

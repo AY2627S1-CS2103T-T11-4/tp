@@ -1,7 +1,6 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.Messages.getErrorMessageForExtraValues;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
@@ -9,8 +8,6 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
-import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -42,15 +39,13 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
     public EditStudentCommand parse(String args) throws ParseException {
         requireNonNull(args);
 
-        ArgumentValidator argValidator = new ArgumentValidator(true, VALID_PREFIXES, NO_REPEAT_PREFIXES,
-                REQUIRED_PREFIXES);
+        ArgumentValidator argValidator = new ArgumentValidator(VALID_PREFIXES, NO_REPEAT_PREFIXES, REQUIRED_PREFIXES);
         Index index;
         EditStudentCommand.EditStudentDescriptor editStudentDescriptor;
 
         ParsingStage stage = ParsingStage.TOKENIZATION;
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
         try {
-            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
-
             stage = ParsingStage.ARGUMENT_VALIDATION;
             argValidator.verifyArgs(argMultimap);
 
@@ -63,9 +58,7 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
             throw pe.withMessage(Messages.formatParserError(pe.getMessage(), EditStudentCommand.MESSAGE_USAGE));
         }
 
-        if (!editStudentDescriptor.isAnyFieldEdited()) {
-            throw new NoFieldsToEditException(EditStudentCommand.MESSAGE_NOT_EDITED);
-        }
+        validateAtLeastOneFieldEdited(editStudentDescriptor);
 
         return new EditStudentCommand(index, editStudentDescriptor);
     }
@@ -92,35 +85,21 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
         if (argMultimap.getValue(PREFIX_ADDRESS).isPresent()) {
             editStudentDescriptor.setAddress(ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get()));
         }
-        parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editStudentDescriptor::setTags);
+        ParserUtil.parseTagsIfPresent(argMultimap.getAllValues(PREFIX_TAG), StudentTag::new)
+                .ifPresent(editStudentDescriptor::setTags);
         if (argMultimap.getValue(PREFIX_CLEAR_TAGS).isPresent()) {
-            verifyClearTag(argMultimap);
+            ParserUtil.validateEmptyPrefixValue(argMultimap, PREFIX_CLEAR_TAGS);
             editStudentDescriptor.setTags(Set.of());
         }
 
         return editStudentDescriptor;
     }
 
-    /**
-     * Parses {@code Collection<String> tags} into a {@code Set<StudentTag>} if {@code tags} is non-empty.
-     * If {@code tags} contains only one element which is an empty string, it will be parsed into a
-     * {@code Set<StudentTag>} containing zero tags.
-     */
-    private Optional<Set<StudentTag>> parseTagsForEdit(Collection<String> tags) throws ParseException {
-        assert tags != null;
-
-        if (tags.isEmpty()) {
-            return Optional.empty();
+    private void validateAtLeastOneFieldEdited(
+            EditStudentCommand.EditStudentDescriptor editStudentDescriptor) throws NoFieldsToEditException {
+        if (!editStudentDescriptor.isAnyFieldEdited()) {
+            throw new NoFieldsToEditException(EditStudentCommand.MESSAGE_NOT_EDITED);
         }
-        return Optional.of(ParserUtil.parseStudentTags(tags));
-    }
-
-    /**
-     * Ensures that {@code emptyString} is empty, then produces an empty set of {@code StudentTag}s.
-     */
-    public static void verifyClearTag(ArgumentMultimap argMultiMap) throws ParseException {
-        ParserUtil.validateEmptyField(
-                argMultiMap.getValue(PREFIX_CLEAR_TAGS).get(), getErrorMessageForExtraValues(PREFIX_CLEAR_TAGS));
     }
 
 }

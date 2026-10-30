@@ -183,7 +183,7 @@ public class JsonAdaptedWorkoutPlanTest {
         WorkoutPlan plan = adapted.toModelType();
 
         assertEquals(new WorkoutTitle("Strength"), plan.getTitle());
-        assertEquals(new WorkoutDescription("Squats"), plan.getWorkouts());
+        assertEquals(new WorkoutDescription("Squats"), plan.getDescription());
         assertEquals("Strength", adapted.getTitle());
         assertEquals("Squats", adapted.getWorkoutDescription());
         assertEquals("2023-11-15", adapted.getDate());

@@ -34,7 +34,7 @@ import seedu.address.logic.commands.MarkPlanCommand;
 import seedu.address.logic.commands.UnmarkPlanCommand;
 import seedu.address.logic.commands.ViewPlanCommand;
 import seedu.address.logic.commands.ViewStudentCommand;
-import seedu.address.logic.parser.exceptions.FieldValueInvalidException;
+import seedu.address.logic.parser.exceptions.InputFormatInvalidException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.exercise.Exercise;
 import seedu.address.model.exercise.ExerciseDescription;
@@ -225,7 +225,7 @@ public class BrotherGymParserTest {
 
     private void assertUnexpectedArgumentsRejected(String commandWord, String usage) {
         for (String arguments : List.of(" 1", " arbitrary text", " n/Alice", " \t 1 \t ")) {
-            assertThrows(FieldValueInvalidException.class,
+            assertThrows(InputFormatInvalidException.class,
                     Messages.formatParserError(MESSAGE_UNEXPECTED_PARAMETERS, usage), ()
                     -> parser.parseCommand(commandWord + arguments));
         }

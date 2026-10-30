@@ -29,6 +29,26 @@ public class ExercisesListTest {
     private static final Exercise REPLACEMENT = new Exercise(new ExerciseName("Deadlift"),
             new ExerciseDescription("Conventional deadlift"));
 
+    // EP: non-null replacement exercise list (valid).
+    @Test
+    public void withExercises_newExercises_returnsNewListWithoutChangingOriginal() {
+        ExercisesList original = new ExercisesList(List.of(FIRST));
+
+        ExercisesList copy = original.withExercises(List.of(SECOND));
+
+        assertNotSame(original, copy);
+        assertEquals(List.of(FIRST), original.getExerciseList());
+        assertEquals(List.of(SECOND), copy.getExerciseList());
+    }
+
+    // One invalid input at a time: only the replacement exercise list is null.
+    @Test
+    public void withExercises_nullExercises_throwsNullPointerException() {
+        ExercisesList original = new ExercisesList(List.of(FIRST));
+
+        assertThrows(NullPointerException.class, () -> original.withExercises(null));
+    }
+
     @Test
     public void constructors_rejectNullsAndCopyInput() {
         // BV: 0 <= count <= MAX_EXERCISES (valid).
