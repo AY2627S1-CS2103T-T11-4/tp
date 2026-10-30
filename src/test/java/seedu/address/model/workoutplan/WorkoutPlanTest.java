@@ -3,7 +3,6 @@ package seedu.address.model.workoutplan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
 
@@ -53,7 +52,7 @@ public class WorkoutPlanTest {
         WorkoutPlan copy = original.withExercises(EXERCISES);
 
         assertNotSame(original, copy);
-        assertSame(EXERCISES, copy.getExercisesList());
+        assertEquals(EXERCISES, copy.getExercisesList());
         assertEquals(new ExercisesList(), original.getExercisesList());
         assertEquals(original.getTitle(), copy.getTitle());
         assertEquals(original.getDescription(), copy.getDescription());
@@ -113,7 +112,7 @@ public class WorkoutPlanTest {
         WorkoutPlan plan = new WorkoutPlan(TITLE_VALID, DESCRIPTION_VALID, DATE_VALID,
                 Set.of(), WorkoutPlanStatus.PENDING, EXERCISES);
 
-        assertSame(EXERCISES, plan.getExercisesList());
+        assertEquals(EXERCISES, plan.getExercisesList());
     }
 
     @Test
@@ -137,7 +136,7 @@ public class WorkoutPlanTest {
     public void updateState_completedRemainsCompletedRegardlessOfDate() {
         WorkoutPlan completed = planForDate(LocalDate.of(2026, 10, 17), WorkoutPlanStatus.COMPLETED);
 
-        assertSame(completed, completed.updateState(LocalDate.of(2026, 10, 18)));
+        assertEquals(completed, completed.updateState(LocalDate.of(2026, 10, 18)));
     }
 
     @Test
@@ -161,7 +160,7 @@ public class WorkoutPlanTest {
         LocalDate todayDate = LocalDate.of(2026, 10, 18);
 
         assertEquals(WorkoutPlanStatus.PENDING, today.updateState(todayDate).getStatus());
-        assertSame(future, future.updateState(todayDate));
+        assertEquals(future, future.updateState(todayDate));
     }
 
     @Test

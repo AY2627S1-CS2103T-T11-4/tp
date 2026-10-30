@@ -27,6 +27,7 @@ import seedu.address.model.student.exceptions.StudentNotFoundException;
 public class UniqueStudentList implements Iterable<Student> {
 
     public static final int MAX_STUDENTS = 999;
+    private static final String DUPLICATE_IDENTITY_ASSERTION_MESSAGE = "Student list contains duplicate identities";
 
     private final ObservableList<Student> internalList = FXCollections.observableArrayList();
     private final ObservableList<Student> internalUnmodifiableList =
@@ -53,7 +54,7 @@ public class UniqueStudentList implements Iterable<Student> {
             throw new StudentListFullException();
         }
         internalList.add(toAdd);
-        assert studentsAreUnique(internalList) : "Student list contains duplicate identities";
+        assert studentsAreUnique(internalList) : DUPLICATE_IDENTITY_ASSERTION_MESSAGE;
     }
 
     /**
@@ -74,7 +75,7 @@ public class UniqueStudentList implements Iterable<Student> {
         }
 
         internalList.set(index, editedStudent);
-        assert studentsAreUnique(internalList) : "Student list contains duplicate identities";
+        assert studentsAreUnique(internalList) : DUPLICATE_IDENTITY_ASSERTION_MESSAGE;
     }
 
     /**

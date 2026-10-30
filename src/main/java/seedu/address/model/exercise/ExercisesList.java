@@ -64,8 +64,9 @@ public final class ExercisesList {
     }
 
     /**
-     * Returns a new list with {@code target} replaced by {@code replacement} at the same position.
+     * Returns a list with {@code target} replaced by {@code replacement} at the same position.
      * The target may be an equal-valued instance rather than the stored instance.
+     * If the replacement represents the same exercise, the list is unchanged.
      */
     public ExercisesList setExercise(Exercise target, Exercise replacement) {
         requireAllNonNull(target, replacement);

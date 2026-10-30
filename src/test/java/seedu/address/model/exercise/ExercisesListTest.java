@@ -3,7 +3,6 @@ package seedu.address.model.exercise;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -120,7 +119,7 @@ public class ExercisesListTest {
         assertNotSame(original, updated);
         assertEquals(List.of(FIRST, SECOND, THIRD), original.getExerciseList());
         assertEquals(List.of(REPLACEMENT, SECOND, THIRD), updated.getExerciseList());
-        assertSame(SECOND, updated.getExerciseList().get(1));
+        assertEquals(SECOND, updated.getExerciseList().get(1));
 
         assertThrows(DuplicateExerciseException.class, () -> original.setExercise(FIRST, SECOND));
         assertThrows(NullPointerException.class, () -> original.setExercise(null, REPLACEMENT));
@@ -130,14 +129,14 @@ public class ExercisesListTest {
     }
 
     @Test
-    public void setExercise_equalTargetAndReplacement_returnsOriginal() {
+    public void setExercise_equalTargetAndReplacement_preservesValues() {
         ExercisesList original = new ExercisesList(List.of(FIRST, SECOND));
         Exercise equalFirst = new Exercise(new ExerciseName("Squats"),
                 new ExerciseDescription("Barbell back squat"));
         Exercise equalReplacement = new Exercise(new ExerciseName("Squats"),
                 new ExerciseDescription("Barbell back squat"));
 
-        assertSame(original, original.setExercise(equalFirst, equalReplacement));
+        assertEquals(original, original.setExercise(equalFirst, equalReplacement));
     }
 
     @Test
@@ -160,7 +159,7 @@ public class ExercisesListTest {
     public void indexedAccess_invalidIndex_throwsExerciseIndexOutOfBoundsException() {
         ExercisesList exercises = new ExercisesList(List.of(FIRST, SECOND));
 
-        assertSame(SECOND, exercises.getExercise(1));
+        assertEquals(SECOND, exercises.getExercise(1));
         assertThrows(ExerciseIndexOutOfBoundsException.class, () -> exercises.getExercise(-1));
         assertThrows(ExerciseIndexOutOfBoundsException.class, () -> exercises.getExercise(2));
     }

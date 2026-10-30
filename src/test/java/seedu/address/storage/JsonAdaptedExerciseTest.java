@@ -30,13 +30,14 @@ public class JsonAdaptedExerciseTest {
         assertThrows(IllegalValueException.class, () -> new JsonAdaptedExercise("  ", "Valid").toModelType());
         assertThrows(IllegalValueException.class, () -> new JsonAdaptedExercise("Squat", null).toModelType());
         assertThrows(IllegalValueException.class, () -> new JsonAdaptedExercise("Squat", "\t").toModelType());
-        assertThrows(IllegalValueException.class, () -> new JsonAdaptedExercise("Squat", "x".repeat(501))
+        assertThrows(IllegalValueException.class, () -> new JsonAdaptedExercise("Squat",
+                "x".repeat(ExerciseDescription.MAX_LENGTH + 1))
                 .toModelType());
     }
 
     @Test
     public void toModelType_descriptionAtLimit_isValid() throws Exception {
-        Exercise restored = new JsonAdaptedExercise("Squat", "x".repeat(500)).toModelType();
-        assertEquals(500, restored.getDescription().getValue().length());
+        Exercise restored = new JsonAdaptedExercise("Squat", "x".repeat(ExerciseDescription.MAX_LENGTH)).toModelType();
+        assertEquals(ExerciseDescription.MAX_LENGTH, restored.getDescription().getValue().length());
     }
 }

@@ -48,6 +48,22 @@ public class JsonAdaptedWorkoutPlanTest {
     }
 
     @Test
+    public void modelToJsonAndBack_acceptsMaximumNumberOfExercises() throws Exception {
+        List<Exercise> exercises = IntStream.range(0, ExercisesList.MAX_EXERCISES)
+                .mapToObj(index -> new Exercise(new ExerciseName("Exercise " + index),
+                        new ExerciseDescription("Description " + index)))
+                .toList();
+        WorkoutPlan original = new WorkoutPlan(new WorkoutTitle("Strength"), new WorkoutDescription("Leg day"),
+                WorkoutDate.fromLocalDate(LocalDate.of(2023, 11, 15)), Set.of(), WorkoutPlanStatus.PENDING,
+                new ExercisesList(exercises));
+
+        String json = JsonUtil.toJsonString(new JsonAdaptedWorkoutPlan(original));
+        WorkoutPlan restored = JsonUtil.fromJsonString(json, JsonAdaptedWorkoutPlan.class).toModelType();
+
+        assertEquals(original, restored);
+    }
+
+    @Test
     public void fromJson_missingOrNullExercises_loadsLegacyPlan() throws Exception {
         for (String exercisesField : List.of("", ",\"exercises\":null")) {
             JsonAdaptedWorkoutPlan adapted = JsonUtil.fromJsonString(
@@ -72,7 +88,7 @@ public class JsonAdaptedWorkoutPlanTest {
 
     @Test
     public void fromJson_moreThanHundredExercises_throwsIllegalValueException() throws Exception {
-        String exercises = IntStream.range(0, 101)
+        String exercises = IntStream.range(0, ExercisesList.MAX_EXERCISES + 1)
                 .mapToObj(index -> "{\"name\":\"Exercise " + index + "\",\"description\":\"Valid\"}")
                 .collect(Collectors.joining(",", "[", "]"));
         JsonAdaptedWorkoutPlan adapted = JsonUtil.fromJsonString(
