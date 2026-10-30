@@ -61,6 +61,7 @@ public class WorkoutPlanListPanelTest {
         }
     }
 
+    // EP: populated plan renders ordered exercises (selected plan).
     @Test
     public void selectedPlan_showsIdentityDetailsAndOrderedExercises() throws Exception {
         Exercise first = exercise("Squats", "Barbell back squat");
@@ -89,6 +90,7 @@ public class WorkoutPlanListPanelTest {
         });
     }
 
+    // BV: 0 <= count <= MAX_EXERCISES (valid).
     @Test
     public void emptyPlanAndNavigation_clearOldExerciseEntries() throws Exception {
         WorkoutPlan populated = plan(List.of(exercise("Squats", "Barbell back squat")));
@@ -121,6 +123,7 @@ public class WorkoutPlanListPanelTest {
         });
     }
 
+    // EP: long description in a narrow panel (valid).
     @Test
     public void longDescription_wrapsWithinNarrowScrollablePanel() throws Exception {
         WorkoutPlan plan = plan(List.of(exercise("Squats", "Long description ".repeat(20))));

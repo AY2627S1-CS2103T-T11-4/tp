@@ -79,7 +79,9 @@ public class MainWindow extends UiPart<Stage> {
 
         setAccelerators();
 
-        helpWindow = new HelpWindow(this::handleCommandFormatSelected);
+        helpWindow = new HelpWindow(
+                logic.getCommandCategories(),
+                this::handleCommandFormatSelected);
     }
 
     public Stage getPrimaryStage() {

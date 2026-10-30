@@ -8,11 +8,13 @@ import org.junit.jupiter.api.Test;
 
 public class AddressTest {
 
+    // EP: address is null (invalid).
     @Test
     public void constructor_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new Address(null));
     }
 
+    // BV: length < 1 (invalid).
     @Test
     public void constructor_invalidAddress_throwsIllegalArgumentException() {
         String invalidAddress = "";
@@ -21,38 +23,42 @@ public class AddressTest {
 
     @Test
     public void isValidAddress() {
-        // null address
+        // EP: address is null (invalid).
         assertThrows(NullPointerException.class, () -> Address.isValidAddress(null));
 
-        // invalid addresses
-        assertFalse(Address.isValidAddress("")); // empty string
-        assertFalse(Address.isValidAddress(" ")); // spaces only
-        assertFalse(Address.isValidAddress("a".repeat(Address.MAX_LENGTH + 1))); // exceeds maximum length
-
-        // valid addresses
+        // BV: length < 1 (invalid).
+        assertFalse(Address.isValidAddress(""));
+        // EP: space-only address (invalid).
+        assertFalse(Address.isValidAddress(" "));
+        // BV: length > MAX_LENGTH (invalid).
+        assertFalse(Address.isValidAddress("a".repeat(Address.MAX_LENGTH + 1)));
+        // Each valid input at least once: a typical address is accepted.
         assertTrue(Address.isValidAddress("Blk 456, Den Road, #01-355"));
-        assertTrue(Address.isValidAddress("-")); // one character
-        assertTrue(Address.isValidAddress("Leng Inc; 1234 Market St; San Francisco CA 2349879; USA")); // long address
-        assertTrue(Address.isValidAddress("a".repeat(Address.MAX_LENGTH))); // exactly maximum length
+        // BV: 1 <= length <= MAX_LENGTH (valid).
+        assertTrue(Address.isValidAddress("-"));
+        // EP: 1 < length < MAX_LENGTH (valid).
+        assertTrue(Address.isValidAddress("Leng Inc; 1234 Market St; San Francisco CA 2349879; USA"));
+        // BV: 1 <= length <= MAX_LENGTH (valid).
+        assertTrue(Address.isValidAddress("a".repeat(Address.MAX_LENGTH)));
     }
 
     @Test
     public void equals() {
         Address address = new Address("Valid Address");
 
-        // same values -> returns true
+        // EP: Another address with the same value (equivalent).
         assertTrue(address.equals(new Address("Valid Address")));
 
-        // same object -> returns true
+        // EP: The same address object (equivalent).
         assertTrue(address.equals(address));
 
-        // null -> returns false
+        // EP: Null (non-equivalent).
         assertFalse(address.equals(null));
 
-        // different types -> returns false
+        // EP: An object of another type (non-equivalent).
         assertFalse(address.equals(5.0f));
 
-        // different values -> returns false
+        // EP: A different address value (non-equivalent).
         assertFalse(address.equals(new Address("Other Valid Address")));
     }
 }

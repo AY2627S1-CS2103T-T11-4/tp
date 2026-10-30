@@ -37,11 +37,13 @@ public class DeletePlanCommandTest {
     private static final WorkoutPlan SECOND_PLAN = new WorkoutPlan(
             new WorkoutTitle("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
 
+    // EP: workout-plan index is null (invalid).
     @Test
     public void constructor_nullIndex_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new DeletePlanCommand(null));
     }
 
+    // EP: workout-plan index exists (valid).
     @Test
     public void execute_validWorkoutId_deletesPlan() {
         Student baseStudent = new ModelManager(getTypicalBrotherGym(), new UserPrefs())
@@ -65,6 +67,7 @@ public class DeletePlanCommandTest {
         assertEquals(updatedStudent, model.getCurrentStudent().orElseThrow());
     }
 
+    // EP: no current student is selected (invalid).
     @Test
     public void execute_noCurrentStudent_throwsCommandException() {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
@@ -73,6 +76,7 @@ public class DeletePlanCommandTest {
         assertCommandFailure(command, model, DeletePlanCommand.MESSAGE_NO_STUDENT_SELECTED);
     }
 
+    // BV: index > size (invalid).
     @Test
     public void execute_invalidWorkoutId_throwsCommandException() {
         Student baseStudent = new ModelManager(getTypicalBrotherGym(), new UserPrefs())

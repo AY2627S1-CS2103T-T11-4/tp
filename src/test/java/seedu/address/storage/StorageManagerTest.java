@@ -38,10 +38,13 @@ public class StorageManagerTest {
     public void constructor_nullStorage_throwsNullPointerException() {
         JsonBrotherGymStorage brotherGymStorage = new JsonBrotherGymStorage(getTempFilePath("ab"));
         JsonUserPrefsStorage userPrefsStorage = new JsonUserPrefsStorage(getTempFilePath("prefs"));
+        // One invalid input at a time: only application-data storage is null.
         assertThrows(NullPointerException.class, () -> new StorageManager(null, userPrefsStorage));
+        // One invalid input at a time: only preferences storage is null.
         assertThrows(NullPointerException.class, () -> new StorageManager(brotherGymStorage, null));
     }
 
+    // EP: preferences read and save delegate successfully (valid).
     @Test
     public void prefsReadSave() throws Exception {
         /*
@@ -56,6 +59,7 @@ public class StorageManagerTest {
         assertEquals(original, retrieved);
     }
 
+    // EP: application data read and save delegate successfully (valid).
     @Test
     public void brotherGymReadSave() throws Exception {
         /*

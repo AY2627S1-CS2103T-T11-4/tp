@@ -56,55 +56,61 @@ public class EditStudentCommandParserTest {
 
     @Test
     public void parse_missingParts_failure() {
-        // no index specified
+        // One invalid input at a time: only the index is missing.
         assertParseFailure(parser, VALID_NAME_AMY, this.formatParserError(MESSAGE_INVALID_INDEX));
 
-        // no field specified
+        // One invalid input at a time: only the edit field is missing.
         assertParseFailure(parser, "1", EditStudentCommand.MESSAGE_NOT_EDITED);
 
     }
 
     @Test
     public void parse_invalidPreamble_failure() {
-        // negative index
+        // EP: negative index (invalid).
         assertParseFailure(parser, "-5" + NAME_DESC_AMY, this.formatParserError(MESSAGE_INVALID_INDEX));
 
-        // zero index
+        // BV: index < 1 (invalid).
         assertParseFailure(parser, "0" + NAME_DESC_AMY, this.formatParserError(MESSAGE_INVALID_INDEX));
 
-        // invalid arguments being parsed as preamble
+        // EP: non-index preamble text (invalid).
         assertParseFailure(parser, "1 some random string", this.formatParserError(MESSAGE_INVALID_INDEX));
 
-        // invalid prefix being parsed as preamble
+        // EP: malformed prefix in the preamble (invalid).
         assertParseFailure(parser, "1 i/ string", this.formatParserError(MESSAGE_INVALID_INDEX));
     }
 
     @Test
     public void parse_invalidValue_failure() {
+        // One invalid input at a time: only the name is invalid.
         assertParseFailure(parser, "1" + INVALID_NAME_DESC,
                 this.formatParserError(Name.MESSAGE_CONSTRAINTS)); // invalid name
+        // One invalid input at a time: only the phone is invalid.
         assertParseFailure(parser, "1" + INVALID_PHONE_DESC,
                 this.formatParserError(Phone.MESSAGE_CONSTRAINTS)); // invalid phone
+        // One invalid input at a time: only the email is invalid.
         assertParseFailure(parser, "1" + INVALID_EMAIL_DESC,
                 this.formatParserError(Email.MESSAGE_CONSTRAINTS)); // invalid email
+        // One invalid input at a time: only the address is invalid.
         assertParseFailure(parser, "1" + INVALID_ADDRESS_DESC,
                 this.formatParserError(Address.MESSAGE_CONSTRAINTS)); // invalid address
+        // One invalid input at a time: only the tag is invalid.
         assertParseFailure(parser, "1" + INVALID_TAG_DESC + CLEAR_TAGS,
                 this.formatParserError(StudentTag.MESSAGE_CONSTRAINTS)); // invalid tag
 
-        // invalid phone followed by valid email
+        // One invalid input at a time: phone is invalid while email remains valid.
         assertParseFailure(parser, "1" + INVALID_PHONE_DESC + EMAIL_DESC_AMY,
                 this.formatParserError(Phone.MESSAGE_CONSTRAINTS));
 
-        // an empty tag remains invalid since --clearTags is available for clearing tags
+        // One invalid input at a time: only the tag is empty.
         assertParseFailure(parser, "1" + TAG_EMPTY,
                 this.formatParserError(StudentTag.MESSAGE_CONSTRAINTS));
 
-        // multiple invalid values, but only the first invalid value is captured
+        // Invalid inputs combined after separate tests: name and email are invalid.
         assertParseFailure(parser, "1" + INVALID_NAME_DESC + INVALID_EMAIL_DESC + VALID_ADDRESS_AMY + VALID_PHONE_AMY,
                 this.formatParserError(Name.MESSAGE_CONSTRAINTS));
     }
 
+    // Each valid input at least once: all editable student fields parse successfully.
     @Test
     public void parse_allFieldsSpecified_success() {
         Index targetIndex = INDEX_SECOND;
@@ -120,6 +126,7 @@ public class EditStudentCommandParserTest {
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 
+    // EP: a subset of editable student fields (valid).
     @Test
     public void parse_someFieldsSpecified_success() {
         Index targetIndex = INDEX_FIRST;
@@ -135,7 +142,7 @@ public class EditStudentCommandParserTest {
 
     @Test
     public void parse_oneFieldSpecified_success() {
-        // name
+        // Each valid input at least once: name succeeds in an edit test.
         Index targetIndex = INDEX_THIRD;
         String userInput = targetIndex.getOneBased() + NAME_DESC_AMY;
         EditStudentCommand.EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder()
@@ -143,31 +150,32 @@ public class EditStudentCommandParserTest {
         EditStudentCommand expectedCommand = new EditStudentCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
-        // phone
+        // Each valid input at least once: phone succeeds in an edit test.
         userInput = targetIndex.getOneBased() + PHONE_DESC_AMY;
         descriptor = new EditStudentDescriptorBuilder().withPhone(VALID_PHONE_AMY).build();
         expectedCommand = new EditStudentCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
-        // email
+        // Each valid input at least once: email succeeds in an edit test.
         userInput = targetIndex.getOneBased() + EMAIL_DESC_AMY;
         descriptor = new EditStudentDescriptorBuilder().withEmail(VALID_EMAIL_AMY).build();
         expectedCommand = new EditStudentCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
-        // address
+        // Each valid input at least once: address succeeds in an edit test.
         userInput = targetIndex.getOneBased() + ADDRESS_DESC_AMY;
         descriptor = new EditStudentDescriptorBuilder().withAddress(VALID_ADDRESS_AMY).build();
         expectedCommand = new EditStudentCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
-        // tags
+        // Each valid input at least once: tags succeed in an edit test.
         userInput = targetIndex.getOneBased() + TAG_DESC_FRIEND;
         descriptor = new EditStudentDescriptorBuilder().withTags(VALID_TAG_FRIEND).build();
         expectedCommand = new EditStudentCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 
+    // EP: repeated non-repeatable phone field (invalid).
     @Test
     public void parse_multipleRepeatedFields_failure() {
         Index targetIndex = INDEX_FIRST;
@@ -179,12 +187,13 @@ public class EditStudentCommandParserTest {
 
     @Test
     public void parse_invalidField_failure() {
-        // invalid prefix alone
+        // One invalid input at a time: only the prefix is unknown.
         assertParseFailure(parser, "1" + INVALID_PREFIX_DESC,
                 this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
 
     }
 
+    // BV: 0 <= count <= MAX_TAG_COUNT (valid).
     @Test
     public void parse_clearTags_success() {
         Index targetIndex = INDEX_THIRD;
@@ -219,6 +228,7 @@ public class EditStudentCommandParserTest {
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 
+    // EP: clear-tags prefix has an unexpected value (invalid).
     @Test
     public void parse_clearTagsWithValue_failure() {
         assertParseFailure(parser, "1" + CLEAR_TAGS + " unexpected",

@@ -12,6 +12,7 @@ public class HelpCommandTest {
     private Model model = new ModelManager();
     private Model expectedModel = new ModelManager();
 
+    // EP: help executes successfully (valid).
     @Test
     public void execute_help_success() {
         CommandResult expectedCommandResult = new CommandResult(SHOWING_HELP_MESSAGE, true, false);

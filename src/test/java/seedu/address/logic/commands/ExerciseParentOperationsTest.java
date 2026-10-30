@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.testutil.ExerciseTestUtil.modelWith;
+import static seedu.address.testutil.ExerciseTestUtil.withPlans;
 import static seedu.address.testutil.TypicalExercises.PUSH_UPS;
 import static seedu.address.testutil.TypicalExercises.SQUATS;
 import static seedu.address.testutil.TypicalStudents.ALICE;
@@ -11,7 +13,6 @@ import static seedu.address.testutil.TypicalStudents.BENSON;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,23 +20,20 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditPlanCommand.EditPlanDescriptor;
 import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
 import seedu.address.logic.commands.exceptions.CommandException;
-import seedu.address.model.BrotherGym;
 import seedu.address.model.ModelManager;
-import seedu.address.model.UserPrefs;
 import seedu.address.model.exercise.Exercise;
-import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
-import seedu.address.model.workoutplan.WorkoutPlansList;
-import seedu.address.model.workoutplan.WorkoutTitle;
+import seedu.address.testutil.ExerciseTestUtil;
 
 /** Regression tests for nested exercises during existing parent operations. */
 public class ExerciseParentOperationsTest {
 
+    // EP: parent edits preserve nested exercises (valid).
     @Test
     public void editAndStatusOperations_preserveExercisesAndSelection() throws CommandException {
         WorkoutPlan selected = plan("Selected", List.of(SQUATS, PUSH_UPS));
@@ -67,11 +65,11 @@ public class ExerciseParentOperationsTest {
         assertExercisesAndIsolation(model, benson);
     }
 
+    // EP: date refresh preserves nested exercises (valid).
     @Test
     public void dateRefresh_preservesExercisesAndSelection() {
-        WorkoutPlan overdue = new WorkoutPlan(new WorkoutTitle("Past plan"),
-                new WorkoutDescription("Plan notes"), WorkoutDate.fromLocalDate(LocalDate.now().minusDays(1)),
-                Set.of(), WorkoutPlanStatus.PENDING, new ExercisesList(List.of(SQUATS, PUSH_UPS)));
+        WorkoutPlan overdue = ExerciseTestUtil.plan("Past plan", "Plan notes",
+                WorkoutDate.fromLocalDate(LocalDate.now().minusDays(1)), List.of(SQUATS, PUSH_UPS));
         Student alice = withPlans(ALICE, overdue);
         ModelManager model = modelWith(alice);
         model.setCurrentStudent(alice);
@@ -84,6 +82,7 @@ public class ExerciseParentOperationsTest {
                 .getExercisesList().getExerciseList());
     }
 
+    // EP: descendant selection becomes stale (removed parent).
     @Test
     public void parentDeletionAndClear_removeOnlyDescendantsAndClearStaleSelection() throws CommandException {
         WorkoutPlan first = plan("First", List.of(SQUATS));
@@ -138,21 +137,7 @@ public class ExerciseParentOperationsTest {
     }
 
     private static WorkoutPlan plan(String title, List<Exercise> exercises) {
-        return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription("Plan notes"),
-                WorkoutDate.fromLocalDate(LocalDate.of(2026, 10, 31)), Set.of(),
-                WorkoutPlanStatus.PENDING, new ExercisesList(exercises));
-    }
-
-    private static Student withPlans(Student base, WorkoutPlan... plans) {
-        return new Student(base.getName(), base.getPhone(), base.getEmail(), base.getAddress(),
-                base.getTags(), new WorkoutPlansList(List.of(plans)));
-    }
-
-    private static ModelManager modelWith(Student... students) {
-        BrotherGym data = new BrotherGym();
-        for (Student student : students) {
-            data.addStudent(student);
-        }
-        return new ModelManager(data, new UserPrefs());
+        return ExerciseTestUtil.plan(title, "Plan notes", WorkoutDate.fromLocalDate(LocalDate.of(2026, 10, 31)),
+                exercises);
     }
 }

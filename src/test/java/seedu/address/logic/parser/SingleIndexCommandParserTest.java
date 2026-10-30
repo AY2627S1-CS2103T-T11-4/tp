@@ -71,16 +71,19 @@ public class SingleIndexCommandParserTest {
         return Messages.formatParserError(errorMessage, SingleIndexCommandStub.MESSAGE_USAGE);
     }
 
+    // BV: index >= 1 (valid).
     @Test
     public void parse_validArgs_returnsSingleIndexCommand() {
         assertParseSuccess(parser, "1", new SingleIndexCommandStub(INDEX_FIRST));
     }
 
+    // EP: empty, zero, negative, and non-numeric inputs (invalid).
     @Test
     public void parse_invalidArgs_throwParseException() {
         assertParseFailure(parser, "a", this.formatParserError(MESSAGE_INVALID_INDEX));
     }
 
+    // One invalid input at a time: only the command prefix is unknown.
     @Test
     public void parse_invalidPrefixes_throwsParseException() {
         // bare dashes are treated as part of the preamble and subsequently fail index parsing

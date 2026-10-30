@@ -33,11 +33,13 @@ public class ViewPlanCommandTest {
     private static final WorkoutPlan SECOND_PLAN = new WorkoutPlan(
             new WorkoutTitle("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
 
+    // EP: workout-plan index is null (invalid).
     @Test
     public void constructor_nullIndex_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new ViewPlanCommand(null));
     }
 
+    // EP: workout-plan index exists (valid).
     @Test
     public void execute_validWorkoutId_returnsSelectedPlan() {
         Student studentWithPlans = createStudentWithPlans();
@@ -52,6 +54,7 @@ public class ViewPlanCommandTest {
         assertEquals(SECOND_PLAN, model.getCurrentWorkoutPlan().orElseThrow());
     }
 
+    // EP: no current student is selected (invalid).
     @Test
     public void execute_noCurrentStudent_throwsCommandException() {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
@@ -60,6 +63,7 @@ public class ViewPlanCommandTest {
         assertCommandFailure(command, model, ViewPlanCommand.MESSAGE_NO_STUDENT_SELECTED);
     }
 
+    // BV: index > size (invalid).
     @Test
     public void execute_invalidWorkoutId_throwsCommandException() {
         Student studentWithPlans = createStudentWithPlans();

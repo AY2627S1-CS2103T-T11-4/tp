@@ -27,17 +27,20 @@ public class HomeCommandTest {
         expectedModel = new ModelManager(model.getBrotherGym(), new UserPrefs());
     }
 
+    // EP: unfiltered list.
     @Test
     public void execute_listIsNotFiltered_showsSameList() {
         assertCommandSuccess(new HomeCommand(), model, HomeCommand.MESSAGE_SUCCESS, expectedModel);
     }
 
+    // EP: filtered list.
     @Test
     public void execute_listIsFiltered_showsEverything() {
         showStudentAtIndex(model, INDEX_FIRST);
         assertCommandSuccess(new HomeCommand(), model, HomeCommand.MESSAGE_SUCCESS, expectedModel);
     }
 
+    // EP: selected student.
     @Test
     public void execute_currentStudentSelected_clearsCurrentStudent() {
         model.setCurrentStudent(model.getFilteredStudentList().get(0));

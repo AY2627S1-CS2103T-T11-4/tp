@@ -8,11 +8,13 @@ import org.junit.jupiter.api.Test;
 
 public class NameTest {
 
+    // EP: student name is null (invalid).
     @Test
     public void constructor_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new Name(null));
     }
 
+    // BV: length < 1 (invalid).
     @Test
     public void constructor_invalidName_throwsIllegalArgumentException() {
         String invalidName = "";
@@ -21,30 +23,40 @@ public class NameTest {
 
     @Test
     public void isValidName() {
-        // null name
+        // EP: student name is null (invalid).
         assertThrows(NullPointerException.class, () -> Name.isValidName(null));
 
-        // invalid name
-        assertFalse(Name.isValidName("")); // empty string
-        assertFalse(Name.isValidName(" ")); // spaces only
-        assertFalse(Name.isValidName("^")); // only non-alphanumeric characters
-        assertFalse(Name.isValidName("peter*")); // contains non-alphanumeric characters
-
-        // valid name
-        assertTrue(Name.isValidName("peter jack")); // alphabets only
-        assertTrue(Name.isValidName("12345")); // numbers only
-        assertTrue(Name.isValidName("peter the 2nd")); // alphanumeric characters
-        assertTrue(Name.isValidName("Capital Tan")); // with capital letters
-        assertTrue(Name.isValidName("David Roger Jackson Ray Jr 2nd")); // long names
+        // BV: length < 1 (invalid).
+        assertFalse(Name.isValidName(""));
+        // EP: space-only student name (invalid).
+        assertFalse(Name.isValidName(" "));
+        // EP: name containing only symbols (invalid).
+        assertFalse(Name.isValidName("^"));
+        // EP: alphanumeric name containing a symbol (invalid).
+        assertFalse(Name.isValidName("peter*"));
+        // Each valid input at least once: an alphabetic name is accepted.
+        assertTrue(Name.isValidName("peter jack"));
+        // Each valid input at least once: a numeric name is accepted.
+        assertTrue(Name.isValidName("12345"));
+        // Each valid input at least once: an alphanumeric name is accepted.
+        assertTrue(Name.isValidName("peter the 2nd"));
+        // EP: mixed-case student name (valid).
+        assertTrue(Name.isValidName("Capital Tan"));
+        // EP: long alphanumeric student name (valid).
+        assertTrue(Name.isValidName("David Roger Jackson Ray Jr 2nd"));
     }
 
     @Test
     public void isSameName() {
         Name name = new Name("Jane Doe");
 
+        // EP: exact name match (same identity).
         assertTrue(name.isSameName(new Name("Jane Doe")));
+        // EP: case-insensitive name match (same identity).
         assertTrue(name.isSameName(new Name("jane doe")));
+        // EP: different name value (different identity).
         assertFalse(name.isSameName(new Name("Jane Smith")));
+        // EP: null (different identity).
         assertFalse(name.isSameName(null));
     }
 
@@ -52,19 +64,19 @@ public class NameTest {
     public void equals() {
         Name name = new Name("Valid Name");
 
-        // same values -> returns true
+        // EP: Another name with the same value (equivalent).
         assertTrue(name.equals(new Name("Valid Name")));
 
-        // same object -> returns true
+        // EP: The same name object (equivalent).
         assertTrue(name.equals(name));
 
-        // null -> returns false
+        // EP: Null (non-equivalent).
         assertFalse(name.equals(null));
 
-        // different types -> returns false
+        // EP: An object of another type (non-equivalent).
         assertFalse(name.equals(5.0f));
 
-        // different values -> returns false
+        // EP: A different name value (non-equivalent).
         assertFalse(name.equals(new Name("Other Valid Name")));
     }
 }

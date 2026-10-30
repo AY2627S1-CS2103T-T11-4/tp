@@ -33,6 +33,7 @@ public class BrotherGymTest {
         assertEquals(List.of(), brotherGym.getStudentList());
     }
 
+    // EP: replacement data is null (invalid).
     @Test
     public void resetData_null_throwsNullPointerException() {
         brotherGym.addStudent(ALICE);
@@ -40,6 +41,7 @@ public class BrotherGymTest {
         assertEquals(List.of(ALICE), brotherGym.getStudentList());
     }
 
+    // EP: replacement data is non-null (valid).
     @Test
     public void resetData_withValidReadOnlyBrotherGym_replacesData() {
         BrotherGym newData = getTypicalBrotherGym();
@@ -47,6 +49,7 @@ public class BrotherGymTest {
         assertEquals(newData, brotherGym);
     }
 
+    // EP: replacement data contains duplicate students (invalid).
     @Test
     public void resetData_withDuplicateStudents_throwsDuplicateStudentException() {
         brotherGym.addStudent(BENSON);
@@ -60,6 +63,7 @@ public class BrotherGymTest {
         assertEquals(List.of(BENSON), brotherGym.getStudentList());
     }
 
+    // EP: student list is null (invalid).
     @Test
     public void setStudents_nullList_throwsNullPointerExceptionWithoutChangingData() {
         brotherGym.addStudent(ALICE);
@@ -68,6 +72,7 @@ public class BrotherGymTest {
         assertEquals(List.of(ALICE), brotherGym.getStudentList());
     }
 
+    // One invalid input at a time: only one replacement student is null.
     @Test
     public void setStudents_withNullStudent_throwsNullPointerExceptionWithoutChangingData() {
         brotherGym.addStudent(ALICE);
@@ -78,6 +83,7 @@ public class BrotherGymTest {
         assertEquals(List.of(ALICE), brotherGym.getStudentList());
     }
 
+    // One invalid input at a time: only one reset-data student is null.
     @Test
     public void resetData_withNullStudent_throwsNullPointerExceptionWithoutChangingData() {
         brotherGym.addStudent(ALICE);
@@ -89,22 +95,26 @@ public class BrotherGymTest {
         assertEquals(List.of(ALICE), brotherGym.getStudentList());
     }
 
+    // EP: student lookup is null (invalid).
     @Test
     public void hasStudent_nullStudent_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> brotherGym.hasStudent(null));
     }
 
+    // EP: student is not stored (absent).
     @Test
     public void hasStudent_studentNotInBrotherGym_returnsFalse() {
         assertFalse(brotherGym.hasStudent(ALICE));
     }
 
+    // EP: exact student is stored (present).
     @Test
     public void hasStudent_studentInBrotherGym_returnsTrue() {
         brotherGym.addStudent(ALICE);
         assertTrue(brotherGym.hasStudent(ALICE));
     }
 
+    // EP: stored student has the same identity fields (present).
     @Test
     public void hasStudent_studentWithSameIdentityFieldsInBrotherGym_returnsTrue() {
         brotherGym.addStudent(ALICE);
@@ -113,6 +123,7 @@ public class BrotherGymTest {
         assertTrue(brotherGym.hasStudent(editedAlice));
     }
 
+    // EP: validation returns the canonical stored student (present).
     @Test
     public void validateStudentInBrotherGym_storedStudent_returnsStoredInstance() {
         brotherGym.addStudent(ALICE);
@@ -122,6 +133,7 @@ public class BrotherGymTest {
         assertSame(ALICE, brotherGym.validateStudentInBrotherGym(equalAlice));
     }
 
+    // EP: validation target is not stored (absent).
     @Test
     public void validateStudentInBrotherGym_studentNotInList_throwsStudentNotFoundException() {
         brotherGym.addStudent(ALICE);
@@ -131,6 +143,7 @@ public class BrotherGymTest {
         assertThrows(StudentNotFoundException.class, () -> brotherGym.validateStudentInBrotherGym(editedAlice));
     }
 
+    // EP: validation target is null (invalid).
     @Test
     public void validateStudentInBrotherGym_nullStudent_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> brotherGym.validateStudentInBrotherGym(null));

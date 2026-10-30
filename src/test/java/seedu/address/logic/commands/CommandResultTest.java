@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 public class CommandResultTest {
+    // EP: Command-result fields (equivalent/non-equivalent).
     @Test
     public void equals() {
         CommandResult commandResult = new CommandResult("feedback");
@@ -35,6 +36,7 @@ public class CommandResultTest {
         assertFalse(commandResult.equals(new CommandResult("feedback", false, true)));
     }
 
+    // EP: Equal command results share a hash code (equivalent).
     @Test
     public void hashcode() {
         CommandResult commandResult = new CommandResult("feedback");

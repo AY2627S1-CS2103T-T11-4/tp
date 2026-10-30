@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.testutil.ExerciseTestUtil.modelWith;
+import static seedu.address.testutil.ExerciseTestUtil.withPlans;
 import static seedu.address.testutil.TypicalExercises.PUSH_UPS;
 import static seedu.address.testutil.TypicalExercises.SQUATS;
 import static seedu.address.testutil.TypicalStudents.ALICE;
@@ -11,7 +13,6 @@ import static seedu.address.testutil.TypicalStudents.BENSON;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
@@ -20,24 +21,21 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditPlanCommand.EditPlanDescriptor;
 import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
 import seedu.address.logic.commands.exceptions.CommandException;
-import seedu.address.model.BrotherGym;
 import seedu.address.model.ModelManager;
-import seedu.address.model.UserPrefs;
 import seedu.address.model.exercise.Exercise;
 import seedu.address.model.exercise.ExerciseDescription;
-import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
-import seedu.address.model.workoutplan.WorkoutPlansList;
-import seedu.address.model.workoutplan.WorkoutTitle;
+import seedu.address.testutil.ExerciseTestUtil;
 
 /** Tests selected-plan navigation and refresh across parent and exercise changes. */
 public class SelectedPlanNavigationTest {
 
+    // EP: commands target the newly selected plan (selected plan).
     @Test
     public void viewPlan_switchesPlanAndUsesDisplayedExerciseIndexes() throws CommandException {
         WorkoutPlan first = plan("First", List.of(SQUATS));
@@ -57,6 +55,7 @@ public class SelectedPlanNavigationTest {
         assertSame(first, model.getCurrentWorkoutPlan().orElseThrow());
     }
 
+    // EP: selected plan rebinds to its replacement (updated parent).
     @Test
     public void exerciseAndParentUpdates_refreshSelectedPlan() throws CommandException {
         WorkoutPlan first = plan("First", List.of(SQUATS));
@@ -97,6 +96,7 @@ public class SelectedPlanNavigationTest {
         assertTrue(selectionChanges.get() >= 6);
     }
 
+    // EP: stale plan selection is cleared.
     @Test
     public void navigationAndFiltering_clearStaleSelection() throws CommandException {
         WorkoutPlan first = plan("First", List.of(SQUATS));
@@ -129,6 +129,7 @@ public class SelectedPlanNavigationTest {
         assertTrue(model.getCurrentWorkoutPlan().isEmpty());
     }
 
+    // EP: only affected selection is cleared (removed parent).
     @Test
     public void parentDeletionAndReplacement_preserveOrClearCorrectPlan() throws CommandException {
         WorkoutPlan first = plan("First", List.of(SQUATS));
@@ -157,11 +158,11 @@ public class SelectedPlanNavigationTest {
         assertTrue(model.getCurrentWorkoutPlan().isEmpty());
     }
 
+    // EP: selection rebinds to the refreshed plan (refreshed parent).
     @Test
     public void dateRefresh_rebindsSelectedPlan() {
-        WorkoutPlan overdue = new WorkoutPlan(new WorkoutTitle("Past plan"),
-                new WorkoutDescription("Notes"), WorkoutDate.fromLocalDate(LocalDate.now().minusDays(1)),
-                Set.of(), WorkoutPlanStatus.PENDING, new ExercisesList(List.of(SQUATS)));
+        WorkoutPlan overdue = ExerciseTestUtil.plan("Past plan", "Notes",
+                WorkoutDate.fromLocalDate(LocalDate.now().minusDays(1)), List.of(SQUATS));
         Student alice = withPlans(ALICE, overdue);
         ModelManager model = modelWith(alice);
         model.setCurrentStudent(alice);
@@ -178,21 +179,7 @@ public class SelectedPlanNavigationTest {
     }
 
     private static WorkoutPlan plan(String title, List<Exercise> exercises) {
-        return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription("Notes"),
-                WorkoutDate.fromLocalDate(LocalDate.now().plusDays(1)), Set.of(),
-                WorkoutPlanStatus.PENDING, new ExercisesList(exercises));
-    }
-
-    private static Student withPlans(Student base, WorkoutPlan... plans) {
-        return new Student(base.getName(), base.getPhone(), base.getEmail(), base.getAddress(),
-                base.getTags(), new WorkoutPlansList(List.of(plans)));
-    }
-
-    private static ModelManager modelWith(Student... students) {
-        BrotherGym data = new BrotherGym();
-        for (Student student : students) {
-            data.addStudent(student);
-        }
-        return new ModelManager(data, new UserPrefs());
+        return ExerciseTestUtil.plan(title, "Notes", WorkoutDate.fromLocalDate(LocalDate.now().plusDays(1)),
+                exercises);
     }
 }

@@ -14,11 +14,13 @@ public class TagTest {
         }
     }
 
+    // EP: tag name is null (invalid).
     @Test
     public void constructor_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new TestTag(null));
     }
 
+    // BV: length < 1 (invalid).
     @Test
     public void constructor_invalidTagName_throwsIllegalArgumentException() {
         String invalidTagName = "";
@@ -27,15 +29,19 @@ public class TagTest {
 
     @Test
     public void isValidTagName() {
-        // null tag name
+        // EP: tag name is null (invalid).
         assertThrows(NullPointerException.class, () -> Tag.isValidTagName(null));
     }
 
     @Test
     public void isValidTagCount() {
+        // BV: count < 0 (invalid).
         assertFalse(Tag.isValidTagCount(-1));
+        // BV: 0 <= count <= MAX_TAG_COUNT (valid).
         assertTrue(Tag.isValidTagCount(0));
+        // BV: 0 <= count <= MAX_TAG_COUNT (valid).
         assertTrue(Tag.isValidTagCount(Tag.MAX_TAG_COUNT));
+        // BV: count > MAX_TAG_COUNT (invalid).
         assertFalse(Tag.isValidTagCount(Tag.MAX_TAG_COUNT + 1));
     }
 
@@ -43,23 +49,24 @@ public class TagTest {
     public void equals() {
         Tag tag = new TestTag("strength");
 
-        // same values -> returns true
+        // EP: Same tag type and name (equivalent).
         assertTrue(tag.equals(new TestTag("strength")));
 
-        // same object -> returns true
+        // EP: The same tag object (equivalent).
         assertTrue(tag.equals(tag));
 
-        // null -> returns false
+        // EP: Null (non-equivalent).
         assertFalse(tag.equals(null));
 
-        // different type -> returns false
+        // EP: A non-tag object (non-equivalent).
         assertFalse(tag.equals("strength"));
 
-        // different tag name -> returns false
+        // EP: A different tag name (non-equivalent).
         assertFalse(tag.equals(new TestTag("cardio")));
 
-        // same name but different tag type -> returns false
+        // EP: Same name on a student tag (non-equivalent).
         assertFalse(tag.equals(new StudentTag("strength")));
+        // EP: Same name on a workout-plan tag (non-equivalent).
         assertFalse(tag.equals(new WorkoutPlanTag("strength")));
     }
 }

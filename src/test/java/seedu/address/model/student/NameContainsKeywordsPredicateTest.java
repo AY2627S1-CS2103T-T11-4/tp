@@ -20,53 +20,53 @@ public class NameContainsKeywordsPredicateTest {
         NameContainsKeywordsPredicate firstPredicate = new NameContainsKeywordsPredicate(firstPredicateKeywordList);
         NameContainsKeywordsPredicate secondPredicate = new NameContainsKeywordsPredicate(secondPredicateKeywordList);
 
-        // same object -> returns true
+        // EP: The same predicate object (equivalent).
         assertTrue(firstPredicate.equals(firstPredicate));
 
-        // same values -> returns true
+        // EP: Another predicate with the same keywords (equivalent).
         NameContainsKeywordsPredicate firstPredicateCopy = new NameContainsKeywordsPredicate(firstPredicateKeywordList);
         assertTrue(firstPredicate.equals(firstPredicateCopy));
 
-        // different types -> returns false
+        // EP: An object of another type (non-equivalent).
         assertFalse(firstPredicate.equals(1));
 
-        // null -> returns false
+        // EP: Null (non-equivalent).
         assertFalse(firstPredicate.equals(null));
 
-        // different student -> returns false
+        // EP: A different keyword list (non-equivalent).
         assertFalse(firstPredicate.equals(secondPredicate));
     }
 
     @Test
     public void test_nameContainsKeywords_returnsTrue() {
-        // One keyword
+        // BV: count >= 1 (match).
         NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(List.of("Alice"));
         assertTrue(predicate.test(new StudentBuilder().withName("Alice Bob").build()));
 
-        // Multiple keywords
+        // Each valid input at least once: multiple matching keywords are accepted.
         predicate = new NameContainsKeywordsPredicate(List.of("Alice", "Bob"));
         assertTrue(predicate.test(new StudentBuilder().withName("Alice Bob").build()));
 
-        // Only one matching keyword
+        // EP: one of multiple keywords matches (match).
         predicate = new NameContainsKeywordsPredicate(List.of("Bob", "Carol"));
         assertTrue(predicate.test(new StudentBuilder().withName("Alice Carol").build()));
 
-        // Mixed-case keywords
+        // EP: keywords differ only by letter case (match).
         predicate = new NameContainsKeywordsPredicate(List.of("aLIce", "bOB"));
         assertTrue(predicate.test(new StudentBuilder().withName("Alice Bob").build()));
     }
 
     @Test
     public void test_nameDoesNotContainKeywords_returnsFalse() {
-        // Zero keywords
+        // BV: count = 0 (no match).
         NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(List.of());
         assertFalse(predicate.test(new StudentBuilder().withName("Alice").build()));
 
-        // Non-matching keyword
+        // EP: keyword is absent from the name (no match).
         predicate = new NameContainsKeywordsPredicate(List.of("Carol"));
         assertFalse(predicate.test(new StudentBuilder().withName("Alice Bob").build()));
 
-        // Keywords match phone, email and address, but do not match name
+        // EP: keywords match non-name fields only (no match).
         predicate = new NameContainsKeywordsPredicate(List.of("1234567", "alice@email.com", "Main", "Street"));
         assertFalse(predicate.test(new StudentBuilder().withName("Alice").withPhone("1234567")
                 .withEmail("alice@email.com").withAddress("Main Street").build()));

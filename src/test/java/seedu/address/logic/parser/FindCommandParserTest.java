@@ -21,17 +21,20 @@ public class FindCommandParserTest {
         return Messages.formatParserError(errorMessage, FindCommand.MESSAGE_USAGE);
     }
 
+    // BV: length < 1 (invalid).
     @Test
     public void parse_emptyArg_throwsParseException() {
         assertParseFailure(parser, "     ", this.formatParserError(MESSAGE_MISSING_PREAMBLE));
     }
 
+    // One invalid input at a time: only the prefix is unknown.
     @Test
     public void parse_invalidPrefix_throwsParseException() {
         assertParseFailure(parser, "Alice --invalid Bob",
                 this.formatParserError(Messages.getErrorMessageForInvalidPrefixes(PREFIX_INVALID)));
     }
 
+    // EP: bare dashes are searchable text (valid).
     @Test
     public void parse_bareDashes_returnsFindCommand() {
         FindCommand expectedFindCommand =
@@ -39,6 +42,7 @@ public class FindCommandParserTest {
         assertParseSuccess(parser, "Alice -- Bob", expectedFindCommand);
     }
 
+    // EP: every keyword violates name constraints (invalid).
     @Test
     public void parse_allKeywordsInvalid_throwsParseException() {
         for (String input : List.of("!!!", "!!! ???", "Alice! Bob?", "A_B", "O'Neil", " \t !!! \t ??? ")) {
@@ -46,6 +50,7 @@ public class FindCommandParserTest {
         }
     }
 
+    // EP: at least one keyword satisfies name constraints (valid).
     @Test
     public void parse_mixedValidAndInvalidKeywords_returnsFindCommand() {
         assertParseSuccess(parser, "Alice !!!",
@@ -54,12 +59,14 @@ public class FindCommandParserTest {
                 new FindCommand(new NameContainsKeywordsPredicate(List.of("!!!", "Bob?", "Alice"))));
     }
 
+    // Each valid input at least once: alphabetic and numeric keywords are accepted.
     @Test
     public void parse_alphanumericKeywords_returnsFindCommand() {
         assertParseSuccess(parser, "Alice123 123",
                 new FindCommand(new NameContainsKeywordsPredicate(List.of("Alice123", "123"))));
     }
 
+    // Each valid input at least once: multiple valid keywords parse successfully.
     @Test
     public void parse_validArgs_returnsFindCommand() {
         // no leading and trailing whitespaces

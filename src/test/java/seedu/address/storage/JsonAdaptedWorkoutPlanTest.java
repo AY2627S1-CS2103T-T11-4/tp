@@ -30,6 +30,7 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 
 public class JsonAdaptedWorkoutPlanTest {
 
+    // EP: multiple ordered exercises survive a JSON round trip (valid).
     @Test
     public void modelToJsonAndBack_preservesExerciseOrder() throws Exception {
         Exercise squat = new Exercise(new ExerciseName("Squat"), new ExerciseDescription("Barbell"));
@@ -47,6 +48,7 @@ public class JsonAdaptedWorkoutPlanTest {
         assertEquals(WorkoutPlanStatus.COMPLETED, restored.getStatus());
     }
 
+    // EP: exercises are missing or null (legacy).
     @Test
     public void modelToJsonAndBack_acceptsMaximumNumberOfExercises() throws Exception {
         List<Exercise> exercises = IntStream.range(0, ExercisesList.MAX_EXERCISES)
@@ -69,10 +71,12 @@ public class JsonAdaptedWorkoutPlanTest {
             JsonAdaptedWorkoutPlan adapted = JsonUtil.fromJsonString(
                     "{\"title\":\"Strength\",\"workoutDescription\":\"Squats\",\"date\":\"2023-11-15\""
                             + exercisesField + "}", JsonAdaptedWorkoutPlan.class);
+            // EP: missing or null exercises become an empty list (legacy).
             assertEquals(new ExercisesList(), adapted.toModelType().getExercisesList());
         }
     }
 
+    // One invalid input at a time: each invalid exercise-list form is checked.
     @Test
     public void fromJson_invalidExerciseList_throwsIllegalValueException() throws Exception {
         String base = "{\"title\":\"Strength\",\"workoutDescription\":\"Squats\","
@@ -82,10 +86,12 @@ public class JsonAdaptedWorkoutPlanTest {
                         + "{\"name\":\"Squat\",\"description\":\"Barbell\"}]")) {
             JsonAdaptedWorkoutPlan adapted = JsonUtil.fromJsonString(base + exercises + "}",
                     JsonAdaptedWorkoutPlan.class);
+            // One invalid input at a time: list contains a null, invalid, or duplicate exercise.
             assertThrows(IllegalValueException.class, adapted::toModelType);
         }
     }
 
+    // BV: count > MAX_EXERCISES (invalid).
     @Test
     public void fromJson_moreThanHundredExercises_throwsIllegalValueException() throws Exception {
         String exercises = IntStream.range(0, ExercisesList.MAX_EXERCISES + 1)
@@ -97,6 +103,7 @@ public class JsonAdaptedWorkoutPlanTest {
         assertThrows(IllegalValueException.class, adapted::toModelType);
     }
 
+    // Each valid input at least once: every workout-plan status survives a round trip.
     @Test
     public void modelToJsonAndBack_preservesEveryStatusAndTags() throws Exception {
         for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
@@ -113,6 +120,7 @@ public class JsonAdaptedWorkoutPlanTest {
         }
     }
 
+    // EP: status is missing or null (legacy).
     @Test
     public void fromJson_missingOrNullStatus_defaultsToPendingWithoutRefreshingDeadline() throws Exception {
         for (String statusField : List.of("", ",\"status\":null")) {
@@ -125,6 +133,7 @@ public class JsonAdaptedWorkoutPlanTest {
         }
     }
 
+    // EP: status is blank, unknown, mis-cased, or padded (invalid).
     @Test
     public void fromJson_invalidStatus_throwsIllegalValueException() throws Exception {
         for (String status : List.of("", "DONE", "completed", " COMPLETED ")) {
@@ -132,11 +141,13 @@ public class JsonAdaptedWorkoutPlanTest {
                     "{\"title\":\"Strength\",\"workoutDescription\":\"Squats\",\"date\":\"2023-11-15\","
                             + "\"status\":\"" + status + "\"}", JsonAdaptedWorkoutPlan.class);
 
+            // EP: status is blank, unknown, mis-cased, or padded (invalid).
             IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
             assertEquals(JsonAdaptedWorkoutPlan.INVALID_STATUS_MESSAGE, exception.getMessage());
         }
     }
 
+    // BV: count >= 0 (valid).
     @Test
     public void fromJson_missingTags_loadsLegacyPlanWithEmptyTags() throws Exception {
         JsonAdaptedWorkoutPlan adapted = JsonUtil.fromJsonString(
@@ -147,6 +158,7 @@ public class JsonAdaptedWorkoutPlanTest {
         assertEquals(WorkoutPlanStatus.PENDING, adapted.toModelType().getStatus());
     }
 
+    // EP: duplicate serialized tags collapse into a typed set (valid).
     @Test
     public void toModelType_duplicateTags_returnsTypedSet() throws Exception {
         JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan("Strength", "Squats", "2023-11-15",
@@ -155,15 +167,18 @@ public class JsonAdaptedWorkoutPlanTest {
         assertEquals(Set.of(new WorkoutPlanTag("legs")), adapted.toModelType().getTags());
     }
 
+    // One invalid input at a time: each invalid tag representation is checked.
     @Test
     public void toModelType_invalidTags_throwsIllegalValueException() {
         for (List<JsonAdaptedTag> tags : List.of(List.of(new JsonAdaptedTag("#legs")),
                 List.of(new JsonAdaptedTag((String) null)), Arrays.asList((JsonAdaptedTag) null))) {
             JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan("Strength", "Squats", "2023-11-15", tags);
+            // One invalid input at a time: only the serialized tags are invalid.
             assertThrows(IllegalValueException.class, adapted::toModelType);
         }
     }
 
+    // BV: count > MAX_TAG_COUNT (invalid).
     @Test
     public void toModelType_tooManyTags_throwsIllegalValueException() {
         List<JsonAdaptedTag> tags = IntStream.range(0, Tag.MAX_TAG_COUNT + 1)
@@ -175,6 +190,7 @@ public class JsonAdaptedWorkoutPlanTest {
         assertEquals(Tag.MESSAGE_TAG_LIMIT, exception.getMessage());
     }
 
+    // Each valid input at least once: all workout-plan fields deserialize successfully.
     @Test
     public void toModelType_validPlan_returnsPlan() throws Exception {
         JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan(
@@ -189,6 +205,7 @@ public class JsonAdaptedWorkoutPlanTest {
         assertEquals("2023-11-15", adapted.getDate());
     }
 
+    // EP: model date serializes in ISO format (valid).
     @Test
     public void modelToJson_usesIsoStorageDate() {
         WorkoutPlan plan = new WorkoutPlan(new WorkoutTitle("Strength"),
@@ -201,6 +218,7 @@ public class JsonAdaptedWorkoutPlanTest {
         assertEquals("2023-11-15", adapted.getDate());
     }
 
+    // One invalid input at a time: only the stored date format is invalid.
     @Test
     public void toModelType_invalidDate_throwsIllegalValueException() {
         JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan(
@@ -209,24 +227,29 @@ public class JsonAdaptedWorkoutPlanTest {
         assertThrows(IllegalValueException.class, adapted::toModelType);
     }
 
+    // EP: title is empty, spaced, or whitespace-only (invalid).
     @Test
     public void toModelType_blankTitle_throwsIllegalValueException() {
         for (String title : List.of("", " ", "\t\n")) {
             JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan(title, "Squats", "2023-11-15");
+            // EP: empty, spaced, or whitespace-only (invalid).
             IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
             assertEquals(WorkoutTitle.MESSAGE_CONSTRAINTS, exception.getMessage());
         }
     }
 
+    // EP: description is empty, spaced, or whitespace-only (invalid).
     @Test
     public void toModelType_blankDescription_throwsIllegalValueException() {
         for (String description : List.of("", " ", "\t\n")) {
             JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan("Strength", description, "2023-11-15");
+            // EP: empty, spaced, or whitespace-only (invalid).
             IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
             assertEquals(WorkoutDescription.MESSAGE_CONSTRAINTS, exception.getMessage());
         }
     }
 
+    // BV: length > MAX_LENGTH (invalid).
     @Test
     public void toModelType_tooLongDescription_throwsIllegalValueException() {
         String description = "a".repeat(WorkoutDescription.MAX_LENGTH + 1);
@@ -238,14 +261,18 @@ public class JsonAdaptedWorkoutPlanTest {
 
     @Test
     public void toModelType_missingFields_throwsIllegalValueException() {
+        // One invalid input at a time: only the title is missing.
         assertThrows(IllegalValueException.class, () -> new JsonAdaptedWorkoutPlan(null, "Squats", "2023-11-15")
                 .toModelType());
+        // One invalid input at a time: only the description is missing.
         assertThrows(IllegalValueException.class, () -> new JsonAdaptedWorkoutPlan("Strength", null, "2023-11-15")
                 .toModelType());
+        // One invalid input at a time: only the date is missing.
         assertThrows(IllegalValueException.class, () -> new JsonAdaptedWorkoutPlan("Strength", "Squats", null)
                 .toModelType());
     }
 
+    // EP: model date is null (invalid).
     @Test
     public void formatDateForStorage_nullDate_throwsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> JsonAdaptedWorkoutPlan.formatDateForStorage(null));
@@ -253,7 +280,9 @@ public class JsonAdaptedWorkoutPlanTest {
 
     @Test
     public void formatDateForModel_invalidDate_throwsIllegalArgumentException() {
+        // EP: malformed stored date (invalid).
         assertThrows(IllegalArgumentException.class, () -> JsonAdaptedWorkoutPlan.formatDateForModel("invalid"));
+        // EP: stored date is null (invalid).
         assertThrows(IllegalArgumentException.class, () -> JsonAdaptedWorkoutPlan.formatDateForModel(null));
     }
 }

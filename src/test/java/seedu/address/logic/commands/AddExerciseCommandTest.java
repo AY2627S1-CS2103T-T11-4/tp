@@ -34,11 +34,13 @@ public class AddExerciseCommandTest {
     private static final WorkoutPlan PLAN = new WorkoutPlan(new WorkoutTitle("Leg day"),
             new WorkoutDescription("Lower body"), WorkoutDate.fromLocalDate(LocalDate.of(2026, 10, 29)));
 
+    // EP: exercise input is null (invalid).
     @Test
     public void constructor_nullExercise_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new AddExerciseCommand(null));
     }
 
+    // EP: a workout plan is selected (valid).
     @Test
     public void execute_validSelectedPlan_addsExercise() {
         Model model = createModelWithSelectedPlan(List.of());
@@ -50,6 +52,7 @@ public class AddExerciseCommandTest {
                 .getExercisesList().getExerciseList());
     }
 
+    // EP: no workout plan is selected (invalid).
     @Test
     public void execute_noSelectedPlan_throwsCommandException() {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
@@ -62,6 +65,7 @@ public class AddExerciseCommandTest {
                 AddExerciseCommand.MESSAGE_NO_PLAN_SELECTED);
     }
 
+    // EP: exercise duplicates a stored exercise (invalid).
     @Test
     public void execute_duplicateExercise_throwsCommandException() {
         Model model = createModelWithSelectedPlan(List.of(EXERCISE));
@@ -69,6 +73,7 @@ public class AddExerciseCommandTest {
         assertCommandFailure(command, model, AddExerciseCommand.MESSAGE_DUPLICATE_EXERCISE);
     }
 
+    // BV: result > MAX_EXERCISES (invalid).
     @Test
     public void execute_fullExerciseList_throwsCommandException() {
         List<Exercise> exercises = IntStream.range(0, ExercisesList.MAX_EXERCISES)

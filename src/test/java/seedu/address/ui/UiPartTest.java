@@ -24,12 +24,14 @@ public class UiPartTest {
     @TempDir
     public Path testFolder;
 
+    // EP: FXML URL is null (invalid).
     @Test
     public void constructor_nullFileUrl_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new TestUiPart<Object>((URL) null));
         assertThrows(NullPointerException.class, () -> new TestUiPart<Object>((URL) null, new Object()));
     }
 
+    // EP: resource is missing (invalid).
     @Test
     public void constructor_missingFileUrl_throwsAssertionError() throws Exception {
         URL missingFileUrl = new URL(testFolder.toUri().toURL(), MISSING_FILE_PATH);
@@ -37,6 +39,7 @@ public class UiPartTest {
         assertThrows(AssertionError.class, () -> new TestUiPart<Object>(missingFileUrl, new Object()));
     }
 
+    // EP: resource is malformed (invalid).
     @Test
     public void constructor_invalidFileUrl_throwsAssertionError() {
         URL invalidFileUrl = getTestFileUrl(INVALID_FILE_PATH);
@@ -44,12 +47,14 @@ public class UiPartTest {
         assertThrows(AssertionError.class, () -> new TestUiPart<Object>(invalidFileUrl, new Object()));
     }
 
+    // Each valid input at least once: a valid FXML URL loads.
     @Test
     public void constructor_validFileUrl_loadsFile() {
         URL validFileUrl = getTestFileUrl(VALID_FILE_PATH);
         assertEquals(VALID_FILE_ROOT, new TestUiPart<TestFxmlObject>(validFileUrl).getRoot());
     }
 
+    // Each valid input at least once: a valid fx:root FXML URL loads.
     @Test
     public void constructor_validFileWithFxRootUrl_loadsFile() {
         URL validFileUrl = getTestFileUrl(VALID_FILE_WITH_FX_ROOT_PATH);
@@ -57,6 +62,7 @@ public class UiPartTest {
         assertEquals(VALID_FILE_ROOT, new TestUiPart<TestFxmlObject>(validFileUrl, root).getRoot());
     }
 
+    // One invalid input at a time: only the UI root is null.
     @Test
     public void constructor_nullRoot_throwsNullPointerException() {
         URL validFileUrl = getTestFileUrl(VALID_FILE_WITH_FX_ROOT_PATH);
@@ -65,18 +71,21 @@ public class UiPartTest {
                 new TestUiPart<Object>(VALID_FILE_WITH_FX_ROOT_PATH, null));
     }
 
+    // One invalid input at a time: only the FXML filename is null.
     @Test
     public void constructor_nullFileName_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new TestUiPart<Object>((String) null));
         assertThrows(NullPointerException.class, () -> new TestUiPart<Object>((String) null, new Object()));
     }
 
+    // EP: named FXML resource is missing (invalid).
     @Test
     public void constructor_missingFileName_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new TestUiPart<Object>(MISSING_FILE_PATH));
         assertThrows(NullPointerException.class, () -> new TestUiPart<Object>(MISSING_FILE_PATH, new Object()));
     }
 
+    // EP: named FXML resource is malformed (invalid).
     @Test
     public void constructor_invalidFileName_throwsAssertionError() {
         assertThrows(AssertionError.class, () -> new TestUiPart<Object>(INVALID_FILE_PATH));

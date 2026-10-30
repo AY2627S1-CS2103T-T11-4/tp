@@ -31,11 +31,13 @@ import seedu.address.testutil.StudentBuilder;
 
 public class AddStudentCommandTest {
 
+    // EP: student input is null (invalid).
     @Test
     public void constructor_nullStudent_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new AddStudentCommand(null));
     }
 
+    // EP: model accepts the unique student (valid).
     @Test
     public void execute_studentAcceptedByModel_addSuccessful() throws Exception {
         ModelStubAcceptingStudentAdded modelStub = new ModelStubAcceptingStudentAdded();
@@ -48,6 +50,7 @@ public class AddStudentCommandTest {
         assertEquals(List.of(validStudent), modelStub.studentsAdded);
     }
 
+    // EP: model rejects a duplicate student (invalid).
     @Test
     public void execute_duplicateStudent_throwsCommandException() {
         Student validStudent = new StudentBuilder().build();
@@ -58,6 +61,7 @@ public class AddStudentCommandTest {
                 AddStudentCommand.MESSAGE_DUPLICATE_STUDENT, () -> addStudentCommand.execute(modelStub));
     }
 
+    // BV: result > MAX_STUDENTS (invalid).
     @Test
     public void execute_studentListFull_throwsCommandException() {
         Student validStudent = new StudentBuilder().build();

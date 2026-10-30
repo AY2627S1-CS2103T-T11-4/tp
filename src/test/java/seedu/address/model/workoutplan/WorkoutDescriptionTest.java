@@ -12,17 +12,20 @@ public class WorkoutDescriptionTest {
     private static final String DESCRIPTION_VALID = "Squats, push-ups";
     private static final String DESCRIPTION_OTHER = "Running";
 
+    // EP: workout description is null (invalid).
     @Test
     public void constructor_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new WorkoutDescription(null));
     }
 
+    // BV: length < 1 (invalid).
     @Test
     public void constructor_invalidWorkoutDescription_throwsIllegalArgumentException() {
         String invalidWorkoutDescription = "";
         assertThrows(IllegalArgumentException.class, () -> new WorkoutDescription(invalidWorkoutDescription));
     }
 
+    // EP: non-blank workout description (valid).
     @Test
     public void constructor_validDescription_storesValue() {
         WorkoutDescription description = new WorkoutDescription(DESCRIPTION_VALID);
@@ -31,16 +34,19 @@ public class WorkoutDescriptionTest {
 
     @Test
     public void isValidWorkoutDescription() {
-        // null description
+        // EP: workout description is null (invalid).
         assertThrows(NullPointerException.class, () -> WorkoutDescription.isValidWorkoutDescription(null));
 
-        // invalid description
-        assertFalse(WorkoutDescription.isValidWorkoutDescription("")); // empty string
-        assertFalse(WorkoutDescription.isValidWorkoutDescription(" ")); // spaces only
+        // BV: length < 1 (invalid).
+        assertFalse(WorkoutDescription.isValidWorkoutDescription(""));
+        // EP: space-only workout description (invalid).
+        assertFalse(WorkoutDescription.isValidWorkoutDescription(" "));
+        // BV: length > MAX_LENGTH (invalid).
         assertFalse(WorkoutDescription.isValidWorkoutDescription("a".repeat(WorkoutDescription.MAX_LENGTH + 1)));
 
-        // valid description
+        // Each valid input at least once: a typical workout description is accepted.
         assertTrue(WorkoutDescription.isValidWorkoutDescription(DESCRIPTION_VALID));
+        // BV: 1 <= length <= MAX_LENGTH (valid).
         assertTrue(WorkoutDescription.isValidWorkoutDescription("a".repeat(WorkoutDescription.MAX_LENGTH)));
     }
 
@@ -48,19 +54,19 @@ public class WorkoutDescriptionTest {
     public void equals() {
         WorkoutDescription description = new WorkoutDescription(DESCRIPTION_VALID);
 
-        // same values -> returns true
+        // EP: Another description with the same value (equivalent).
         assertTrue(description.equals(new WorkoutDescription(DESCRIPTION_VALID)));
 
-        // same object -> returns true
+        // EP: The same description object (equivalent).
         assertTrue(description.equals(description));
 
-        // null -> returns false
+        // EP: Null (non-equivalent).
         assertFalse(description.equals(null));
 
-        // different type -> returns false
+        // EP: An object of another type (non-equivalent).
         assertFalse(description.equals(DESCRIPTION_VALID));
 
-        // different values -> returns false
+        // EP: A different description value (non-equivalent).
         assertFalse(description.equals(new WorkoutDescription(DESCRIPTION_OTHER)));
     }
 
