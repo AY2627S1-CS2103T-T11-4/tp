@@ -368,7 +368,7 @@
 .workout-plan-card {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-border-width: 0 0 0 3px;
+    -fx-border-width: 0;
     -fx-border-radius: 7px;
     -fx-background-radius: 7px;
 }
@@ -438,19 +438,19 @@
 }
 
 .workout-plan-card.workout-plan-overdue {
-    -fx-border-color: #b64955;
+    -fx-background-color: rgba(214, 69, 69, 0.34);
 }
 
 .workout-plan-card.workout-plan-overdue:hover {
-    -fx-background-color: #32191e;
+    -fx-background-color: rgba(214, 69, 69, 0.42);
 }
 
 .workout-plan-card.workout-plan-completed {
-    -fx-border-color: #4c8a5a;
+    -fx-background-color: rgba(93, 187, 99, 0.14);
 }
 
 .workout-plan-card.workout-plan-completed:hover {
-    -fx-background-color: #14251c;
+    -fx-background-color: rgba(93, 187, 99, 0.22);
 }
 
 .workout-plan-description {
