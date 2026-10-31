@@ -35,10 +35,14 @@ If you type quickly, BrotherGym can help you manage students and workouts faster
    * `addStudent John Doe --hp 98765432 --email johnd@example.com --addr John street, block 123, #01-01`: 
      Adds a student named `John Doe` to the BrotherGym student list.
    
-   * `viewStudent 2` : View all workout plans of the 2nd student in the current list.
+   * `viewStudent 2` : Selects the second student in the list to view all workout plans of that student.
 
    * `addPlan Leg Day --plan Squats 100kg 5 reps x5; Leg curls 80kg 10 reps x3 --date 20102026`: 
-     Adds a plan named `Leg Day` to the workout plan list for the current student.
+     Adds a plan named `Leg Day` to the workout plan list for the selected student.
+
+  * `viewPlan 2`: Selects the second plan of the selected student, to view all the exercises contained in that workout plan
+
+  * `addExercise Squats --description 30kg * 10`: Adds an exercise called `Squats` in the selected workout plan.
 
    * `deleteStudent 3` : Deletes the 3rd student shown in the current BrotherGym student list.
 
@@ -71,17 +75,36 @@ If you type quickly, BrotherGym can help you manage students and workouts faster
 * Parameters can be in any order.<br>
   For example, if the command specifies `--name NAME --hp PHONE_NUMBER`, `--hp PHONE_NUMBER --name NAME` is also acceptable.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `home`, `exit`, and `clear`, are ignored.<br>
-  For example, `help 123` is interpreted as `help`.
+* The format of commands should be abided by strictly. Additional parameters or prefixes would cause the command to not be processed.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </box>
 
-### Viewing help: `help`
+### Common Commands
+
+#### Viewing help: `help`
 
 Shows a message explaining how to access the help page.
 
 Format: `help`
+
+#### Clearing all entries: `clear`
+
+Clears all entries from the BrotherGym student list.
+
+Format: `clear`
+
+#### Exiting the program: `exit`
+
+Exits the program.
+
+Format: `exit`
+
+#### Listing all students: `home`
+
+Shows a list of all students in the BrotherGym student list and removes the selection from the selected student.
+
+Format: `home`
 
 ### Student-related Commands
 
@@ -96,6 +119,7 @@ Format: `addStudent NAME --hp PHONE_NUMBER --email EMAIL --addr ADDRESS [--tag T
 * Phone number should be at least 3 digits long
 * Email has to follow the format of `<name>@<domain>`
 * Address cannot be empty
+* Tag should not be multiple words long
 
 <box type="tip" seamless>
 
@@ -105,12 +129,6 @@ Format: `addStudent NAME --hp PHONE_NUMBER --email EMAIL --addr ADDRESS [--tag T
 Examples:
 * `addStudent John Doe --hp 98765432 --email johnd@example.com --addr John street, block 123, #01-01`
 * `addStudent Betsy Crowe --tag friend --email betsycrowe@example.com --addr Newgate Prison --hp 1234567 --tag criminal`
-
-#### Listing all students: `home`
-
-Shows a list of all students in the BrotherGym student list.
-
-Format: `home`
 
 #### Editing a student: `editStudent`
 
@@ -176,7 +194,10 @@ Examples:
 * `find Betsy` followed by `deleteStudent 1` deletes the 1st student in the results of the `find` command.
 
 ### Workout plan related commands
+
+<box type="important">
 These commands can only be performed after a specific student has been selected via `viewStudent`
+</box>
 
 #### Add a workout plan to a student: `addPlan`
 
@@ -316,17 +337,6 @@ Format: `deleteExercise EXERCISE_ID`
 
 Example: `deleteExercise 2` removes the second exercise from the selected plan.
 
-### Clearing all entries: `clear`
-
-Clears all entries from the BrotherGym student list.
-
-Format: `clear`
-
-### Exiting the program: `exit`
-
-Exits the program.
-
-Format: `exit`
 
 ## Saving the data
 
