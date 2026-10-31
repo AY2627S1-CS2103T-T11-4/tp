@@ -7,11 +7,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.AddExerciseCommand;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.DeleteExerciseCommand;
 import seedu.address.logic.commands.DeletePlanCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
+import seedu.address.logic.commands.EditExerciseCommand;
 import seedu.address.logic.commands.EditPlanCommand;
 import seedu.address.logic.commands.EditStudentCommand;
 import seedu.address.logic.commands.ExitCommand;
@@ -74,7 +77,7 @@ public class CommandMetadataTest {
     public void catalog_containsExpectedCategoriesAndCommands() {
         List<CommandCategory> categories = CommandMetadataCatalog.allCommandCategories();
 
-        assertEquals(List.of("Common commands", "Student commands", "Workout plan commands"),
+        assertEquals(List.of("Common commands", "Student commands", "Workout plan commands", "Exercise commands"),
                 categories.stream().map(CommandCategory::title).toList());
         assertEquals(List.of(
                         HomeCommand.COMMAND_WORD,
@@ -97,6 +100,11 @@ public class CommandMetadataTest {
                         MarkPlanCommand.COMMAND_WORD,
                         UnmarkPlanCommand.COMMAND_WORD),
                 commandWords(categories.get(2)));
+        assertEquals(List.of(
+                        AddExerciseCommand.COMMAND_WORD,
+                        EditExerciseCommand.COMMAND_WORD,
+                        DeleteExerciseCommand.COMMAND_WORD),
+                commandWords(categories.get(3)));
 
         CommandMetadata addPlan = categories.get(2).commands().get(0);
         assertEquals(AddPlanCommand.MESSAGE_PARAMETERS, addPlan.parameters());

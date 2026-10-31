@@ -2,11 +2,14 @@ package seedu.address.logic.metadata;
 
 import java.util.List;
 
+import seedu.address.logic.commands.AddExerciseCommand;
 import seedu.address.logic.commands.AddPlanCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.DeleteExerciseCommand;
 import seedu.address.logic.commands.DeletePlanCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
+import seedu.address.logic.commands.EditExerciseCommand;
 import seedu.address.logic.commands.EditPlanCommand;
 import seedu.address.logic.commands.EditStudentCommand;
 import seedu.address.logic.commands.ExitCommand;
@@ -53,7 +56,14 @@ public final class CommandMetadataCatalog {
                     command(MarkPlanCommand.COMMAND_WORD, MarkPlanCommand.MESSAGE_PARAMETERS,
                             MarkPlanCommand.MESSAGE_DESCRIPTION, MarkPlanCommand.MESSAGE_EXAMPLE),
                     command(UnmarkPlanCommand.COMMAND_WORD, UnmarkPlanCommand.MESSAGE_PARAMETERS,
-                            UnmarkPlanCommand.MESSAGE_DESCRIPTION, UnmarkPlanCommand.MESSAGE_EXAMPLE))));
+                            UnmarkPlanCommand.MESSAGE_DESCRIPTION, UnmarkPlanCommand.MESSAGE_EXAMPLE))),
+            new CommandCategory("Exercise commands", List.of(
+                    command(AddExerciseCommand.COMMAND_WORD, AddExerciseCommand.MESSAGE_PARAMETERS,
+                            AddExerciseCommand.MESSAGE_DESCRIPTION, AddExerciseCommand.MESSAGE_EXAMPLE),
+                    command(EditExerciseCommand.COMMAND_WORD, EditExerciseCommand.MESSAGE_PARAMETERS,
+                            EditExerciseCommand.MESSAGE_DESCRIPTION, EditExerciseCommand.MESSAGE_EXAMPLE),
+                    command(DeleteExerciseCommand.COMMAND_WORD, DeleteExerciseCommand.MESSAGE_PARAMETERS,
+                            DeleteExerciseCommand.MESSAGE_DESCRIPTION, DeleteExerciseCommand.MESSAGE_EXAMPLE))));
 
     private CommandMetadataCatalog() {}
 
