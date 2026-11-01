@@ -249,16 +249,16 @@ Expands the selected workout plan and its exercises within the current student's
 Format: `viewPlan PLAN_ID`
 
 * Keeps all of the student's workout plans visible in their original order and expands the selected plan in place.
-* Displays the selected plan's title, date, status, description, tags, and numbered exercises. An empty plan shows `Exercises (0)` and an empty message.
+* Displays the selected plan's title, date, status, description, tags, and numbered exercises. An empty plan shows `Exercises (0)` and an inline empty message.
 * The plan id refers to the index number shown in the displayed list of workout plans of the student.
 * The plan id **must be a positive integer** 1, 2, 3, ...
-* Run `viewPlan` again to expand a different plan, or `viewStudent` to collapse the selected plan. Exercise IDs follow the order displayed inside the expanded plan.
+* Run `viewPlan` again to expand a different plan, or `viewStudent` to collapse the selected plan and return the list to the top. Exercise IDs follow the order displayed inside the expanded plan.
+* Updating the selected plan or adding, editing, or deleting one of its exercises keeps that plan expanded. Deleting a different plan keeps the selection and updates its displayed plan ID. Deleting the selected plan collapses the list without selecting another plan.
 * The workout panel remains one scrollable list, so plans above and below the expanded plan remain accessible.
 
 Example: `viewStudent 1` followed by `viewPlan 2` expands the second plan in place while retaining the surrounding workout cards.
 
 ![Example selected workout plan with sample exercises](images/selectedPlanView.png)
-
 
 #### Deleting a workout plan: `deletePlan`
 
@@ -276,9 +276,15 @@ Workout plans set the focus of a training session. Exercises specify the movemen
 
 <box type="important">
 
-Select a student with `viewStudent`, then select one of their workout plans with `viewPlan` before adding an exercise.
+Select a student with `viewStudent`, then select one of their workout plans with `viewPlan` before using an exercise command.
 
 </box>
+
+#### Exercise ID rules
+
+* An `EXERCISE_ID` is the positive, one-based number displayed beside an exercise inside the expanded workout plan.
+* The ID must refer to an exercise currently shown in the selected plan. An invalid or out-of-range ID leaves the plan unchanged.
+* Exercise IDs follow the displayed order. After an exercise is deleted, the remaining exercises keep their order and are renumbered.
 
 #### Add an exercise to a workout plan: `addExercise`
 
@@ -290,16 +296,13 @@ Format: `addExercise TITLE --description DESCRIPTION`
 
 Example: `addExercise Squats --description Barbell back squat`
 
-
 #### Editing an exercise: `editExercise`
 
 Edits one exercise in the selected workout plan.
 
 Format: `editExercise EXERCISE_ID [--name NAME] [--description DESCRIPTION]`
 
-* First select a student with `viewStudent STUDENT_ID`, then a workout plan with `viewPlan PLAN_ID`.
-* `EXERCISE_ID` is the positive number shown beside the exercise in the selected plan view.
-* Supply at least one field. An omitted field keeps its existing value and the exercise stays in the same position.
+* Supply at least one field. An omitted field keeps its existing value, the exercise stays in the same position, and the selected workout plan remains expanded.
 * Repeated or unsupported fields, invalid values, and edits that duplicate an existing exercise are rejected without changing the plan.
 
 Example: `editExercise 2 --name Goblet Squat --description 3 sets of 10 reps`
@@ -309,10 +312,6 @@ Example: `editExercise 2 --name Goblet Squat --description 3 sets of 10 reps`
 Deletes one exercise from the selected workout plan.
 
 Format: `deleteExercise EXERCISE_ID`
-
-* First select a student with `viewStudent STUDENT_ID`, then a plan with `viewPlan PLAN_ID`.
-* `EXERCISE_ID` is the positive number shown beside the exercise in the selected plan.
-* An invalid or out-of-range ID leaves the plan unchanged. The remaining exercises keep their order and are renumbered.
 
 Example: `deleteExercise 2` removes the second exercise from the selected plan.
 
@@ -401,5 +400,5 @@ Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add Exercise** | `addExercise TITLE --description DESCRIPTION`<br> e.g., `addExercise Squats --description Barbell back squat`
 **Edit Exercise** | `editExercise EXERCISE_ID [--name NAME] [--description DESCRIPTION]`<br> e.g., `editExercise 1 --description 3 sets of 10 reps`
-**Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `viewStudent 1`, `viewPlan 2`, `deleteExercise 1`
+**Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `deleteExercise 1`
 
