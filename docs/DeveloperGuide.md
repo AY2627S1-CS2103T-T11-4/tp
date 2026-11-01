@@ -81,6 +81,7 @@ The `UI` component,
 * executes user commands using the `Logic` component.
 * listens for changes to `Model` data so that the UI can be updated with the modified data. In particular, `MainWindow` observes `Logic#currentStudentProperty()` and updates `WorkoutPlanListPanel` when the current student changes.
 * keeps a reference to the `Logic` component, because the `UI` relies on the `Logic` to execute commands.
+  * the `HelpWindow` also requires [command metadata](#metadata-classes) from `Logic` to render the command cards of the help page.
 * depends on some classes in the `Model` component because it displays `Student` and `WorkoutPlan` objects from the model.
 
 ### Logic component
@@ -105,11 +106,24 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 ##### Interaction with the UI
 
-`Logic` exposes the filtered student list, the current student and its read-only observable property, and GUI settings to the UI.
+`Logic` exposes the filtered student list, the current student and its read-only observable property, GUI settings, and the command categories displayed in the Help window to the UI.
 
 * **Student list and selection:** The UI observes the filtered student list so it reflects changes to the student filter. `MainWindow` observes the current-student property and updates the student selection and workout-plan panel when it changes.
 * **GUI settings:** The UI reads these settings when initializing the window and updates them through `Logic` when exiting.
 * **Workout plans and exercises:** The `home` command shows all students and clears the current selection. Plan commands operate on the selected student; `viewPlan` selects a plan within that student. Exercise commands operate only on this selected plan.
+* **Help page metadata:** `LogicManager#getCommandCategories()` obtains the command categories from `CommandMetadataCatalog` and exposes them through the `Logic` interface for the UI to display.
+
+#### Metadata Classes
+
+The `logic.metadata` package supplies the command information displayed in the Help window.
+
+* `CommandMetadataCatalog` constructs and exposes the ordered list of command categories.
+* `CommandCategory` groups related commands under a Help page section title.
+* `CommandMetadata` stores a command's word, parameters, description, and example. Its `format()` method produces the command format displayed by the UI.
+
+The `CommandMetadataCatalog` object is passed to the `HelpWindow` of the `Ui` component through the `LogicManager` facade, which uses it to create 
+* one section for each `CommandCategory`; and 
+* one command card for each `CommandMetadata` entry.
 
 #### Parser Classes
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
