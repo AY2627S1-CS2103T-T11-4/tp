@@ -160,10 +160,6 @@ The entity diagram expands `UniqueStudentList` and `Student` to show student det
 <puml src="diagrams/ModelEntitiesClassDiagram.puml" alt="Model entities and their internal relationships" width="700" />
 
 <box type="info" seamless>
-
-**Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `BrotherGym`, and each `Student` references tags from that list. This lets `BrotherGym` maintain one `Tag` object per unique tag instead of each `Student` holding its own `Tag` objects.<br>
-
-<puml src="diagrams/BetterModelClassDiagram.puml" width="450" />
 </box>
 
 
