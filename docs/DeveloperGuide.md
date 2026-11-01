@@ -117,6 +117,8 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 The `logic.metadata` package supplies the command information displayed in the Help window.
 
+<puml src="diagrams/CommandMetadataClasses.puml" width="500"/>
+
 * `CommandMetadataCatalog` constructs and exposes the ordered list of command categories.
 * `CommandCategory` groups related commands under a Help page section title.
 * `CommandMetadata` stores a command's word, parameters, description, and example. Its `format()` method produces the command format displayed by the UI.
