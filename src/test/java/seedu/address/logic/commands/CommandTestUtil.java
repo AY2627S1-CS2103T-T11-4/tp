@@ -90,7 +90,7 @@ public class CommandTestUtil {
     public static final String TAG_DESC_STRENGTH = " " + PREFIX_TAG + " " + VALID_TAG_STRENGTH;
 
     public static final String INVALID_PLAN_NAME_DESC = " " + PREFIX_NAME; // empty string not allowed for plan names
-    public static final String INVALID_PLAN_DESC = " " + PREFIX_DESCRIPTION; // empty string not allowed for plan descriptions
+    public static final String INVALID_PLAN_DESC = " " + PREFIX_DESCRIPTION; // empty plan description
     public static final String INVALID_DATE_DESC_LETTERS = " " + PREFIX_DATE + " dd102026"; // 'd' not allowed in date
     public static final String INVALID_DATE_DESC_LENGTH = " " + PREFIX_DATE + " 091026"; // date must be 8 chars long
 

@@ -65,7 +65,7 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
      */
     private WorkoutPlan parseValidFields(ArgumentMultimap argMultimap) throws ParseException {
         WorkoutName name = ParserUtil.parseWorkoutName(argMultimap.getPreamble());
-        WorkoutDescription desc = ParserUtil.parseDescription(argMultimap.getValue(PREFIX_PLAN).get());
+        WorkoutDescription desc = ParserUtil.parseDescription(argMultimap.getValue(PREFIX_DESCRIPTION).get());
         WorkoutDate date = ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get());
         Set<WorkoutPlanTag> tagList = ParserUtil.parseTagsIfPresent(
                 argMultimap.getAllValues(PREFIX_TAG), WorkoutPlanTag::new).orElse(Set.of());

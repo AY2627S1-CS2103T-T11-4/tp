@@ -267,6 +267,8 @@ Adapters validate stored values during conversion, while model classes enforce d
 
 `StorageManager` delegates saves to `JsonBrotherGymStorage`, which converts the `ReadOnlyBrotherGym` model into `JsonSerializableBrotherGym` and its nested adapters. This preserves the student, workout-plan, and exercise hierarchy without modifying the model.
 
+`JsonAdaptedWorkoutPlan` writes the plan's name under the existing `"title"` JSON key, so previously saved data remains readable.
+
 `JsonUtil` uses Jackson to serialize the adapters and write the JSON file. Keeping conversion in the adapters separates the stored representation from domain logic.
 
 #### Automatic saving

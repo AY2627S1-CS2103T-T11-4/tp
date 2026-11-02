@@ -5,7 +5,7 @@ skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
 
 Class WorkoutPlan
-Class WorkoutTitle
+Class WorkoutName
 Class WorkoutDescription
 Class WorkoutDate
 enum WorkoutPlanStatus <<enumeration>>
@@ -16,7 +16,7 @@ Class Exercise
 Class ExerciseName
 Class ExerciseDescription
 
-WorkoutPlan --> "1" WorkoutTitle
+WorkoutPlan --> "1" WorkoutName
 WorkoutPlan --> "1" WorkoutDescription
 WorkoutPlan --> "1" WorkoutDate
 WorkoutPlan --> "1" WorkoutPlanStatus
