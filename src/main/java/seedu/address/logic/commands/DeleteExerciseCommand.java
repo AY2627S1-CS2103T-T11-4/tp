@@ -20,10 +20,11 @@ import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
 public class DeleteExerciseCommand extends SingleIndexCommand {
 
     public static final String COMMAND_WORD = "deleteExercise";
-    public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Deletes an exercise from the selected workout plan.\n"
-            + "Parameters: EXERCISE_ID (must be a positive integer shown in viewPlan)\n"
-            + "Example: " + COMMAND_WORD + " 1";
+    public static final String MESSAGE_DESCRIPTION = "Deletes an exercise from the selected workout plan.";
+    public static final String MESSAGE_PARAMETERS = "EXERCISE_ID (must be a positive integer shown in viewPlan)";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1";
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
+            + "Parameters: " + MESSAGE_PARAMETERS + "\n" + "Example: " + MESSAGE_EXAMPLE;
     public static final String MESSAGE_SUCCESS = "Deleted exercise: %1$s";
     public static final String MESSAGE_NO_STUDENT_SELECTED =
             "No student is currently selected. Use viewStudent first.";
