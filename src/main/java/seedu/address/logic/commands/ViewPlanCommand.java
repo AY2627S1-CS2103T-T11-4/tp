@@ -14,6 +14,7 @@ import seedu.address.model.Model;
 import seedu.address.model.exercise.Exercise;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 
 /** Displays one workout plan belonging to the currently selected student. */
 public class ViewPlanCommand extends SingleIndexCommand {
@@ -47,10 +48,18 @@ public class ViewPlanCommand extends SingleIndexCommand {
         requireNonNull(model);
         Student currentStudent = model.getCurrentStudent()
                 .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
-                
+
+        final WorkoutPlan workoutPlan;
+        try {
+
+            workoutPlan = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
+        } catch (WorkoutPlanIndexOutOfBoundsException e) {
+            throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
+        }
+
         currentStudent = model.updateStudentWorkoutsState(currentStudent);
 
-        WorkoutPlan workoutPlan = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
+
         model.setCurrentWorkoutPlan(workoutPlan);
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(workoutPlan),
                 formatExercises(workoutPlan.getExercisesList().getExerciseList())));
