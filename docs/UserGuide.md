@@ -30,7 +30,7 @@ If you type quickly, BrotherGym can help you manage students and workouts faster
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
 
-   * `home` : Lists all contacts.
+   * `home` : Lists all students.
 
    * `addStudent John Doe --hp 98765432 --email johnd@example.com --addr John street, block 123, #01-01`: 
      Adds a student named `John Doe` to the BrotherGym student list.
@@ -46,7 +46,7 @@ If you type quickly, BrotherGym can help you manage students and workouts faster
 
    * `deleteStudent 3` : Deletes the 3rd student shown in the current BrotherGym student list.
 
-   * `clear` : Deletes all contacts.
+   * `clear` : Deletes all students.
 
    * `exit` : Exits the app.
 
@@ -76,6 +76,8 @@ If you type quickly, BrotherGym can help you manage students and workouts faster
   For example, if the command specifies `--name NAME --hp PHONE_NUMBER`, `--hp PHONE_NUMBER --name NAME` is also acceptable.
 
 * The format of commands should be abided by strictly. Additional parameters or prefixes would cause the command to not be processed.
+
+* Indexes such as `STUDENT_ID`, `PLAN_ID`, and `EXERCISE_ID` must be positive integers without leading zeros. For example, `1` is valid but `0001` is rejected.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </box>
@@ -116,10 +118,13 @@ Format: `addStudent NAME --hp PHONE_NUMBER --email EMAIL --addr ADDRESS [--tag T
 
 * Displays the updated BrotherGym student list after the new student is added.
 * Name can only contain alphanumeric characters
+* Student names that differ only by letter case are treated as duplicates
 * Phone number should be at least 3 digits long
 * Email has to follow the format of `<name>@<domain>`
-* Address cannot be empty
+* Email must have at least 6 characters in total, with at most 64 characters before and after `@` (e.g., `a@example.com` is valid)
+* Address cannot be empty and cannot exceed 256 characters
 * Tag should not be multiple words long
+* The student list can contain up to 999 students
 
 <box type="tip" seamless>
 
@@ -392,7 +397,7 @@ Action     | Format, Examples
 **View Student** | `viewStudent STUDENT_ID`<br> e.g., `viewStudent 2`
 **Find Student**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **Delete Student** | `deleteStudent STUDENT_ID`<br> e.g., `deleteStudent 3`
-**Clear all Students**  | `clear`git
+**Clear all Students**  | `clear`
 
 Workout plan-related commands
 
