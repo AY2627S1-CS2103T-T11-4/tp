@@ -13,7 +13,10 @@
 
 ## **Acknowledgements**
 
-* _{List the sources of reused or adapted ideas, code, documentation, and third-party libraries here, with links to the originals.}_
+* This project is based on and adapted from the [AddressBook-Level3 project](https://github.com/NUS-CS2103-AY2627-S1/tp). 
+  We reused and extended parts of its codebase, project structure, and documentation conventions to develop BrotherGym.
+* During development, we used AI tools, including OpenAI Codex and Anthropic Claude, to assist with coding, documentation, and GitHub issue management. 
+  All AI-assisted contributions were reviewed and adapted by the team.
 
 --------------------------------------------------------------------------------------------------------------------
 
