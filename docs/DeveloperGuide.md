@@ -144,6 +144,14 @@ when `BrotherGymParser#parseCommand("deleteStudent 1")` is called from `LogicMan
 
 <puml src="diagrams/DeleteParserSequenceDiagram.puml" alt="Sequence Diagram for parsing 'delete 1'"/>
 
+#### Parser Exception Handling
+The `ArgumentValidator` and `ParserUtil` classes shown above also define the workflow’s two failure paths:
+* Format errors (e.g. incorrect use of prefixes) of command inputs produce an `InputFormatInvalidException` during argument validation by `ArgumentValidator`
+* Invalid values provided for the command arguments produce a `FieldValueInvalidException` during field parsing by `ParserUtil`.
+
+Both exception types are subclasses of `ParseException`, and the parser methods wrap the raw exceptions with the command usage message
+in another `ParseException` object to be thrown to the higher levels.
+
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
 
