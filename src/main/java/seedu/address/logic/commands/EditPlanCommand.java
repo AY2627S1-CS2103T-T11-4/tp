@@ -34,7 +34,7 @@ public class EditPlanCommand extends Command {
 
     public static final String MESSAGE_DESCRIPTION =
             "Edits a workout plan from the Student currently being viewed.";
-    public static final String MESSAGE_PARAMETERS = "PLAN_ID [" + PREFIX_NAME + " NAME] [" + PREFIX_PLAN
+    public static final String MESSAGE_PARAMETERS = "PLAN_ID [" + PREFIX_NAME + " PLAN_NAME] [" + PREFIX_PLAN
             + " DESCRIPTION] [" + PREFIX_DATE + " DATE(DDMMYYYY)] [" + PREFIX_TAG + " TAG]... ["
             + PREFIX_CLEAR_TAGS + "]";
     public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1 " + PREFIX_NAME + " NewName " + PREFIX_PLAN
