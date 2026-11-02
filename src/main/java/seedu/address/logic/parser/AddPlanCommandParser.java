@@ -15,8 +15,8 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutTitle;
 
 /**
  * Parses input arguments and creates a new AddPlanCommand object
@@ -64,12 +64,12 @@ public class AddPlanCommandParser implements Parser<AddPlanCommand> {
      * @throws ParseException if any of the fields contain invalid contents
      */
     private WorkoutPlan parseValidFields(ArgumentMultimap argMultimap) throws ParseException {
-        WorkoutTitle title = ParserUtil.parseTitle(argMultimap.getPreamble());
+        WorkoutName name = ParserUtil.parseWorkoutName(argMultimap.getPreamble());
         WorkoutDescription desc = ParserUtil.parseDescription(argMultimap.getValue(PREFIX_DESCRIPTION).get());
         WorkoutDate date = ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get());
         Set<WorkoutPlanTag> tagList = ParserUtil.parseTagsIfPresent(
                 argMultimap.getAllValues(PREFIX_TAG), WorkoutPlanTag::new).orElse(Set.of());
 
-        return new WorkoutPlan(title, desc, date, tagList);
+        return new WorkoutPlan(name, desc, date, tagList);
     }
 }

@@ -74,7 +74,7 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
         EditPlanCommand.EditPlanDescriptor editPlanDescriptor = new EditPlanCommand.EditPlanDescriptor();
 
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
-            editPlanDescriptor.setTitle(ParserUtil.parseTitle(argMultimap.getValue(PREFIX_NAME).get()));
+            editPlanDescriptor.setName(ParserUtil.parseWorkoutName(argMultimap.getValue(PREFIX_NAME).get()));
         }
         if (argMultimap.getValue(PREFIX_DESCRIPTION).isPresent()) {
             editPlanDescriptor.setDescription(

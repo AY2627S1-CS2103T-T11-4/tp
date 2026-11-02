@@ -33,10 +33,10 @@ import seedu.address.model.student.Student;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
-import seedu.address.model.workoutplan.WorkoutTitle;
 import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
 import seedu.address.testutil.BrotherGymBuilder;
@@ -257,7 +257,7 @@ public class ModelManagerTest {
         Student afterSet = modelManager.getCurrentStudent().orElseThrow();
         WorkoutPlan afterSetPlan = afterSet.getWorkoutPlansList().getWorkoutPlan(0);
         assertEquals(List.of(SQUATS, DEADLIFTS, LUNGES), afterSetPlan.getExercisesList().getExerciseList());
-        assertEquals(first.getTitle(), afterSetPlan.getTitle());
+        assertEquals(first.getName(), afterSetPlan.getName());
         assertEquals(first.getDescription(), afterSetPlan.getDescription());
         assertEquals(first.getDate(), afterSetPlan.getDate());
         assertEquals(first.getTags(), afterSetPlan.getTags());
@@ -276,7 +276,7 @@ public class ModelManagerTest {
         WorkoutPlan storedPlan = planWithExercises("First", LocalDate.now(), WorkoutPlanStatus.PENDING, SQUATS);
         Student storedStudent = withPlans(ALICE, storedPlan);
         Student equalStudent = withPlans(ALICE, storedPlan);
-        WorkoutPlan equalPlan = new WorkoutPlan(storedPlan.getTitle(), storedPlan.getDescription(),
+        WorkoutPlan equalPlan = new WorkoutPlan(storedPlan.getName(), storedPlan.getDescription(),
                 storedPlan.getDate(), storedPlan.getTags(), WorkoutPlanStatus.PENDING,
                 new ExercisesList(List.of(PUSH_UPS)));
         modelManager.addStudent(storedStudent);
@@ -401,13 +401,13 @@ public class ModelManagerTest {
 
     private static WorkoutPlan plan(String title, LocalDate deadline, WorkoutPlanStatus status) {
         WorkoutDate date = WorkoutDate.fromLocalDate(deadline);
-        return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription("Exercise"), date, Set.of(), status);
+        return new WorkoutPlan(new WorkoutName(title), new WorkoutDescription("Exercise"), date, Set.of(), status);
     }
 
     private static WorkoutPlan planWithExercises(String title, LocalDate deadline,
             WorkoutPlanStatus status, Exercise... exercises) {
         WorkoutDate date = WorkoutDate.fromLocalDate(deadline);
-        return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription("Exercise"), date,
+        return new WorkoutPlan(new WorkoutName(title), new WorkoutDescription("Exercise"), date,
                 Set.of(), status, new ExercisesList(List.of(exercises)));
     }
 

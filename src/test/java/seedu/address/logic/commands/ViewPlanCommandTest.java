@@ -21,17 +21,17 @@ import seedu.address.model.UserPrefs;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
-import seedu.address.model.workoutplan.WorkoutTitle;
 
 /** Contains unit and integration tests for {@link ViewPlanCommand}. */
 public class ViewPlanCommandTest {
 
     private static final WorkoutPlan FIRST_PLAN = new WorkoutPlan(
-            new WorkoutTitle("Strength"), new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)));
+            new WorkoutName("Strength"), new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)));
     private static final WorkoutPlan SECOND_PLAN = new WorkoutPlan(
-            new WorkoutTitle("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
+            new WorkoutName("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
 
     // EP: workout-plan index is null (invalid).
     @Test

@@ -79,7 +79,7 @@ public class WorkoutPlanCard extends UiPart<Region> {
     }
 
     private void setTitle(WorkoutPlan workoutPlan) {
-        String fullTitle = workoutPlan.getTitle().getValue();
+        String fullTitle = workoutPlan.getName().getValue();
         title.setText(fullTitle);
         title.setTooltip(createTooltip(fullTitle));
     }

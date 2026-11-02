@@ -30,7 +30,7 @@ public class WorkoutUtil {
      */
     public static String getWorkoutDetails(WorkoutPlan workout) {
         StringBuilder sb = new StringBuilder();
-        sb.append(workout.getTitle());
+        sb.append(workout.getName());
         sb.append(" " + PREFIX_DESCRIPTION + " " + workout.getDescription());
         sb.append(" " + PREFIX_DATE + " " + workout.getDate().toInputString());
         return sb.toString();
@@ -41,7 +41,7 @@ public class WorkoutUtil {
      */
     public static String getEditPlanDescriptorDetails(EditPlanCommand.EditPlanDescriptor descriptor) {
         StringBuilder sb = new StringBuilder();
-        descriptor.getTitle().ifPresent(title ->
+        descriptor.getName().ifPresent(title ->
                 sb.append(PREFIX_NAME).append(" ").append(title.getValue()).append(" "));
         descriptor.getDescription().ifPresent(plan ->
                 sb.append(PREFIX_DESCRIPTION).append(" ").append(plan.getValue()).append(" "));

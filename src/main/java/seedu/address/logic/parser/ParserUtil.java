@@ -26,7 +26,7 @@ import seedu.address.model.student.Phone;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
-import seedu.address.model.workoutplan.WorkoutTitle;
+import seedu.address.model.workoutplan.WorkoutName;
 
 /**
  * Contains utility methods used for parsing strings in the various *Parser classes.
@@ -37,11 +37,11 @@ public class ParserUtil {
             + Integer.MAX_VALUE + ", without leading zeros.";
 
     /**
-     * Parses and validates an exercise title.
+     * Parses and validates an exercise name.
      *
-     * @param name Exercise title to parse.
+     * @param name Exercise name to parse.
      * @return The parsed exercise name.
-     * @throws ParseException If the title is invalid.
+     * @throws ParseException If the name is invalid.
      */
     public static ExerciseName parseExerciseName(String name) throws ParseException {
         requireNonNull(name);
@@ -207,17 +207,17 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a {@code String title} into a {@code WorkoutTitle}
+     * Parses a {@code String name} into a {@code WorkoutName}
      *
-     * @throws ParseException if the given {@code title} is invalid
+     * @throws ParseException if the given {@code name} is invalid
      */
-    public static WorkoutTitle parseTitle(String title) throws ParseException {
-        requireNonNull(title);
-        String trimmedTitle = title.trim();
-        if (!WorkoutTitle.isValidWorkoutTitle(trimmedTitle)) {
-            throw new FieldValueInvalidException(WorkoutTitle.MESSAGE_CONSTRAINTS);
+    public static WorkoutName parseWorkoutName(String name) throws ParseException {
+        requireNonNull(name);
+        String trimmedName = name.trim();
+        if (!WorkoutName.isValidName(trimmedName)) {
+            throw new FieldValueInvalidException(WorkoutName.MESSAGE_CONSTRAINTS);
         }
-        return new WorkoutTitle(trimmedTitle);
+        return new WorkoutName(trimmedName);
     }
 
     /**

@@ -161,7 +161,7 @@ public class ModelManager implements Model {
         Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
         replaceStoredStudent(storedStudent, updatedStudent);
 
-        logger.info(() -> "Workout plan added for student " + student.getName() + ": " + plan.getTitle()
+        logger.info(() -> "Workout plan added for student " + student.getName() + ": " + plan.getName()
                 + "; Total number of workout plans: " + updatedPlans.getWorkoutList().size());
     }
 
@@ -175,7 +175,7 @@ public class ModelManager implements Model {
         Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
         replaceStoredStudent(storedStudent, updatedStudent);
 
-        logger.info(() -> "Workout plan removed for student " + student.getName() + ": " + plan.getTitle()
+        logger.info(() -> "Workout plan removed for student " + student.getName() + ": " + plan.getName()
                 + "; Total number of workout plans: " + updatedPlans.getWorkoutList().size());
     }
 
@@ -193,7 +193,7 @@ public class ModelManager implements Model {
         setStudentWithPlanReplacement(storedStudent, storedPlan, refreshedPlan, updatedStudent);
 
         logger.info(() -> "Workout plan set for student " + student.getName() + ": "
-                + target.getTitle() + " -> " + editedPlan.getTitle());
+                + target.getName() + " -> " + editedPlan.getName());
     }
 
     @Override
@@ -212,7 +212,7 @@ public class ModelManager implements Model {
         setStudentWithPlanReplacement(storedStudent, storedPlan, updatedPlan, updatedStudent);
 
         logger.info(() -> "Exercise added for student " + student.getName() + " in workout plan "
-                + plan.getTitle() + ": " + exercise + "; Total number of exercises: "
+                + plan.getName() + ": " + exercise + "; Total number of exercises: "
                 + updatedExercises.getExerciseList().size());
     }
 
@@ -233,7 +233,7 @@ public class ModelManager implements Model {
         setStudentWithPlanReplacement(storedStudent, storedPlan, updatedPlan, updatedStudent);
 
         logger.info(() -> "Exercise set for student " + student.getName() + " in workout plan "
-                + plan.getTitle() + ": " + target + " -> " + editedExercise);
+                + plan.getName() + ": " + target + " -> " + editedExercise);
     }
 
     @Override
@@ -252,7 +252,7 @@ public class ModelManager implements Model {
         setStudentWithPlanReplacement(storedStudent, storedPlan, updatedPlan, updatedStudent);
 
         logger.info(() -> "Exercise removed for student " + student.getName() + " in workout plan "
-                + plan.getTitle() + ": " + target + "; Total number of exercises: "
+                + plan.getName() + ": " + target + "; Total number of exercises: "
                 + updatedExercises.getExerciseList().size());
     }
 

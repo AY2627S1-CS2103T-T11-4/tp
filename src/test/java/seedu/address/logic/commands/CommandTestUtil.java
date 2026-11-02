@@ -67,8 +67,8 @@ public class CommandTestUtil {
     public static final EditStudentCommand.EditStudentDescriptor DESC_BOB;
 
     // Workout commands
-    public static final String VALID_WORKOUT_TITLE_LEGS = "Leg Day";
-    public static final String VALID_WORKOUT_TITLE_CHEST = "Chest Day";
+    public static final String VALID_WORKOUT_NAME_LEGS = "Leg Day";
+    public static final String VALID_WORKOUT_NAME_CHEST = "Chest Day";
     public static final String VALID_WORKOUT_PLAN_LEGS = "Leg Press 3x 180kg, Leg Extension 3x 60kg, RDLs 3x 40kg";
     public static final String VALID_WORKOUT_PLAN_CHEST = "Bench Press 3x 80kg";
     public static final LocalDate VALID_WORKOUT_DATE_LEGS = LocalDate.of(2026, 10, 15);
@@ -76,10 +76,10 @@ public class CommandTestUtil {
     public static final String VALID_TAG_HIIT = "HIIT";
     public static final String VALID_TAG_STRENGTH = "strength";
 
-    public static final String TITLE_PREAMBLE_LEGS = VALID_WORKOUT_TITLE_LEGS;
-    public static final String TITLE_PREAMBLE_CHEST = VALID_WORKOUT_TITLE_CHEST;
-    public static final String TITLE_DESC_LEGS = " " + PREFIX_NAME + " " + VALID_WORKOUT_TITLE_LEGS;
-    public static final String TITLE_DESC_CHEST = " " + PREFIX_NAME + " " + VALID_WORKOUT_TITLE_CHEST;
+    public static final String PLAN_NAME_PREAMBLE_LEGS = VALID_WORKOUT_NAME_LEGS;
+    public static final String PLAN_NAME_PREAMBLE_CHEST = VALID_WORKOUT_NAME_CHEST;
+    public static final String PLAN_NAME_DESC_LEGS = " " + PREFIX_NAME + " " + VALID_WORKOUT_NAME_LEGS;
+    public static final String PLAN_NAME_DESC_CHEST = " " + PREFIX_NAME + " " + VALID_WORKOUT_NAME_CHEST;
     public static final String PLAN_DESC_LEGS = " " + PREFIX_DESCRIPTION + " " + VALID_WORKOUT_PLAN_LEGS;
     public static final String PLAN_DESC_CHEST = " " + PREFIX_DESCRIPTION + " " + VALID_WORKOUT_PLAN_CHEST;
     public static final String DATE_DESC_LEGS = " " + PREFIX_DATE + " "
@@ -89,8 +89,8 @@ public class CommandTestUtil {
     public static final String TAG_DESC_HIIT = " " + PREFIX_TAG + " " + VALID_TAG_HIIT;
     public static final String TAG_DESC_STRENGTH = " " + PREFIX_TAG + " " + VALID_TAG_STRENGTH;
 
-    public static final String INVALID_TITLE_DESC = " " + PREFIX_NAME; // empty string not allowed for plan titles
-    public static final String INVALID_PLAN_DESC = " " + PREFIX_DESCRIPTION;
+    public static final String INVALID_PLAN_NAME_DESC = " " + PREFIX_NAME; // empty string not allowed for plan names
+    public static final String INVALID_PLAN_DESC = " " + PREFIX_DESCRIPTION; // empty plan description
     public static final String INVALID_DATE_DESC_LETTERS = " " + PREFIX_DATE + " dd102026"; // 'd' not allowed in date
     public static final String INVALID_DATE_DESC_LENGTH = " " + PREFIX_DATE + " 091026"; // date must be 8 chars long
 

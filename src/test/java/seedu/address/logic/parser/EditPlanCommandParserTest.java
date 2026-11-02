@@ -4,19 +4,19 @@ import static seedu.address.logic.commands.CommandTestUtil.DATE_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_DATE_DESC_LETTERS;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PLAN_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_PLAN_NAME_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PREFIX_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
-import static seedu.address.logic.commands.CommandTestUtil.INVALID_TITLE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_CHEST;
 import static seedu.address.logic.commands.CommandTestUtil.PLAN_DESC_LEGS;
+import static seedu.address.logic.commands.CommandTestUtil.PLAN_NAME_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_HIIT;
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_STRENGTH;
-import static seedu.address.logic.commands.CommandTestUtil.TITLE_DESC_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HIIT;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_STRENGTH;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_DATE_LEGS;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_NAME_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_PLAN_LEGS;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_TITLE_LEGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
@@ -38,7 +38,7 @@ import seedu.address.logic.commands.EditPlanCommand;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
-import seedu.address.model.workoutplan.WorkoutTitle;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.testutil.EditPlanDescriptorBuilder;
 
 public class EditPlanCommandParserTest {
@@ -80,7 +80,7 @@ public class EditPlanCommandParserTest {
     @Test
     public void parse_missingParts_failure() {
         // One invalid input at a time: only the index is missing.
-        assertParseFailure(parser, VALID_WORKOUT_TITLE_LEGS, this.formatParserError(MESSAGE_INVALID_INDEX));
+        assertParseFailure(parser, VALID_WORKOUT_NAME_LEGS, this.formatParserError(MESSAGE_INVALID_INDEX));
 
         // One invalid input at a time: only the edit field is missing.
         assertParseFailure(parser, "1", EditPlanCommand.MESSAGE_NOT_EDITED);
@@ -90,10 +90,10 @@ public class EditPlanCommandParserTest {
     @Test
     public void parse_invalidPreamble_failure() {
         // EP: negative index (invalid).
-        assertParseFailure(parser, "-5" + TITLE_DESC_LEGS, this.formatParserError(MESSAGE_INVALID_INDEX));
+        assertParseFailure(parser, "-5" + PLAN_NAME_DESC_LEGS, this.formatParserError(MESSAGE_INVALID_INDEX));
 
         // BV: index < 1 (invalid).
-        assertParseFailure(parser, "0" + TITLE_DESC_LEGS, this.formatParserError(MESSAGE_INVALID_INDEX));
+        assertParseFailure(parser, "0" + PLAN_NAME_DESC_LEGS, this.formatParserError(MESSAGE_INVALID_INDEX));
 
         // EP: non-index preamble text (invalid).
         assertParseFailure(parser, "1 some random string", this.formatParserError(MESSAGE_INVALID_INDEX));
@@ -104,9 +104,9 @@ public class EditPlanCommandParserTest {
 
     @Test
     public void parse_invalidValue_failure() {
-        // One invalid input at a time: only the workout title is invalid.
-        assertParseFailure(parser, "1" + INVALID_TITLE_DESC,
-                this.formatParserError(WorkoutTitle.MESSAGE_CONSTRAINTS)); // invalid title
+        // One invalid input at a time: only the workout name is invalid.
+        assertParseFailure(parser, "1" + INVALID_PLAN_NAME_DESC,
+                this.formatParserError(WorkoutName.MESSAGE_CONSTRAINTS)); // invalid name
         // One invalid input at a time: only the workout description is invalid.
         assertParseFailure(parser, "1" + INVALID_PLAN_DESC,
                 this.formatParserError(WorkoutDescription.MESSAGE_CONSTRAINTS)); // invalid description
@@ -128,20 +128,20 @@ public class EditPlanCommandParserTest {
         assertParseFailure(parser, "1" + TAG_EMPTY,
                 this.formatParserError(WorkoutPlanTag.MESSAGE_CONSTRAINTS));
 
-        // Invalid inputs combined after separate tests: title and description are invalid.
-        assertParseFailure(parser, "1" + INVALID_TITLE_DESC + INVALID_PLAN_DESC + DATE_DESC_LEGS,
-                this.formatParserError(WorkoutTitle.MESSAGE_CONSTRAINTS));
+        // Invalid inputs combined after separate tests: name and description are invalid.
+        assertParseFailure(parser, "1" + INVALID_PLAN_NAME_DESC + INVALID_PLAN_DESC + DATE_DESC_LEGS,
+                this.formatParserError(WorkoutName.MESSAGE_CONSTRAINTS));
     }
 
     // Each valid input at least once: all editable workout-plan fields parse successfully.
     @Test
     public void parse_allFieldsSpecified_success() {
         Index targetIndex = INDEX_SECOND;
-        String userInput = targetIndex.getOneBased() + TITLE_DESC_LEGS + PLAN_DESC_LEGS
+        String userInput = targetIndex.getOneBased() + PLAN_NAME_DESC_LEGS + PLAN_DESC_LEGS
                 + DATE_DESC_LEGS + TAG_DESC_STRENGTH + TAG_DESC_HIIT;
 
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder()
-                .withTitle(VALID_WORKOUT_TITLE_LEGS)
+                .withName(VALID_WORKOUT_NAME_LEGS)
                 .withDescription(VALID_WORKOUT_PLAN_LEGS).withDate(VALID_WORKOUT_DATE_LEGS)
                 .withTags(VALID_TAG_STRENGTH, VALID_TAG_HIIT).build();
         EditPlanCommand expectedCommand = new EditPlanCommand(targetIndex, descriptor);
@@ -165,11 +165,11 @@ public class EditPlanCommandParserTest {
 
     @Test
     public void parse_oneFieldSpecified_success() {
-        // Each valid input at least once: title succeeds in an edit test.
+        // Each valid input at least once: name succeeds in an edit test.
         Index targetIndex = INDEX_THIRD;
-        String userInput = targetIndex.getOneBased() + TITLE_DESC_LEGS;
+        String userInput = targetIndex.getOneBased() + PLAN_NAME_DESC_LEGS;
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder()
-                .withTitle(VALID_WORKOUT_TITLE_LEGS).build();
+                .withName(VALID_WORKOUT_NAME_LEGS).build();
         EditPlanCommand expectedCommand = new EditPlanCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
@@ -225,10 +225,10 @@ public class EditPlanCommandParserTest {
     @Test
     public void parse_clearTagsWithOtherField_success() {
         Index targetIndex = INDEX_THIRD;
-        String userInput = targetIndex.getOneBased() + TITLE_DESC_LEGS + CLEAR_TAGS;
+        String userInput = targetIndex.getOneBased() + PLAN_NAME_DESC_LEGS + CLEAR_TAGS;
 
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanDescriptorBuilder()
-                .withTitle(VALID_WORKOUT_TITLE_LEGS).withTags().build();
+                .withName(VALID_WORKOUT_NAME_LEGS).withTags().build();
         EditPlanCommand expectedCommand = new EditPlanCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);

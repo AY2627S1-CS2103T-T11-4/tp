@@ -239,7 +239,6 @@ After a successful change to workout plans or exercises, the command refreshes t
 
 Status refresh preserves completed plans and determines whether other plans are pending or overdue using the current date. Deferring this refresh until the requested operation succeeds prevents a rejected operation, such as a duplicate addition, from changing existing statuses. If refresh replaces the selected plan, its selection is retained at the same list index.
 
-
 ### Storage component
 **API** : [`Storage.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/storage/Storage.java)
 
@@ -267,6 +266,8 @@ Adapters validate stored values during conversion, while model classes enforce d
 #### Writing data: from model objects to JSON
 
 `StorageManager` delegates saves to `JsonBrotherGymStorage`, which converts the `ReadOnlyBrotherGym` model into `JsonSerializableBrotherGym` and its nested adapters. This preserves the student, workout-plan, and exercise hierarchy without modifying the model.
+
+`JsonAdaptedWorkoutPlan` writes the plan's name under the existing `"title"` JSON key, so previously saved data remains readable.
 
 `JsonUtil` uses Jackson to serialize the adapters and write the JSON file. Keeping conversion in the adapters separates the stored representation from domain logic.
 
@@ -300,7 +301,7 @@ The panel treats the same stored instance, or its replacement at the same list i
 
 Deleting another plan retains and reindexes the selection. Deleting the selected plan instead collapses the remaining list without selecting a replacement. Running `viewStudent` collapses the selection and returns the panel to the top, while navigating away from the student clears the panel state. This keeps the visible selection and subsequent exercise commands aligned with the same stored plan.
 
-Each `WorkoutPlanCard` reads the plan's title, date, workout description, tags, and status through `WorkoutPlan` getters. Tags are sorted by name and rendered individually as labels, giving a stable display order without relying on `WorkoutPlan#toString()`. The card maps the status to visible `DONE`, `OVERDUE`, or `PENDING` text and applies matching CSS classes to both the badge and card.
+Each `WorkoutPlanCard` reads the plan's name, date, workout description, tags, and status through `WorkoutPlan` getters. Tags are sorted by name and rendered individually as labels, giving a stable display order without relying on `WorkoutPlan#toString()`. The card maps the status to visible `DONE`, `OVERDUE`, or `PENDING` text and applies matching CSS classes to both the badge and card.
 
 The following sequence diagram shows how the panel is updated when the user executes `viewStudent 1`:
 
