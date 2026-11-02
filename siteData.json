@@ -70,10 +70,14 @@
         "view-exercises-of-a-workout-plan": "View exercises of a workout plan",
         "non-functional-requirements": "Non-Functional Requirements",
         "glossary": "Glossary",
-        "appendix-instructions-for-manual-testing": "Appendix: Instructions for manual testing",
-        "launch-and-shutdown": "Launch and shutdown",
-        "deleting-a-student": "Deleting a student",
-        "saving-data": "Saving data"
+        "appendix-instructions-for-manual-testing": "Appendix: Instructions for Manual Testing",
+        "before-you-begin": "Before you begin",
+        "prepare-a-predictable-dataset": "Prepare a predictable dataset",
+        "manage-students-and-navigate-between-views": "Manage students and navigate between views",
+        "manage-workout-plans-and-track-progress": "Manage workout plans and track progress",
+        "manage-exercises-within-a-selected-plan": "Manage exercises within a selected plan",
+        "check-selection-rules-and-rejected-inputs": "Check selection rules and rejected inputs",
+        "verify-saving-deletion-and-recovery": "Verify saving, deletion, and recovery"
       },
       "headingKeywords": {}
     },
