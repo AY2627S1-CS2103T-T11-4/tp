@@ -127,7 +127,7 @@ Format: `addStudent NAME --hp PHONE_NUMBER --email EMAIL --addr ADDRESS [--tag T
 
 <box type="tip" seamless>
 
-**Tip:** A student can have any number of tags, including zero.
+**Tip:** A student can have up to 30 distinct tags
 </box>
 
 Examples:
@@ -168,9 +168,9 @@ Format: `find KEYWORD [MORE_KEYWORDS]...`
   Mixed input such as `find Alice !!!` still searches for `Alice`.
 
 Examples:
-* `find John` returns `john` and `John Doe`
-* `find alex david` returns `Alex Yeoh`, `David Li`<br>
-  ![result for 'find alex david'](images/findAlexDavidResult.png)
+* `find Amelie John` returns `Amelie Garber` and `John Doe`
+
+  ![result for 'Find Amelie John'](images/find-command-ui-ss.png)
 
 #### Viewing all workout plans of a student: `viewStudent`
 
@@ -218,6 +218,7 @@ Examples:
 * `addPlan Leg Day --description focus on form --date 20102026`
 * `addPlan Chest Day --description Push for PR --date 31102026`
 
+**Tip:** A workout plan can have up to 30 distinct tags
 #### Edit a workout plan of a student: `editPlan`
 
 Edits an existing workout plan from the student's list of workout plans
@@ -349,7 +350,7 @@ BrotherGym automatically saves data after every command. You do not need to save
 
 ### Editing the data file
 
-BrotherGym data is saved automatically as a JSON file `[JAR file location]/data/brothergym.json`. Advanced users are welcome to update data directly by editing that data file.
+BrotherGym data is saved automatically as `data/brothergym.json`, relative to the directory from which the app is run (the current working directory). Advanced users are welcome to update data directly by editing that data file.
 
 <box type="warning" seamless>
 
@@ -358,12 +359,6 @@ If your changes make the data file invalid, BrotherGym starts with an empty stud
 Furthermore, certain edits can cause the BrotherGym to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
 
 </box>
-
-### Archiving data files `[coming in v2.0]`
-
-_Details coming soon ..._
-
---------------------------------------------------------------------------------------------------------------------
 
 ## FAQ
 
@@ -375,7 +370,6 @@ _Details coming soon ..._
 ## Known issues
 
 1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
-2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
 
 --------------------------------------------------------------------------------------------------------------------
 
