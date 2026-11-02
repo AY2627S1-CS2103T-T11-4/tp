@@ -72,15 +72,21 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/se-
 
 <puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
 
-The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `StudentListPanel`, `WorkoutPlanListPanel`, and `StatusBarFooter`. `StudentListPanel` displays students using `StudentCard` objects, while `WorkoutPlanListPanel` displays the current student's plans using `WorkoutPlanCard` objects. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
+The UI is coordinated by `MainWindow`, which owns the command box, result display, student list, workout-plan list, and status bar, and opens the Help window.
+
+* `StudentListPanel` displays students using `StudentCard` objects.
+* `WorkoutPlanListPanel` displays the current student's workout plans using `WorkoutPlanCard` objects. It also controls which card is expanded to show its numbered exercises.
+* `CommandBox` passes command text to `MainWindow`, while `ResultDisplay` shows the returned feedback or error message.
+* The visible UI classes inherit from the abstract `UiPart` class, which provides their common FXML-loading behavior.
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/MainWindow.java).
 
 The `UI` component,
 
 * executes user commands using the `Logic` component.
-* listens for changes to `Model` data so that the UI can be updated with the modified data. In particular, `MainWindow` observes `Logic#currentStudentProperty()` and updates `WorkoutPlanListPanel` when the current student changes.
+* listens for changes to the current student and selected workout plan exposed by `Logic`, so `MainWindow` can keep `StudentListPanel` and `WorkoutPlanListPanel` synchronized with the current navigation state.
 * keeps a reference to the `Logic` component, because the `UI` relies on the `Logic` to execute commands.
+  * the `HelpWindow` also requires [command metadata](#metadata-classes) from `Logic` to render the command cards of the help page.
 * depends on some classes in the `Model` component because it displays `Student` and `WorkoutPlan` objects from the model.
 
 ### Logic component
@@ -105,38 +111,67 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 ##### Interaction with the UI
 
-`Logic` exposes the filtered student list, the current student and its read-only observable property, and GUI settings to the UI.
+`Logic` exposes the filtered student list, the current student and its read-only observable property, GUI settings, and the command categories displayed in the Help window to the UI.
 
 * **Student list and selection:** The UI observes the filtered student list so it reflects changes to the student filter. `MainWindow` observes the current-student property and updates the student selection and workout-plan panel when it changes.
 * **GUI settings:** The UI reads these settings when initializing the window and updates them through `Logic` when exiting.
 * **Workout plans and exercises:** The `home` command shows all students and clears the current selection. Plan commands operate on the selected student; `viewPlan` selects a plan within that student. Exercise commands operate only on this selected plan.
+* **Help page metadata:** `LogicManager#getCommandCategories()` obtains the command categories from `CommandMetadataCatalog` and exposes them through the `Logic` interface for the UI to display.
+
+#### Metadata Classes
+
+The `logic.metadata` package supplies the command information displayed in the Help window.
+
+<puml src="diagrams/CommandMetadataClasses.puml" width="500"/>
+
+* `CommandMetadataCatalog` constructs and exposes the ordered list of command categories.
+* `CommandCategory` groups related commands under a Help page section title.
+* `CommandMetadata` stores a command's word, parameters, description, and example. Its `format()` method produces the command format displayed by the UI.
+
+The `CommandMetadataCatalog` object is passed to the `HelpWindow` of the `Ui` component through the `LogicManager` facade, which uses it to create 
+* one section for each `CommandCategory`; and 
+* one command card for each `CommandMetadata` entry.
 
 #### Parser Classes
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
-<puml src="diagrams/ParserClasses.puml" width="600"/>
+<puml src="diagrams/ParserClasses.puml" width="800"/>
 
 Here are the classes dedicated to parsing the arguments of the command strings:
 
 <puml src="diagrams/ArgumentProcessors.puml" width="600"/>
 
 How the parsing works:
-* When called upon to parse a user command, the `BrotherGymParser` class creates either an `XYZCommandParser` or a `SingleIndexCommandParser`
-  * `addStudent`, `addPlan`, `addExercise`, `editStudent`, `editPlan`, and `editExercise` commands each have a dedicated `XYZCommandParser`
-    (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`),
-  * `viewStudent`, `viewPlan`, `deleteStudent`, `deletePlan`, and `deleteExercise` commands are `SingleIndexCommand`s that only parse a single index,
-    hence they use the same generic `SingleIndexCommandParser`
-  * both types of parsers implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+
+* After identifying the command word, `BrotherGymParser` delegates the arguments to one of the following parser categories:
+
+| Parser category                    | Commands | Responsibility                                                                           |
+|------------------------------------|----------|------------------------------------------------------------------------------------------|
+| Dedicated `XYZCommandParser`       | `addStudent`, `addPlan`, `addExercise`, `editStudent`, `editPlan`, `editExercise`, `find` | Each command has its own dedicated parser (`XYZ` is a placeholder for the command name). |
+| Generic `SingleIndexCommandParser` | `viewStudent`, `viewPlan`, `deleteStudent`, `deletePlan`, `deleteExercise`, `markPlan`, `unmarkPlan` | Generic parser for `SingleIndexCommand`s that accept a single positive index.            |
+| Generic `NoArgumentCommandParser`  | `help`, `home`, `exit`, `clear` | Generic parser that rejects any arguments after the command word.                        |
+
+* Every concrete parser represented in the table implements the `Parser` interface.
+
 * The parser class uses a few dependencies to parse the user input into a valid command object (e.g. `AddStudentCommand`, `DeleteStudentCommand`):
   1. The user input string is passed into `ArgumentTokenizer` to create a `ArgumentMultimap` object to store the entered arguments.
   2. The `ArgumentValidator` ensures that the `ArgumentMultimap` contains the correct arguments for the command.
-  3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the `Command` object
-* The `BrotherGymParser` returns that object as a `Command` object.
+  3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the corresponding command object
+
+* The `BrotherGymParser` returns the created command as `Command` object.
 
 The sequence diagram shows how the parser classes create the `DeleteStudentCommand` object 
 when `BrotherGymParser#parseCommand("deleteStudent 1")` is called from `LogicManager`:
 
 <puml src="diagrams/DeleteParserSequenceDiagram.puml" alt="Sequence Diagram for parsing 'delete 1'"/>
+
+#### Parser Exception Handling
+The `ArgumentValidator` and `ParserUtil` classes shown above also define the workflow’s two failure paths:
+* Format errors (e.g. incorrect use of prefixes) of command inputs produce an `InputFormatInvalidException` during argument validation by `ArgumentValidator`
+* Invalid values provided for the command arguments produce a `FieldValueInvalidException` during field parsing by `ParserUtil`.
+
+Both exception types are subclasses of `ParseException`, and the parser methods wrap the raw exceptions with the command usage message
+in another `ParseException` object to be thrown to the higher levels.
 
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
@@ -160,10 +195,6 @@ The entity diagram expands `UniqueStudentList` and `Student` to show student det
 <puml src="diagrams/ModelEntitiesClassDiagram.puml" alt="Model entities and their internal relationships" width="700" />
 
 <box type="info" seamless>
-
-**Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `BrotherGym`, and each `Student` references tags from that list. This lets `BrotherGym` maintain one `Tag` object per unique tag instead of each `Student` holding its own `Tag` objects.<br>
-
-<puml src="diagrams/BetterModelClassDiagram.puml" width="450" />
 </box>
 
 
@@ -300,7 +331,11 @@ Workout-plan statuses are refreshed explicitly when `viewStudent` is executed. `
 
 Changing either selection notifies `MainWindow`, which coalesces related property changes before passing the final student and plan state to `WorkoutPlanListPanel#showStudent()`. With no selected plan, the panel shows the student's collapsed plan cards. `viewPlan` expands the selected card in its original list position and renders numbered exercises inside it, while sibling cards remain available through the same outer scroll pane. An empty plan shows an `Exercises (0)` heading and an inline empty message. With no current student, the panel prompts the user to select one.
 
-The same observable flow redraws the panel after commands such as `markPlan`, `unmarkPlan`, `editExercise`, and `deleteExercise` replace the selected plan. `ModelManager` rebinds the selected plan when an edit or exercise change replaces it with an immutable object. The panel treats the same stored instance or a replacement at the same list index as a retained selection and restores the previous scroll offset. A different `viewPlan` selection is scrolled only far enough to become visible. Removing the selected plan collapses the remaining list without selecting a replacement; navigation away from the student clears the panel state. This keeps the view and subsequent exercise commands on the same stored plan.
+The same observable flow redraws the panel after commands such as `markPlan`, `unmarkPlan`, `editExercise`, and `deleteExercise` replace the selected plan. Because plans are immutable, `ModelManager` rebinds the selected plan to its replacement.
+
+The panel treats the same stored instance, or its replacement at the same list index, as a retained selection. It then restores the previous scroll offset. Selecting a different plan scrolls only far enough to reveal its card.
+
+Deleting another plan retains and reindexes the selection. Deleting the selected plan instead collapses the remaining list without selecting a replacement. Running `viewStudent` collapses the selection and returns the panel to the top, while navigating away from the student clears the panel state. This keeps the visible selection and subsequent exercise commands aligned with the same stored plan.
 
 Each `WorkoutPlanCard` reads the plan's title, date, workout description, tags, and status through `WorkoutPlan` getters. Tags are sorted by name and rendered individually as labels, giving a stable display order without relying on `WorkoutPlan#toString()`. The card maps the status to visible `DONE`, `OVERDUE`, or `PENDING` text and applies matching CSS classes to both the badge and card.
 
@@ -319,11 +354,11 @@ The following sequence diagram shows how the panel is updated when the user exec
   * Pros: The display always reflects the current time without requiring another command.
   * Cons: A timer adds lifecycle complexity, while calculating status in the UI mixes model rules with presentation logic.
 
-**Aspect: Keeping the workout plan panel synchronized with the current student:**
+**Aspect: Keeping the workout plan panel synchronized with navigation:**
 
-* **Alternative 1 (current choice):** Observe the selected student and plan properties in `Logic`.
-  * Pros: The panel updates when navigation or immutable replacements change either selection.
-  * Cons: Commands and `Model` operations must update both properties correctly for listeners to be notified.
+* **Alternative 1 (current choice):** Observe the selected student and plan properties in `Logic` and expand the selected card within the existing list.
+  * Pros: The panel updates when navigation or immutable replacements change either selection, while the surrounding plans remain visible for context.
+  * Cons: Commands and `Model` operations must update both properties correctly, and the panel must preserve a sensible viewport while cards expand, collapse, or are reindexed.
 * **Alternative 2:** Call `WorkoutPlanListPanel#showStudent()` manually after every successful command.
   * Pros: The refresh is explicit in the command-execution flow.
   * Cons: The UI is refreshed even for unrelated commands, and new commands can fail to refresh the panel if the manual call is omitted.
@@ -336,9 +371,11 @@ The following sequence diagram shows how the panel is updated when the user exec
 
 ### Editing an exercise
 
-`EditExerciseCommandParser` accepts a displayed one-based exercise index and optional `--name` and `--description` values. It rejects repeated or unsupported prefixes and requires at least one edited field.
+`EditExerciseCommandParser` accepts the displayed one-based exercise index followed by optional `--name` and `--description` values. It validates the argument structure before parsing the index and supplied fields. Repeated or unsupported prefixes, invalid field values, and commands without an edited field are rejected before a command is created.
 
-`EditExerciseCommand` preserves omitted fields and calls `Model#setExerciseForWorkoutPlan`. The model replaces the immutable exercise list, workout plan, and student while retaining the exercise position and unrelated data. Domain failures are translated into command errors before any model state changes.
+When `EditExerciseCommand` executes, it first requires both a selected student and selected workout plan. It locates the exercise using the displayed index and copies any omitted field from the existing exercise. It then calls `Model#setExerciseForWorkoutPlan` with the replacement.
+
+The exercise remains at the same position, and the selected workout card stays expanded to show the updated value. An out-of-range index, duplicate result, or stale selection produces a command error without a partial update.
 
 ### \[Proposed\] Undo/redo feature
 
