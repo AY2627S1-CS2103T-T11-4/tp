@@ -13,7 +13,12 @@
 
 ## **Acknowledgements**
 
-* _{List the sources of reused or adapted ideas, code, documentation, and third-party libraries here, with links to the originals.}_
+BrotherGym is based on and adapted from the [AddressBook-Level3 project](https://github.com/NUS-CS2103-AY2627-S1/tp), created by the [SE-EDU initiative](https://se-education.org).
+We reused and extended parts of its codebase, project structure, and documentation conventions to develop BrotherGym.
+
+During development, we used AI tools, including OpenAI Codex, Anthropic Claude and GitHub Copilot, to assist with coding, documentation, and GitHub issue management. All AI-assisted contributions were reviewed and adapted by the team.
+
+Libraries used include [JavaFX](https://openjfx.io/) for the GUI, [Jackson](https://github.com/FasterXML/jackson) for JSON data storage, and [JUnit 5](https://github.com/junit-team/junit5) for testing.
 
 --------------------------------------------------------------------------------------------------------------------
 
