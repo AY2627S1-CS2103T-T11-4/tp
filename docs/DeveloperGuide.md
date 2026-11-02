@@ -114,24 +114,30 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 #### Parser Classes
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
-<puml src="diagrams/ParserClasses.puml" width="600"/>
+<puml src="diagrams/ParserClasses.puml" width="800"/>
 
 Here are the classes dedicated to parsing the arguments of the command strings:
 
 <puml src="diagrams/ArgumentProcessors.puml" width="600"/>
 
 How the parsing works:
-* When called upon to parse a user command, the `BrotherGymParser` class creates either an `XYZCommandParser` or a `SingleIndexCommandParser`
-  * `addStudent`, `addPlan`, `addExercise`, `editStudent`, `editPlan`, and `editExercise` commands each have a dedicated `XYZCommandParser`
-    (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`),
-  * `viewStudent`, `viewPlan`, `deleteStudent`, `deletePlan`, and `deleteExercise` commands are `SingleIndexCommand`s that only parse a single index,
-    hence they use the same generic `SingleIndexCommandParser`
-  * both types of parsers implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+
+* After identifying the command word, `BrotherGymParser` delegates the arguments to one of the following parser categories:
+
+| Parser category                    | Commands | Responsibility                                                                           |
+|------------------------------------|----------|------------------------------------------------------------------------------------------|
+| Dedicated `XYZCommandParser`       | `addStudent`, `addPlan`, `addExercise`, `editStudent`, `editPlan`, `editExercise`, `find` | Each command has its own dedicated parser (`XYZ` is a placeholder for the command name). |
+| Generic `SingleIndexCommandParser` | `viewStudent`, `viewPlan`, `deleteStudent`, `deletePlan`, `deleteExercise`, `markPlan`, `unmarkPlan` | Generic parser for `SingleIndexCommand`s that accept a single positive index.            |
+| Generic `NoArgumentCommandParser`  | `help`, `home`, `exit`, `clear` | Generic parser that rejects any arguments after the command word.                        |
+
+* Every concrete parser represented in the table implements the `Parser` interface.
+
 * The parser class uses a few dependencies to parse the user input into a valid command object (e.g. `AddStudentCommand`, `DeleteStudentCommand`):
   1. The user input string is passed into `ArgumentTokenizer` to create a `ArgumentMultimap` object to store the entered arguments.
   2. The `ArgumentValidator` ensures that the `ArgumentMultimap` contains the correct arguments for the command.
-  3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the `Command` object
-* The `BrotherGymParser` returns that object as a `Command` object.
+  3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the corresponding command object
+
+* The `BrotherGymParser` returns the created command as `Command` object.
 
 The sequence diagram shows how the parser classes create the `DeleteStudentCommand` object 
 when `BrotherGymParser#parseCommand("deleteStudent 1")` is called from `LogicManager`:
