@@ -37,8 +37,8 @@ If you type quickly, BrotherGym can help you manage students and workouts faster
    
    * `viewStudent 2` : View all workout plans of the 2nd student in the current list.
 
-   * `addPlan Leg Day --plan Squats 100kg 5 reps x5; Leg curls 80kg 10 reps x3 --date 20102026`: 
-     Adds a plan named `Leg Day` to the workout plan list for the current student.
+   * `addPlan Leg Day --plan Lower body strength training --date 20102026`:
+     Adds a plan named `Leg Day` to the workout plan list for the selected student.
 
    * `deleteStudent 3` : Deletes the 3rd student shown in the current BrotherGym student list.
 
@@ -176,7 +176,10 @@ Examples:
 * `find Betsy` followed by `deleteStudent 1` deletes the 1st student in the results of the `find` command.
 
 ### Workout plan related commands
+
+<box type="important">
 These commands can only be performed after a specific student has been selected via `viewStudent`
+</box>
 
 #### Add a workout plan to a student: `addPlan`
 
@@ -190,8 +193,8 @@ Format: `addPlan TITLE --plan DESCRIPTION --date DDMMYYYY [--tag TAG]...`
 * Date field must be provided in `DDMMYYYY` format
   
 Examples:
-* `addPlan Leg Day --plan Squats 100kg 10 reps x5; Leg curls 80kg 10 reps x3 --date 20102026`
-* `addPlan Chest Day --plan Bench press 80kg 15 reps x3 --date 31102026`
+* `addPlan Leg Day --plan Lower body strength training --date 20102026`
+* `addPlan Chest Day --plan Upper body strength training --date 31102026`
 
 #### Edit a workout plan of a student: `editPlan`
 
@@ -212,9 +215,9 @@ Dates follow the same calendar validation as `addPlan`, including leap-year chec
 * If both `--tag TAG` and `--clearTags` are supplied, all tags are cleared after the tag values are validated.
 
 Examples:
-* `editPlan 2 --plan Bicep Curls 15kg 10 reps x3 --date 06072027`: 
+* `editPlan 2 --plan Full body conditioning --date 06072027`:
    Edits the description and date of the second workout plan of the student's list of workout plans 
-   to `Bicep Curls 15kg 10 reps x3` and `06072027`
+   to `Full body conditioning` and `06072027`
 * `editPlan 3 --clearTags`: Clears all tags for the third workout plan of the student's list of workout plans
 
 #### Changing statuses of commands: `markPlan` and `unmarkPlan`
@@ -388,7 +391,7 @@ Workout plan-related commands
 
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add Workout Plan**    | `addPlan TITLE --plan DESCRIPTION --date DDMMYYYY [--tag TAG]... ` <br> e.g., `addPlan Leg Day --plan Squats 100kg 5 reps x5; Leg curls 80kg 10 reps x3 --date 20102026`
+**Add Workout Plan**    | `addPlan TITLE --plan DESCRIPTION --date DDMMYYYY [--tag TAG]... ` <br> e.g., `addPlan Leg Day --plan Lower body strength training --date 20102026`
 **Edit Workout Plan**   | `editPlan PLAN_ID [--name NAME] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... [--clearTags]`<br> e.g.,`editPlan 2 --date 06072027`
 **Mark Workout Plan** | `markPlan PLAN_ID` <br> e.g. `markPlan 2`
 **Unmark Workout Plan** | `unmarkPlan PLAN_ID` <br> e.g. `unmarkPlan 2`
