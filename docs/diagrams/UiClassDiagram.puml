@@ -49,7 +49,7 @@ MainWindow .up.|> UiPart
 MainWindow *-right-> "1" CommandBox
 MainWindow *-right-> "1" ResultDisplay
 MainWindow *-right-> "1" StatusBarFooter
-MainWindow *-right-> "1" HelpWindow
+MainWindow -right-> "0..1" HelpWindow
 MainWindow *-down-> "1" StudentListPanel
 MainWindow *-down-> "1" WorkoutPlanListPanel
 

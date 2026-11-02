@@ -72,7 +72,7 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/se-
 
 <puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
 
-The UI is coordinated by `MainWindow`, which owns the command box, result display, student list, workout-plan list, status bar, and Help window.
+The UI is coordinated by `MainWindow`, which owns the command box, result display, student list, workout-plan list, and status bar, and opens the Help window.
 
 * `StudentListPanel` displays students using `StudentCard` objects.
 * `WorkoutPlanListPanel` displays the current student's workout plans using `WorkoutPlanCard` objects. It also controls which card is expanded to show its numbered exercises.
