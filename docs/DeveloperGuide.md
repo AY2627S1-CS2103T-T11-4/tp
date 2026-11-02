@@ -486,6 +486,14 @@ Note: For all use cases below, the **Software System** is BrotherGym and the **A
 | U6 | [Remove a workout plan](#remove-a-workout-plan) |
 | U7 | [View exercises of a workout plan](#view-exercises-of-a-workout-plan) |
 
+**Exercise management**
+
+| As a ... | I want to ... | So that I can ... |
+|----------|---------------|-------------------|
+| gym trainer | store different types of exercises per workout plan | ensure workout sessions cover all the necessary exercises |
+| gym trainer | add different exercises to each workout plan | ensure workout sessions are further customised for each student |
+| gym trainer | remove an unwanted exercise from a workout plan | clear up space in BrotherGym |
+
 ### Add a student
 
 Use case: U1 - Add a student
@@ -510,6 +518,10 @@ Use case: U1 - Add a student
   * 2b1. BrotherGym displays an error message.
 
     Use case resumes at step 2.
+* 2c. The student list is full (999 students).
+  * 2c1. BrotherGym displays an error message asking the trainer to delete a student before adding another.
+
+    Use case ends without adding the student.
 
 ### View all students
 
@@ -519,6 +531,7 @@ Use case: U2 - View all students
 
 1. Trainer requests to view all students.
 2. BrotherGym displays all students in the system.
+3. Selected student and workout plan are cleared
 
    Use case ends.
 
@@ -550,8 +563,9 @@ Use case: U4 - View workout plans for a specific student
 **MSS:**
 
 1. Trainer <u>views all students (U2)</u>.
-2. Trainer selects a specific student.
-3. BrotherGym displays all workout plans assigned to the student.
+2. Trainer requests to view a specific student using `viewStudent`.
+3. BrotherGym clears the previously selected student or workout plan
+4. BrotherGym selects the student and refreshes the student's workout plan statuses as Done, Overdue, or Pending 
 
    Use case ends.
 
@@ -562,9 +576,16 @@ Use case: U4 - View workout plans for a specific student
 
     Use case resumes at step 2.
 
+* 4b. The student has no workout plans.
+  * 4b1. BrotherGym displays "No workout plans assigned."
+
+    Use case ends.
+
 ### Add a workout plan
 
 Use case: U5 - Add a workout plan
+
+**Precondition:** A student must be selected using `viewStudent` (U4) before adding a plan.
 
 **MSS:**
 
@@ -582,10 +603,25 @@ Use case: U5 - Add a workout plan
   * 2a1. BrotherGym displays an error message.
 
     Use case resumes at step 2.
+* 2b. Trainer provides optional tags.
+  * 2b1. BrotherGym includes the tags in the workout plan.
+
+    Use case resumes at step 3.
+* 2c. The workout plan already exists for the selected student.
+  * 2c1. BrotherGym displays an error message without adding the duplicate plan.
+
+    Use case resumes at step 2.
+* 2d. No student is selected.
+  * 2d1. BrotherGym displays an error message asking the trainer to use `viewStudent` first.
+  * 2d2. Trainer selects a student using `viewStudent` (U4).
+
+    Use case resumes at step 2.
 
 ### Remove a workout plan
 
 Use case: U6 - Remove a workout plan
+
+**Precondition:** A student must be selected using `viewStudent` (U4) before removing a plan.
 
 **MSS:**
 
@@ -604,9 +640,17 @@ Use case: U6 - Remove a workout plan
 
     Use case resumes at step 2.
 
+* 2b. No student is selected.
+  * 2b1. BrotherGym displays an error message asking the trainer to use `viewStudent` first.
+  * 2b2. Trainer selects a student using `viewStudent` (U4).
+
+    Use case resumes at step 2.
+
 ### View exercises of a workout plan
 
 Use case: U7 - View exercises of a workout plan
+
+**Precondition:** A student must be selected using `viewStudent` (U4) before viewing a plan.
 
 **MSS:**
 
@@ -622,6 +666,17 @@ Use case: U7 - View exercises of a workout plan
   * 2a1. BrotherGym displays an error message.
 
     Use case resumes at step 2.
+
+* 2b. No student is selected.
+  * 2b1. BrotherGym displays an error message asking the trainer to use `viewStudent` first.
+  * 2b2. Trainer selects a student using `viewStudent` (U4).
+
+    Use case resumes at step 2.
+
+* 3a. The selected workout plan has no exercises.
+  * 3a1. BrotherGym displays the plan details and indicates that there are no exercises.
+
+    Use case ends.
 
 ### Non-Functional Requirements
 
