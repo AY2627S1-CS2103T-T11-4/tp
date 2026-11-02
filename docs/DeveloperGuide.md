@@ -135,7 +135,7 @@ How the parsing works:
 * The parser class uses a few dependencies to parse the user input into a valid command object (e.g. `AddStudentCommand`, `DeleteStudentCommand`):
   1. The user input string is passed into `ArgumentTokenizer` to create a `ArgumentMultimap` object to store the entered arguments.
   2. The `ArgumentValidator` ensures that the `ArgumentMultimap` contains the correct arguments for the command.
-  3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the corresponding commmand object
+  3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the corresponding command object
 
 * The `BrotherGymParser` returns the created command as `Command` object.
 
