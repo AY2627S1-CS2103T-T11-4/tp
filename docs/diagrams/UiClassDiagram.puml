@@ -44,7 +44,8 @@ HiddenOutside ..> Ui
 UiManager .up.|> Ui
 UiManager *-right-> "1" MainWindow : owns >
 
-MainWindow .up.|> UiPart
+MainWindow -up-|> UiPart
+HelpWindow -left-|> UiPart
 
 MainWindow *-right-> "1" CommandBox
 MainWindow *-right-> "1" ResultDisplay
@@ -60,6 +61,7 @@ StudentCard ..> Model
 WorkoutPlanCard ..> Model
 UiManager -up-> Logic
 MainWindow -up-> Logic
+HelpWindow .down.> Logic
 
 CommandBox -[hidden]down- ResultDisplay
 ResultDisplay -[hidden]down- StatusBarFooter

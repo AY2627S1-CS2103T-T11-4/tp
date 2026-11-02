@@ -86,6 +86,7 @@ The `UI` component,
 * executes user commands using the `Logic` component.
 * listens for changes to the current student and selected workout plan exposed by `Logic`, so `MainWindow` can keep `StudentListPanel` and `WorkoutPlanListPanel` synchronized with the current navigation state.
 * keeps a reference to the `Logic` component, because the `UI` relies on the `Logic` to execute commands.
+  * the `HelpWindow` also requires [command metadata](#metadata-classes) from `Logic` to render the command cards of the help page.
 * depends on some classes in the `Model` component because it displays `Student` and `WorkoutPlan` objects from the model.
 
 ### Logic component
@@ -110,38 +111,67 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 ##### Interaction with the UI
 
-`Logic` exposes the filtered student list, the current student and its read-only observable property, and GUI settings to the UI.
+`Logic` exposes the filtered student list, the current student and its read-only observable property, GUI settings, and the command categories displayed in the Help window to the UI.
 
 * **Student list and selection:** The UI observes the filtered student list so it reflects changes to the student filter. `MainWindow` observes the current-student property and updates the student selection and workout-plan panel when it changes.
 * **GUI settings:** The UI reads these settings when initializing the window and updates them through `Logic` when exiting.
 * **Workout plans and exercises:** The `home` command shows all students and clears the current selection. Plan commands operate on the selected student; `viewPlan` selects a plan within that student. Exercise commands operate only on this selected plan.
+* **Help page metadata:** `LogicManager#getCommandCategories()` obtains the command categories from `CommandMetadataCatalog` and exposes them through the `Logic` interface for the UI to display.
+
+#### Metadata Classes
+
+The `logic.metadata` package supplies the command information displayed in the Help window.
+
+<puml src="diagrams/CommandMetadataClasses.puml" width="500"/>
+
+* `CommandMetadataCatalog` constructs and exposes the ordered list of command categories.
+* `CommandCategory` groups related commands under a Help page section title.
+* `CommandMetadata` stores a command's word, parameters, description, and example. Its `format()` method produces the command format displayed by the UI.
+
+The `CommandMetadataCatalog` object is passed to the `HelpWindow` of the `Ui` component through the `LogicManager` facade, which uses it to create 
+* one section for each `CommandCategory`; and 
+* one command card for each `CommandMetadata` entry.
 
 #### Parser Classes
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
-<puml src="diagrams/ParserClasses.puml" width="600"/>
+<puml src="diagrams/ParserClasses.puml" width="800"/>
 
 Here are the classes dedicated to parsing the arguments of the command strings:
 
 <puml src="diagrams/ArgumentProcessors.puml" width="600"/>
 
 How the parsing works:
-* When called upon to parse a user command, the `BrotherGymParser` class creates either an `XYZCommandParser` or a `SingleIndexCommandParser`
-  * `addStudent`, `addPlan`, `addExercise`, `editStudent`, `editPlan`, and `editExercise` commands each have a dedicated `XYZCommandParser`
-    (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`),
-  * `viewStudent`, `viewPlan`, `deleteStudent`, `deletePlan`, and `deleteExercise` commands are `SingleIndexCommand`s that only parse a single index,
-    hence they use the same generic `SingleIndexCommandParser`
-  * both types of parsers implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+
+* After identifying the command word, `BrotherGymParser` delegates the arguments to one of the following parser categories:
+
+| Parser category                    | Commands | Responsibility                                                                           |
+|------------------------------------|----------|------------------------------------------------------------------------------------------|
+| Dedicated `XYZCommandParser`       | `addStudent`, `addPlan`, `addExercise`, `editStudent`, `editPlan`, `editExercise`, `find` | Each command has its own dedicated parser (`XYZ` is a placeholder for the command name). |
+| Generic `SingleIndexCommandParser` | `viewStudent`, `viewPlan`, `deleteStudent`, `deletePlan`, `deleteExercise`, `markPlan`, `unmarkPlan` | Generic parser for `SingleIndexCommand`s that accept a single positive index.            |
+| Generic `NoArgumentCommandParser`  | `help`, `home`, `exit`, `clear` | Generic parser that rejects any arguments after the command word.                        |
+
+* Every concrete parser represented in the table implements the `Parser` interface.
+
 * The parser class uses a few dependencies to parse the user input into a valid command object (e.g. `AddStudentCommand`, `DeleteStudentCommand`):
   1. The user input string is passed into `ArgumentTokenizer` to create a `ArgumentMultimap` object to store the entered arguments.
   2. The `ArgumentValidator` ensures that the `ArgumentMultimap` contains the correct arguments for the command.
-  3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the `Command` object
-* The `BrotherGymParser` returns that object as a `Command` object.
+  3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the corresponding command object
+
+* The `BrotherGymParser` returns the created command as `Command` object.
 
 The sequence diagram shows how the parser classes create the `DeleteStudentCommand` object 
 when `BrotherGymParser#parseCommand("deleteStudent 1")` is called from `LogicManager`:
 
 <puml src="diagrams/DeleteParserSequenceDiagram.puml" alt="Sequence Diagram for parsing 'delete 1'"/>
+
+#### Parser Exception Handling
+The `ArgumentValidator` and `ParserUtil` classes shown above also define the workflow’s two failure paths:
+* Format errors (e.g. incorrect use of prefixes) of command inputs produce an `InputFormatInvalidException` during argument validation by `ArgumentValidator`
+* Invalid values provided for the command arguments produce a `FieldValueInvalidException` during field parsing by `ParserUtil`.
+
+Both exception types are subclasses of `ParseException`, and the parser methods wrap the raw exceptions with the command usage message
+in another `ParseException` object to be thrown to the higher levels.
 
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
