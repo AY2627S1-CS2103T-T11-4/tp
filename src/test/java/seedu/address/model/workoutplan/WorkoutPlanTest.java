@@ -30,7 +30,7 @@ public class WorkoutPlanTest {
 
     private static final String NAME_TEXT_VALID = "Strength training";
     private static final String NAME_TEXT_OTHER = "Cardio";
-    private static final WorkoutPlanName NAME_VALID = new WorkoutPlanName(NAME_TEXT_VALID);
+    private static final WorkoutName NAME_VALID = new WorkoutName(NAME_TEXT_VALID);
 
     private static final String DESCRIPTION_TEXT_VALID = "Squats, push-ups";
     private static final String DESCRIPTION_TEXT_OTHER = "Running";
@@ -236,7 +236,7 @@ public class WorkoutPlanTest {
         WorkoutPlan plan = new WorkoutPlan(NAME_VALID, DESCRIPTION_VALID, DATE_VALID);
 
         // EP: Another plan with equal identifying fields (equivalent).
-        WorkoutPlan copy = new WorkoutPlan(new WorkoutPlanName(NAME_TEXT_VALID),
+        WorkoutPlan copy = new WorkoutPlan(new WorkoutName(NAME_TEXT_VALID),
                 new WorkoutDescription(DESCRIPTION_TEXT_VALID), new WorkoutDate(DATE_VALID.getValue()));
         assertTrue(plan.equals(copy));
 
@@ -250,7 +250,7 @@ public class WorkoutPlanTest {
         assertFalse(plan.equals(NAME_TEXT_VALID));
 
         // EP: Only the name differs (non-equivalent).
-        assertFalse(plan.equals(new WorkoutPlan(new WorkoutPlanName(NAME_TEXT_OTHER),
+        assertFalse(plan.equals(new WorkoutPlan(new WorkoutName(NAME_TEXT_OTHER),
                 DESCRIPTION_VALID, DATE_VALID)));
 
         // EP: Only the description differs (non-equivalent).
@@ -282,7 +282,7 @@ public class WorkoutPlanTest {
     @Test
     public void hashCode_equalPlans_haveSameHashCode() {
         WorkoutPlan first = new WorkoutPlan(NAME_VALID, DESCRIPTION_VALID, DATE_VALID);
-        WorkoutPlan second = new WorkoutPlan(new WorkoutPlanName(NAME_TEXT_VALID),
+        WorkoutPlan second = new WorkoutPlan(new WorkoutName(NAME_TEXT_VALID),
                 new WorkoutDescription(DESCRIPTION_TEXT_VALID), new WorkoutDate(DATE_VALID.getValue()));
         assertEquals(first.hashCode(), second.hashCode());
 
@@ -307,7 +307,7 @@ public class WorkoutPlanTest {
         // EP: null (different identity).
         assertFalse(plan.isSamePlan(null));
         // EP: only the name differs (different identity).
-        assertFalse(plan.isSamePlan(new WorkoutPlan(new WorkoutPlanName(NAME_TEXT_OTHER),
+        assertFalse(plan.isSamePlan(new WorkoutPlan(new WorkoutName(NAME_TEXT_OTHER),
                 DESCRIPTION_VALID, DATE_VALID)));
         // EP: only the description differs (different identity).
         assertFalse(plan.isSamePlan(new WorkoutPlan(NAME_VALID,

@@ -37,8 +37,8 @@ import seedu.address.model.student.Student;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 
@@ -101,7 +101,7 @@ public class WorkoutPlanListPanelTest {
     @Test
     public void emptyPlanAndNavigation_clearOldExerciseEntries() throws Exception {
         WorkoutPlan populated = plan(List.of(exercise("Squats", "Barbell back squat")));
-        WorkoutPlan empty = new WorkoutPlan(new WorkoutPlanName("Mobility"), new WorkoutDescription("Plan notes"),
+        WorkoutPlan empty = new WorkoutPlan(new WorkoutName("Mobility"), new WorkoutDescription("Plan notes"),
                 WorkoutDate.fromLocalDate(LocalDate.now().plusDays(1)),
                 Set.of(new WorkoutPlanTag("mobility")), WorkoutPlanStatus.COMPLETED, new ExercisesList());
         Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(), ALICE.getAddress(),
@@ -141,11 +141,11 @@ public class WorkoutPlanListPanelTest {
     @Test
     public void selectedMiddlePlan_retainsCardsInOriginalOrder() throws Exception {
         WorkoutPlan first = plan(List.of(exercise("Squats", "Barbell back squat")));
-        WorkoutPlan second = new WorkoutPlan(new WorkoutPlanName("Cardio"), new WorkoutDescription("Intervals"),
+        WorkoutPlan second = new WorkoutPlan(new WorkoutName("Cardio"), new WorkoutDescription("Intervals"),
                 WorkoutDate.fromLocalDate(LocalDate.now().plusDays(2)),
                 Set.of(new WorkoutPlanTag("cardio")), WorkoutPlanStatus.PENDING,
                 new ExercisesList(List.of(exercise("Sprints", "Six rounds"))));
-        WorkoutPlan third = new WorkoutPlan(new WorkoutPlanName("Mobility"), new WorkoutDescription("Recovery"),
+        WorkoutPlan third = new WorkoutPlan(new WorkoutName("Mobility"), new WorkoutDescription("Recovery"),
                 WorkoutDate.fromLocalDate(LocalDate.now().plusDays(3)),
                 Set.of(new WorkoutPlanTag("mobility")), WorkoutPlanStatus.PENDING, new ExercisesList());
         Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(), ALICE.getAddress(),
@@ -341,7 +341,7 @@ public class WorkoutPlanListPanelTest {
     }
 
     private static WorkoutPlan namedPlan(String title, List<Exercise> exercises) {
-        return new WorkoutPlan(new WorkoutPlanName(title), new WorkoutDescription("Plan notes"),
+        return new WorkoutPlan(new WorkoutName(title), new WorkoutDescription("Plan notes"),
                 WorkoutDate.fromLocalDate(LocalDate.now().plusDays(1)),
                 Set.of(new WorkoutPlanTag("strength")), WorkoutPlanStatus.COMPLETED, new ExercisesList(exercises));
     }

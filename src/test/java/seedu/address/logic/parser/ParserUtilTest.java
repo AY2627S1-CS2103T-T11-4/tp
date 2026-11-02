@@ -31,7 +31,7 @@ import seedu.address.model.student.Phone;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
-import seedu.address.model.workoutplan.WorkoutPlanName;
+import seedu.address.model.workoutplan.WorkoutName;
 
 @SuppressWarnings("checkstyle:Regexp")
 public class ParserUtilTest {
@@ -394,22 +394,22 @@ public class ParserUtilTest {
 
     // EP: workout name violates its constraints (invalid).
     @Test
-    public void parseWorkoutPlanName_invalidValue_throwsParseException() {
-        assertThrows(ParseException.class, () -> ParserUtil.parseWorkoutPlanName(INVALID_PLAN_NAME));
+    public void parseWorkoutName_invalidValue_throwsParseException() {
+        assertThrows(ParseException.class, () -> ParserUtil.parseWorkoutName(INVALID_PLAN_NAME));
     }
 
     // Each valid input at least once: a valid workout name is parsed.
     @Test
-    public void parseWorkoutPlanName_validValue_returnsWorkoutPlanName() throws Exception {
-        WorkoutPlanName expectedName = new WorkoutPlanName(VALID_PLAN_NAME);
-        assertEquals(expectedName, ParserUtil.parseWorkoutPlanName(VALID_PLAN_NAME));
+    public void parseWorkoutName_validValue_returnsWorkoutName() throws Exception {
+        WorkoutName expectedName = new WorkoutName(VALID_PLAN_NAME);
+        assertEquals(expectedName, ParserUtil.parseWorkoutName(VALID_PLAN_NAME));
     }
 
     // Each valid input at least once: surrounding name whitespace is trimmed.
     @Test
-    public void parseWorkoutPlanName_validValueWithWhitespace_returnsTrimmedName() throws Exception {
-        WorkoutPlanName expectedName = new WorkoutPlanName(VALID_PLAN_NAME);
-        assertEquals(expectedName, ParserUtil.parseWorkoutPlanName(WHITESPACE + VALID_PLAN_NAME + WHITESPACE));
+    public void parseWorkoutName_validValueWithWhitespace_returnsTrimmedName() throws Exception {
+        WorkoutName expectedName = new WorkoutName(VALID_PLAN_NAME);
+        assertEquals(expectedName, ParserUtil.parseWorkoutName(WHITESPACE + VALID_PLAN_NAME + WHITESPACE));
     }
 
     @Test

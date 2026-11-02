@@ -21,8 +21,8 @@ import seedu.address.model.UserPrefs;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 
 /**
@@ -33,9 +33,9 @@ import seedu.address.model.workoutplan.WorkoutPlansList;
 public class DeletePlanCommandTest {
 
     private static final WorkoutPlan FIRST_PLAN = new WorkoutPlan(
-            new WorkoutPlanName("Strength"), new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)));
+            new WorkoutName("Strength"), new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)));
     private static final WorkoutPlan SECOND_PLAN = new WorkoutPlan(
-            new WorkoutPlanName("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
+            new WorkoutName("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
 
     // EP: workout-plan index is null (invalid).
     @Test

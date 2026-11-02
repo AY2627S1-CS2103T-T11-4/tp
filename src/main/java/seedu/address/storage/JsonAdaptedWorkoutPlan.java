@@ -23,8 +23,8 @@ import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 
 /**
@@ -136,10 +136,10 @@ class JsonAdaptedWorkoutPlan {
     public WorkoutPlan toModelType() throws IllegalValueException {
         if (title == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT,
-                    WorkoutPlanName.class.getSimpleName()));
+                    WorkoutName.class.getSimpleName()));
         }
-        if (!WorkoutPlanName.isValidName(title)) {
-            throw new IllegalValueException(WorkoutPlanName.MESSAGE_CONSTRAINTS);
+        if (!WorkoutName.isValidName(title)) {
+            throw new IllegalValueException(WorkoutName.MESSAGE_CONSTRAINTS);
         }
         if (workoutDescription == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT,
@@ -193,7 +193,7 @@ class JsonAdaptedWorkoutPlan {
             throw new IllegalValueException(e.getMessage());
         }
 
-        return new WorkoutPlan(new WorkoutPlanName(title), new WorkoutDescription(workoutDescription),
+        return new WorkoutPlan(new WorkoutName(title), new WorkoutDescription(workoutDescription),
                 modelDate, modelTags, modelStatus, modelExercisesList);
     }
 }

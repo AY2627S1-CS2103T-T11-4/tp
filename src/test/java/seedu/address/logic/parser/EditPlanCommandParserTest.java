@@ -38,7 +38,7 @@ import seedu.address.logic.commands.EditPlanCommand;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
-import seedu.address.model.workoutplan.WorkoutPlanName;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.testutil.EditPlanDescriptorBuilder;
 
 public class EditPlanCommandParserTest {
@@ -106,7 +106,7 @@ public class EditPlanCommandParserTest {
     public void parse_invalidValue_failure() {
         // One invalid input at a time: only the workout name is invalid.
         assertParseFailure(parser, "1" + INVALID_PLAN_NAME_DESC,
-                this.formatParserError(WorkoutPlanName.MESSAGE_CONSTRAINTS)); // invalid name
+                this.formatParserError(WorkoutName.MESSAGE_CONSTRAINTS)); // invalid name
         // One invalid input at a time: only the workout description is invalid.
         assertParseFailure(parser, "1" + INVALID_PLAN_DESC,
                 this.formatParserError(WorkoutDescription.MESSAGE_CONSTRAINTS)); // invalid description
@@ -130,7 +130,7 @@ public class EditPlanCommandParserTest {
 
         // Invalid inputs combined after separate tests: name and description are invalid.
         assertParseFailure(parser, "1" + INVALID_PLAN_NAME_DESC + INVALID_PLAN_DESC + DATE_DESC_LEGS,
-                this.formatParserError(WorkoutPlanName.MESSAGE_CONSTRAINTS));
+                this.formatParserError(WorkoutName.MESSAGE_CONSTRAINTS));
     }
 
     // Each valid input at least once: all editable workout-plan fields parse successfully.

@@ -24,14 +24,14 @@ import seedu.address.model.exercise.ExercisesList;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanName;
 
 /** Tests adding an exercise to the selected workout plan. */
 public class AddExerciseCommandTest {
     private static final Exercise EXERCISE = new Exercise(new ExerciseName("Squats"),
             new ExerciseDescription("Barbell back squat"));
-    private static final WorkoutPlan PLAN = new WorkoutPlan(new WorkoutPlanName("Leg day"),
+    private static final WorkoutPlan PLAN = new WorkoutPlan(new WorkoutName("Leg day"),
             new WorkoutDescription("Lower body"), WorkoutDate.fromLocalDate(LocalDate.of(2026, 10, 29)));
 
     // EP: exercise input is null (invalid).

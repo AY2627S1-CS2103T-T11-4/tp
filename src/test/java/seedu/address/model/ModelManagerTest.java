@@ -33,8 +33,8 @@ import seedu.address.model.student.Student;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
@@ -384,13 +384,13 @@ public class ModelManagerTest {
 
     private static WorkoutPlan plan(String title, LocalDate deadline, WorkoutPlanStatus status) {
         WorkoutDate date = WorkoutDate.fromLocalDate(deadline);
-        return new WorkoutPlan(new WorkoutPlanName(title), new WorkoutDescription("Exercise"), date, Set.of(), status);
+        return new WorkoutPlan(new WorkoutName(title), new WorkoutDescription("Exercise"), date, Set.of(), status);
     }
 
     private static WorkoutPlan planWithExercises(String title, LocalDate deadline,
             WorkoutPlanStatus status, Exercise... exercises) {
         WorkoutDate date = WorkoutDate.fromLocalDate(deadline);
-        return new WorkoutPlan(new WorkoutPlanName(title), new WorkoutDescription("Exercise"), date,
+        return new WorkoutPlan(new WorkoutName(title), new WorkoutDescription("Exercise"), date,
                 Set.of(), status, new ExercisesList(List.of(exercises)));
     }
 

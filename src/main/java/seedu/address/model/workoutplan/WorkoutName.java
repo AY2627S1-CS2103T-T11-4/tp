@@ -7,18 +7,18 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  * Represents the name of a workout plan.
  * Guarantees: immutable and not blank.
  */
-public final class WorkoutPlanName {
+public final class WorkoutName {
 
     public static final String MESSAGE_CONSTRAINTS = "Workout plan names should not be blank";
 
     private final String value;
 
     /**
-     * Constructs a {@code WorkoutPlanName}.
+     * Constructs a {@code WorkoutName}.
      *
      * @param name A non-blank name.
      */
-    public WorkoutPlanName(String name) {
+    public WorkoutName(String name) {
         requireNonNull(name);
         checkArgument(isValidName(name), MESSAGE_CONSTRAINTS);
         value = name;
@@ -45,7 +45,7 @@ public final class WorkoutPlanName {
         if (other == this) {
             return true;
         }
-        return other instanceof WorkoutPlanName otherName && value.equals(otherName.value);
+        return other instanceof WorkoutName otherName && value.equals(otherName.value);
     }
 
     @Override

@@ -23,8 +23,8 @@ import seedu.address.model.student.Student;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 
@@ -36,7 +36,7 @@ import seedu.address.model.workoutplan.WorkoutPlansList;
 public class AddPlanCommandTest {
 
     private static final WorkoutPlan PLAN = new WorkoutPlan(
-            new WorkoutPlanName("Strength"),
+            new WorkoutName("Strength"),
             new WorkoutDescription("Upper body"),
             new WorkoutDate(new Date(0)));
 
@@ -80,7 +80,7 @@ public class AddPlanCommandTest {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
         Student currentStudent = model.getFilteredStudentList().get(0);
         model.setCurrentStudent(currentStudent);
-        WorkoutPlan taggedPlan = new WorkoutPlan(new WorkoutPlanName("Strength"),
+        WorkoutPlan taggedPlan = new WorkoutPlan(new WorkoutName("Strength"),
                 new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)),
                 Set.of(new WorkoutPlanTag("strength"), new WorkoutPlanTag("upperbody")));
 
@@ -117,9 +117,9 @@ public class AddPlanCommandTest {
     public void equals() {
         AddPlanCommand first = new AddPlanCommand(PLAN);
         AddPlanCommand copy = new AddPlanCommand(new WorkoutPlan(
-                new WorkoutPlanName("Strength"), new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0))));
+                new WorkoutName("Strength"), new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0))));
         AddPlanCommand different = new AddPlanCommand(new WorkoutPlan(
-                new WorkoutPlanName("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(0))));
+                new WorkoutName("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(0))));
 
         assertTrue(first.equals(first));
         assertTrue(first.equals(copy));

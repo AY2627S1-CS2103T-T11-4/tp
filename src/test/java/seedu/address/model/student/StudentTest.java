@@ -26,15 +26,15 @@ import seedu.address.model.tag.StudentTag;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.testutil.StudentBuilder;
 
 public class StudentTest {
 
-    private static final WorkoutPlan WORKOUT_PLAN = new WorkoutPlan(new WorkoutPlanName("Strength"),
+    private static final WorkoutPlan WORKOUT_PLAN = new WorkoutPlan(new WorkoutName("Strength"),
             new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
 
     // EP: non-null replacement workout-plan list (valid).

@@ -30,8 +30,8 @@ import seedu.address.model.student.Student;
 import seedu.address.model.tag.StudentTag;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 
@@ -47,7 +47,7 @@ public class JsonBrotherGymStorageTest {
         Path filePath = testFolder.resolve("Exercises.json");
         Exercise squat = new Exercise(new ExerciseName("Squat"), new ExerciseDescription("Barbell"));
         Exercise press = new Exercise(new ExerciseName("Press"), new ExerciseDescription("Dumbbell"));
-        WorkoutPlan plan = new WorkoutPlan(new WorkoutPlanName("Strength"), new WorkoutDescription("Leg day"),
+        WorkoutPlan plan = new WorkoutPlan(new WorkoutName("Strength"), new WorkoutDescription("Leg day"),
                 JsonAdaptedWorkoutPlan.formatDateForModel("2026-10-14"), Set.of(), WorkoutPlanStatus.PENDING,
                 new ExercisesList(List.of(squat, press)));
         Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(), ALICE.getAddress(),
@@ -177,7 +177,7 @@ public class JsonBrotherGymStorageTest {
     public void readAndSaveBrotherGym_typedTags_preservesStudentAndWorkoutPlanTags() throws Exception {
         Path filePath = testFolder.resolve("TaggedBrotherGym.json");
         WorkoutPlan plan = new WorkoutPlan(
-                new WorkoutPlanName("Strength"),
+                new WorkoutName("Strength"),
                 new WorkoutDescription("Squats"),
                 JsonAdaptedWorkoutPlan.formatDateForModel("2026-10-14"),
                 Set.of(new WorkoutPlanTag("strength"), new WorkoutPlanTag("legs")));
@@ -202,7 +202,7 @@ public class JsonBrotherGymStorageTest {
     public void readAndSaveBrotherGym_workoutStatuses_preservesAllStatusesWithoutRefreshing() throws Exception {
         Path filePath = testFolder.resolve("WorkoutStatuses.json");
         List<WorkoutPlan> plans = List.of(WorkoutPlanStatus.values()).stream()
-                .map(status -> new WorkoutPlan(new WorkoutPlanName(status.name()), new WorkoutDescription("Squats"),
+                .map(status -> new WorkoutPlan(new WorkoutName(status.name()), new WorkoutDescription("Squats"),
                         JsonAdaptedWorkoutPlan.formatDateForModel("2023-11-15"),
                         Set.of(new WorkoutPlanTag("legs")), status))
                 .toList();

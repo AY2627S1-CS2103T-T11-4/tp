@@ -27,8 +27,8 @@ import seedu.address.model.UserPrefs;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.testutil.TypicalStudents;
@@ -62,7 +62,7 @@ public class ViewStudentCommandTest {
     // EP: selected student has workout plans (valid).
     @Test
     public void execute_validIndexWithWorkoutPlans_success() {
-        WorkoutPlan plan = new WorkoutPlan(new WorkoutPlanName("Strength"),
+        WorkoutPlan plan = new WorkoutPlan(new WorkoutName("Strength"),
                 new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)));
         Student baseStudent = TypicalStudents.ALICE;
         Student studentWithPlan = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
@@ -169,7 +169,7 @@ public class ViewStudentCommandTest {
     }
 
     private static WorkoutPlan plan(String title, LocalDate deadline, WorkoutPlanStatus status) {
-        return new WorkoutPlan(new WorkoutPlanName(title), new WorkoutDescription("Exercise"),
+        return new WorkoutPlan(new WorkoutName(title), new WorkoutDescription("Exercise"),
                 WorkoutDate.fromLocalDate(deadline), Set.of(), status);
     }
 }

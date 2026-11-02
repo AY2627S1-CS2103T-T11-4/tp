@@ -24,7 +24,7 @@ public final class WorkoutPlan {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
-    private final WorkoutPlanName name;
+    private final WorkoutName name;
     private final WorkoutDescription description;
     private final WorkoutDate date;
     private final Set<WorkoutPlanTag> tags;
@@ -35,14 +35,14 @@ public final class WorkoutPlan {
      * Constructs a workout plan with validated, non-null fields.
      */
     @Deprecated
-    public WorkoutPlan(WorkoutPlanName name, WorkoutDescription description, WorkoutDate date) {
+    public WorkoutPlan(WorkoutName name, WorkoutDescription description, WorkoutDate date) {
         this(name, description, date, Set.of());
     }
 
     /**
      * Constructs a workout plan with validated, non-null fields.
      */
-    public WorkoutPlan(WorkoutPlanName name, WorkoutDescription description, WorkoutDate date,
+    public WorkoutPlan(WorkoutName name, WorkoutDescription description, WorkoutDate date,
             Set<WorkoutPlanTag> tags) {
         this(name, description, date, tags, WorkoutPlanStatus.PENDING);
     }
@@ -50,7 +50,7 @@ public final class WorkoutPlan {
     /**
      * Constructs a workout plan with validated, non-null fields and the given status.
      */
-    public WorkoutPlan(WorkoutPlanName name, WorkoutDescription description, WorkoutDate date,
+    public WorkoutPlan(WorkoutName name, WorkoutDescription description, WorkoutDate date,
             Set<WorkoutPlanTag> tags, WorkoutPlanStatus status) {
         this(name, description, date, tags, status, new ExercisesList());
     }
@@ -58,7 +58,7 @@ public final class WorkoutPlan {
     /**
      * Constructs a workout plan with validated, non-null fields and the given status and exercises.
      */
-    public WorkoutPlan(WorkoutPlanName name, WorkoutDescription description, WorkoutDate date,
+    public WorkoutPlan(WorkoutName name, WorkoutDescription description, WorkoutDate date,
             Set<WorkoutPlanTag> tags, WorkoutPlanStatus status, ExercisesList exercises) {
         requireAllNonNull(name, description, date, tags, status, exercises);
         checkArgument(Tag.isValidTagCount(tags.size()), Tag.MESSAGE_TAG_LIMIT);
@@ -70,7 +70,7 @@ public final class WorkoutPlan {
         this.exercises = exercises;
     }
 
-    public WorkoutPlanName getName() {
+    public WorkoutName getName() {
         return name;
     }
 

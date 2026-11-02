@@ -22,8 +22,8 @@ import seedu.address.model.student.Student;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 
@@ -96,7 +96,7 @@ public class EditPlanCommand extends Command {
     }
 
     private static WorkoutPlan createEditedPlan(WorkoutPlan planToEdit, EditPlanDescriptor descriptor) {
-        WorkoutPlanName updatedName = descriptor.getName().orElse(planToEdit.getName());
+        WorkoutName updatedName = descriptor.getName().orElse(planToEdit.getName());
         WorkoutDescription updatedDescription = descriptor.getDescription().orElse(planToEdit.getDescription());
         WorkoutDate updatedDate = descriptor.getDate().orElse(planToEdit.getDate());
         Set<WorkoutPlanTag> updatedTags = descriptor.getWorkoutPlanTags().orElse(planToEdit.getTags());
@@ -126,7 +126,7 @@ public class EditPlanCommand extends Command {
 
     /** Stores the optional fields to replace on a workout plan. */
     public static class EditPlanDescriptor {
-        private WorkoutPlanName name;
+        private WorkoutName name;
         private WorkoutDescription description;
         private WorkoutDate date;
         private Set<WorkoutPlanTag> tags;
@@ -146,11 +146,11 @@ public class EditPlanCommand extends Command {
             return name != null || description != null || date != null || tags != null;
         }
 
-        public void setName(WorkoutPlanName name) {
+        public void setName(WorkoutName name) {
             this.name = name;
         }
 
-        public Optional<WorkoutPlanName> getName() {
+        public Optional<WorkoutName> getName() {
             return Optional.ofNullable(name);
         }
 

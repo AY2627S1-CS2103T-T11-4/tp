@@ -31,8 +31,8 @@ import seedu.address.model.student.Student;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
@@ -214,7 +214,7 @@ public class EditExerciseCommandTest {
     }
 
     private static WorkoutPlan plan(String title, List<Exercise> exercises) {
-        return new WorkoutPlan(new WorkoutPlanName(title), new WorkoutDescription("Plan notes"),
+        return new WorkoutPlan(new WorkoutName(title), new WorkoutDescription("Plan notes"),
                 new WorkoutDate(new Date(0)), Set.of(), WorkoutPlanStatus.PENDING,
                 new ExercisesList(exercises));
     }

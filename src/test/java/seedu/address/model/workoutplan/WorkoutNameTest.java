@@ -7,7 +7,7 @@ import static seedu.address.testutil.Assert.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-public class WorkoutPlanNameTest {
+public class WorkoutNameTest {
 
     private static final String NAME_VALID = "Strength training";
     private static final String NAME_OTHER = "Cardio";
@@ -15,43 +15,43 @@ public class WorkoutPlanNameTest {
     // EP: workout name is null (invalid).
     @Test
     public void constructor_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> new WorkoutPlanName(null));
+        assertThrows(NullPointerException.class, () -> new WorkoutName(null));
     }
 
     // BV: length < 1 (invalid).
     @Test
-    public void constructor_invalidWorkoutPlanName_throwsIllegalArgumentException() {
-        String invalidWorkoutPlanName = "";
-        assertThrows(IllegalArgumentException.class, () -> new WorkoutPlanName(invalidWorkoutPlanName));
+    public void constructor_invalidWorkoutName_throwsIllegalArgumentException() {
+        String invalidWorkoutName = "";
+        assertThrows(IllegalArgumentException.class, () -> new WorkoutName(invalidWorkoutName));
     }
 
     // EP: non-blank workout name (valid).
     @Test
     public void constructor_validName_storesValue() {
-        WorkoutPlanName name = new WorkoutPlanName(NAME_VALID);
+        WorkoutName name = new WorkoutName(NAME_VALID);
         assertEquals(NAME_VALID, name.getValue());
     }
 
     @Test
     public void isValidName() {
         // EP: workout name is null (invalid).
-        assertThrows(NullPointerException.class, () -> WorkoutPlanName.isValidName(null));
+        assertThrows(NullPointerException.class, () -> WorkoutName.isValidName(null));
 
         // BV: length < 1 (invalid).
-        assertFalse(WorkoutPlanName.isValidName(""));
+        assertFalse(WorkoutName.isValidName(""));
         // EP: space-only workout name (invalid).
-        assertFalse(WorkoutPlanName.isValidName(" "));
+        assertFalse(WorkoutName.isValidName(" "));
 
         // Each valid input at least once: a typical workout name is accepted.
-        assertTrue(WorkoutPlanName.isValidName(NAME_VALID));
+        assertTrue(WorkoutName.isValidName(NAME_VALID));
     }
 
     @Test
     public void equals() {
-        WorkoutPlanName name = new WorkoutPlanName(NAME_VALID);
+        WorkoutName name = new WorkoutName(NAME_VALID);
 
         // EP: Another name with the same value (equivalent).
-        assertTrue(name.equals(new WorkoutPlanName(NAME_VALID)));
+        assertTrue(name.equals(new WorkoutName(NAME_VALID)));
 
         // EP: The same name object (equivalent).
         assertTrue(name.equals(name));
@@ -63,17 +63,17 @@ public class WorkoutPlanNameTest {
         assertFalse(name.equals(NAME_VALID));
 
         // EP: A different name value (non-equivalent).
-        assertFalse(name.equals(new WorkoutPlanName(NAME_OTHER)));
+        assertFalse(name.equals(new WorkoutName(NAME_OTHER)));
     }
 
     @Test
     public void hashCode_equalNames_haveSameHashCode() {
-        assertEquals(new WorkoutPlanName(NAME_VALID).hashCode(),
-                new WorkoutPlanName(NAME_VALID).hashCode());
+        assertEquals(new WorkoutName(NAME_VALID).hashCode(),
+                new WorkoutName(NAME_VALID).hashCode());
     }
 
     @Test
     public void toStringMethod() {
-        assertEquals(NAME_VALID, new WorkoutPlanName(NAME_VALID).toString());
+        assertEquals(NAME_VALID, new WorkoutName(NAME_VALID).toString());
     }
 }

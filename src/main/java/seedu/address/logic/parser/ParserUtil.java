@@ -26,7 +26,7 @@ import seedu.address.model.student.Phone;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
-import seedu.address.model.workoutplan.WorkoutPlanName;
+import seedu.address.model.workoutplan.WorkoutName;
 
 /**
  * Contains utility methods used for parsing strings in the various *Parser classes.
@@ -207,17 +207,17 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a {@code String name} into a {@code WorkoutPlanName}
+     * Parses a {@code String name} into a {@code WorkoutName}
      *
      * @throws ParseException if the given {@code name} is invalid
      */
-    public static WorkoutPlanName parseWorkoutPlanName(String name) throws ParseException {
+    public static WorkoutName parseWorkoutName(String name) throws ParseException {
         requireNonNull(name);
         String trimmedName = name.trim();
-        if (!WorkoutPlanName.isValidName(trimmedName)) {
-            throw new FieldValueInvalidException(WorkoutPlanName.MESSAGE_CONSTRAINTS);
+        if (!WorkoutName.isValidName(trimmedName)) {
+            throw new FieldValueInvalidException(WorkoutName.MESSAGE_CONSTRAINTS);
         }
-        return new WorkoutPlanName(trimmedName);
+        return new WorkoutName(trimmedName);
     }
 
     /**

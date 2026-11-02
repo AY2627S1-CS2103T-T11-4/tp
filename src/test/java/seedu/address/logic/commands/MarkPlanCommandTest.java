@@ -20,8 +20,8 @@ import seedu.address.model.ModelManager;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
 
@@ -148,7 +148,7 @@ public class MarkPlanCommandTest {
     }
 
     private static WorkoutPlan plan(String title, LocalDate deadline, WorkoutPlanStatus status) {
-        return new WorkoutPlan(new WorkoutPlanName(title), new WorkoutDescription("Exercise"),
+        return new WorkoutPlan(new WorkoutName(title), new WorkoutDescription("Exercise"),
                 WorkoutDate.fromLocalDate(deadline), Set.of(), status);
     }
 }
