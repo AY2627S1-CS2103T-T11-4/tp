@@ -35,14 +35,15 @@ HiddenOutside ..> Ui
 UiManager .up.|> Ui
 UiManager -down-> "1" MainWindow
 
-MainWindow -left-|> UiPart
+MainWindow -up-|> UiPart
+HelpWindow -up-|> UiPart
 
 MainWindow *-down-> "1" CommandBox
 MainWindow *-down-> "1" ResultDisplay
 MainWindow *-down-> "1" StudentListPanel
 MainWindow *-down-> "1" WorkoutPlanListPanel
 MainWindow *-down-> "1" StatusBarFooter
-MainWindow --> "0..1" HelpWindow
+MainWindow -down-> "0..1" HelpWindow
 
 StudentListPanel *-down-> "*" StudentCard
 WorkoutPlanListPanel *-down-> "*" WorkoutPlanCard
@@ -51,12 +52,12 @@ StudentCard ..> Model
 WorkoutPlanCard ..> Model
 UiManager -right-> Logic
 MainWindow -right-> Logic
+HelpWindow .up.> Logic
 
 CommandBox -[hidden]right- ResultDisplay
 ResultDisplay -[hidden]right- StudentListPanel
 StudentListPanel -[hidden]right- WorkoutPlanListPanel
 WorkoutPlanListPanel -[hidden]right- StatusBarFooter
-StatusBarFooter -[hidden]right- HelpWindow
 StudentCard -[hidden]right- WorkoutPlanCard
 
 @enduml
