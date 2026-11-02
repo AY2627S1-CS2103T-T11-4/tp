@@ -305,7 +305,11 @@ Workout-plan statuses are refreshed explicitly when `viewStudent` is executed. `
 
 Changing either selection notifies `MainWindow`, which coalesces related property changes before passing the final student and plan state to `WorkoutPlanListPanel#showStudent()`. With no selected plan, the panel shows the student's collapsed plan cards. `viewPlan` expands the selected card in its original list position and renders numbered exercises inside it, while sibling cards remain available through the same outer scroll pane. An empty plan shows an `Exercises (0)` heading and an inline empty message. With no current student, the panel prompts the user to select one.
 
-The same observable flow redraws the panel after commands such as `markPlan`, `unmarkPlan`, `editExercise`, and `deleteExercise` replace the selected plan. `ModelManager` rebinds the selected plan when an edit or exercise change replaces it with an immutable object. The panel treats the same stored instance, or its replacement at the same list index, as a retained selection and restores the previous scroll offset. Selecting a different plan scrolls only far enough to reveal its card. Deleting another plan retains and reindexes the selection, while deleting the selected plan collapses the remaining list without selecting a replacement. Running `viewStudent` collapses the selection and returns the panel to the top; navigating away from the student clears the panel state. This keeps the visible selection and subsequent exercise commands aligned with the same stored plan.
+The same observable flow redraws the panel after commands such as `markPlan`, `unmarkPlan`, `editExercise`, and `deleteExercise` replace the selected plan. Because plans are immutable, `ModelManager` rebinds the selected plan to its replacement.
+
+The panel treats the same stored instance, or its replacement at the same list index, as a retained selection. It then restores the previous scroll offset. Selecting a different plan scrolls only far enough to reveal its card.
+
+Deleting another plan retains and reindexes the selection. Deleting the selected plan instead collapses the remaining list without selecting a replacement. Running `viewStudent` collapses the selection and returns the panel to the top, while navigating away from the student clears the panel state. This keeps the visible selection and subsequent exercise commands aligned with the same stored plan.
 
 Each `WorkoutPlanCard` reads the plan's title, date, workout description, tags, and status through `WorkoutPlan` getters. Tags are sorted by name and rendered individually as labels, giving a stable display order without relying on `WorkoutPlan#toString()`. The card maps the status to visible `DONE`, `OVERDUE`, or `PENDING` text and applies matching CSS classes to both the badge and card.
 
@@ -343,7 +347,9 @@ The following sequence diagram shows how the panel is updated when the user exec
 
 `EditExerciseCommandParser` accepts the displayed one-based exercise index followed by optional `--name` and `--description` values. It validates the argument structure before parsing the index and supplied fields. Repeated or unsupported prefixes, invalid field values, and commands without an edited field are rejected before a command is created.
 
-When `EditExerciseCommand` executes, it first requires both a selected student and selected workout plan. It locates the exercise using the displayed index, copies any omitted field from the existing exercise, and calls `Model#setExerciseForWorkoutPlan` with the replacement. The exercise remains at the same position, and the selected workout card remains expanded so the user sees the updated value immediately. An out-of-range index, duplicate result, or stale selection is reported as a command error without a partial update.
+When `EditExerciseCommand` executes, it first requires both a selected student and selected workout plan. It locates the exercise using the displayed index and copies any omitted field from the existing exercise. It then calls `Model#setExerciseForWorkoutPlan` with the replacement.
+
+The exercise remains at the same position, and the selected workout card stays expanded to show the updated value. An out-of-range index, duplicate result, or stale selection produces a command error without a partial update.
 
 ### \[Proposed\] Undo/redo feature
 
