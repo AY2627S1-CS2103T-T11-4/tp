@@ -8,6 +8,7 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -58,7 +59,8 @@ public class DeletePlanCommandTest {
         DeletePlanCommand command = new DeletePlanCommand(Index.fromOneBased(1));
 
         Student updatedStudent = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
-                baseStudent.getAddress(), baseStudent.getTags(), new WorkoutPlansList(List.of(SECOND_PLAN)));
+                baseStudent.getAddress(), baseStudent.getTags(),
+                new WorkoutPlansList(List.of(SECOND_PLAN.updateState(LocalDate.now()))));
         Model expectedModel = new ModelManager(model.getBrotherGym(), new UserPrefs());
         expectedModel.setStudent(studentWithPlans, updatedStudent);
 

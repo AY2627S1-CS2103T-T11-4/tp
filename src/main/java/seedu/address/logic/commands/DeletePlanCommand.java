@@ -60,6 +60,7 @@ public class DeletePlanCommand extends SingleIndexCommand {
         Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
         model.setStudent(currentStudent, updatedStudent);
+        model.updateStudentWorkoutsState(model.getCurrentStudent().orElseThrow());
 
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(planToDelete)));
     }

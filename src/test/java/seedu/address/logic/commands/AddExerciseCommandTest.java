@@ -45,6 +45,7 @@ public class AddExerciseCommandTest {
     public void execute_validSelectedPlan_addsExercise() {
         Model model = createModelWithSelectedPlan(List.of());
         Model expectedModel = createModelWithSelectedPlan(List.of(EXERCISE));
+        expectedModel.updateStudentWorkoutsState(expectedModel.getCurrentStudent().orElseThrow());
 
         assertCommandSuccess(new AddExerciseCommand(EXERCISE), model,
                 String.format(AddExerciseCommand.MESSAGE_SUCCESS, EXERCISE), expectedModel);

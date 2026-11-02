@@ -79,6 +79,7 @@ public class EditExerciseCommand extends Command {
         } catch (ExerciseNotFoundException e) {
             throw new CommandException(MESSAGE_INVALID_EXERCISE_ID, e);
         }
+        model.updateStudentWorkoutsState(model.getCurrentStudent().orElseThrow());
         return new CommandResult(String.format(MESSAGE_SUCCESS, editedExercise));
     }
 

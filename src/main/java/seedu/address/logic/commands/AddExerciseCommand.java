@@ -56,6 +56,7 @@ public class AddExerciseCommand extends Command {
         } catch (ExerciseListFullException e) {
             throw new CommandException(MESSAGE_EXERCISE_LIST_FULL, e);
         }
+        model.updateStudentWorkoutsState(model.getCurrentStudent().orElseThrow());
         return new CommandResult(String.format(MESSAGE_SUCCESS, toAdd));
     }
 

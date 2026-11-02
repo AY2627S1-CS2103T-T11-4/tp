@@ -30,7 +30,7 @@ public class MarkPlanCommandTest {
 
     // EP: selected workout-plan index exists (valid).
     @Test
-    public void execute_validIndex_updatesOnlySelectedPlan() throws Exception {
+    public void execute_validIndex_updatesTargetAndRefreshesOtherPlans() throws Exception {
         for (WorkoutPlanStatus status : List.of(WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE)) {
             // Each valid input at least once: pending and overdue plans can both be marked.
             assertTransition(LocalDate.now().minusDays(1), status, WorkoutPlanStatus.COMPLETED);
@@ -40,7 +40,7 @@ public class MarkPlanCommandTest {
     private void assertTransition(LocalDate deadline, WorkoutPlanStatus initialStatus,
             WorkoutPlanStatus expectedStatus) throws Exception {
         WorkoutPlan target = plan("Target", deadline, initialStatus);
-        // Deliberately stale: this command must not refresh unrelated plans.
+        // Deliberately stale: the command should refresh other plans for the same student.
         WorkoutPlan unchanged = plan("Other", LocalDate.now().minusDays(1), WorkoutPlanStatus.PENDING);
         Student original = withPlans(ALICE, List.of(unchanged, target));
         Student otherStudent = withPlans(BENSON, List.of(unchanged));
@@ -55,10 +55,12 @@ public class MarkPlanCommandTest {
         Student updated = model.getCurrentStudent().orElseThrow();
         List<WorkoutPlan> updatedPlans = updated.getWorkoutPlansList().getWorkoutList();
         WorkoutPlan expectedPlan = plan("Target", deadline, expectedStatus);
-        assertEquals(withPlans(ALICE, List.of(unchanged, expectedPlan)), updated);
+        WorkoutPlan refreshed = unchanged.updateState(LocalDate.now());
+        assertEquals(withPlans(ALICE, List.of(refreshed, expectedPlan)), updated);
         assertSame(updated, model.getBrotherGym().getStudentList().get(0));
         assertSame(otherStudent, model.getBrotherGym().getStudentList().get(1));
-        assertSame(unchanged, updatedPlans.get(0));
+        assertEquals(refreshed, updatedPlans.get(0));
+        assertEquals(WorkoutPlanStatus.PENDING, unchanged.getStatus());
         assertEquals(initialStatus, target.getStatus());
         assertEquals(String.format(MarkPlanCommand.MESSAGE_SUCCESS, expectedPlan), result.getFeedbackToUser());
 

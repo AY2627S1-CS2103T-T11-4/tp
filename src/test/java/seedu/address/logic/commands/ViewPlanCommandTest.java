@@ -8,6 +8,7 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -50,8 +51,8 @@ public class ViewPlanCommandTest {
         assertCommandSuccess(command, model,
                 String.format(ViewPlanCommand.MESSAGE_SUCCESS, SECOND_PLAN,
                         ViewPlanCommand.MESSAGE_NO_EXERCISES), model);
-        assertEquals(studentWithPlans, model.getCurrentStudent().orElseThrow());
-        assertEquals(SECOND_PLAN, model.getCurrentWorkoutPlan().orElseThrow());
+        assertEquals(studentWithPlans.updateWorkoutsState(), model.getCurrentStudent().orElseThrow());
+        assertEquals(SECOND_PLAN.updateState(LocalDate.now()), model.getCurrentWorkoutPlan().orElseThrow());
     }
 
     // EP: no current student is selected (invalid).
