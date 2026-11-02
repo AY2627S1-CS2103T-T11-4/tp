@@ -303,9 +303,16 @@ Workout plans set the focus of a training session. Exercises specify the movemen
 
 <box type="important">
 
-Select a student with `viewStudent`, then select one of their workout plans with `viewPlan` before adding an exercise.
+Select a student with `viewStudent`, then select one of their workout plans with `viewPlan` before using an exercise command.
 
 </box>
+
+#### IDs used with exercise commands
+
+* `STUDENT_ID` is the number shown beside a student in the currently displayed student list. Use it with `viewStudent`.
+* `PLAN_ID` is the number shown beside a workout plan of the selected student. Use it with `viewPlan`.
+* `EXERCISE_ID` is the number shown beside an exercise in the selected workout plan. Only `editExercise` and `deleteExercise` use it.
+* Each ID must refer to an item in its list. The index format rules in the command format notes apply to all three IDs.
 
 #### Add an exercise to a workout plan: `addExercise`
 
@@ -324,9 +331,7 @@ Edits one exercise in the selected workout plan.
 
 Format: `editExercise EXERCISE_ID [--name EXERCISE_NAME] [--description DESCRIPTION]`
 
-* First select a student with `viewStudent STUDENT_ID`, then a workout plan with `viewPlan PLAN_ID`.
-* `EXERCISE_ID` is the positive number shown beside the exercise in the selected plan view.
-* Supply at least one field. An omitted field keeps its existing value, the exercise stays in the same position, and the selected workout plan remains expanded.
+* Supply at least one field. An omitted field keeps its existing value and the exercise stays in the same position.
 * Repeated or unsupported fields, invalid values, and edits that duplicate an existing exercise are rejected without changing the plan.
 
 Example: `editExercise 2 --name Goblet Squat --description 3 sets of 10 reps`
@@ -337,8 +342,6 @@ Deletes one exercise from the selected workout plan.
 
 Format: `deleteExercise EXERCISE_ID`
 
-* First select a student with `viewStudent STUDENT_ID`, then a plan with `viewPlan PLAN_ID`.
-* `EXERCISE_ID` is the positive number shown beside the exercise in the selected plan.
 * An invalid or out-of-range ID leaves the plan unchanged. The remaining exercises keep their order and are renumbered.
 
 Example: `deleteExercise 2` removes the second exercise from the selected plan.
@@ -410,5 +413,5 @@ Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add Exercise** | `addExercise EXERCISE_NAME --description DESCRIPTION`<br> e.g., `addExercise Squats --description 30kg * 3 sets * 5 reps`
 **Edit Exercise** | `editExercise EXERCISE_ID [--name EXERCISE_NAME] [--description DESCRIPTION]`<br> e.g., `editExercise 1 --description 30kg * 3 sets * 10 reps`
-**Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `viewStudent 1`, `viewPlan 2`, `deleteExercise 1`
+**Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `deleteExercise 1`
 
