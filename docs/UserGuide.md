@@ -120,8 +120,7 @@ Format: `addStudent NAME --hp PHONE_NUMBER --email EMAIL --addr ADDRESS [--tag T
 * Name can only contain alphanumeric characters
 * Student names that differ only by letter case are treated as duplicates
 * Phone number should be at least 3 digits long
-* Email has to follow the format of `<name>@<domain>`
-* Email must have at least 6 characters in total, with at most 64 characters before and after `@` (e.g., `a@example.com` is valid)
+* Email must be `<name>@<domain>`, at least 6 characters overall, and at most 64 characters on each side of `@`
 * Address cannot be empty and cannot exceed 256 characters
 * Tag should not be multiple words long
 * The student list can contain up to 999 students
