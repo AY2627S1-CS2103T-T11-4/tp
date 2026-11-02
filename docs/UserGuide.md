@@ -127,7 +127,7 @@ Format: `addStudent NAME --hp PHONE_NUMBER --email EMAIL --addr ADDRESS [--tag T
 
 <box type="tip" seamless>
 
-**Tip:** A student can have any number of tags, including zero.
+**Tip:** A student can have up to 30 distinct tags
 </box>
 
 Examples:
@@ -168,9 +168,9 @@ Format: `find KEYWORD [MORE_KEYWORDS]...`
   Mixed input such as `find Alice !!!` still searches for `Alice`.
 
 Examples:
-* `find John` returns `john` and `John Doe`
-* `find alex david` returns `Alex Yeoh`, `David Li`<br>
-  ![result for 'find alex david'](images/findAlexDavidResult.png)
+* `find Amelie John` returns `Amelie Garber` and `John Doe`
+
+  ![result for 'Find Amelie John'](images/find-command-ui-ss.png)
 
 #### Viewing all workout plans of a student: `viewStudent`
 
@@ -218,6 +218,7 @@ Examples:
 * `addPlan Leg Day --description focus on form --date 20102026`
 * `addPlan Chest Day --description Push for PR --date 31102026`
 
+**Tip:** A workout plan can have up to 30 distinct tags
 #### Edit a workout plan of a student: `editPlan`
 
 Edits an existing workout plan from the student's list of workout plans
@@ -302,9 +303,16 @@ Workout plans set the focus of a training session. Exercises specify the movemen
 
 <box type="important">
 
-Select a student with `viewStudent`, then select one of their workout plans with `viewPlan` before adding an exercise.
+Select a student with `viewStudent`, then select one of their workout plans with `viewPlan` before using an exercise command.
 
 </box>
+
+#### IDs used with exercise commands
+
+* `STUDENT_ID` is the number shown beside a student in the currently displayed student list. Use it with `viewStudent`.
+* `PLAN_ID` is the number shown beside a workout plan of the selected student. Use it with `viewPlan`.
+* `EXERCISE_ID` is the number shown beside an exercise in the selected workout plan. Only `editExercise` and `deleteExercise` use it.
+* Each ID must refer to an item in its list. The index format rules in the command format notes apply to all three IDs.
 
 #### Add an exercise to a workout plan: `addExercise`
 
@@ -323,9 +331,7 @@ Edits one exercise in the selected workout plan.
 
 Format: `editExercise EXERCISE_ID [--name EXERCISE_NAME] [--description DESCRIPTION]`
 
-* First select a student with `viewStudent STUDENT_ID`, then a workout plan with `viewPlan PLAN_ID`.
-* `EXERCISE_ID` is the positive number shown beside the exercise in the selected plan view.
-* Supply at least one field. An omitted field keeps its existing value, the exercise stays in the same position, and the selected workout plan remains expanded.
+* Supply at least one field. An omitted field keeps its existing value and the exercise stays in the same position.
 * Repeated or unsupported fields, invalid values, and edits that duplicate an existing exercise are rejected without changing the plan.
 
 Example: `editExercise 2 --name Goblet Squat --description 3 sets of 10 reps`
@@ -336,8 +342,6 @@ Deletes one exercise from the selected workout plan.
 
 Format: `deleteExercise EXERCISE_ID`
 
-* First select a student with `viewStudent STUDENT_ID`, then a plan with `viewPlan PLAN_ID`.
-* `EXERCISE_ID` is the positive number shown beside the exercise in the selected plan.
 * An invalid or out-of-range ID leaves the plan unchanged. The remaining exercises keep their order and are renumbered.
 
 Example: `deleteExercise 2` removes the second exercise from the selected plan.
@@ -349,7 +353,7 @@ BrotherGym automatically saves data after every command. You do not need to save
 
 ### Editing the data file
 
-BrotherGym data is saved automatically as a JSON file `[JAR file location]/data/brothergym.json`. Advanced users are welcome to update data directly by editing that data file.
+BrotherGym data is saved automatically as `data/brothergym.json`, relative to the directory from which the app is run (the current working directory). Advanced users are welcome to update data directly by editing that data file.
 
 <box type="warning" seamless>
 
@@ -358,12 +362,6 @@ If your changes make the data file invalid, BrotherGym starts with an empty stud
 Furthermore, certain edits can cause the BrotherGym to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
 
 </box>
-
-### Archiving data files `[coming in v2.0]`
-
-_Details coming soon ..._
-
---------------------------------------------------------------------------------------------------------------------
 
 ## FAQ
 
@@ -375,7 +373,6 @@ _Details coming soon ..._
 ## Known issues
 
 1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
-2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -395,7 +392,7 @@ Action     | Format, Examples
 **Add Student**    | `addStudent NAME --hp PHONE_NUMBER --email EMAIL --addr ADDRESS [--tag TAG]... ` <br> e.g., `addStudent James Ho --hp 22224444 --email jamesho@example.com --addr 123, Clementi Rd, 1234665 --tag friend --tag colleague`
 **Edit Student**   | `editStudent STUDENT_ID [--name NAME] [--hp PHONE_NUMBER] [--email EMAIL] [--addr ADDRESS] [--tag TAG]... [--clearTags]`<br> e.g.,`editStudent 2 --name James Lee --email jameslee@example.com`
 **View Student** | `viewStudent STUDENT_ID`<br> e.g., `viewStudent 2`
-**Find Student**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
+**Find Student**   | `find KEYWORD [MORE_KEYWORDS]...`<br> e.g., `find James Jake`
 **Delete Student** | `deleteStudent STUDENT_ID`<br> e.g., `deleteStudent 3`
 **Clear all Students**  | `clear`
 
@@ -416,5 +413,5 @@ Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add Exercise** | `addExercise EXERCISE_NAME --description DESCRIPTION`<br> e.g., `addExercise Squats --description 30kg * 3 sets * 5 reps`
 **Edit Exercise** | `editExercise EXERCISE_ID [--name EXERCISE_NAME] [--description DESCRIPTION]`<br> e.g., `editExercise 1 --description 30kg * 3 sets * 10 reps`
-**Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `viewStudent 1`, `viewPlan 2`, `deleteExercise 1`
+**Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `deleteExercise 1`
 

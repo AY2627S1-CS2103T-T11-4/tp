@@ -16,7 +16,6 @@ public class CliSyntax {
     public static final Prefix PREFIX_ADDRESS = new Prefix("--addr");
 
     /* Workout Plan Prefixes */
-    public static final Prefix PREFIX_PLAN = new Prefix("--plan");
     public static final Prefix PREFIX_DATE = new Prefix("--date");
 
     /* Exercise Prefixes */

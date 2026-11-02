@@ -3,8 +3,8 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Set;
@@ -24,10 +24,10 @@ import seedu.address.model.tag.WorkoutPlanTag;
 public class EditPlanCommandParser implements Parser<EditPlanCommand> {
 
     private static final Set<Prefix> VALID_PREFIXES =
-            Set.of(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG, PREFIX_CLEAR_TAGS);
+            Set.of(PREFIX_NAME, PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_TAG, PREFIX_CLEAR_TAGS);
     private static final Set<Prefix> REQUIRED_PREFIXES = Set.of();
     private static final Set<Prefix> NO_REPEAT_PREFIXES =
-            Set.of(PREFIX_NAME, PREFIX_PLAN, PREFIX_DATE, PREFIX_CLEAR_TAGS);
+            Set.of(PREFIX_NAME, PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_CLEAR_TAGS);
 
     private static final Logger logger = LogsCenter.getLogger(EditPlanCommandParser.class);
 
@@ -76,8 +76,9 @@ public class EditPlanCommandParser implements Parser<EditPlanCommand> {
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
             editPlanDescriptor.setName(ParserUtil.parseWorkoutName(argMultimap.getValue(PREFIX_NAME).get()));
         }
-        if (argMultimap.getValue(PREFIX_PLAN).isPresent()) {
-            editPlanDescriptor.setDescription(ParserUtil.parseDescription(argMultimap.getValue(PREFIX_PLAN).get()));
+        if (argMultimap.getValue(PREFIX_DESCRIPTION).isPresent()) {
+            editPlanDescriptor.setDescription(
+                    ParserUtil.parseDescription(argMultimap.getValue(PREFIX_DESCRIPTION).get()));
         }
         if (argMultimap.getValue(PREFIX_DATE).isPresent()) {
             editPlanDescriptor.setDate(ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get()));

@@ -29,8 +29,7 @@ public class EditExerciseCommand extends Command {
     public static final String MESSAGE_DESCRIPTION = "Edits an exercise in the selected workout plan.";
     public static final String MESSAGE_PARAMETERS = "EXERCISE_ID [" + PREFIX_NAME + " EXERCISE_NAME] ["
             + PREFIX_DESCRIPTION + " DESCRIPTION]";
-    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1 " + PREFIX_NAME + " Goblet Squat "
-            + PREFIX_DESCRIPTION + " 3 sets of 10 reps";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1 " + PREFIX_DESCRIPTION + " 30kg * 3 sets * 10 reps";
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
             + "Parameters: " + MESSAGE_PARAMETERS + "\n" + "Example: " + MESSAGE_EXAMPLE;
     public static final String MESSAGE_SUCCESS = "Edited exercise: %1$s";

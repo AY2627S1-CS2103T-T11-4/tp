@@ -29,8 +29,6 @@ public final class CommandMetadataCatalog {
                             HomeCommand.MESSAGE_DESCRIPTION, HomeCommand.MESSAGE_EXAMPLE),
                     command(HelpCommand.COMMAND_WORD, HelpCommand.MESSAGE_PARAMETERS,
                             HelpCommand.MESSAGE_DESCRIPTION, HelpCommand.MESSAGE_EXAMPLE),
-                    command(ClearCommand.COMMAND_WORD, ClearCommand.MESSAGE_PARAMETERS,
-                            ClearCommand.MESSAGE_DESCRIPTION, ClearCommand.MESSAGE_EXAMPLE),
                     command(ExitCommand.COMMAND_WORD, ExitCommand.MESSAGE_PARAMETERS,
                             ExitCommand.MESSAGE_DESCRIPTION, ExitCommand.MESSAGE_EXAMPLE))),
             new CommandCategory("Student commands", List.of(
@@ -43,7 +41,9 @@ public final class CommandMetadataCatalog {
                     command(DeleteStudentCommand.COMMAND_WORD, DeleteStudentCommand.MESSAGE_PARAMETERS,
                             DeleteStudentCommand.MESSAGE_DESCRIPTION, DeleteStudentCommand.MESSAGE_EXAMPLE),
                     command(FindCommand.COMMAND_WORD, FindCommand.MESSAGE_PARAMETERS,
-                            FindCommand.MESSAGE_DESCRIPTION, FindCommand.MESSAGE_EXAMPLE))),
+                            FindCommand.MESSAGE_DESCRIPTION, FindCommand.MESSAGE_EXAMPLE),
+                    command(ClearCommand.COMMAND_WORD, ClearCommand.MESSAGE_PARAMETERS,
+                            ClearCommand.MESSAGE_DESCRIPTION, ClearCommand.MESSAGE_EXAMPLE))),
             new CommandCategory("Workout plan commands", List.of(
                     command(AddPlanCommand.COMMAND_WORD, AddPlanCommand.MESSAGE_PARAMETERS,
                             AddPlanCommand.MESSAGE_DESCRIPTION, AddPlanCommand.MESSAGE_EXAMPLE),

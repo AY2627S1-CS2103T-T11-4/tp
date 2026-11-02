@@ -20,8 +20,8 @@ public class DeleteStudentCommand extends SingleIndexCommand {
 
     public static final String MESSAGE_DESCRIPTION =
             "Deletes the student identified by the index number used in the displayed student list.";
-    public static final String MESSAGE_PARAMETERS = "STUDENT_ID (must be a positive integer)";
-    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1";
+    public static final String MESSAGE_PARAMETERS = "STUDENT_ID";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 3";
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
             + "Parameters: " + MESSAGE_PARAMETERS + "\n"
             + "Example: " + MESSAGE_EXAMPLE;

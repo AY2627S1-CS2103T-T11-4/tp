@@ -2,7 +2,7 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Set;
@@ -23,9 +23,9 @@ import seedu.address.model.workoutplan.WorkoutPlan;
  */
 public class AddPlanCommandParser implements Parser<AddPlanCommand> {
 
-    private static final Set<Prefix> VALID_PREFIXES = Set.of(PREFIX_PLAN, PREFIX_DATE, PREFIX_TAG);
-    private static final Set<Prefix> REQUIRED_PREFIXES = Set.of(PREFIX_PLAN, PREFIX_DATE);
-    private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_PLAN, PREFIX_DATE);
+    private static final Set<Prefix> VALID_PREFIXES = Set.of(PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_TAG);
+    private static final Set<Prefix> REQUIRED_PREFIXES = Set.of(PREFIX_DESCRIPTION, PREFIX_DATE);
+    private static final Set<Prefix> NO_REPEAT_PREFIXES = Set.of(PREFIX_DESCRIPTION, PREFIX_DATE);
 
     private static final Logger logger = LogsCenter.getLogger(AddPlanCommandParser.class);
 
