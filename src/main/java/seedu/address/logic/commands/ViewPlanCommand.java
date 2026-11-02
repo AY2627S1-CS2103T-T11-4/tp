@@ -47,10 +47,7 @@ public class ViewPlanCommand extends SingleIndexCommand {
         requireNonNull(model);
         Student currentStudent = model.getCurrentStudent()
                 .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
-
-        if (targetIndex.getZeroBased() >= currentStudent.getWorkoutPlansList().getWorkoutList().size()) {
-            throw new CommandException(MESSAGE_INVALID_WORKOUT_ID);
-        }
+                
         currentStudent = model.updateStudentWorkoutsState(currentStudent);
 
         WorkoutPlan workoutPlan = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());

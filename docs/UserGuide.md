@@ -371,7 +371,7 @@ _Details coming soon ..._
 
 1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
 2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
-3. **Workout plan statuses do not refresh automatically at midnight.** They refresh when you run `viewStudent` or a successful workout plan-related or exercise-related command. If you leave a student open across midnight, displayed statuses may remain out of date. The remedy is to run `viewStudent STUDENT_ID` again to refresh all workout plan statuses for that student.
+3. **If the application is used past midnight** , the workout plan statuses does not automatically refresh. The update is only invoked on plan-related and exercise-related commands. The remedy is to run viewStudent STUDENT_ID to refresh the workout plan statuses.
 
 --------------------------------------------------------------------------------------------------------------------
 
