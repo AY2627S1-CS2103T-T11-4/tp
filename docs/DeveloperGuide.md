@@ -255,7 +255,7 @@ Writing proceeds from the complete `BrotherGym` down to its nested objects. `Jso
 
 1. **BrotherGym:** `new JsonSerializableBrotherGym(brotherGym)` reads `brotherGym.getStudentList()` and creates a `JsonAdaptedStudent` for each student. These adapters form its `students` list.
 1. **Students:** `new JsonAdaptedStudent(student)` extracts the student's name, phone, email, and address as strings. It converts each student tag into a `JsonAdaptedTag` and each plan in the student's `WorkoutPlansList` into a `JsonAdaptedWorkoutPlan`, collecting them into its `tags` and `workoutPlans` lists.
-1. **Workout plans:** `new JsonAdaptedWorkoutPlan(plan)` extracts the title and workout description as strings, formats the date using `formatDateForStorage()`, and creates a `JsonAdaptedTag` for each workout-plan tag.
+1. **Workout plans:** `new JsonAdaptedWorkoutPlan(plan)` extracts the name and workout description as strings, formats the date using `formatDateForStorage()`, and creates a `JsonAdaptedTag` for each workout-plan tag. The adapter writes the name under the existing `"title"` JSON key so older data remains compatible.
 1. **Tags:** `new JsonAdaptedTag(tag)` copies the tag's name. The same adapter accepts both `StudentTag` and `WorkoutPlanTag`; its position in the adapter tree preserves which object owns the tag.
 1. **JSON output:** Once the adapter tree is complete, `JsonUtil.saveJsonFile(data, filePath)` uses Jackson to serialize it into formatted JSON. The adapter lists become JSON arrays, and `JsonAdaptedTag` uses `@JsonValue` to serialize each tag as a string. `FileUtil` then writes the JSON text to the destination file in UTF-8.
 
@@ -302,7 +302,7 @@ Changing either selection notifies `MainWindow`, which coalesces related propert
 
 The same observable flow redraws the panel after commands such as `markPlan`, `unmarkPlan`, `editExercise`, and `deleteExercise` replace the selected plan. `ModelManager` rebinds the selected plan when an edit or exercise change replaces it with an immutable object. The panel treats the same stored instance or a replacement at the same list index as a retained selection and restores the previous scroll offset. A different `viewPlan` selection is scrolled only far enough to become visible. Removing the selected plan collapses the remaining list without selecting a replacement; navigation away from the student clears the panel state. This keeps the view and subsequent exercise commands on the same stored plan.
 
-Each `WorkoutPlanCard` reads the plan's title, date, workout description, tags, and status through `WorkoutPlan` getters. Tags are sorted by name and rendered individually as labels, giving a stable display order without relying on `WorkoutPlan#toString()`. The card maps the status to visible `DONE`, `OVERDUE`, or `PENDING` text and applies matching CSS classes to both the badge and card.
+Each `WorkoutPlanCard` reads the plan's name, date, workout description, tags, and status through `WorkoutPlan` getters. Tags are sorted by name and rendered individually as labels, giving a stable display order without relying on `WorkoutPlan#toString()`. The card maps the status to visible `DONE`, `OVERDUE`, or `PENDING` text and applies matching CSS classes to both the badge and card.
 
 The following sequence diagram shows how the panel is updated when the user executes `viewStudent 1`:
 

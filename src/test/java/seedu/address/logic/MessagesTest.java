@@ -18,7 +18,7 @@ public class MessagesTest {
     @Test
     public void format_workoutPlanWithoutTags_formatsDetails() {
         WorkoutPlan plan = new WorkoutBuilder()
-                .withTitle("Leg Day")
+                .withName("Leg Day")
                 .withDescription("Squats and lunges")
                 .withDate(LocalDate.of(2026, 10, 9))
                 .build();
@@ -30,7 +30,7 @@ public class MessagesTest {
     @Test
     public void format_workoutPlanWithTags_formatsSortedTags() {
         WorkoutPlan plan = new WorkoutBuilder()
-                .withTitle("Leg Day")
+                .withName("Leg Day")
                 .withDescription("Squats and lunges")
                 .withDate(LocalDate.of(2026, 10, 9))
                 .withTags("upperbody", "strength")

@@ -25,8 +25,8 @@ import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
-import seedu.address.model.workoutplan.WorkoutTitle;
 
 public class JsonAdaptedWorkoutPlanTest {
 
@@ -37,7 +37,7 @@ public class JsonAdaptedWorkoutPlanTest {
         Exercise press = new Exercise(new ExerciseName("Press"), new ExerciseDescription("Dumbbell"));
         Exercise alternateSquat = new Exercise(new ExerciseName("Squat"),
                 new ExerciseDescription("Bodyweight"));
-        WorkoutPlan original = new WorkoutPlan(new WorkoutTitle("Strength"), new WorkoutDescription("Leg day"),
+        WorkoutPlan original = new WorkoutPlan(new WorkoutPlanName("Strength"), new WorkoutDescription("Leg day"),
                 WorkoutDate.fromLocalDate(LocalDate.of(2023, 11, 15)), Set.of(), WorkoutPlanStatus.COMPLETED,
                 new ExercisesList(List.of(squat, press, alternateSquat)));
 
@@ -55,7 +55,7 @@ public class JsonAdaptedWorkoutPlanTest {
                 .mapToObj(index -> new Exercise(new ExerciseName("Exercise " + index),
                         new ExerciseDescription("Description " + index)))
                 .toList();
-        WorkoutPlan original = new WorkoutPlan(new WorkoutTitle("Strength"), new WorkoutDescription("Leg day"),
+        WorkoutPlan original = new WorkoutPlan(new WorkoutPlanName("Strength"), new WorkoutDescription("Leg day"),
                 WorkoutDate.fromLocalDate(LocalDate.of(2023, 11, 15)), Set.of(), WorkoutPlanStatus.PENDING,
                 new ExercisesList(exercises));
 
@@ -107,7 +107,7 @@ public class JsonAdaptedWorkoutPlanTest {
     @Test
     public void modelToJsonAndBack_preservesEveryStatusAndTags() throws Exception {
         for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
-            WorkoutPlan original = new WorkoutPlan(new WorkoutTitle("Strength"), new WorkoutDescription("Squats"),
+            WorkoutPlan original = new WorkoutPlan(new WorkoutPlanName("Strength"), new WorkoutDescription("Squats"),
                     WorkoutDate.fromLocalDate(LocalDate.of(2023, 11, 15)), Set.of(new WorkoutPlanTag("legs")), status);
             JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan(original);
 
@@ -198,7 +198,7 @@ public class JsonAdaptedWorkoutPlanTest {
 
         WorkoutPlan plan = adapted.toModelType();
 
-        assertEquals(new WorkoutTitle("Strength"), plan.getTitle());
+        assertEquals(new WorkoutPlanName("Strength"), plan.getName());
         assertEquals(new WorkoutDescription("Squats"), plan.getDescription());
         assertEquals("Strength", adapted.getTitle());
         assertEquals("Squats", adapted.getWorkoutDescription());
@@ -208,7 +208,7 @@ public class JsonAdaptedWorkoutPlanTest {
     // EP: model date serializes in ISO format (valid).
     @Test
     public void modelToJson_usesIsoStorageDate() {
-        WorkoutPlan plan = new WorkoutPlan(new WorkoutTitle("Strength"),
+        WorkoutPlan plan = new WorkoutPlan(new WorkoutPlanName("Strength"),
                 new WorkoutDescription("Squats"),
                 new WorkoutDate(Date.from(LocalDate.of(2023, 11, 15)
                         .atStartOfDay(ZoneId.systemDefault()).toInstant())));
@@ -234,7 +234,7 @@ public class JsonAdaptedWorkoutPlanTest {
             JsonAdaptedWorkoutPlan adapted = new JsonAdaptedWorkoutPlan(title, "Squats", "2023-11-15");
             // EP: empty, spaced, or whitespace-only (invalid).
             IllegalValueException exception = assertThrows(IllegalValueException.class, adapted::toModelType);
-            assertEquals(WorkoutTitle.MESSAGE_CONSTRAINTS, exception.getMessage());
+            assertEquals(WorkoutPlanName.MESSAGE_CONSTRAINTS, exception.getMessage());
         }
     }
 

@@ -24,8 +24,8 @@ import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
-import seedu.address.model.workoutplan.WorkoutTitle;
 
 /**
  * Jackson-friendly version of {@link WorkoutPlan}.
@@ -83,7 +83,7 @@ class JsonAdaptedWorkoutPlan {
     }
 
     public JsonAdaptedWorkoutPlan(WorkoutPlan source) {
-        title = source.getTitle().getValue();
+        title = source.getName().getValue();
         workoutDescription = source.getDescription().getValue();
         date = formatDateForStorage(source.getDate().getValue());
         status = source.getStatus().name();
@@ -136,10 +136,10 @@ class JsonAdaptedWorkoutPlan {
     public WorkoutPlan toModelType() throws IllegalValueException {
         if (title == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT,
-                    WorkoutTitle.class.getSimpleName()));
+                    WorkoutPlanName.class.getSimpleName()));
         }
-        if (!WorkoutTitle.isValidWorkoutTitle(title)) {
-            throw new IllegalValueException(WorkoutTitle.MESSAGE_CONSTRAINTS);
+        if (!WorkoutPlanName.isValidName(title)) {
+            throw new IllegalValueException(WorkoutPlanName.MESSAGE_CONSTRAINTS);
         }
         if (workoutDescription == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT,
@@ -193,7 +193,7 @@ class JsonAdaptedWorkoutPlan {
             throw new IllegalValueException(e.getMessage());
         }
 
-        return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription(workoutDescription),
+        return new WorkoutPlan(new WorkoutPlanName(title), new WorkoutDescription(workoutDescription),
                 modelDate, modelTags, modelStatus, modelExercisesList);
     }
 }

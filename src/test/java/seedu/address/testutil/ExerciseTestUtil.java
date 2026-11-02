@@ -12,9 +12,9 @@ import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
-import seedu.address.model.workoutplan.WorkoutTitle;
 
 /** Builds models with workout plans and exercises for command tests. */
 public class ExerciseTestUtil {
@@ -24,7 +24,7 @@ public class ExerciseTestUtil {
 
     /** Creates a pending plan with the given exercises. */
     public static WorkoutPlan plan(String title, String description, WorkoutDate date, List<Exercise> exercises) {
-        return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription(description), date,
+        return new WorkoutPlan(new WorkoutPlanName(title), new WorkoutDescription(description), date,
                 Set.of(), WorkoutPlanStatus.PENDING, new ExercisesList(exercises));
     }
 

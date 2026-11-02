@@ -28,9 +28,9 @@ import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
-import seedu.address.model.workoutplan.WorkoutTitle;
 import seedu.address.testutil.TypicalStudents;
 
 /**
@@ -62,7 +62,7 @@ public class ViewStudentCommandTest {
     // EP: selected student has workout plans (valid).
     @Test
     public void execute_validIndexWithWorkoutPlans_success() {
-        WorkoutPlan plan = new WorkoutPlan(new WorkoutTitle("Strength"),
+        WorkoutPlan plan = new WorkoutPlan(new WorkoutPlanName("Strength"),
                 new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)));
         Student baseStudent = TypicalStudents.ALICE;
         Student studentWithPlan = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
@@ -77,7 +77,7 @@ public class ViewStudentCommandTest {
                 + OVERDUE_HEADING + "1. " + plan + "\n"
                 + PENDING_HEADING + EMPTY_STATUS_PLANS;
         Model expectedModel = new ModelManager(modelWithPlan.getBrotherGym(), new UserPrefs());
-        WorkoutPlan overduePlan = new WorkoutPlan(plan.getTitle(), plan.getDescription(), plan.getDate(),
+        WorkoutPlan overduePlan = new WorkoutPlan(plan.getName(), plan.getDescription(), plan.getDate(),
                 plan.getTags(), WorkoutPlanStatus.OVERDUE);
         Student refreshedStudent = withPlans(baseStudent, List.of(overduePlan));
         expectedModel.setStudent(studentWithPlan, refreshedStudent);
@@ -169,7 +169,7 @@ public class ViewStudentCommandTest {
     }
 
     private static WorkoutPlan plan(String title, LocalDate deadline, WorkoutPlanStatus status) {
-        return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription("Exercise"),
+        return new WorkoutPlan(new WorkoutPlanName(title), new WorkoutDescription("Exercise"),
                 WorkoutDate.fromLocalDate(deadline), Set.of(), status);
     }
 }

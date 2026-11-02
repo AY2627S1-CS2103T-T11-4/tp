@@ -16,7 +16,7 @@ Class WorkoutPlansList
 Class WorkoutPlan
 Class WorkoutDate
 Class WorkoutPlanStatus
-Class WorkoutTitle
+Class WorkoutPlanName
 Class WorkoutDescription
 Class WorkoutPlanTag
 
@@ -31,7 +31,7 @@ WorkoutPlansList o--> "*" WorkoutPlan
 WorkoutPlan *--> "*" WorkoutPlanTag
 WorkoutPlan *--> "1" WorkoutPlanStatus
 WorkoutPlan *--> "1" WorkoutDate
-WorkoutPlan *--> "1" WorkoutTitle
+WorkoutPlan *--> "1" WorkoutPlanName
 WorkoutPlan *--> "1" WorkoutDescription
 
 StudentTag --|> Tag

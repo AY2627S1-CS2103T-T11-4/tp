@@ -24,9 +24,9 @@ import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
+import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
-import seedu.address.model.workoutplan.WorkoutTitle;
 
 /**
  * Contains unit and integration test structure for {@link AddPlanCommand}.
@@ -36,7 +36,7 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 public class AddPlanCommandTest {
 
     private static final WorkoutPlan PLAN = new WorkoutPlan(
-            new WorkoutTitle("Strength"),
+            new WorkoutPlanName("Strength"),
             new WorkoutDescription("Upper body"),
             new WorkoutDate(new Date(0)));
 
@@ -56,7 +56,7 @@ public class AddPlanCommandTest {
 
         Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(),
-                new WorkoutPlansList(List.of(new WorkoutPlan(PLAN.getTitle(), PLAN.getDescription(), PLAN.getDate(),
+                new WorkoutPlansList(List.of(new WorkoutPlan(PLAN.getName(), PLAN.getDescription(), PLAN.getDate(),
                         PLAN.getTags(), WorkoutPlanStatus.OVERDUE))));
         Model expectedModel = new ModelManager(model.getBrotherGym(), new UserPrefs());
         expectedModel.setStudent(currentStudent, updatedStudent);
@@ -80,7 +80,7 @@ public class AddPlanCommandTest {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
         Student currentStudent = model.getFilteredStudentList().get(0);
         model.setCurrentStudent(currentStudent);
-        WorkoutPlan taggedPlan = new WorkoutPlan(new WorkoutTitle("Strength"),
+        WorkoutPlan taggedPlan = new WorkoutPlan(new WorkoutPlanName("Strength"),
                 new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)),
                 Set.of(new WorkoutPlanTag("strength"), new WorkoutPlanTag("upperbody")));
 
@@ -89,7 +89,7 @@ public class AddPlanCommandTest {
         WorkoutPlan storedPlan = model.getCurrentStudent().orElseThrow()
                 .getWorkoutPlansList().getWorkoutList().get(0);
         assertEquals(WorkoutPlanStatus.OVERDUE, storedPlan.getStatus());
-        assertEquals(taggedPlan.getTitle(), storedPlan.getTitle());
+        assertEquals(taggedPlan.getName(), storedPlan.getName());
         assertEquals(taggedPlan.getDescription(), storedPlan.getDescription());
         assertEquals(taggedPlan.getDate(), storedPlan.getDate());
         assertEquals(Set.of(new WorkoutPlanTag("strength"), new WorkoutPlanTag("upperbody")),
@@ -117,9 +117,9 @@ public class AddPlanCommandTest {
     public void equals() {
         AddPlanCommand first = new AddPlanCommand(PLAN);
         AddPlanCommand copy = new AddPlanCommand(new WorkoutPlan(
-                new WorkoutTitle("Strength"), new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0))));
+                new WorkoutPlanName("Strength"), new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0))));
         AddPlanCommand different = new AddPlanCommand(new WorkoutPlan(
-                new WorkoutTitle("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(0))));
+                new WorkoutPlanName("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(0))));
 
         assertTrue(first.equals(first));
         assertTrue(first.equals(copy));

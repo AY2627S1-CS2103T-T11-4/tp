@@ -182,10 +182,10 @@ These commands can only be performed after a specific student has been selected 
 
 Add a new workout plan to the list of workout plans of the specified student
 
-Format: `addPlan TITLE --plan DESCRIPTION --date DDMMYYYY [--tag TAG]...`
+Format: `addPlan NAME --plan DESCRIPTION --date DDMMYYYY [--tag TAG]...`
 
 * Displays the updated list of workout plans of the specified student, after the new plan is added
-* Title and description of the workout plan cannot be empty.
+* Name and description of the workout plan cannot be empty.
 * Description cannot exceed 500 characters.
 * Date field must be provided in `DDMMYYYY` format
   
@@ -197,7 +197,7 @@ Examples:
 
 Edits an existing workout plan from the student's list of workout plans
 
-Format: `editPlan PLAN_ID [--name TITLE] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... [--clearTags]`
+Format: `editPlan PLAN_ID [--name NAME] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... [--clearTags]`
 
 Dates follow the same calendar validation as `addPlan`, including leap-year checks.
 
@@ -249,7 +249,7 @@ Expands the selected workout plan and its exercises within the current student's
 Format: `viewPlan PLAN_ID`
 
 * Keeps all of the student's workout plans visible in their original order and expands the selected plan in place.
-* Displays the selected plan's title, date, status, description, tags, and numbered exercises. An empty plan shows `Exercises (0)` and an empty message.
+* Displays the selected plan's name, date, status, description, tags, and numbered exercises. An empty plan shows `Exercises (0)` and an empty message.
 * The plan id refers to the index number shown in the displayed list of workout plans of the student.
 * The plan id **must be a positive integer** 1, 2, 3, ...
 * Run `viewPlan` again to expand a different plan, or `viewStudent` to collapse the selected plan. Exercise IDs follow the order displayed inside the expanded plan.
@@ -282,10 +282,10 @@ Select a student with `viewStudent`, then select one of their workout plans with
 
 #### Add an exercise to a workout plan: `addExercise`
 
-Format: `addExercise TITLE --description DESCRIPTION`
+Format: `addExercise NAME --description DESCRIPTION`
 
-* Both title and description are required and cannot be blank. The description can contain up to 500 characters.
-* The exercise is appended to the selected workout plan. An identical title and description cannot be added twice.
+* Both name and description are required and cannot be blank. The description can contain up to 500 characters.
+* The exercise is appended to the selected workout plan. An identical name and description cannot be added twice.
 * A workout plan can contain up to 100 exercises.
 
 Example: `addExercise Squats --description Barbell back squat`
@@ -388,7 +388,7 @@ Workout plan-related commands
 
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add Workout Plan**    | `addPlan TITLE --plan DESCRIPTION --date DDMMYYYY [--tag TAG]... ` <br> e.g., `addPlan Leg Day --plan Squats 100kg 5 reps x5; Leg curls 80kg 10 reps x3 --date 20102026`
+**Add Workout Plan**    | `addPlan NAME --plan DESCRIPTION --date DDMMYYYY [--tag TAG]... ` <br> e.g., `addPlan Leg Day --plan Squats 100kg 5 reps x5; Leg curls 80kg 10 reps x3 --date 20102026`
 **Edit Workout Plan**   | `editPlan PLAN_ID [--name NAME] [--plan DESCRIPTION] [--date DDMMYYYY] [--tag TAG]... [--clearTags]`<br> e.g.,`editPlan 2 --date 06072027`
 **Mark Workout Plan** | `markPlan PLAN_ID` <br> e.g. `markPlan 2`
 **Unmark Workout Plan** | `unmarkPlan PLAN_ID` <br> e.g. `unmarkPlan 2`
@@ -399,7 +399,7 @@ Exercise-related commands
 
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add Exercise** | `addExercise TITLE --description DESCRIPTION`<br> e.g., `addExercise Squats --description Barbell back squat`
+**Add Exercise** | `addExercise NAME --description DESCRIPTION`<br> e.g., `addExercise Squats --description Barbell back squat`
 **Edit Exercise** | `editExercise EXERCISE_ID [--name NAME] [--description DESCRIPTION]`<br> e.g., `editExercise 1 --description 3 sets of 10 reps`
 **Delete Exercise** | `deleteExercise EXERCISE_ID`<br> e.g., `viewStudent 1`, `viewPlan 2`, `deleteExercise 1`
 

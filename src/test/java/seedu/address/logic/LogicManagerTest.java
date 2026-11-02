@@ -39,7 +39,7 @@ import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutTitle;
+import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.storage.JsonBrotherGymStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
 import seedu.address.storage.StorageManager;
@@ -97,7 +97,7 @@ public class LogicManagerTest {
         Student student = new StudentBuilder().build();
         model.addStudent(student);
         model.setCurrentStudent(student);
-        WorkoutPlan plan = new WorkoutPlan(new WorkoutTitle("Leg day"),
+        WorkoutPlan plan = new WorkoutPlan(new WorkoutPlanName("Leg day"),
                 new WorkoutDescription("Lower body"), WorkoutDate.fromLocalDate(LocalDate.of(2026, 10, 29)));
         model.addWorkoutPlanForStudent(student, plan);
         model.setCurrentWorkoutPlan(model.getCurrentStudent().orElseThrow()

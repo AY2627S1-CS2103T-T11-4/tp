@@ -28,17 +28,17 @@ import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
 public class WorkoutPlansListTest {
 
     private static final WorkoutPlan FIRST = new WorkoutPlan(
-            new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+            new WorkoutPlanName("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
     private static final WorkoutPlan SECOND = new WorkoutPlan(
-            new WorkoutTitle("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
+            new WorkoutPlanName("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
     private static final WorkoutPlan FIRST_WITH_EXERCISES = new WorkoutPlan(
-            FIRST.getTitle(), FIRST.getDescription(), FIRST.getDate(), FIRST.getTags(), FIRST.getStatus(),
+            FIRST.getName(), FIRST.getDescription(), FIRST.getDate(), FIRST.getTags(), FIRST.getStatus(),
             new ExercisesList(List.of(new Exercise(new ExerciseName("Squats"),
                     new ExerciseDescription("Barbell back squat")))));
 
     @Test
     public void updateState_replacesChangedPlansAndPreservesUnchangedPlans() {
-        WorkoutPlan completed = new WorkoutPlan(SECOND.getTitle(), SECOND.getDescription(), SECOND.getDate(),
+        WorkoutPlan completed = new WorkoutPlan(SECOND.getName(), SECOND.getDescription(), SECOND.getDate(),
                 java.util.Set.of(), WorkoutPlanStatus.COMPLETED);
         WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, completed));
 
@@ -73,9 +73,9 @@ public class WorkoutPlansListTest {
     @Test
     public void getWorkoutPlan_target_returnsCanonicalStoredPlan() {
         WorkoutPlan equalFirst = new WorkoutPlan(
-                new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+                new WorkoutPlanName("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
         WorkoutPlan equalExternal = new WorkoutPlan(
-                new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+                new WorkoutPlanName("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
         WorkoutPlansList plans = new WorkoutPlansList(List.of(FIRST, SECOND, equalFirst));
 
         // EP: exact stored plan target (valid).
@@ -88,19 +88,19 @@ public class WorkoutPlansListTest {
         assertThrows(NullPointerException.class, () -> plans.getWorkoutPlan(null));
         // EP: workout-plan target is absent (invalid).
         assertThrows(WorkoutPlanNotFoundException.class, () -> plans.getWorkoutPlan(
-                new WorkoutPlan(new WorkoutTitle("Missing"), new WorkoutDescription("Missing"),
+                new WorkoutPlan(new WorkoutPlanName("Missing"), new WorkoutDescription("Missing"),
                         new WorkoutDate(new Date(3)))));
     }
 
     @Test
     public void addWorkoutPlan_appendsInNewList() {
         WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST));
-        WorkoutPlan differentTitle = new WorkoutPlan(new WorkoutTitle("Cardio"), FIRST.getDescription(),
+        WorkoutPlan differentName = new WorkoutPlan(new WorkoutPlanName("Cardio"), FIRST.getDescription(),
                 FIRST.getDate(), FIRST.getTags(), WorkoutPlanStatus.OVERDUE);
-        WorkoutPlansList updated = original.addWorkoutPlan(differentTitle);
+        WorkoutPlansList updated = original.addWorkoutPlan(differentName);
 
         assertEquals(List.of(FIRST), original.getWorkoutList());
-        assertEquals(List.of(FIRST, differentTitle), updated.getWorkoutList());
+        assertEquals(List.of(FIRST, differentName), updated.getWorkoutList());
         // EP: workout plan input is null (invalid).
         assertThrows(NullPointerException.class, () -> original.addWorkoutPlan(null));
         // EP: the same workout plan is already present (invalid).
@@ -112,11 +112,11 @@ public class WorkoutPlansListTest {
     @Test
     public void addWorkoutPlan_sameDetailsAcrossStatuses_throwsDuplicateWorkoutPlanException() {
         for (WorkoutPlanStatus existingStatus : List.of(WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.COMPLETED)) {
-            WorkoutPlan existing = new WorkoutPlan(FIRST.getTitle(), FIRST.getDescription(), FIRST.getDate(),
+            WorkoutPlan existing = new WorkoutPlan(FIRST.getName(), FIRST.getDescription(), FIRST.getDate(),
                     FIRST.getTags(), existingStatus);
             WorkoutPlansList plans = new WorkoutPlansList(List.of(existing));
             for (WorkoutPlanStatus newStatus : List.of(WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE)) {
-                WorkoutPlan newPlan = new WorkoutPlan(FIRST.getTitle(), FIRST.getDescription(), FIRST.getDate(),
+                WorkoutPlan newPlan = new WorkoutPlan(FIRST.getName(), FIRST.getDescription(), FIRST.getDate(),
                         Set.of(new WorkoutPlanTag("different")), newStatus);
                 // EP: status changes do not make plan details unique (duplicate).
                 assertThrows(DuplicateWorkoutPlanException.class, () -> plans.addWorkoutPlan(newPlan));
@@ -157,7 +157,7 @@ public class WorkoutPlansListTest {
     public void removeWorkoutPlan_removesSpecifiedWorkoutPlanInNewList() {
         WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND, FIRST));
         WorkoutPlan equalFirst = new WorkoutPlan(
-                new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+                new WorkoutPlanName("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
 
         WorkoutPlansList updated = original.removeWorkoutPlan(equalFirst);
 
@@ -172,11 +172,11 @@ public class WorkoutPlansListTest {
     @Test
     public void setWorkoutPlan_replacesExactTargetAndPreservesOrder() {
         WorkoutPlan equalFirst = new WorkoutPlan(
-                new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+                new WorkoutPlanName("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
         WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND, equalFirst));
 
         WorkoutPlan replacement = new WorkoutPlan(
-                new WorkoutTitle("Mobility"), new WorkoutDescription("Stretching"), new WorkoutDate(new Date(2)));
+                new WorkoutPlanName("Mobility"), new WorkoutDescription("Stretching"), new WorkoutDate(new Date(2)));
         WorkoutPlansList updated = original.setWorkoutPlan(equalFirst, replacement);
 
         assertEquals(List.of(FIRST, SECOND, equalFirst), original.getWorkoutList());
@@ -191,7 +191,7 @@ public class WorkoutPlansListTest {
         // EP: target workout plan is absent (invalid).
         assertThrows(WorkoutPlanNotFoundException.class, () -> new WorkoutPlansList().setWorkoutPlan(FIRST, SECOND));
 
-        WorkoutPlan secondWithExercises = new WorkoutPlan(SECOND.getTitle(), SECOND.getDescription(), SECOND.getDate(),
+        WorkoutPlan secondWithExercises = new WorkoutPlan(SECOND.getName(), SECOND.getDescription(), SECOND.getDate(),
                 SECOND.getTags(), SECOND.getStatus(), FIRST_WITH_EXERCISES.getExercisesList());
         // EP: nested exercises do not make a duplicate replacement unique (invalid).
         assertThrows(DuplicateWorkoutPlanException.class, () ->
@@ -202,10 +202,10 @@ public class WorkoutPlansListTest {
     public void setWorkoutPlan_equalTargetReplacesFirstMatchingPlan() {
         WorkoutPlansList original = new WorkoutPlansList(List.of(FIRST, SECOND));
         WorkoutPlan equalFirst = new WorkoutPlan(
-                new WorkoutTitle("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
+                new WorkoutPlanName("Strength"), new WorkoutDescription("Squats"), new WorkoutDate(new Date(0)));
 
         WorkoutPlan replacement = new WorkoutPlan(
-                new WorkoutTitle("Mobility"), new WorkoutDescription("Stretching"), new WorkoutDate(new Date(2)));
+                new WorkoutPlanName("Mobility"), new WorkoutDescription("Stretching"), new WorkoutDate(new Date(2)));
         WorkoutPlansList updated = original.setWorkoutPlan(equalFirst, replacement);
 
         assertEquals(List.of(replacement, SECOND), updated.getWorkoutList());
@@ -222,26 +222,26 @@ public class WorkoutPlansListTest {
         assertEquals(List.of(FIRST_WITH_EXERCISES), updated.getWorkoutList());
     }
 
-    // EP: title edit duplicates an overdue plan (invalid).
+    // EP: name edit duplicates an overdue plan (invalid).
     @Test
-    public void setWorkoutPlan_titleEditMatchesOverduePlan_throwsDuplicateWorkoutPlanException() {
-        assertTitleEditMatchingPlanIsRejected(WorkoutPlanStatus.OVERDUE);
+    public void setWorkoutPlan_nameEditMatchesOverduePlan_throwsDuplicateWorkoutPlanException() {
+        assertNameEditMatchingPlanIsRejected(WorkoutPlanStatus.OVERDUE);
     }
 
-    // EP: title edit duplicates a completed plan (invalid).
+    // EP: name edit duplicates a completed plan (invalid).
     @Test
-    public void setWorkoutPlan_titleEditMatchesCompletedPlan_throwsDuplicateWorkoutPlanException() {
-        assertTitleEditMatchingPlanIsRejected(WorkoutPlanStatus.COMPLETED);
+    public void setWorkoutPlan_nameEditMatchesCompletedPlan_throwsDuplicateWorkoutPlanException() {
+        assertNameEditMatchingPlanIsRejected(WorkoutPlanStatus.COMPLETED);
     }
 
     // EP: edited plan remains unique (valid).
     @Test
-    public void setWorkoutPlan_titleEditRemainsUnique_replacesTarget() {
-        WorkoutPlan existing = new WorkoutPlan(FIRST.getTitle(), FIRST.getDescription(), FIRST.getDate(),
+    public void setWorkoutPlan_nameEditRemainsUnique_replacesTarget() {
+        WorkoutPlan existing = new WorkoutPlan(FIRST.getName(), FIRST.getDescription(), FIRST.getDate(),
                 FIRST.getTags(), WorkoutPlanStatus.COMPLETED);
-        WorkoutPlan target = new WorkoutPlan(new WorkoutTitle("Cardio"), FIRST.getDescription(), FIRST.getDate(),
+        WorkoutPlan target = new WorkoutPlan(new WorkoutPlanName("Cardio"), FIRST.getDescription(), FIRST.getDate(),
                 FIRST.getTags(), WorkoutPlanStatus.PENDING);
-        WorkoutPlan edited = new WorkoutPlan(new WorkoutTitle("Mobility"), target.getDescription(), target.getDate(),
+        WorkoutPlan edited = new WorkoutPlan(new WorkoutPlanName("Mobility"), target.getDescription(), target.getDate(),
                 target.getTags(), target.getStatus());
         WorkoutPlansList plans = new WorkoutPlansList(List.of(existing, target));
 
@@ -251,12 +251,12 @@ public class WorkoutPlansListTest {
         assertEquals(List.of(existing, target), plans.getWorkoutList());
     }
 
-    private static void assertTitleEditMatchingPlanIsRejected(WorkoutPlanStatus existingStatus) {
-        WorkoutPlan existing = new WorkoutPlan(FIRST.getTitle(), FIRST.getDescription(), FIRST.getDate(),
+    private static void assertNameEditMatchingPlanIsRejected(WorkoutPlanStatus existingStatus) {
+        WorkoutPlan existing = new WorkoutPlan(FIRST.getName(), FIRST.getDescription(), FIRST.getDate(),
                 FIRST.getTags(), existingStatus);
-        WorkoutPlan target = new WorkoutPlan(new WorkoutTitle("Cardio"), existing.getDescription(), existing.getDate(),
-                Set.of(new WorkoutPlanTag("different")), WorkoutPlanStatus.PENDING);
-        WorkoutPlan edited = new WorkoutPlan(existing.getTitle(), target.getDescription(), target.getDate(),
+        WorkoutPlan target = new WorkoutPlan(new WorkoutPlanName("Cardio"), existing.getDescription(),
+                existing.getDate(), Set.of(new WorkoutPlanTag("different")), WorkoutPlanStatus.PENDING);
+        WorkoutPlan edited = new WorkoutPlan(existing.getName(), target.getDescription(), target.getDate(),
                 target.getTags(), target.getStatus());
         WorkoutPlansList plans = new WorkoutPlansList(List.of(existing, target));
 

@@ -23,7 +23,7 @@ import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutTitle;
+import seedu.address.model.workoutplan.WorkoutPlanName;
 import seedu.address.model.workoutplan.exceptions.DuplicateWorkoutPlanException;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 
@@ -34,7 +34,7 @@ public class EditPlanCommand extends Command {
 
     public static final String MESSAGE_DESCRIPTION =
             "Edits a workout plan from the Student currently being viewed.";
-    public static final String MESSAGE_PARAMETERS = "PLAN_ID [" + PREFIX_NAME + " PLAN_NAME] [" + PREFIX_PLAN
+    public static final String MESSAGE_PARAMETERS = "PLAN_ID [" + PREFIX_NAME + " NAME] [" + PREFIX_PLAN
             + " DESCRIPTION] [" + PREFIX_DATE + " DATE(DDMMYYYY)] [" + PREFIX_TAG + " TAG]... ["
             + PREFIX_CLEAR_TAGS + "]";
     public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1 " + PREFIX_NAME + " NewName " + PREFIX_PLAN
@@ -96,11 +96,11 @@ public class EditPlanCommand extends Command {
     }
 
     private static WorkoutPlan createEditedPlan(WorkoutPlan planToEdit, EditPlanDescriptor descriptor) {
-        WorkoutTitle updatedTitle = descriptor.getTitle().orElse(planToEdit.getTitle());
+        WorkoutPlanName updatedName = descriptor.getName().orElse(planToEdit.getName());
         WorkoutDescription updatedDescription = descriptor.getDescription().orElse(planToEdit.getDescription());
         WorkoutDate updatedDate = descriptor.getDate().orElse(planToEdit.getDate());
         Set<WorkoutPlanTag> updatedTags = descriptor.getWorkoutPlanTags().orElse(planToEdit.getTags());
-        return new WorkoutPlan(updatedTitle, updatedDescription, updatedDate, updatedTags,
+        return new WorkoutPlan(updatedName, updatedDescription, updatedDate, updatedTags,
                 planToEdit.getStatus(), planToEdit.getExercisesList());
     }
 
@@ -126,7 +126,7 @@ public class EditPlanCommand extends Command {
 
     /** Stores the optional fields to replace on a workout plan. */
     public static class EditPlanDescriptor {
-        private WorkoutTitle title;
+        private WorkoutPlanName name;
         private WorkoutDescription description;
         private WorkoutDate date;
         private Set<WorkoutPlanTag> tags;
@@ -136,22 +136,22 @@ public class EditPlanCommand extends Command {
         /** Copy constructor. */
         public EditPlanDescriptor(EditPlanDescriptor toCopy) {
             requireNonNull(toCopy);
-            setTitle(toCopy.title);
+            setName(toCopy.name);
             setDescription(toCopy.description);
             setDate(toCopy.date);
             setWorkoutPlanTags(toCopy.tags);
         }
 
         public boolean isAnyFieldEdited() {
-            return title != null || description != null || date != null || tags != null;
+            return name != null || description != null || date != null || tags != null;
         }
 
-        public void setTitle(WorkoutTitle title) {
-            this.title = title;
+        public void setName(WorkoutPlanName name) {
+            this.name = name;
         }
 
-        public Optional<WorkoutTitle> getTitle() {
-            return Optional.ofNullable(title);
+        public Optional<WorkoutPlanName> getName() {
+            return Optional.ofNullable(name);
         }
 
         public void setDescription(WorkoutDescription description) {
@@ -189,7 +189,7 @@ public class EditPlanCommand extends Command {
             if (!(other instanceof EditPlanDescriptor otherDescriptor)) {
                 return false;
             }
-            return Objects.equals(title, otherDescriptor.title)
+            return Objects.equals(name, otherDescriptor.name)
                     && Objects.equals(description, otherDescriptor.description)
                     && Objects.equals(date, otherDescriptor.date)
                     && Objects.equals(tags, otherDescriptor.tags);
@@ -197,13 +197,13 @@ public class EditPlanCommand extends Command {
 
         @Override
         public int hashCode() {
-            return Objects.hash(title, description, date, tags);
+            return Objects.hash(name, description, date, tags);
         }
 
         @Override
         public String toString() {
             return new ToStringBuilder(this)
-                    .add("title", title)
+                    .add("name", name)
                     .add("description", description)
                     .add("date", date)
                     .add("tags", tags)
