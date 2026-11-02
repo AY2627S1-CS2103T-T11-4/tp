@@ -661,55 +661,234 @@ Use case: U7 - View exercises of a workout plan
 
 --------------------------------------------------------------------------------------------------------------------
 
-## **Appendix: Instructions for manual testing**
+## **Appendix: Instructions for Manual Testing**
 
-Given below are instructions to test the app manually.
+The following walkthrough provides a starting point for manual testing. Testers are encouraged to explore
+additional variations. Refer to the [User Guide](UserGuide.md#features) for command syntax and field constraints.
+This appendix should only serve as a starting point to familiarise testers with the functionalities of BrotherGym.
 
-<box type="info" seamless>
+### Before you begin
 
-**Note:** These instructions only provide a starting point for testers to work on;
-testers are expected to do more *exploratory* testing.
-</box>
+* Follow the [Quick start](UserGuide.md#quick-start) instructions to launch the JAR from a separate, empty
+  test folder. Keep the same working directory when relaunching so the app uses the same data file.
+* Use only test data: the walkthrough includes `clear` and deletion commands.
+* Enter `help` and check that the help window opens with readable command instructions; close it to continue.
+* Run the sections in order and enter each command on a separate line. Unless a step says otherwise, retain the
+  data from the previous section. IDs below assume this order; after exploratory changes, use the displayed IDs
+  or recreate the dataset.
 
-### Launch and shutdown
+### Prepare a predictable dataset
 
-1. Initial launch
+Enter the following commands. `clear` removes the initial sample data in this test instance.
 
-   1. Download the JAR file and copy it into an empty folder.
+```text
+clear
+addStudent Alex Tan --hp 91234567 --email alex@example.com --addr 10 Clementi Road --tag beginner
+addStudent Beth Lim --hp 92345678 --email beth@example.com --addr 20 Dover Road
+viewStudent 1
+addPlan Strength Session --description Practise controlled movements --date 31122099 --tag strength
+addPlan Previous Session --description Review completed training --date 01012000
+viewPlan 1
+addExercise Squat --description 3 sets of 8 reps at 30kg
+addExercise Plank --description 3 sets of 30 seconds
+```
 
-   1. Double-click the JAR file.<br>
-      Expected: The GUI opens with a set of sample contacts. The window size may not be optimal.
+Expected: There are two students. Alex has two plans, with two numbered exercises in the expanded first plan.
+Beth has no plans. The first plan is `PENDING` and the second is `OVERDUE`, assuming the test date is between
+2 January 2000 and 31 December 2099 (inclusive). For the later checks, which change the first plan
+to 30 December 2099, the expected `PENDING` status assumes the test date is on or before that date.
 
-1. Saving window preferences
+### Manage students and navigate between views
 
-   1. Resize the window to an optimal size. Move the window to a different location. Close the window.
+1. Enter the following commands:
 
-   1. Relaunch the app by double-clicking the JAR file.<br>
-       Expected: The most recent window size and location are retained.
+   ```text
+   find bEtH
+   viewStudent 1
+   home
+   viewStudent 1
+   ```
 
-1. _{ more test cases … }_
+   Expected: The search displays only Beth, numbered 1, and `viewStudent 1` shows her empty workout list.
+   `home` restores both students and clears the selection. The final command shows Alex's two plans.
 
-### Deleting a student
+2. Update Alex's details and tags:
 
-1. Deleting a student while all students are being shown
+   ```text
+   editStudent 1 --name Alex Teo --hp 93456789 --email alexteo@example.com --addr 30 Clementi Road --tag regular
+   editStudent 1 --clearTags
+   ```
 
-   1. Prerequisites: List all students using the `home` command, with multiple students in the list.
+   Expected: The first command updates the specified details and replaces `beginner` with `regular`.
+   The second removes all student tags. Alex's plans and exercises remain intact.
 
-   1. Test case: `deleteStudent 1`<br>
-      Expected: The first contact is deleted from the list. The status message shows the deleted contact's details.
+3. Try adding a duplicate:
 
-   1. Test case: `deleteStudent 0`<br>
-      Expected: No student is deleted. The status message shows error details.
+   ```text
+   addStudent alex teo --hp 94567890 --email duplicate@example.com --addr 40 Dover Road
+   ```
 
-   1. Other incorrect delete commands to try: `deleteStudent`, `deleteStudent x`, `...` (where x is larger than the list size)<br>
-      Expected: Similar to previous.
+   Expected: The command is rejected despite the different letter case and contact details. There are still two students.
 
-1. _{ more test cases … }_
+### Manage workout plans and track progress
 
-### Saving data
+1. Select Alex and edit the first plan:
 
-1. Dealing with missing/corrupted data files
+   ```text
+   viewStudent 1
+   viewPlan 1
+   editPlan 1 --name Strength Training --description Focus on controlled technique --date 30122099 --tag technique
+   editPlan 1 --clearTags
+   ```
 
-   1. _{Explain how to simulate missing or corrupted data files and state the expected behavior.}_
+   Expected: The first plan's details update, its tags are replaced and then cleared, and its two exercises remain.
+   The plan stays expanded throughout these edits.
+   Try `addPlan Strength Training --description Focus on controlled technique --date 30122099`.
+   Expected: The duplicate is rejected and there are still two plans.
 
-1. _{ more test cases … }_
+2. Check status changes:
+
+   ```text
+   markPlan 1
+   markPlan 1
+   unmarkPlan 1
+   markPlan 2
+   unmarkPlan 2
+   unmarkPlan 2
+   ```
+
+   Expected: Plan 1 becomes `DONE`, the repeated mark is rejected, and unmarking restores `PENDING`.
+   Plan 2 becomes `DONE`, then returns to `OVERDUE`; the repeated unmark is rejected.
+
+3. Check calendar validation:
+
+   ```text
+   editPlan 1 --date 31022027
+   editPlan 1 --date 29022028
+   editPlan 1 --date 30122099
+   ```
+
+   Expected: The impossible date is rejected without changing the plan. The leap-day date is accepted, and the
+   final command restores the future date. For the today boundary, temporarily set an unmarked plan's date to
+   today's date in `DDMMYYYY` format: its status should be `PENDING`. Restore the original date afterward.
+
+4. Enter `viewPlan 2`, then `viewPlan 1`.
+
+   Expected: Only the selected plan expands, while both plans remain in their original order in one scrollable
+   list. Plan 2 shows an empty exercise list. The selected plan's details and numbered exercises are readable.
+   `viewStudent 1` collapses the expansion and returns the list to the top; enter `viewPlan 1` again to continue.
+
+### Manage exercises within a selected plan
+
+Prerequisite: Alex's first plan is expanded and still contains Squat and Plank.
+
+1. Enter:
+
+   ```text
+   editExercise 1 --description 3 sets of 10 reps at 30kg
+   addExercise Squat --description 3 sets of 10 reps at 30kg
+   editExercise 2 --name Squat --description 3 sets of 10 reps at 30kg
+   ```
+
+   Expected: The first exercise keeps its name and position while its description changes. Both subsequent
+   commands are rejected as duplicates, leaving the two exercises unchanged.
+
+2. Enter:
+
+   ```text
+   editExercise 2 --name Side Plank
+   deleteExercise 1
+   deleteExercise 1
+   ```
+
+   Expected: Renaming retains the second exercise's description. The first deletion leaves Side Plank numbered 1;
+   the second leaves an empty plan showing `Exercises (0)` and an empty message. The plan stays expanded.
+
+3. Add an exercise back for the saving checks:
+
+   ```text
+   addExercise Goblet Squat --description 3 sets of 10 reps at 12kg
+   viewPlan 2
+   viewStudent 2
+   viewStudent 1
+   viewPlan 1
+   ```
+
+   Expected: Plan 2 remains empty and Beth still has no plans. Returning to Alex's first plan shows Goblet Squat,
+   confirming that exercise changes affected only the selected plan.
+
+### Check selection rules and rejected inputs
+
+1. Enter these commands in order:
+
+   ```text
+   home
+   addPlan Unselected Session --description Selection check --date 31122099
+   viewStudent 1
+   addExercise Unselected Exercise --description Selection check
+   viewPlan 1
+   ```
+
+   Expected: The plan command is rejected because no student is selected. The exercise command is rejected
+   because no plan is selected. Selecting the student and plan afterward succeeds without losing existing data.
+
+2. With Alex and plan 1 selected, try this representative set of invalid inputs:
+
+   | Input | What to check |
+   | --- | --- |
+   | `viewStudent 0` | Non-positive index is rejected. |
+   | `viewPlan 01` | Leading-zero index is rejected. |
+   | `deleteExercise 999` | Out-of-range index is rejected; Goblet Squat remains. |
+   | `addExercise Curl` | Missing required description is reported. |
+   | `editExercise 1 --tag strength` | Unsupported prefix is rejected. |
+   | `editExercise 1 --name Curl --name Row` | Repeated single-value prefix is rejected. |
+   | `editStudent 1` | An edit without any fields is rejected. |
+   | `find !!!` | Search without a valid keyword is rejected. |
+   | `home extra` | Extra arguments to a no-argument command are rejected. |
+
+   Expected for each: Feedback explains the error and no student, plan, or exercise data changes.
+   Enter `viewStudent 1` and `viewPlan 1` afterward to confirm that valid commands still work.
+
+### Verify saving, deletion, and recovery
+
+1. **Persist the nested data.** Enter `markPlan 2`, then `exit`. Relaunch from the same working directory and
+   enter `viewStudent 1`, then `viewPlan 1`.
+
+   Expected: Alex's edited contact details, cleared tags, both plans, and Goblet Squat are retained. Plan 2 is
+   still `DONE`. Check the saved data rather than expecting the previous view selection to be restored.
+
+2. **Delete plans around an expanded plan.** Enter `viewPlan 2`, then `deletePlan 1`.
+
+   Expected: Previous Session remains expanded and becomes plan 1. Enter `deletePlan 1` again.
+   The selected plan disappears and the list collapses without selecting another plan.
+
+3. **Delete a student with nested data.** Recreate a plan and exercise for Alex:
+
+   ```text
+   addPlan Cleanup Session --description Check nested deletion --date 31122099
+   viewPlan 1
+   addExercise Lunge --description 2 sets of 10 reps
+   home
+   find Alex
+   deleteStudent 1
+   home
+   ```
+
+   Expected: Alex and the associated plan and exercise are removed. Beth remains unchanged. Enter `clear`,
+   then `exit`, and relaunch. The student list remains empty rather than being replaced by sample data.
+
+4. **Missing data file.** Close the app and copy `data/brothergym.json` to a backup outside the `data` folder.
+   Remove the original file and relaunch from the same working directory.
+
+   Expected: The app opens with sample data. Close the app and restore the backup before the next check.
+
+5. **Corrupted data file.** With the app closed and the backup retained, replace the contents of
+   `data/brothergym.json` with the following invalid JSON, then relaunch:
+
+   ```text
+   { invalid json
+   ```
+
+   Expected: The app opens with an empty student list. Before entering any command, inspect the file externally:
+   it should still contain the invalid text. Enter `home` and inspect it again: the successful command saves
+   valid data for the empty list. Close the app, restore the backup, and relaunch to verify recovery.
