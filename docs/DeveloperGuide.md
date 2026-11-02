@@ -174,28 +174,70 @@ Both exception types are subclasses of `ParseException`, and the parser methods 
 in another `ParseException` object to be thrown to the higher levels.
 
 ### Model component
-**API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
+**API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-T11-4/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
 The class diagram below shows the high-level structure of the `Model` component.
 
-<puml src="diagrams/ModelClassDiagram.puml" width="450" />
+<puml src="diagrams/ModelClassDiagram.puml" width="650" />
 
 
 The `Model` component,
 
-* stores all `Student` objects in a `UniqueStudentList`. Each `Student` contains a `WorkoutPlansList` of `WorkoutPlan` objects.
+* stores all `Student` objects in a `UniqueStudentList`.
 * exposes students matching the current filter, such as search results, as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to.
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * tracks `currentStudent`, the `Student` whose workout plans the user has chosen to view or edit.
+* tracks `currentWorkoutPlan`, the `WorkoutPlan` that belongs to `currentStudent`, of which the user has chosen to view or edit.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
 
-The entity diagram expands `UniqueStudentList` and `Student` to show student details, tags, and workout plans:
+The entity diagram expands `UniqueStudentList` and `Student` to show student details, tags, and their workout plan list. Details of `WorkoutPlan` are omitted for clarity and will be shown in a later diagram:
 
-<puml src="diagrams/ModelEntitiesClassDiagram.puml" alt="Model entities and their internal relationships" width="700" />
+<puml src="diagrams/ModelEntitiesClassDiagram.puml" alt="Student entities, tags, and workout plan list" width="800" />
 
-<box type="info" seamless>
-</box>
+The following diagram shows the entities referenced by `WorkoutPlan`.
+
+<puml src="diagrams/WorkoutPlanClassDiagram.puml" alt="Workout plan entities, exercises, and tags" width="1000" />
+
+#### Model checks and state updates
+
+The `Model` package enforces domain rules when model objects are constructed or changed. This is accomplished in two main ways.
+
+1. Entities enforce their own constraints when the entity objects are created. An example is the checking of the character limit of certain entity fields.
+
+2. `ModelManager` imposes validity checks when a method attempts to change the state of `BrotherGym`, delegating membership and uniqueness checks to `BrotherGym` and the list classes.
+
+#### Interaction with Model during command execution
+
+Changes to nested plan and exercise data follow an immutable-update pattern: each edit builds replacement lists and entities up to a replacement `Student`, reusing unchanged fields, then replaces the stored student.
+
+#### Entity construction
+
+The construction stage depends on whether the entity can be created from the supplied fields alone or requires existing model data. Constructing an entity does not itself change the stored data; checks that depend on the selected student or existing plans take place during command execution.
+
+For `addPlan`, parsing can produce a complete plan without reading the selected student's data. The command holds this plan until execution, when the selected student is known:
+
+<puml src="diagrams/AddPlanEntityCreationSequenceDiagram.puml" alt="Creating a workout plan from addPlan input" width="850" />
+
+For `editPlan`, parsing produces an `EditPlanDescriptor` containing the requested changes rather than a complete replacement plan. Construction must wait until execution because omitted fields depend on the stored plan. The target index is also checked against that student's plans at this stage:
+
+<puml src="diagrams/EditPlanEntityCreationSequenceDiagram.puml" alt="Creating an edited workout plan from the selected student" width="1000" />
+
+#### Updating stored data
+
+The following diagrams show a successful `addPlan`. The second diagram expands the `Build updatedStudent` reference frame in the first.
+
+<puml src="diagrams/AddPlanBrotherGymUpdateSequenceDiagram.puml" alt="Adding a workout plan to BrotherGym" width="1000" />
+
+<puml src="diagrams/AddPlanUpdatedStudentSequenceDiagram.puml" alt="Constructing the updated student for addPlan" width="900" />
+
+The command supplies the requested change through the Model API, while `ModelManager` maintains the stored data and selection together. This keeps commands from having to manage references to objects replaced by nested updates. Exercise changes follow the same approach, with an additional replacement `WorkoutPlan` containing the updated exercises.
+
+Selection maintenance is omitted from the diagrams. After replacing the selected student, `ModelManager` points `currentStudent` to the stored replacement. A retained plan remains selected; when an edit or exercise change replaces the selected plan, selection follows its replacement. Removing that plan clears the plan selection, and a student that no longer matches the current filter has both selections cleared.
+
+After a successful change to workout plans or exercises, the command refreshes the current student's workout statuses through `updateStudentWorkoutsState`. This can replace the student again; unchanged statuses reuse the existing student. The internals of status refresh are omitted from the diagrams above.
+
+Status refresh preserves completed plans and determines whether other plans are pending or overdue using the current date. Deferring this refresh until the requested operation succeeds prevents a rejected operation, such as a duplicate addition, from changing existing statuses. If refresh replaces the selected plan, its selection is retained at the same list index.
 
 
 ### Storage component

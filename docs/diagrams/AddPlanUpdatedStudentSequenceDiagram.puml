@@ -1,0 +1,33 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+skinparam maxMessageSize 250
+mainframe sd Build updatedStudent
+
+participant ":ModelManager" as Model MODEL_COLOR
+participant "storedStudent:Student" as StoredStudent MODEL_COLOR
+participant "plans:WorkoutPlansList" as Plans MODEL_COLOR
+participant "updatedStudent:Student" as UpdatedStudent MODEL_COLOR
+
+Model -> StoredStudent : getWorkoutPlansList()
+activate StoredStudent
+StoredStudent --> Model : plans
+deactivate StoredStudent
+Model -> Plans : addWorkoutPlan(plan)
+activate Plans
+note right of Plans
+  Reject duplicates; create a new list
+  containing the existing plans and plan.
+end note
+Plans --> Model : updatedPlans
+deactivate Plans
+Model -> StoredStudent : withWorkoutPlans(updatedPlans)
+activate StoredStudent
+create UpdatedStudent
+StoredStudent -> UpdatedStudent : new Student(..., updatedPlans)
+activate UpdatedStudent
+UpdatedStudent --> StoredStudent : updatedStudent
+deactivate UpdatedStudent
+StoredStudent --> Model : updatedStudent
+deactivate StoredStudent
+@enduml
