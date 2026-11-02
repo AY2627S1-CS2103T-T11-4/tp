@@ -686,8 +686,8 @@ clear
 addStudent Alex Tan --hp 91234567 --email alex@example.com --addr 10 Clementi Road --tag beginner
 addStudent Beth Lim --hp 92345678 --email beth@example.com --addr 20 Dover Road
 viewStudent 1
-addPlan Strength Session --description Practise controlled movements --date 31122099 --tag strength
-addPlan Previous Session --description Review completed training --date 01012000
+addPlan Strength Session --plan Practise controlled movements --date 31122099 --tag strength
+addPlan Previous Session --plan Review completed training --date 01012000
 viewPlan 1
 addExercise Squat --description 3 sets of 8 reps at 30kg
 addExercise Plank --description 3 sets of 30 seconds
@@ -737,18 +737,19 @@ to 30 December 2099, the expected `PENDING` status assumes the test date is on o
    ```text
    viewStudent 1
    viewPlan 1
-   editPlan 1 --name Strength Training --description Focus on controlled technique --date 30122099 --tag technique
+   editPlan 1 --name Strength Training --plan Focus on controlled technique --date 30122099 --tag technique
    editPlan 1 --clearTags
    ```
 
    Expected: The first plan's details update, its tags are replaced and then cleared, and its two exercises remain.
    The plan stays expanded throughout these edits.
-   Try `addPlan Strength Training --description Focus on controlled technique --date 30122099`.
+   Try `addPlan Strength Training --plan Focus on controlled technique --date 30122099`.
    Expected: The duplicate is rejected and there are still two plans.
 
 2. Check status changes:
 
    ```text
+   viewStudent 1
    markPlan 1
    markPlan 1
    unmarkPlan 1
@@ -774,9 +775,11 @@ to 30 December 2099, the expected `PENDING` status assumes the test date is on o
 
 4. Enter `viewPlan 2`, then `viewPlan 1`.
 
-   Expected: Only the selected plan expands, while both plans remain in their original order in one scrollable
-   list. Plan 2 shows an empty exercise list. The selected plan's details and numbered exercises are readable.
-   `viewStudent 1` collapses the expansion and returns the list to the top; enter `viewPlan 1` again to continue.
+   Expected: Only the selected plan expands, while both plans remain in their original order from the one
+   scrollable list. Plan 2 shows an empty exercise list. The selected plan's details and numbered exercises
+   are readable.
+   `viewStudent 1` collapses the expansion and returns the list to the top; enter `viewPlan 1` again to
+   continue.
 
 ### Manage exercises within a selected plan
 
@@ -802,7 +805,7 @@ Prerequisite: Alex's first plan is expanded and still contains Squat and Plank.
    ```
 
    Expected: Renaming retains the second exercise's description. The first deletion leaves Side Plank numbered 1;
-   the second leaves an empty plan showing `Exercises (0)` and an empty message. The plan stays expanded.
+   the second leaves an empty plan showing `Exercises (none)` and an empty message. The plan stays expanded.
 
 3. Add an exercise back for the saving checks:
 
@@ -823,7 +826,7 @@ Prerequisite: Alex's first plan is expanded and still contains Squat and Plank.
 
    ```text
    home
-   addPlan Unselected Session --description Selection check --date 31122099
+   addPlan Unselected Session --plan Selection check --date 31122099
    viewStudent 1
    addExercise Unselected Exercise --description Selection check
    viewPlan 1
@@ -847,7 +850,7 @@ Prerequisite: Alex's first plan is expanded and still contains Squat and Plank.
    | `home extra` | Extra arguments to a no-argument command are rejected. |
 
    Expected for each: Feedback explains the error and no student, plan, or exercise data changes.
-   Enter `viewStudent 1` and `viewPlan 1` afterward to confirm that valid commands still work.
+   Enter `viewStudent 1` and `viewPlan 2` afterward to confirm that valid commands still work.
 
 ### Verify saving, deletion, and recovery
 
@@ -865,7 +868,7 @@ Prerequisite: Alex's first plan is expanded and still contains Squat and Plank.
 3. **Delete a student with nested data.** Recreate a plan and exercise for Alex:
 
    ```text
-   addPlan Cleanup Session --description Check nested deletion --date 31122099
+   addPlan Cleanup Session --plan Check nested deletion --date 31122099
    viewPlan 1
    addExercise Lunge --description 2 sets of 10 reps
    home
