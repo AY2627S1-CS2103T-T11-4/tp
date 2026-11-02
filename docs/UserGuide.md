@@ -235,7 +235,7 @@ Dates follow the same calendar validation as `addPlan`, including leap-year chec
 Examples:
 * `editPlan 2 --description Bicep Curls 15kg 10 reps x3 --date 06072027`:
    Edits the description and date of the second workout plan of the student's list of workout plans 
-   to `Bicep Curls 15kg 10 reps x3` and `06072027`
+   to `Full body conditioning` and `06072027`
 * `editPlan 3 --clearTags`: Clears all tags for the third workout plan of the student's list of workout plans
 
 #### Changing statuses of commands: `markPlan` and `unmarkPlan`
