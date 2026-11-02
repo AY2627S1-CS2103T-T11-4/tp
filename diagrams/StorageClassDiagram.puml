@@ -18,6 +18,7 @@ Class JsonBrotherGymStorage
 Class JsonSerializableBrotherGym
 Class JsonAdaptedStudent
 Class JsonAdaptedWorkoutPlan
+Class JsonAdaptedExercise
 Class JsonAdaptedTag
 }
 
@@ -34,6 +35,7 @@ JsonBrotherGymStorage ..> JsonSerializableBrotherGym
 JsonSerializableBrotherGym --> "*" JsonAdaptedStudent
 JsonAdaptedStudent --> "*" JsonAdaptedTag
 JsonAdaptedStudent --> "*" JsonAdaptedWorkoutPlan
+JsonAdaptedWorkoutPlan --> "*" JsonAdaptedExercise
 JsonAdaptedWorkoutPlan --> "*" JsonAdaptedTag
 
 @enduml
