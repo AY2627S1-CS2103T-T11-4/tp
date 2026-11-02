@@ -14,8 +14,8 @@ import static seedu.address.logic.commands.CommandTestUtil.TITLE_PREAMBLE_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HIIT;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_STRENGTH;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalWorkouts.LEG_DAY;
@@ -66,7 +66,7 @@ public class AddPlanCommandParserTest {
 
         // EP: repeated non-repeatable workout-plan field (invalid).
         assertParseFailure(parser, validExpectePlanString + PLAN_DESC_CHEST,
-                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN)));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_DESCRIPTION)));
 
     }
 
@@ -74,7 +74,7 @@ public class AddPlanCommandParserTest {
     public void parse_compulsoryFieldMissing_failure() {
         // One invalid input at a time: only the compulsory description is missing.
         assertParseFailure(parser, TITLE_PREAMBLE_LEGS + DATE_DESC_LEGS,
-                this.formatParserError(Messages.getErrorMessageForMissingPrefixes(PREFIX_PLAN)));
+                this.formatParserError(Messages.getErrorMessageForMissingPrefixes(PREFIX_DESCRIPTION)));
     }
 
     @Test

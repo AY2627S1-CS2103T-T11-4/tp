@@ -82,7 +82,6 @@ public class CommandMetadataTest {
         assertEquals(List.of(
                         HomeCommand.COMMAND_WORD,
                         HelpCommand.COMMAND_WORD,
-                        ClearCommand.COMMAND_WORD,
                         ExitCommand.COMMAND_WORD),
                 commandWords(categories.get(0)));
         assertEquals(List.of(
@@ -90,7 +89,8 @@ public class CommandMetadataTest {
                         ViewStudentCommand.COMMAND_WORD,
                         EditStudentCommand.COMMAND_WORD,
                         DeleteStudentCommand.COMMAND_WORD,
-                        FindCommand.COMMAND_WORD),
+                        FindCommand.COMMAND_WORD,
+                        ClearCommand.COMMAND_WORD),
                 commandWords(categories.get(1)));
         assertEquals(List.of(
                         AddPlanCommand.COMMAND_WORD,
@@ -106,12 +106,20 @@ public class CommandMetadataTest {
                         DeleteExerciseCommand.COMMAND_WORD),
                 commandWords(categories.get(3)));
 
-        CommandMetadata addPlan = categories.get(2).commands().get(0);
-        assertEquals(AddPlanCommand.MESSAGE_PARAMETERS, addPlan.parameters());
-        assertEquals(AddPlanCommand.MESSAGE_DESCRIPTION, addPlan.description());
-        assertEquals(AddPlanCommand.MESSAGE_EXAMPLE, addPlan.example());
-        assertEquals(AddPlanCommand.COMMAND_WORD + " " + AddPlanCommand.MESSAGE_PARAMETERS,
-                addPlan.format());
+        List<CommandMetadata> changedMetadata = List.of(
+                categories.get(1).commands().get(0), categories.get(1).commands().get(2),
+                categories.get(2).commands().get(0));
+        assertEquals(List.of(
+                        "NAME --hp PHONE_NUMBER --email EMAIL --addr ADDRESS [--tag TAG]...|"
+                                + "addStudent James Ho --hp 22224444 --email jamesho@example.com "
+                                + "--addr 123, Clementi Rd, 1234665 --tag friend --tag colleague",
+                        "STUDENT_ID [--name NAME] [--hp PHONE_NUMBER] [--email EMAIL] [--addr ADDRESS] "
+                                + "[--tag TAG]... [--clearTags]|editStudent 2 --name James Lee "
+                                + "--email jameslee@example.com",
+                        "PLAN_NAME --description DESCRIPTION --date DDMMYYYY [--tag TAG]...|"
+                                + "addPlan Leg Day --description focus on form --date 20102026"),
+                changedMetadata.stream()
+                        .map(metadata -> metadata.parameters() + "|" + metadata.example()).toList());
     }
 
     private static List<String> commandWords(CommandCategory category) {

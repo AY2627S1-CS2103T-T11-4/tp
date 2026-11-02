@@ -2,8 +2,8 @@ package seedu.address.testutil;
 
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Set;
@@ -31,7 +31,7 @@ public class WorkoutUtil {
     public static String getWorkoutDetails(WorkoutPlan workout) {
         StringBuilder sb = new StringBuilder();
         sb.append(workout.getTitle());
-        sb.append(" " + PREFIX_PLAN + " " + workout.getDescription());
+        sb.append(" " + PREFIX_DESCRIPTION + " " + workout.getDescription());
         sb.append(" " + PREFIX_DATE + " " + workout.getDate().toInputString());
         return sb.toString();
     }
@@ -44,7 +44,7 @@ public class WorkoutUtil {
         descriptor.getTitle().ifPresent(title ->
                 sb.append(PREFIX_NAME).append(" ").append(title.getValue()).append(" "));
         descriptor.getDescription().ifPresent(plan ->
-                sb.append(PREFIX_PLAN).append(" ").append(plan.getValue()).append(" "));
+                sb.append(PREFIX_DESCRIPTION).append(" ").append(plan.getValue()).append(" "));
         descriptor.getDate().ifPresent(date ->
                 sb.append(PREFIX_DATE).append(" ").append(date.toInputString()).append(" "));
         if (descriptor.getWorkoutPlanTags().isPresent()) {
