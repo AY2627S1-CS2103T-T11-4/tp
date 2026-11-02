@@ -1,0 +1,23 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor LOGIC_COLOR_T4
+skinparam classBackgroundColor LOGIC_COLOR
+
+
+package "Metadata classes" {
+    class "<<record>>\nCommandCategory" as CommandCategory
+    class "<<record>>\nCommandMetadata" as CommandMetadata
+    class CommandMetadataCatalog
+}
+
+class XYZCommand
+
+Class HiddenOutside #FFFFFF
+HiddenOutside ..> CommandMetadataCatalog
+CommandMetadataCatalog *--> " * " CommandCategory
+CommandCategory *--> " * " CommandMetadata
+
+CommandMetadataCatalog ..> XYZCommand : obtains metadata from
+
+@enduml

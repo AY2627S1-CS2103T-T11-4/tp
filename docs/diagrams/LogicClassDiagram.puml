@@ -15,6 +15,7 @@ package "Logic" as LogicComponent {
     class "<<interface>>\nLogic" as LogicApi
 
     package "Parser Classes" as ParserClasses {}
+    package "Metadata Classes" as MetadataClasses {}
 
     class CommandResult
     class "{abstract}\nCommand" as Command
@@ -28,35 +29,35 @@ package "Storage" as StorageComponent {}
 package "Model" as ModelComponent {}
 
 HiddenOutside ..> LogicApi
-LogicManager .right.|> LogicApi
+LogicManager .up.|> LogicApi
 LogicManager --> "1" ParserClasses
 LogicManager --> "1" StorageComponent
 LogicManager --> "1" ModelComponent
 LogicManager ..> Command : executes
+LogicManager ..> MetadataClasses : returns
 LogicManager ..> CommandResult : returns
-ParserClasses ..> Command : creates
+ParserClasses .down.> Command : creates
 LogicApi ..> CommandResult : returns
+LogicApi ..> MetadataClasses : returns
 Command ..> ModelComponent
-Command ..> CommandResult : returns
+Command .left.> CommandResult : returns
 
 SingleIndexCommand -up-|> Command
 XYZCommand -up-|> Command
 DeleteStudentCommand -up-|> SingleIndexCommand
 
-note right of XYZCommand
+note bottom of XYZCommand
     Represents direct command subclasses,
     such as AddStudentCommand and FindCommand.
 end note
 
 HiddenOutside -[hidden]down-> LogicApi
-LogicManager -[hidden]right-> LogicApi
-LogicManager -[hidden]down-> ParserClasses
-ParserClasses -[hidden]down-> CommandResult
-CommandResult -[hidden]down-> Command
+MetadataClasses -[hidden]right-> ParserClasses
+MetadataClasses -[hidden]right-> CommandResult
 Command -[hidden]down-> XYZCommand
 XYZCommand -[hidden]right-> SingleIndexCommand
 SingleIndexCommand -[hidden]down-> DeleteStudentCommand
 LogicComponent -[hidden]right-> StorageComponent
-StorageComponent -[hidden]down-> ModelComponent
+LogicComponent -[hidden]right-> ModelComponent
 
 @enduml

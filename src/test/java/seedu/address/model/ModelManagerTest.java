@@ -176,6 +176,23 @@ public class ModelManagerTest {
         assertEquals(List.of(second), removed.getWorkoutPlansList().getWorkoutList());
     }
 
+    @Test
+    public void removeWorkoutPlanForStudent_otherPlanRemoved_keepsSelectedPlan() {
+        WorkoutPlan removedPlan = plan("Removed", LocalDate.now(), WorkoutPlanStatus.PENDING);
+        WorkoutPlan selectedPlan = plan("Selected", LocalDate.now(), WorkoutPlanStatus.PENDING);
+        Student student = withPlans(ALICE, removedPlan, selectedPlan);
+        modelManager.addStudent(student);
+        modelManager.setCurrentStudent(student);
+        modelManager.setCurrentWorkoutPlan(selectedPlan);
+
+        modelManager.removeWorkoutPlanForStudent(student, removedPlan);
+
+        Student updatedStudent = modelManager.getCurrentStudent().orElseThrow();
+        assertSame(updatedStudent, modelManager.getBrotherGym().getStudentList().get(0));
+        assertEquals(List.of(selectedPlan), updatedStudent.getWorkoutPlansList().getWorkoutList());
+        assertSame(selectedPlan, modelManager.getCurrentWorkoutPlan().orElseThrow());
+    }
+
     // EP: workout-plan operation targets are not stored (absent).
     @Test
     public void workoutPlanOperations_missingTargetsDoNotChangeModel() {
@@ -483,6 +500,12 @@ public class ModelManagerTest {
     public void setCurrentStudent_missingStudent_throwsStudentNotFoundException() {
         assertThrows(StudentNotFoundException.class, () -> modelManager.setCurrentStudent(ALICE));
         assertTrue(modelManager.getCurrentStudent().isEmpty());
+    }
+
+    @Test
+    public void setStudent_missingTarget_throwsStudentNotFoundException() {
+        assertThrows(StudentNotFoundException.class, () -> modelManager.setStudent(ALICE, BENSON));
+        assertTrue(modelManager.getBrotherGym().getStudentList().isEmpty());
     }
 
     @Test
