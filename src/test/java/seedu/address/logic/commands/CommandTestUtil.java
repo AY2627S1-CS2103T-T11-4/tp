@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_UNKNOWN;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -80,8 +80,8 @@ public class CommandTestUtil {
     public static final String TITLE_PREAMBLE_CHEST = VALID_WORKOUT_TITLE_CHEST;
     public static final String TITLE_DESC_LEGS = " " + PREFIX_NAME + " " + VALID_WORKOUT_TITLE_LEGS;
     public static final String TITLE_DESC_CHEST = " " + PREFIX_NAME + " " + VALID_WORKOUT_TITLE_CHEST;
-    public static final String PLAN_DESC_LEGS = " " + PREFIX_PLAN + " " + VALID_WORKOUT_PLAN_LEGS;
-    public static final String PLAN_DESC_CHEST = " " + PREFIX_PLAN + " " + VALID_WORKOUT_PLAN_CHEST;
+    public static final String PLAN_DESC_LEGS = " " + PREFIX_DESCRIPTION + " " + VALID_WORKOUT_PLAN_LEGS;
+    public static final String PLAN_DESC_CHEST = " " + PREFIX_DESCRIPTION + " " + VALID_WORKOUT_PLAN_CHEST;
     public static final String DATE_DESC_LEGS = " " + PREFIX_DATE + " "
             + VALID_WORKOUT_DATE_LEGS.format(WorkoutDate.INPUT_DATE_FORMAT);
     public static final String DATE_DESC_CHEST = " " + PREFIX_DATE + " "
@@ -90,7 +90,7 @@ public class CommandTestUtil {
     public static final String TAG_DESC_STRENGTH = " " + PREFIX_TAG + " " + VALID_TAG_STRENGTH;
 
     public static final String INVALID_TITLE_DESC = " " + PREFIX_NAME; // empty string not allowed for plan titles
-    public static final String INVALID_PLAN_DESC = " " + PREFIX_PLAN; // empty string not allowed for plan descriptions
+    public static final String INVALID_PLAN_DESC = " " + PREFIX_DESCRIPTION;
     public static final String INVALID_DATE_DESC_LETTERS = " " + PREFIX_DATE + " dd102026"; // 'd' not allowed in date
     public static final String INVALID_DATE_DESC_LENGTH = " " + PREFIX_DATE + " 091026"; // date must be 8 chars long
 

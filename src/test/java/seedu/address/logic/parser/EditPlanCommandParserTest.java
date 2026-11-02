@@ -18,8 +18,8 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_DATE_LE
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_PLAN_LEGS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WORKOUT_TITLE_LEGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INVALID;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -199,7 +199,7 @@ public class EditPlanCommandParserTest {
         String userInput = targetIndex.getOneBased() + PLAN_DESC_LEGS + PLAN_DESC_CHEST;
 
         assertParseFailure(parser, userInput,
-                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PLAN)));
+                this.formatParserError(Messages.getErrorMessageForDuplicatePrefixes(PREFIX_DESCRIPTION)));
     }
 
     @Test

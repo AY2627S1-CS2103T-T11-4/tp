@@ -3,8 +3,8 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_CLEAR_TAGS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_PLAN;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Collections;
@@ -34,11 +34,10 @@ public class EditPlanCommand extends Command {
 
     public static final String MESSAGE_DESCRIPTION =
             "Edits a workout plan from the Student currently being viewed.";
-    public static final String MESSAGE_PARAMETERS = "PLAN_ID [" + PREFIX_NAME + " PLAN_NAME] [" + PREFIX_PLAN
-            + " DESCRIPTION] [" + PREFIX_DATE + " DATE(DDMMYYYY)] [" + PREFIX_TAG + " TAG]... ["
+    public static final String MESSAGE_PARAMETERS = "PLAN_ID [" + PREFIX_NAME + " PLAN_NAME] [" + PREFIX_DESCRIPTION
+            + " DESCRIPTION] [" + PREFIX_DATE + " DDMMYYYY] [" + PREFIX_TAG + " TAG]... ["
             + PREFIX_CLEAR_TAGS + "]";
-    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1 " + PREFIX_NAME + " NewName " + PREFIX_PLAN
-            + " New description " + PREFIX_DATE + " 15102026";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 2 " + PREFIX_DATE + " 06072027";
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
             + "Parameters: " + MESSAGE_PARAMETERS + "\n"
             + "Example: " + MESSAGE_EXAMPLE;
