@@ -9,7 +9,6 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 
 /**
@@ -50,16 +49,12 @@ public class DeletePlanCommand extends SingleIndexCommand {
                 .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
 
         final WorkoutPlan planToDelete;
-        final WorkoutPlansList updatedPlans;
         try {
             planToDelete = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
-            updatedPlans = currentStudent.getWorkoutPlansList().removeWorkoutPlan(targetIndex.getZeroBased());
         } catch (WorkoutPlanIndexOutOfBoundsException e) {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
-        Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
-                currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
-        model.setStudent(currentStudent, updatedStudent);
+        model.removeWorkoutPlanForStudent(currentStudent, planToDelete);
 
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(planToDelete)));
     }
