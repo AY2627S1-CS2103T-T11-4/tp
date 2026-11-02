@@ -274,10 +274,11 @@ Expands the selected workout plan and its exercises within the current student's
 Format: `viewPlan PLAN_ID`
 
 * Keeps all of the student's workout plans visible in their original order and expands the selected plan in place.
-* Displays the selected plan's title, date, status, description, tags, and numbered exercises. An empty plan shows `Exercises (0)` and an empty message.
+* Displays the selected plan's title, date, status, description, tags, and numbered exercises. An empty plan shows `Exercises (0)` and an inline empty message.
 * The plan id refers to the index number shown in the displayed list of workout plans of the student.
 * The plan id **must be a positive integer** 1, 2, 3, ...
-* Run `viewPlan` again to expand a different plan, or `viewStudent` to collapse the selected plan. Exercise IDs follow the order displayed inside the expanded plan.
+* Run `viewPlan` again to expand a different plan, or `viewStudent` to collapse the selected plan and return the list to the top. Exercise IDs follow the order displayed inside the expanded plan.
+* Updating the selected plan or adding, editing, or deleting one of its exercises keeps that plan expanded. Deleting a different plan keeps the selection and updates its displayed plan ID. Deleting the selected plan collapses the list without selecting another plan.
 * The workout panel remains one scrollable list, so plans above and below the expanded plan remain accessible.
 
 Example: `viewStudent 1` followed by `viewPlan 2` expands the second plan in place while retaining the surrounding workout cards.
@@ -324,7 +325,7 @@ Format: `editExercise EXERCISE_ID [--name EXERCISE_NAME] [--description DESCRIPT
 
 * First select a student with `viewStudent STUDENT_ID`, then a workout plan with `viewPlan PLAN_ID`.
 * `EXERCISE_ID` is the positive number shown beside the exercise in the selected plan view.
-* Supply at least one field. An omitted field keeps its existing value and the exercise stays in the same position.
+* Supply at least one field. An omitted field keeps its existing value, the exercise stays in the same position, and the selected workout plan remains expanded.
 * Repeated or unsupported fields, invalid values, and edits that duplicate an existing exercise are rejected without changing the plan.
 
 Example: `editExercise 2 --name Goblet Squat --description 3 sets of 10 reps`
