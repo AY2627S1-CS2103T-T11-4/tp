@@ -104,6 +104,9 @@ Format: `exit`
 
 ### Student-related commands
 
+Students are referenced by `STUDENT_ID`, the positive index displayed beside a student in the current student list. 
+When a command accepts `STUDENT_ID`, it must be a positive integer (e.g., `1`, `2`, or `3`).
+
 #### Adding a student: `addStudent`
 
 Adds a student to the BrotherGym student list.
@@ -134,7 +137,7 @@ Edits an existing student in the BrotherGym student list.
 
 Format: `editStudent STUDENT_ID [--name NAME] [--hp PHONE] [--email EMAIL] [--addr ADDRESS] [--tag TAG]... [--clearTags]`
 
-* Edits the student at the specified `STUDENT_ID`. The student id refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, ...
+* Edits the student at the specified `STUDENT_ID`.
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
 * When editing tags, all of the student's existing tags are removed; adding tags is not cumulative.
@@ -152,10 +155,8 @@ Displays all the workout plans saved for the specified student.
 
 Format: `viewStudent STUDENT_ID`
 
-* Displays the list of workout plans for the student at the specified `INDEX`,
+* Displays the list of workout plans for the student at the specified `STUDENT_ID`,
   which can now be edited through [workout plan commands](#workout-plan-related-commands)
-* The student id refers to the index number shown in the displayed student list.
-* The student id **must be a positive integer** 1, 2, 3, ...
 
 #### Locating students by name: `find`
 
@@ -184,8 +185,6 @@ Deletes the specified student from the BrotherGym student list.
 Format: `deleteStudent STUDENT_ID`
 
 * Deletes the student at the specified `STUDENT_ID`.
-* The student id refers to the index number shown in the displayed student list.
-* The student id **must be a positive integer** 1, 2, 3, ...
 
 Examples:
 * `home` followed by `deleteStudent 2` deletes the 2nd student in the BrotherGym student list.
@@ -199,8 +198,13 @@ Format: `clear`
 
 ### Workout plan-related commands
 
+Workout plans are referenced by `PLAN_ID`, the positive index displayed beside a plan in the selected student’s workout-plan list. 
+When a command accepts `PLAN_ID`, it must be a positive integer (e.g., `1`, `2`, or `3`).
+
 <box type="important">
-These commands can only be performed after a specific student has been selected via `viewStudent`
+
+Select a student with `viewStudent STUDENT_ID` before using workout plan commands.
+
 </box>
 
 #### Add a workout plan to a student: `addPlan`
@@ -219,6 +223,7 @@ Examples:
 * `addPlan Chest Day --description Push for PR --date 31102026`
 
 **Tip:** A workout plan can have up to 30 distinct tags
+
 #### Edit a workout plan of a student: `editPlan`
 
 Edits an existing workout plan from the student's list of workout plans
@@ -227,9 +232,7 @@ Format: `editPlan PLAN_ID [--name PLAN_NAME] [--description DESCRIPTION] [--date
 
 Dates follow the same calendar validation as `addPlan`, including leap-year checks.
 
-* Edits the plan at the specified `PLAN_ID`. 
-  The plan id refers to the index number shown in the displayed list of workout plans. 
-  The plan id **must be a positive integer** 1, 2, 3, ...
+* Edits the plan at the specified `PLAN_ID`.
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
 * A new description cannot exceed 500 characters.
@@ -256,8 +259,6 @@ Format: `markPlan PLAN_ID`
 
 * Marks the workout plan at the specified `PLAN_ID` as `COMPLETED` 
 * Shows an error if the workout plan is already marked as completed
-* The plan id refers to the index number shown in the displayed list of workout plans
-* The plan id **must be a positive integer** 1, 2, 3, ...
 
 `unmarkPlan` reverts the status of the workout plan to either `PENDING` or `OVERDUE`
 
@@ -265,8 +266,6 @@ Format: `unmarkPlan PLAN_ID`
 
 * Reverts the status of the workout plan at the specified `PLAN_ID`
 * Shows an error if the workout plan is already unmarked (`PENDING` or `OVERDUE`)
-* The plan id refers to the index number shown in the displayed list of workout plans
-* The plan id **must be a positive integer** 1, 2, 3, ...
 
 #### Viewing details of a workout plan: `viewPlan`
 
@@ -276,9 +275,7 @@ Format: `viewPlan PLAN_ID`
 
 * Keeps all of the student's workout plans visible in their original order and expands the selected plan in place.
 * Displays the selected plan's name, date, status, description, tags, and numbered exercises. An empty plan shows `Exercises (0)` and an inline empty message.
-* The plan id refers to the index number shown in the displayed list of workout plans of the student.
-* The plan id **must be a positive integer** 1, 2, 3, ...
-* Run `viewPlan` again to expand a different plan, or `viewStudent` to collapse the selected plan and return the list to the top. Exercise IDs follow the order displayed inside the expanded plan.
+* Run `viewPlan` again to expand a different plan, or `viewStudent` to collapse the selected plan and return the list to the top. 
 * Updating the selected plan or adding, editing, or deleting one of its exercises keeps that plan expanded. Deleting a different plan keeps the selection and updates its displayed plan ID. Deleting the selected plan collapses the list without selecting another plan.
 * The workout panel remains one scrollable list, so plans above and below the expanded plan remain accessible.
 
@@ -294,8 +291,6 @@ Deletes the specified workout plan from the list of workouts of the selected stu
 Format: `deletePlan PLAN_ID`
 
 * Deletes the workout plan at the specified `PLAN_ID`.
-* The plan id refers to the index number shown in the displayed list of workout plans of the student.
-* The plan id **must be a positive integer** 1, 2, 3, ...
 
 ### Exercise-related commands
 
@@ -303,16 +298,12 @@ Workout plans set the focus of a training session. Exercises specify the movemen
 
 <box type="important">
 
-Select a student with `viewStudent`, then select one of their workout plans with `viewPlan` before using an exercise command.
+Select a student with `viewStudent STUDENT_ID`, then select one of their workout plans with `viewPlan PLAN_ID` before using an exercise command.
 
 </box>
 
-#### IDs used with exercise commands
-
-* `STUDENT_ID` is the number shown beside a student in the currently displayed student list. Use it with `viewStudent`.
-* `PLAN_ID` is the number shown beside a workout plan of the selected student. Use it with `viewPlan`.
-* `EXERCISE_ID` is the number shown beside an exercise in the selected workout plan. Only `editExercise` and `deleteExercise` use it.
-* Each ID must refer to an item in its list. The index format rules in the command format notes apply to all three IDs.
+Exercises are referenced by `EXERCISE_ID`, the positive index displayed beside an exercise in the selected workout plan. 
+When a command accepts `EXERCISE_ID`, it must be a positive integer (e.g., `1`, `2`, or `3`).
 
 #### Add an exercise to a workout plan: `addExercise`
 
