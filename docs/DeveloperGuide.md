@@ -133,8 +133,8 @@ The `logic.metadata` package supplies the command information displayed in the H
 * `CommandCategory` groups related commands under a Help page section title.
 * `CommandMetadata` stores a command's word, parameters, description, and example. Its `format()` method produces the command format displayed by the UI.
 
-The `CommandMetadataCatalog` object is passed to the `HelpWindow` of the `Ui` component through the `LogicManager` facade, which uses it to create 
-* one section for each `CommandCategory`; and 
+The `CommandMetadataCatalog` object is passed to the `HelpWindow` of the `Ui` component through the `LogicManager` facade, which uses it to create
+* one section for each `CommandCategory`; and
 * one command card for each `CommandMetadata` entry.
 
 #### Parser Classes
@@ -165,7 +165,7 @@ How the parsing works:
 
 * The `BrotherGymParser` returns the created command as `Command` object.
 
-The sequence diagram shows how the parser classes create the `DeleteStudentCommand` object 
+The sequence diagram shows how the parser classes create the `DeleteStudentCommand` object
 when `BrotherGymParser#parseCommand("deleteStudent 1")` is called from `LogicManager`:
 
 <puml src="diagrams/DeleteParserSequenceDiagram.puml" alt="Sequence Diagram for parsing 'delete 1'"/>
@@ -450,7 +450,7 @@ _{Explain here how the data archiving feature will be implemented}_
 
 ### Product scope
 
-**Target user profile**: 
+**Target user profile**:
 * Gym trainers who want to keep track of students and their workouts
 * has a need to manage a significant number of contacts
 * prefers desktop apps over other types of applications
@@ -458,7 +458,7 @@ _{Explain here how the data archiving feature will be implemented}_
 * prefers typing to mouse interactions
 * is reasonably comfortable using CLI apps
 
-**Value proposition**: 
+**Value proposition**:
 A gym trainer who wants to plan & track the workouts of his student. He wants to plan the workout split of his students, selecting exercises from different muscle groups studentalised to each student. Afterwards, while the student goes to the gym, the trainer can log the actual reps that student has done, tracking his--her sets, reps, rest time and weights for progressive overload.
 
 ### User stories

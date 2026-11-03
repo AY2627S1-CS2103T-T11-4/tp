@@ -56,7 +56,7 @@ public class ViewPlanCommand extends SingleIndexCommand {
         }
         model.setCurrentWorkoutPlan(workoutPlan);
         model.updateStudentWorkoutsState(model.getCurrentStudent().orElseThrow());
-       
+
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(workoutPlan),
                 formatExercises(workoutPlan.getExercisesList().getExerciseList())));
     }
