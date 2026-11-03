@@ -21,7 +21,7 @@ Student --> "1" Phone
 Student --> "1" Email
 Student --> "1" Address
 Student --> "*" StudentTag
-Student --> "1" WorkoutPlansList
+Student --> "1  " WorkoutPlansList
 WorkoutPlansList --> "*" WorkoutPlan
 
 note right of WorkoutPlan

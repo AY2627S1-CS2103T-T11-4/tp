@@ -25,7 +25,7 @@ note "Other details of Student class \n are omitted for clarity." as N1
 }
 
 Class HiddenOutside #FFFFFF
-HiddenOutside --> Model
+HiddenOutside ..> Model
 
 BrotherGym .up.|> ReadOnlyBrotherGym
 
@@ -42,7 +42,7 @@ Model -[hidden]right-> ReadOnlyUserPrefs
 BrotherGym *--> "1" UniqueStudentList
 UniqueStudentList -right-> "~* all" Student
 
-Student -down-> "1" WorkoutPlansList
+Student -down-> "1  " WorkoutPlansList
 WorkoutPlansList -right-> "*" WorkoutPlan
 
 Student -right- N1
