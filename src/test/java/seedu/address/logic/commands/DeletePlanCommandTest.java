@@ -88,9 +88,10 @@ public class DeletePlanCommandTest {
 
         new DeletePlanCommand(Index.fromOneBased(1)).execute(model);
 
-        assertEquals(List.of(SECOND_PLAN),
+        assertEquals(List.of(SECOND_PLAN.updateState(LocalDate.now())),
                 model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutList());
-        assertSame(SECOND_PLAN, model.getCurrentWorkoutPlan().orElseThrow());
+        assertSame(model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutPlan(0),
+                model.getCurrentWorkoutPlan().orElseThrow());
     }
 
     // EP: no current student is selected (invalid).

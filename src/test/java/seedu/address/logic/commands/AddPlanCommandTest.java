@@ -116,8 +116,8 @@ public class AddPlanCommandTest {
     @Test
     public void execute_staleExistingPlan_refreshesExistingAndAddedPlans() throws Exception {
         WorkoutDate yesterday = WorkoutDate.fromLocalDate(LocalDate.now().minusDays(1));
-        WorkoutPlan first = new WorkoutPlan(new WorkoutTitle("First"), new WorkoutDescription("Test"), yesterday);
-        WorkoutPlan second = new WorkoutPlan(new WorkoutTitle("Second"), new WorkoutDescription("Test"), yesterday);
+        WorkoutPlan first = new WorkoutPlan(new WorkoutName("First"), new WorkoutDescription("Test"), yesterday);
+        WorkoutPlan second = new WorkoutPlan(new WorkoutName("Second"), new WorkoutDescription("Test"), yesterday);
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
         Student baseStudent = model.getFilteredStudentList().get(0);
         Student student = baseStudent.withWorkoutPlans(new WorkoutPlansList(List.of(first)));

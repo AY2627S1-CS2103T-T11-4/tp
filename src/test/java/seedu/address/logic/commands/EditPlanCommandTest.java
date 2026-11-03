@@ -246,7 +246,7 @@ public class EditPlanCommandTest {
     @Test
     public void execute_staleExistingPlan_refreshesExistingAndEditedPlans() throws Exception {
         WorkoutDate yesterday = WorkoutDate.fromLocalDate(LocalDate.now().minusDays(1));
-        WorkoutPlan first = new WorkoutPlan(new WorkoutTitle("First"), new WorkoutDescription("Test"), yesterday);
+        WorkoutPlan first = new WorkoutPlan(new WorkoutName("First"), new WorkoutDescription("Test"), yesterday);
         Model model = createModelWithPlans(first, SECOND_PLAN);
         model.setCurrentStudent(model.getFilteredStudentList().get(0));
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();

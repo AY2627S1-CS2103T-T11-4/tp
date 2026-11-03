@@ -54,11 +54,8 @@ public class DeletePlanCommand extends SingleIndexCommand {
         } catch (WorkoutPlanIndexOutOfBoundsException e) {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
-        Student updatedStudent = new Student(currentStudent.getName(), currentStudent.getPhone(),
-                currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
-        model.setStudent(currentStudent, updatedStudent);
-        model.updateStudentWorkoutsState(model.getCurrentStudent().orElseThrow());
         model.removeWorkoutPlanForStudent(currentStudent, planToDelete);
+        model.updateStudentWorkoutsState(model.getCurrentStudent().orElseThrow());
 
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(planToDelete)));
     }
