@@ -22,6 +22,7 @@ import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.ModelManager;
 import seedu.address.model.exercise.Exercise;
+import seedu.address.model.exercise.ExerciseDescription;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
@@ -32,6 +33,32 @@ import seedu.address.testutil.ExerciseTestUtil;
 
 /** Regression tests for nested exercises during existing parent operations. */
 public class ExerciseParentOperationsTest {
+
+    @Test
+    public void exerciseCommands_refreshAllPlansAndPreserveSelection() throws CommandException {
+        EditExerciseCommand.EditExerciseDescriptor descriptor = new EditExerciseCommand.EditExerciseDescriptor();
+        descriptor.setDescription(new ExerciseDescription("Updated notes"));
+        List<Command> commands = List.of(new AddExerciseCommand(PUSH_UPS),
+                new EditExerciseCommand(Index.fromOneBased(1), descriptor),
+                new DeleteExerciseCommand(Index.fromOneBased(1)));
+
+        for (Command command : commands) {
+            WorkoutDate yesterday = WorkoutDate.fromLocalDate(LocalDate.now().minusDays(1));
+            WorkoutPlan selected = ExerciseTestUtil.plan("Selected", "Notes", yesterday, List.of(SQUATS));
+            WorkoutPlan other = ExerciseTestUtil.plan("Other", "Notes", yesterday, List.of(PUSH_UPS));
+            Student alice = withPlans(ALICE, selected, other);
+            ModelManager model = modelWith(alice);
+            model.setCurrentStudent(alice);
+            model.setCurrentWorkoutPlan(selected);
+
+            command.execute(model);
+
+            List<WorkoutPlan> plans = model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutList();
+            assertEquals(WorkoutPlanStatus.OVERDUE, plans.get(0).getStatus(), command.toString());
+            assertEquals(WorkoutPlanStatus.OVERDUE, plans.get(1).getStatus(), command.toString());
+            assertSame(plans.get(0), model.getCurrentWorkoutPlan().orElseThrow());
+        }
+    }
 
     // EP: parent edits preserve nested exercises (valid).
     @Test
@@ -94,7 +121,9 @@ public class ExerciseParentOperationsTest {
         model.setCurrentWorkoutPlan(second);
 
         new DeletePlanCommand(Index.fromOneBased(1)).execute(model);
-        assertSame(second, model.getCurrentWorkoutPlan().orElseThrow());
+        assertEquals(second.updateState(LocalDate.now()), model.getCurrentWorkoutPlan().orElseThrow());
+        assertSame(firstPlanOf(model.getCurrentStudent().orElseThrow()),
+                model.getCurrentWorkoutPlan().orElseThrow());
         assertEquals(List.of(PUSH_UPS), model.getCurrentWorkoutPlan().orElseThrow()
                 .getExercisesList().getExerciseList());
 

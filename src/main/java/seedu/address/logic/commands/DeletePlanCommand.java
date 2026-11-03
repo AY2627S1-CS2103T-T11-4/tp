@@ -55,6 +55,7 @@ public class DeletePlanCommand extends SingleIndexCommand {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
         model.removeWorkoutPlanForStudent(currentStudent, planToDelete);
+        model.updateStudentWorkoutsState(model.getCurrentStudent().orElseThrow());
 
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(planToDelete)));
     }

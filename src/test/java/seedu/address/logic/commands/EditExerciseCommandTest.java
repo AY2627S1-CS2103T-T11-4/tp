@@ -10,6 +10,7 @@ import static seedu.address.testutil.TypicalExercises.SQUATS;
 import static seedu.address.testutil.TypicalStudents.ALICE;
 import static seedu.address.testutil.TypicalStudents.BENSON;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -76,8 +77,8 @@ public class EditExerciseCommandTest {
         assertEquals(selectedPlan.getDescription(), updatedPlan.getDescription());
         assertEquals(selectedPlan.getDate(), updatedPlan.getDate());
         assertEquals(selectedPlan.getTags(), updatedPlan.getTags());
-        assertEquals(selectedPlan.getStatus(), updatedPlan.getStatus());
-        assertSame(otherPlan, model.getCurrentStudent().orElseThrow()
+        assertEquals(selectedPlan.updateState(LocalDate.now()).getStatus(), updatedPlan.getStatus());
+        assertEquals(otherPlan.updateState(LocalDate.now()), model.getCurrentStudent().orElseThrow()
                 .getWorkoutPlansList().getWorkoutPlan(1));
         assertSame(benson, model.getBrotherGym().getStudentList().get(1));
         assertEquals(List.of(SQUATS, PUSH_UPS), selectedPlan.getExercisesList().getExerciseList());

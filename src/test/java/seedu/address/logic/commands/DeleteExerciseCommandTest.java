@@ -13,6 +13,7 @@ import static seedu.address.testutil.TypicalExercises.SQUATS;
 import static seedu.address.testutil.TypicalStudents.ALICE;
 import static seedu.address.testutil.TypicalStudents.BENSON;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,7 +53,7 @@ public class DeleteExerciseCommandTest {
 
             assertEquals(String.format(DeleteExerciseCommand.MESSAGE_SUCCESS, deleted), result.getFeedbackToUser());
             assertEquals(expected, model.getCurrentWorkoutPlan().orElseThrow().getExercisesList().getExerciseList());
-            assertSame(otherPlan, model.getCurrentStudent().orElseThrow()
+            assertEquals(otherPlan.updateState(LocalDate.now()), model.getCurrentStudent().orElseThrow()
                     .getWorkoutPlansList().getWorkoutPlan(1));
             assertSame(benson, model.getBrotherGym().getStudentList().get(1));
             assertEquals(original, selectedPlan.getExercisesList().getExerciseList());
@@ -145,7 +146,8 @@ public class DeleteExerciseCommandTest {
 
         new DeleteExerciseCommand(Index.fromOneBased(1)).execute(model);
 
-        assertSame(first, model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutPlan(0));
+        assertEquals(first.updateState(LocalDate.now()),
+                model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutPlan(0));
         assertTrue(model.getCurrentWorkoutPlan().orElseThrow().getExercisesList().getExerciseList().isEmpty());
     }
 

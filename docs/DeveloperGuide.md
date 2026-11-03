@@ -133,8 +133,8 @@ The `logic.metadata` package supplies the command information displayed in the H
 * `CommandCategory` groups related commands under a Help page section title.
 * `CommandMetadata` stores a command's word, parameters, description, and example. Its `format()` method produces the command format displayed by the UI.
 
-The `CommandMetadataCatalog` object is passed to the `HelpWindow` of the `Ui` component through the `LogicManager` facade, which uses it to create 
-* one section for each `CommandCategory`; and 
+The `CommandMetadataCatalog` object is passed to the `HelpWindow` of the `Ui` component through the `LogicManager` facade, which uses it to create
+* one section for each `CommandCategory`; and
 * one command card for each `CommandMetadata` entry.
 
 #### Parser Classes
@@ -165,7 +165,7 @@ How the parsing works:
 
 * The `BrotherGymParser` returns the created command as `Command` object.
 
-The sequence diagram shows how the parser classes create the `DeleteStudentCommand` object 
+The sequence diagram shows how the parser classes create the `DeleteStudentCommand` object
 when `BrotherGymParser#parseCommand("deleteStudent 1")` is called from `LogicManager`:
 
 <puml src="diagrams/DeleteParserSequenceDiagram.puml" alt="Sequence Diagram for parsing 'delete 1'"/>
@@ -450,7 +450,7 @@ _{Explain here how the data archiving feature will be implemented}_
 
 ### Product scope
 
-**Target user profile**: 
+**Target user profile**:
 * Gym trainers who want to keep track of students and their workouts
 * has a need to manage a significant number of contacts
 * prefers desktop apps over other types of applications
@@ -458,7 +458,7 @@ _{Explain here how the data archiving feature will be implemented}_
 * prefers typing to mouse interactions
 * is reasonably comfortable using CLI apps
 
-**Value proposition**: 
+**Value proposition**:
 A gym trainer who wants to plan & track the workouts of his student. He wants to plan the workout split of his students, selecting exercises from different muscle groups studentalised to each student. Afterwards, while the student goes to the gym, the trainer can log the actual reps that student has done, tracking his--her sets, reps, rest time and weights for progressive overload.
 
 ### User stories
@@ -467,19 +467,38 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **Student management**
 
-| Priority | As a ... | I want to ... | So that I can... |
-|----------|----------|---------------|------------------|
-| `* * *`  | gym trainer | add my student's contact number to the BrotherGym | keep their contact information accessible |
-| `* * *`  | gym trainer with multiple students | hold multiple contact numbers in my BrotherGym | keep track of all my students' contact information |
-| `* * *`  | gym trainer | remove a student's record from the BrotherGym | clear up space in the BrotherGym |
+| Priority | As a ...                           | I want to ...                                               | So that I can ...                                                 |
+|----------|------------------------------------|-------------------------------------------------------------|-------------------------------------------------------------------|
+| `* * *`  | gym trainer                        | add my student's contact number to the BrotherGym           | keep their contact information accessible                         |
+| `* * *`  | gym trainer with multiple students | hold multiple contact numbers in my BrotherGym              | keep track of all my students' contact information                |
+| `* * *`  | gym trainer                        | remove a student's record from the BrotherGym               | clear up space in the BrotherGym                                  |
+| `* * *`  | gym trainer                        | edit a student's details                                    | keep their information up to date                                 |
+| `* * *`  | gym trainer                        | search for students by name                                 | quickly find the student I need                                   |
+| `* * *`  | gym trainer                        | clear all students and their workout plans and exercises    | start with an empty BrotherGym                                    |
+| `* * *`  | gym trainer                        | categorise students                                         | identify students with shared characteristics                     |
+| `* * *`  | gym trainer                        | view all students                                           | get an overview of my trainees                                    |
 
 **Workout planning**
 
-| Priority | As a ... | I want to ... | So that I can... |
-|----------|----------|---------------|------------------|
-| `* * *`  | gym trainer | store different types of workout plans per student | ensure each workout can focus on a different muscle group |
-| `* * *`  | gym trainer | add different workouts to each workout plan | ensure that workout sessions are customised for each student |
-| `* * *`  | gym trainer | view all the workout plans for each student | pick which plan to follow during the student's next session |
+| Priority | As a ...                           | I want to ...                                               | So that I can ...                                                 |
+|----------|------------------------------------|-------------------------------------------------------------|-------------------------------------------------------------------|
+| `* * *`  | gym trainer                        | store different types of workout plans per student          | ensure each workout can focus on a different muscle group         |
+| `* * *`  | gym trainer                        | add different workouts to each workout plan                 | ensure that workout sessions are customised for each student      |
+| `* * *`  | gym trainer                        | view all the workout plans for each student                 | pick which plan to follow during the student's next session       |
+| `* * *`  | gym trainer                        | edit a workout plan's details                               | adapt the plan to a student's changing needs                      |
+| `* * *`  | gym trainer                        | mark workout plans as completed or undo a completion mark   | keep an accurate record of completed workouts                     |        |
+| `* * *`  | gym trainer                        | remove an unwanted workout plan                             | keep a student's workout plans relevant                           |
+| `* * *`  | gym trainer                        | categorise workout plans                                    | identify plans with a shared focus                                |
+
+**Exercise management**
+
+| Priority | As a ...                           | I want to ...                                               | So that I can ...                                                 |
+|----------|------------------------------------|-------------------------------------------------------------|-------------------------------------------------------------------|
+| `* * *`  | gym trainer                        | store different types of exercises per workout plan         | ensure workout sessions cover all the necessary exercises         |
+| `* * *`  | gym trainer                        | add exercises to each workout plan                          | ensure workout sessions are further customised for each student   |
+| `* * *`  | gym trainer                        | remove an unwanted exercise from a workout plan             | clear up space in BrotherGym                                      |
+| `* * *`  | gym trainer                        | view the exercises in a workout plan                        | see which exercises the student should perform during the session |
+| `* * *`  | gym trainer                        | edit an exercise                     | adapt the exercise to a student's changing needs                  |
 
 ### Use cases
 
@@ -487,21 +506,42 @@ Note: For all use cases below, the **Software System** is BrotherGym and the **A
 
 | ID | Use case |
 |----|----------|
-| U1 | [Add a student](#add-a-student) |
-| U2 | [View all students](#view-all-students) |
-| U3 | [Delete a student](#delete-a-student) |
-| U4 | [View workout plans for a specific student](#view-workout-plans-for-a-specific-student) |
-| U5 | [Add a workout plan](#add-a-workout-plan) |
-| U6 | [Remove a workout plan](#remove-a-workout-plan) |
-| U7 | [View exercises of a workout plan](#view-exercises-of-a-workout-plan) |
+| U1 | [View all students](#u1-view-all-students) |
+| U2 | [Add a student](#u2-add-a-student) |
+| U3 | [Edit student details](#u3-edit-student-details) |
+| U4 | [View workout plans for a specific student](#u4-view-workout-plans-for-a-specific-student) |
+| U5 | [Search students by name](#u5-search-students-by-name) |
+| U6 | [Delete a student](#u6-delete-a-student) |
+| U7 | [Clear all students and nested data](#u7-clear-all-students-and-nested-data) |
+| U8 | [Add a workout plan](#u8-add-a-workout-plan) |
+| U9 | [Edit a workout plan](#u9-edit-a-workout-plan) |
+| U10 | [Mark a workout plan as completed](#u10-mark-a-workout-plan-as-completed) |
+| U11 | [Unmark a completed workout plan](#u11-unmark-a-completed-workout-plan) |
+| U12 | [View exercises of a workout plan](#u12-view-exercises-of-a-workout-plan) |
+| U13 | [Remove a workout plan](#u13-remove-a-workout-plan) |
+| U14 | [Add an exercise](#u14-add-an-exercise) |
+| U15 | [Edit an exercise](#u15-edit-an-exercise) |
+| U16 | [Delete an exercise](#u16-delete-an-exercise) |
 
-### Add a student
+### U1: View all students
 
-Use case: U1 - Add a student
+Use case: U1 - View all students
 
 **MSS:**
 
-1. Trainer <u>views all students (U2)</u>.
+1. Trainer requests to view all students.
+2. BrotherGym displays all students in the system.
+3. Selected student and workout plan are cleared
+
+   Use case ends.
+
+### U2: Add a student
+
+Use case: U2 - Add a student
+
+**MSS:**
+
+1. Trainer <u>views all students (U1)</u>.
 2. Trainer requests to add a new student, providing the student's name and handphone number.
 3. BrotherGym adds the student.
 4. BrotherGym displays a success message.
@@ -519,25 +559,96 @@ Use case: U1 - Add a student
   * 2b1. BrotherGym displays an error message.
 
     Use case resumes at step 2.
+* 2c. The student list is full (999 students).
+  * 2c1. BrotherGym displays an error message asking the trainer to delete a student before adding another.
 
-### View all students
+    Use case ends without adding the student.
 
-Use case: U2 - View all students
+### U3: Edit student details
+
+Use case: U3 - Edit student details
 
 **MSS:**
 
-1. Trainer requests to view all students.
-2. BrotherGym displays all students in the system.
+1. Trainer <u>views all students (U1)</u>.
+2. Trainer identifies a student and provides changes to their name, phone, email, address, or tags.
+3. BrotherGym updates the specified fields, preserving omitted fields and the student's workout plans and exercises.
+4. BrotherGym displays a success message and the full student list with the updated details.
 
    Use case ends.
 
-### Delete a student
+**Extensions:**
 
-Use case: U3 - Delete a student
+* 2a. Trainer specifies an invalid input
+  * 2a1. BrotherGym displays an error message without changing the student.
+
+
+* 2b. The edited student would duplicate another student.
+  * 2b1. BrotherGym displays an error message without changing the student.
+
+
+* 2c. Trainer requests to clear the student's tags.
+  * 2c1. BrotherGym removes all tags from the student and applies any other supplied changes.
+
+    Use case resumes at step 4.
+
+### U4: View workout plans for a specific student
+
+Use case: U4 - View workout plans for a specific student
 
 **MSS:**
 
-1. Trainer <u>views all students (U2)</u>.
+1. Trainer <u>views all students (U1)</u>.
+2. Trainer requests to view a specific student using `viewStudent`.
+3. BrotherGym clears the previously selected student or workout plan
+4. BrotherGym selects the student
+   Use case ends.
+
+**Extensions:**
+
+* 2a. Trainer selects an invalid student.
+  * 2a1. BrotherGym displays an error message.
+
+    Use case resumes at step 2.
+
+* 4a. The student has no workout plans.
+  * 4a1. BrotherGym displays "No workout plans assigned."
+
+    Use case ends.
+
+### U5: Search students by name
+
+Use case: U5 - Search students by name
+
+**MSS:**
+
+1. Trainer provides one or more name keywords to search for.
+2. BrotherGym displays students whose names contain any keyword as a whole word, ignoring case, and reports the count.
+
+   Use case ends.
+
+**Extensions:**
+
+* 1a. Trainer provides no keywords or invalid keywords.
+  * 1a1. BrotherGym displays an error message.
+
+    Use case resumes at step 1.
+* 2a. No students match the keywords.
+  * 2a1. BrotherGym displays an empty list and reports zero matches.
+
+    Use case ends.
+* 2b. The selected student is excluded from the search results.
+  * 2b1. BrotherGym clears the selected student and workout plan.
+
+    Use case ends.
+
+### U6: Delete a student
+
+Use case: U6 - Delete a student
+
+**MSS:**
+
+1. Trainer <u>views all students (U1)</u>.
 2. Trainer requests to delete a selected student.
 3. BrotherGym deletes the student.
 4. BrotherGym displays a success message.
@@ -552,28 +663,31 @@ Use case: U3 - Delete a student
 
     Use case resumes at step 2.
 
-### View workout plans for a specific student
+### U7: Clear all students and nested data
 
-Use case: U4 - View workout plans for a specific student
+Use case: U7 - Clear all students and nested data
 
 **MSS:**
 
-1. Trainer <u>views all students (U2)</u>.
-2. Trainer selects a specific student.
-3. BrotherGym displays all workout plans assigned to the student.
+1. Trainer requests to clear BrotherGym.
+2. BrotherGym removes all students and their workout plans and exercises, 
+3. BrotherGym clears the selected student and plan.
+4. BrotherGym displays a success message and an empty student list.
 
    Use case ends.
 
 **Extensions:**
 
-* 2a. Trainer selects an invalid student.
-  * 2a1. BrotherGym displays an error message.
+* 1a. BrotherGym is already empty.
+  * 1a1. BrotherGym displays a success message and keeps the student list empty.
 
-    Use case resumes at step 2.
+    Use case ends.
 
-### Add a workout plan
+### U8: Add a workout plan
 
-Use case: U5 - Add a workout plan
+Use case: U8 - Add a workout plan
+
+**Precondition:** A student must be selected using `viewStudent` (U4) before adding a plan.
 
 **MSS:**
 
@@ -591,10 +705,127 @@ Use case: U5 - Add a workout plan
   * 2a1. BrotherGym displays an error message.
 
     Use case resumes at step 2.
+* 2b. Trainer provides optional tags.
+  * 2b1. BrotherGym includes the tags in the workout plan.
 
-### Remove a workout plan
+    Use case resumes at step 3.
+* 2c. The workout plan already exists for the selected student.
+  * 2c1. BrotherGym displays an error message without adding the duplicate plan.
 
-Use case: U6 - Remove a workout plan
+    Use case resumes at step 2.
+
+### U9: Edit a workout plan
+
+Use case: U9 - Edit a workout plan
+
+**Precondition:** A student must be selected using `viewStudent` (U4) before editing a plan.
+
+**MSS:**
+
+1. Trainer <u>views workout plans for a specific student (U4)</u>.
+2. Trainer identifies a plan and provides changes to its name, description, or date.
+3. BrotherGym updates the specified fields, preserving omitted fields and the plan's exercises.
+4. BrotherGym displays a success message and the updated plan.
+
+   Use case ends.
+
+**Extensions:**
+  
+* 2a. Trainer specifies an invalid plan index, invalid details, or no fields to edit.
+  * 2a1. BrotherGym displays an error message without changing the plan.
+
+    Use case resumes at step 2.
+* 2b. The edited plan would duplicate another plan belonging to the student.
+  * 2b1. BrotherGym displays an error message without changing the plan.
+
+    Use case resumes at step 2.
+* 2c. Trainer requests to clear the plan's tags.
+  * 2c1. BrotherGym removes all tags from the plan and applies any other supplied changes.
+
+    Use case resumes at step 4.
+
+### U10: Mark a workout plan as completed
+
+Use case: U10 - Mark a workout plan as completed
+
+**Precondition:** A student must be selected using `viewStudent` (U4) before marking a plan as completed.
+
+**MSS:**
+
+1. Trainer <u>views workout plans for a specific student (U4)</u>.
+2. Trainer requests to mark a workout plan as completed.
+3. BrotherGym marks the plan as Completed and displays a success message and the updated plan.
+
+   Use case ends.
+
+**Extensions:**
+
+* 2a. Trainer specifies an invalid workout plan index.
+  * 2a1. BrotherGym displays an error message without changing the plan.
+
+    Use case resumes at step 2.
+* 2b. The plan is already completed.
+  * 2b1. BrotherGym displays an error message without changing the plan.
+
+    Use case ends.
+
+### U11: Unmark a completed workout plan
+
+Use case: U11 - Unmark a completed workout plan
+
+**Precondition:** A student must be selected using `viewStudent` (U4) before unmarking a plan.
+
+**MSS:**
+
+1. Trainer <u>views workout plans for a specific student (U4)</u>.
+2. Trainer requests to unmark a completed workout plan.
+3. BrotherGym changes the plan to Overdue if its date has passed, or Pending otherwise.
+4. BrotherGym displays a success message and the updated plan.
+
+   Use case ends.
+
+**Extensions:**
+
+* 2a. Trainer specifies an invalid workout plan index.
+  * 2a1. BrotherGym displays an error message without changing the plan.
+
+    Use case resumes at step 2.
+* 2b. The plan is already Pending or Overdue.
+  * 2b1. BrotherGym displays an error message without changing the plan.
+
+    Use case ends.
+
+### U12: View exercises of a workout plan
+
+Use case: U12 - View exercises of a workout plan
+
+**Precondition:** A student must be selected using `viewStudent` (U4) before viewing a plan.
+
+**MSS:**
+
+1. Trainer <u>views workout plans for a specific student (U4)</u>.
+2. Trainer selects a workout plan belonging to the student.
+3. BrotherGym displays information about the exercises in the selected workout plan.
+
+   Use case ends.
+
+**Extensions:**
+
+* 2a. Trainer selects an invalid workout plan.
+  * 2a1. BrotherGym displays an error message.
+
+    Use case resumes at step 2.
+
+* 3a. The selected workout plan has no exercises.
+  * 3a1. BrotherGym displays the plan details and indicates that there are no exercises.
+
+    Use case ends.
+
+### U13: Remove a workout plan
+
+Use case: U13 - Remove a workout plan
+
+**Precondition:** A student must be selected using `viewStudent` (U4) before removing a plan.
 
 **MSS:**
 
@@ -613,24 +844,87 @@ Use case: U6 - Remove a workout plan
 
     Use case resumes at step 2.
 
-### View exercises of a workout plan
+### U14: Add an exercise
 
-Use case: U7 - View exercises of a workout plan
+Use case: U14 - Add an exercise
+
+**Precondition:** A workout plan must be selected using `viewPlan` (U12) before adding an exercise.
 
 **MSS:**
 
-1. Trainer <u>views workout plans for a specific student (U4)</u>.
-2. Trainer selects a workout plan belonging to the student.
-3. BrotherGym displays information about the exercises in the selected workout plan.
+1. Trainer <u>views exercises of a workout plan (U12)</u>.
+2. Trainer requests to add an exercise, providing its name and description.
+3. BrotherGym adds the exercise to the selected plan.
+4. BrotherGym displays a success message and the updated exercise list.
 
    Use case ends.
 
 **Extensions:**
 
-* 2a. Trainer selects an invalid workout plan.
-  * 2a1. BrotherGym displays an error message.
+* 2a. Trainer provides invalid or incomplete exercise details.
+  * 2a1. BrotherGym displays an error message without adding the exercise.
 
     Use case resumes at step 2.
+* 2b. The exercise already exists in the selected plan.
+  * 2b1. BrotherGym displays an error message without adding the duplicate exercise.
+
+    Use case resumes at step 2.
+* 2c. The plan already contains 100 exercises.
+  * 2c1. BrotherGym displays an error message without adding the exercise.
+
+    Use case ends.
+
+### U15: Edit an exercise
+
+Use case: U15 - Edit an exercise
+
+**Precondition:** A workout plan must be selected using `viewPlan` (U12) before editing an exercise.
+
+**MSS:**
+
+1. Trainer <u>views exercises of a workout plan (U12)</u>.
+2. Trainer identifies an exercise and provides a new name, description, or both.
+3. BrotherGym updates the exercise, preserving any omitted field.
+4. BrotherGym displays a success message and the updated exercise list.
+
+   Use case ends.
+
+**Extensions:**
+
+* 2a. Trainer specifies an invalid exercise index, invalid details, or no fields to edit.
+  * 2a1. BrotherGym displays an error message without changing the exercise.
+
+    Use case resumes at step 2.
+* 2b. The edited exercise would duplicate another exercise in the plan.
+  * 2b1. BrotherGym displays an error message without changing the exercise.
+
+    Use case resumes at step 2.
+
+### U16: Delete an exercise
+
+Use case: U16 - Delete an exercise
+
+**Precondition:** A workout plan must be selected using `viewPlan` (U12) before deleting an exercise.
+
+**MSS:**
+
+1. Trainer <u>views exercises of a workout plan (U12)</u>.
+2. Trainer identifies an exercise to delete.
+3. BrotherGym deletes the exercise from the selected plan.
+4. BrotherGym displays a success message and the updated exercise list.
+
+   Use case ends.
+
+**Extensions:**
+
+* 2a. Trainer specifies an invalid exercise index.
+  * 2a1. BrotherGym displays an error message without deleting an exercise.
+
+    Use case resumes at step 2.
+* 4a. The deleted exercise was the last exercise in the plan.
+  * 4a1. BrotherGym indicates that the plan has no exercises.
+
+    Use case ends.
 
 ### Non-Functional Requirements
 

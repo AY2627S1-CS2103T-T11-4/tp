@@ -59,6 +59,7 @@ public class AddPlanCommand extends Command {
         } catch (DuplicateWorkoutPlanException e) {
             throw new CommandException(MESSAGE_DUPLICATE_PLAN, e);
         }
+        model.updateStudentWorkoutsState(model.getCurrentStudent().orElseThrow());
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
     }
 

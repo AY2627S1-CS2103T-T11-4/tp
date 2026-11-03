@@ -114,6 +114,26 @@ public class AddPlanCommandTest {
     }
 
     @Test
+    public void execute_staleExistingPlan_refreshesExistingAndAddedPlans() throws Exception {
+        WorkoutDate yesterday = WorkoutDate.fromLocalDate(LocalDate.now().minusDays(1));
+        WorkoutPlan first = new WorkoutPlan(new WorkoutName("First"), new WorkoutDescription("Test"), yesterday);
+        WorkoutPlan second = new WorkoutPlan(new WorkoutName("Second"), new WorkoutDescription("Test"), yesterday);
+        Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
+        Student baseStudent = model.getFilteredStudentList().get(0);
+        Student student = baseStudent.withWorkoutPlans(new WorkoutPlansList(List.of(first)));
+        model.setStudent(baseStudent, student);
+        model.setCurrentStudent(student);
+
+        new AddPlanCommand(second).execute(model);
+
+        List<WorkoutPlan> plans = model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutList();
+        assertEquals(2, plans.size());
+        assertEquals(WorkoutPlanStatus.OVERDUE, plans.get(0).getStatus());
+        assertEquals(WorkoutPlanStatus.OVERDUE, plans.get(1).getStatus());
+        assertEquals(plans.get(0).getDate(), plans.get(1).getDate());
+    }
+
+    @Test
     public void equals() {
         AddPlanCommand first = new AddPlanCommand(PLAN);
         AddPlanCommand copy = new AddPlanCommand(new WorkoutPlan(

@@ -48,21 +48,21 @@ public class ModelManagerTest {
 
     /**
      * Verifies that when a workout plan is added for a student, its status is
-     * correctly evaluated and updated based on its scheduled date relative to today.
+     * stored as supplied without refreshing its date-based status.
      */
     @Test
     public void addWorkoutPlanForStudent_storesExpectedStatus() {
         // BV: date < today (valid).
-        assertAddRefresh(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
+        assertAddPreservesStatus(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
         // BV: date = today (valid).
-        assertAddRefresh(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
+        assertAddPreservesStatus(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.OVERDUE);
         // BV: date > today (valid).
-        assertAddRefresh(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
+        assertAddPreservesStatus(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
         // Each valid input at least once: completed status remains completed.
-        assertAddRefresh(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
+        assertAddPreservesStatus(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
     }
 
-    private void assertAddRefresh(int days, WorkoutPlanStatus status, WorkoutPlanStatus expectedStatus) {
+    private void assertAddPreservesStatus(int days, WorkoutPlanStatus status, WorkoutPlanStatus expectedStatus) {
         LocalDate today = LocalDate.now();
         ModelManager model = new ModelManager();
         WorkoutPlan unchanged = plan("Other", today.minusDays(1), WorkoutPlanStatus.PENDING);
@@ -86,21 +86,21 @@ public class ModelManagerTest {
 
     /**
      * Verifies that when a student's workout plan is updated (set), its status is
-     * correctly re-evaluated and stored based on its scheduled date relative to today.
+     * stored as supplied without refreshing its date-based status.
      */
     @Test
     public void setWorkoutPlanForStudent_storesExpectedStatus() {
         // BV: date < today (valid).
-        assertSetRefresh(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.OVERDUE);
+        assertSetPreservesStatus(-1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
         // BV: date = today (valid).
-        assertSetRefresh(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.PENDING);
+        assertSetPreservesStatus(0, WorkoutPlanStatus.OVERDUE, WorkoutPlanStatus.OVERDUE);
         // BV: date > today (valid).
-        assertSetRefresh(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
+        assertSetPreservesStatus(1, WorkoutPlanStatus.PENDING, WorkoutPlanStatus.PENDING);
         // Each valid input at least once: completed replacement remains completed.
-        assertSetRefresh(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
+        assertSetPreservesStatus(-1, WorkoutPlanStatus.COMPLETED, WorkoutPlanStatus.COMPLETED);
     }
 
-    private void assertSetRefresh(int days, WorkoutPlanStatus status, WorkoutPlanStatus expectedStatus) {
+    private void assertSetPreservesStatus(int days, WorkoutPlanStatus status, WorkoutPlanStatus expectedStatus) {
         LocalDate today = LocalDate.now();
         ModelManager model = new ModelManager();
         WorkoutPlan unchanged = plan("Other", today.minusDays(1), WorkoutPlanStatus.PENDING);
@@ -123,9 +123,9 @@ public class ModelManagerTest {
         assertEquals(status, edited.getStatus());
     }
 
-    // EP: refreshed workout plan duplicates an existing plan (invalid).
+    // EP: workout plan duplicates an existing plan despite differing status (invalid).
     @Test
-    public void workoutPlanOperations_duplicateAfterStatusRefresh_doesNotChangeModel() {
+    public void workoutPlanOperations_duplicateWithDifferentStatus_doesNotChangeModel() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
         WorkoutPlan existing = plan("Same", yesterday, WorkoutPlanStatus.OVERDUE);
         WorkoutPlan candidate = plan("Same", yesterday, WorkoutPlanStatus.PENDING);

@@ -69,6 +69,7 @@ public class MarkPlanCommand extends SingleIndexCommand {
         if (wasSelected && model.getCurrentStudent().isPresent()) {
             model.setCurrentWorkoutPlan(markedPlan);
         }
+        model.updateStudentWorkoutsState(model.getCurrentStudent().orElseThrow());
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(markedPlan)));
     }
 
