@@ -15,10 +15,6 @@ StoredStudent --> Model : plans
 deactivate StoredStudent
 Model -> Plans : addWorkoutPlan(plan)
 activate Plans
-note right of Plans
-  Reject duplicates; create a new list
-  containing the existing plans and plan.
-end note
 Plans --> Model : updatedPlans
 deactivate Plans
 Model -> StoredStudent : withWorkoutPlans(updatedPlans)

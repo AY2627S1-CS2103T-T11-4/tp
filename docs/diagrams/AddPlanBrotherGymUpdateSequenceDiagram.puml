@@ -9,8 +9,7 @@ participant ":BrotherGym" as BrotherGym MODEL_COLOR
 participant ":UniqueStudentList" as Students MODEL_COLOR
 
 note over Command, Model
-  Successful add for the selected student.
-  Error handling and selection rebinding are omitted.
+  Earlier execution steps are omitted.
 end note
 Command -> Model : addWorkoutPlanForStudent(student, plan)
 activate Model
