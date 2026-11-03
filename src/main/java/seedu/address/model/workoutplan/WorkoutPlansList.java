@@ -104,7 +104,7 @@ public final class WorkoutPlansList {
 
     /**
      * Returns a list with {@code target} replaced by {@code editedPlan} at the same position.
-     * Prefers the exact target instance. Otherwise, matches title, description, date, tags, and status,
+     * Prefers the exact target instance. Otherwise, matches name, description, date, tags, and status,
      * ignoring exercises; the first matching plan is replaced.
      *
      * @throws WorkoutPlanNotFoundException If no matching plan is present.
@@ -156,7 +156,7 @@ public final class WorkoutPlansList {
 
     /**
      * Returns a new list with one plan removed.
-     * Prefers the exact {@code plan} instance. Otherwise, matches title, description, date, tags, and status,
+     * Prefers the exact {@code plan} instance. Otherwise, matches name, description, date, tags, and status,
      * ignoring exercises; the first matching plan is removed.
      *
      * @throws WorkoutPlanNotFoundException If no matching plan is present.

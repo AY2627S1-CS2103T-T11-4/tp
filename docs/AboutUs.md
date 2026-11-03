@@ -25,10 +25,9 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 <img src="images/incharapraveen.png" width="200px">
 
 [[github](http://github.com/IncharaPraveen)]
-[[portfolio](team/janejoe.md)]
 
 * Role: Developer
-* Responsibilities: UI
+* Responsibilities: Storage
 
 ### Koh Luck Heng
 
@@ -43,9 +42,9 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ### Xinlin
 
-<img src="images/headphonesribbons.png" width="400px">
+<img src="images/headphonesribbons.png" width="200px">
 
-[[github](https://github.com/headphonesribbons)] [portfolio]
+[[github](https://github.com/headphonesribbons)]
 
 * Role: Developer
 * Responsibilities: Frontend

@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
@@ -21,9 +22,9 @@ import seedu.address.model.UserPrefs;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlansList;
-import seedu.address.model.workoutplan.WorkoutTitle;
 
 /**
  * Contains unit and integration test structure for {@link DeletePlanCommand}.
@@ -33,9 +34,9 @@ import seedu.address.model.workoutplan.WorkoutTitle;
 public class DeletePlanCommandTest {
 
     private static final WorkoutPlan FIRST_PLAN = new WorkoutPlan(
-            new WorkoutTitle("Strength"), new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)));
+            new WorkoutName("Strength"), new WorkoutDescription("Upper body"), new WorkoutDate(new Date(0)));
     private static final WorkoutPlan SECOND_PLAN = new WorkoutPlan(
-            new WorkoutTitle("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
+            new WorkoutName("Cardio"), new WorkoutDescription("Running"), new WorkoutDate(new Date(1)));
 
     // EP: workout-plan index is null (invalid).
     @Test
@@ -55,6 +56,7 @@ public class DeletePlanCommandTest {
         brotherGym.addStudent(studentWithPlans);
         Model model = new ModelManager(brotherGym, new UserPrefs());
         model.setCurrentStudent(studentWithPlans);
+        model.setCurrentWorkoutPlan(FIRST_PLAN);
         DeletePlanCommand command = new DeletePlanCommand(Index.fromOneBased(1));
 
         Student updatedStudent = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
@@ -65,6 +67,28 @@ public class DeletePlanCommandTest {
         assertCommandSuccess(command, model, String.format(DeletePlanCommand.MESSAGE_SUCCESS, FIRST_PLAN),
                 expectedModel);
         assertEquals(updatedStudent, model.getCurrentStudent().orElseThrow());
+        assertTrue(model.getCurrentWorkoutPlan().isEmpty());
+    }
+
+    // EP: deleting another plan keeps the selected workout plan (valid).
+    @Test
+    public void execute_otherPlanDeleted_keepsSelectedPlan() throws Exception {
+        Student baseStudent = new ModelManager(getTypicalBrotherGym(), new UserPrefs())
+                .getFilteredStudentList().get(0);
+        Student studentWithPlans = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
+                baseStudent.getAddress(), baseStudent.getTags(),
+                new WorkoutPlansList(List.of(FIRST_PLAN, SECOND_PLAN)));
+        BrotherGym brotherGym = new BrotherGym();
+        brotherGym.addStudent(studentWithPlans);
+        Model model = new ModelManager(brotherGym, new UserPrefs());
+        model.setCurrentStudent(studentWithPlans);
+        model.setCurrentWorkoutPlan(SECOND_PLAN);
+
+        new DeletePlanCommand(Index.fromOneBased(1)).execute(model);
+
+        assertEquals(List.of(SECOND_PLAN),
+                model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutList());
+        assertSame(SECOND_PLAN, model.getCurrentWorkoutPlan().orElseThrow());
     }
 
     // EP: no current student is selected (invalid).

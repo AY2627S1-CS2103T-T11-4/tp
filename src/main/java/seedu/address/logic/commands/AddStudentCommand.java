@@ -21,17 +21,11 @@ public class AddStudentCommand extends Command {
     public static final String COMMAND_WORD = "addStudent";
 
     public static final String MESSAGE_DESCRIPTION = "Adds a student to the student list.";
-    public static final String MESSAGE_PARAMETERS = "NAME "
-            + PREFIX_PHONE + " PHONE "
-            + PREFIX_EMAIL + " EMAIL "
-            + PREFIX_ADDRESS + " ADDRESS "
-            + "[" + PREFIX_TAG + " TAG]...";
-    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " John Doe "
-            + PREFIX_PHONE + " 98765432 "
-            + PREFIX_EMAIL + " johnd@example.com "
-            + PREFIX_ADDRESS + " 311, Clementi Ave 2, #02-25 "
-            + PREFIX_TAG + " friends "
-            + PREFIX_TAG + " owesMoney";
+    public static final String MESSAGE_PARAMETERS = "NAME " + PREFIX_PHONE + " PHONE_NUMBER "
+            + PREFIX_EMAIL + " EMAIL " + PREFIX_ADDRESS + " ADDRESS " + "[" + PREFIX_TAG + " TAG]...";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " James Ho " + PREFIX_PHONE + " 22224444 "
+            + PREFIX_EMAIL + " jamesho@example.com " + PREFIX_ADDRESS + " 123, Clementi Rd, 1234665 "
+            + PREFIX_TAG + " friend " + PREFIX_TAG + " colleague";
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + " \n"
             + "Parameters: " + MESSAGE_PARAMETERS + "\n"
             + "Example: " + MESSAGE_EXAMPLE;

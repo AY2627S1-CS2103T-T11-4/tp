@@ -39,16 +39,15 @@ public class EditStudentCommand extends Command {
     public static final String MESSAGE_DESCRIPTION = "Edits the details of the student identified "
             + "by the index number used in the displayed student list. "
             + "Existing values will be overwritten by the input values.";
-    public static final String MESSAGE_PARAMETERS = "STUDENT_ID (must be a positive integer) "
+    public static final String MESSAGE_PARAMETERS = "STUDENT_ID "
             + "[" + PREFIX_NAME + " NAME] "
-            + "[" + PREFIX_PHONE + " PHONE] "
+            + "[" + PREFIX_PHONE + " PHONE_NUMBER] "
             + "[" + PREFIX_EMAIL + " EMAIL] "
             + "[" + PREFIX_ADDRESS + " ADDRESS] "
-            + "[" + PREFIX_TAG + " TAG]..."
+            + "[" + PREFIX_TAG + " TAG]... "
             + "[" + PREFIX_CLEAR_TAGS + "]";
-    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1 "
-            + PREFIX_PHONE + " 91234567 "
-            + PREFIX_EMAIL + " johndoe@example.com";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 2 "
+            + PREFIX_NAME + " James Lee " + PREFIX_EMAIL + " jameslee@example.com";
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
             + "Parameters: " + MESSAGE_PARAMETERS + "\n"
             + "Example: " + MESSAGE_EXAMPLE;

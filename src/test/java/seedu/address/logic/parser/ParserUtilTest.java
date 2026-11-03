@@ -31,7 +31,7 @@ import seedu.address.model.student.Phone;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
-import seedu.address.model.workoutplan.WorkoutTitle;
+import seedu.address.model.workoutplan.WorkoutName;
 
 @SuppressWarnings("checkstyle:Regexp")
 public class ParserUtilTest {
@@ -40,7 +40,7 @@ public class ParserUtilTest {
     private static final String INVALID_ADDRESS = " ";
     private static final String INVALID_EMAIL = "example.com";
     private static final String INVALID_TAG = "#friend";
-    private static final String INVALID_TITLE = "";
+    private static final String INVALID_PLAN_NAME = "";
     private static final String INVALID_DESC = "";
     private static final String INVALID_DATE_CHARS = "dd102026";
     private static final String INVALID_DATE_LENGTH = "091026";
@@ -52,7 +52,7 @@ public class ParserUtilTest {
     private static final String VALID_EMAIL = "rachel@example.com";
     private static final String VALID_TAG_1 = "friend";
     private static final String VALID_TAG_2 = "neighbour";
-    private static final String VALID_TITLE = "Shoulder Day";
+    private static final String VALID_PLAN_NAME = "Shoulder Day";
     private static final String VALID_DESC = "Shoulder Press 3x 80kg";
     private static final String VALID_DATE = "09102026";
     private static final Date VALID_DATE_OBJECT = Date.from(LocalDate.of(2026, 10, 9)
@@ -392,24 +392,24 @@ public class ParserUtilTest {
             -> ParserUtil.parseTagsIfPresent(tags, TagStub::new));
     }
 
-    // EP: workout title violates its constraints (invalid).
+    // EP: workout name violates its constraints (invalid).
     @Test
-    public void parseTitle_invalidValue_throwsParseException() {
-        assertThrows(ParseException.class, () -> ParserUtil.parseTitle(INVALID_TITLE));
+    public void parseWorkoutName_invalidValue_throwsParseException() {
+        assertThrows(ParseException.class, () -> ParserUtil.parseWorkoutName(INVALID_PLAN_NAME));
     }
 
-    // Each valid input at least once: a valid workout title is parsed.
+    // Each valid input at least once: a valid workout name is parsed.
     @Test
-    public void parseTitle_validValue_returnsWorkoutTitle() throws Exception {
-        WorkoutTitle expectedTitle = new WorkoutTitle(VALID_TITLE);
-        assertEquals(expectedTitle, ParserUtil.parseTitle(VALID_TITLE));
+    public void parseWorkoutName_validValue_returnsWorkoutName() throws Exception {
+        WorkoutName expectedName = new WorkoutName(VALID_PLAN_NAME);
+        assertEquals(expectedName, ParserUtil.parseWorkoutName(VALID_PLAN_NAME));
     }
 
-    // Each valid input at least once: surrounding title whitespace is trimmed.
+    // Each valid input at least once: surrounding name whitespace is trimmed.
     @Test
-    public void parseTitle_validValueWithWhitespace_returnsTrimmedTitle() throws Exception {
-        WorkoutTitle expectedTitle = new WorkoutTitle(VALID_TITLE);
-        assertEquals(expectedTitle, ParserUtil.parseTitle(WHITESPACE + VALID_TITLE + WHITESPACE));
+    public void parseWorkoutName_validValueWithWhitespace_returnsTrimmedName() throws Exception {
+        WorkoutName expectedName = new WorkoutName(VALID_PLAN_NAME);
+        assertEquals(expectedName, ParserUtil.parseWorkoutName(WHITESPACE + VALID_PLAN_NAME + WHITESPACE));
     }
 
     @Test

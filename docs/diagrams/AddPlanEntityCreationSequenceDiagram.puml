@@ -1,0 +1,24 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+skinparam maxMessageSize 250
+
+participant ":AddPlanCommandParser" as Parser LOGIC_COLOR
+participant "plan:WorkoutPlan" as Plan MODEL_COLOR
+participant "exercises:ExercisesList" as Exercises MODEL_COLOR
+
+note over Parser
+  Valid fields have been parsed.
+  Parsing and command construction are omitted.
+end note
+create Plan
+Parser -> Plan : new WorkoutPlan(...)
+activate Plan
+create Exercises
+Plan -> Exercises : new ExercisesList()
+activate Exercises
+Exercises --> Plan : exercises
+deactivate Exercises
+Plan --> Parser : plan
+deactivate Plan
+@enduml

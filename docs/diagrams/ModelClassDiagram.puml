@@ -1,6 +1,8 @@
 @startuml
 !include style.puml
 skinparam arrowThickness 1.1
+skinparam nodesep 55
+skinparam ranksep 45
 skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
 
@@ -14,15 +16,16 @@ Class UserPrefs
 
 Class UniqueStudentList
 Class Student
+Class WorkoutPlan
+Class WorkoutPlansList
 
-Class I #FFFFFF
 
-note "Details of Student Class \n are omitted for clarity." as N1
+note "Other details of Student class \n are omitted for clarity." as N1
 
 }
 
 Class HiddenOutside #FFFFFF
-HiddenOutside ..> Model
+HiddenOutside --> Model
 
 BrotherGym .up.|> ReadOnlyBrotherGym
 
@@ -33,14 +36,18 @@ ModelManager -left-> "1" BrotherGym
 ModelManager -right-> "1" UserPrefs
 UserPrefs .up.|> ReadOnlyUserPrefs
 
-BrotherGym *--> "1" UniqueStudentList
-UniqueStudentList --> "~* all" Student
+ReadOnlyBrotherGym -[hidden]right-> Model
+Model -[hidden]right-> ReadOnlyUserPrefs
 
-Student -[hidden]up--> I
-UniqueStudentList -[hidden]right-> I
+BrotherGym *--> "1" UniqueStudentList
+UniqueStudentList -right-> "~* all" Student
+
+Student -down-> "1" WorkoutPlansList
+WorkoutPlansList -right-> "*" WorkoutPlan
 
 Student -right- N1
 
 ModelManager --> "~* filtered" Student
-ModelManager --> "1 selected" Student
+ModelManager -down-> "0..1" Student : selected
+ModelManager -down-> "0..1" WorkoutPlan : selected
 @enduml

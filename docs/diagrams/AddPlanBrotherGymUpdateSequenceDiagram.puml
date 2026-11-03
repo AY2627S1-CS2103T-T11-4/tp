@@ -1,0 +1,44 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+skinparam maxMessageSize 250
+
+participant ":AddPlanCommand" as Command LOGIC_COLOR
+participant ":ModelManager" as Model MODEL_COLOR
+participant ":BrotherGym" as BrotherGym MODEL_COLOR
+participant ":UniqueStudentList" as Students MODEL_COLOR
+
+note over Command, Model
+  Earlier execution steps are omitted.
+end note
+Command -> Model : addWorkoutPlanForStudent(student, plan)
+activate Model
+Model -> BrotherGym : validateStudentInBrotherGym(student)
+activate BrotherGym
+BrotherGym --> Model : storedStudent
+deactivate BrotherGym
+ref over Model : Build updatedStudent
+Model -> Model : replaceStoredStudent(storedStudent, updatedStudent)
+activate Model
+Model -> BrotherGym : setStudent(storedStudent, updatedStudent)
+activate BrotherGym
+BrotherGym -> Students : setStudent(storedStudent, updatedStudent)
+activate Students
+Students --> BrotherGym
+deactivate Students
+BrotherGym --> Model
+deactivate BrotherGym
+Model --> Model
+deactivate Model
+Model --> Command
+deactivate Model
+Command -> Model : getCurrentStudent()
+activate Model
+Model --> Command : Optional.of(currentStudent)
+deactivate Model
+Command -> Model : updateStudentWorkoutsState(currentStudent)
+activate Model
+note right of Model : Status refresh internals are omitted.
+Model --> Command : refreshedStudent
+deactivate Model
+@enduml
