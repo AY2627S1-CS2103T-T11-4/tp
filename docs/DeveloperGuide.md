@@ -477,8 +477,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *`  | gym trainer                        | add different workouts to each workout plan                 | ensure that workout sessions are customised for each student      |
 | `* * *`  | gym trainer                        | view all the workout plans for each student                 | pick which plan to follow during the student's next session       |
 | `* * *`  | gym trainer                        | edit a workout plan's details                               | adapt the plan to a student's changing needs                      |
-| `* * *`  | gym trainer                        | mark workout plans as completed or undo a completion mark   | keep an accurate record of completed workouts                     |
-| `* * *`  | gym trainer                        | track Pending, Overdue, and Completed workout plan statuses | identify completed workouts and those that need attention         |
+| `* * *`  | gym trainer                        | mark workout plans as completed or undo a completion mark   | keep an accurate record of completed workouts                     |        |
 | `* * *`  | gym trainer                        | remove an unwanted workout plan                             | keep a student's workout plans relevant                           |
 | `* * *`  | gym trainer                        | categorise workout plans                                    | identify plans with a shared focus                                |
 
@@ -571,14 +570,14 @@ Use case: U3 - Edit student details
 
 **Extensions:**
 
-* 2a. Trainer specifies an invalid student index, invalid details, or no fields to edit.
+* 2a. Trainer specifies an invalid input
   * 2a1. BrotherGym displays an error message without changing the student.
 
-    Use case resumes at step 2.
+
 * 2b. The edited student would duplicate another student.
   * 2b1. BrotherGym displays an error message without changing the student.
 
-    Use case resumes at step 2.
+
 * 2c. Trainer requests to clear the student's tags.
   * 2c1. BrotherGym removes all tags from the student and applies any other supplied changes.
 
@@ -593,8 +592,7 @@ Use case: U4 - View workout plans for a specific student
 1. Trainer <u>views all students (U1)</u>.
 2. Trainer requests to view a specific student using `viewStudent`.
 3. BrotherGym clears the previously selected student or workout plan
-4. BrotherGym selects the student and refreshes the student's workout plan statuses as Done, Overdue, or Pending
-
+4. BrotherGym selects the student
    Use case ends.
 
 **Extensions:**
@@ -604,8 +602,8 @@ Use case: U4 - View workout plans for a specific student
 
     Use case resumes at step 2.
 
-* 4b. The student has no workout plans.
-  * 4b1. BrotherGym displays "No workout plans assigned."
+* 4a. The student has no workout plans.
+  * 4a1. BrotherGym displays "No workout plans assigned."
 
     Use case ends.
 
@@ -663,8 +661,9 @@ Use case: U7 - Clear all students and nested data
 **MSS:**
 
 1. Trainer requests to clear BrotherGym.
-2. BrotherGym removes all students and their workout plans and exercises, and clears the selected student and plan.
-3. BrotherGym displays a success message and an empty student list.
+2. BrotherGym removes all students and their workout plans and exercises, 
+3. BrotherGym clears the selected student and plan.
+4. BrotherGym displays a success message and an empty student list.
 
    Use case ends.
 
@@ -705,50 +704,42 @@ Use case: U8 - Add a workout plan
   * 2c1. BrotherGym displays an error message without adding the duplicate plan.
 
     Use case resumes at step 2.
-* 2d. No student is selected.
-  * 2d1. BrotherGym displays an error message asking the trainer to use `viewStudent` first.
-  * 2d2. Trainer selects a student using `viewStudent` (U4).
-
-    Use case resumes at step 2.
 
 ### U9: Edit a workout plan
 
 Use case: U9 - Edit a workout plan
 
-**Precondition:** The student is currently being viewed (U4).
+**Precondition:** A student must be selected using `viewStudent` (U4) before editing a plan.
 
 **MSS:**
 
 1. Trainer <u>views workout plans for a specific student (U4)</u>.
-2. Trainer identifies a plan and provides changes to its title, description, date, or tags.
+2. Trainer identifies a plan and provides changes to its name, description, date, or tags.
 3. BrotherGym updates the specified fields, preserving omitted fields and the plan's exercises.
 4. BrotherGym displays a success message and the updated plan.
 
    Use case ends.
 
 **Extensions:**
-
-* 2a. No student is selected.
-  * 2a1. BrotherGym displays an error message asking the trainer to select a student.
-  * 2a2. Trainer selects a student using `viewStudent` (U4).
+  
+* 2a. Trainer specifies an invalid plan index, invalid details, or no fields to edit.
+  * 2a1. BrotherGym displays an error message without changing the plan.
 
     Use case resumes at step 2.
-* 2b. Trainer specifies an invalid plan index, invalid details, or no fields to edit.
+* 2b. The edited plan would duplicate another plan belonging to the student.
   * 2b1. BrotherGym displays an error message without changing the plan.
 
     Use case resumes at step 2.
-* 2c. The edited plan would duplicate another plan belonging to the student.
-  * 2c1. BrotherGym displays an error message without changing the plan.
-
-    Use case resumes at step 2.
-* 2d. Trainer requests to clear the plan's tags.
-  * 2d1. BrotherGym removes all tags from the plan and applies any other supplied changes.
+* 2c. Trainer requests to clear the plan's tags.
+  * 2c1. BrotherGym removes all tags from the plan and applies any other supplied changes.
 
     Use case resumes at step 4.
 
 ### U10: Mark a workout plan as completed
 
 Use case: U10 - Mark a workout plan as completed
+
+**Precondition:** A student must be selected using `viewStudent` (U4) before marking a plan as completed.
 
 **MSS:**
 
@@ -760,23 +751,20 @@ Use case: U10 - Mark a workout plan as completed
 
 **Extensions:**
 
-* 2a. No student is selected.
-  * 2a1. BrotherGym displays an error message asking the trainer to select a student.
-  * 2a2. Trainer selects a student using `viewStudent` (U4).
+* 2a. Trainer specifies an invalid workout plan index.
+  * 2a1. BrotherGym displays an error message without changing the plan.
 
     Use case resumes at step 2.
-* 2b. Trainer specifies an invalid workout plan index.
+* 2b. The plan is already completed.
   * 2b1. BrotherGym displays an error message without changing the plan.
-
-    Use case resumes at step 2.
-* 2c. The plan is already completed.
-  * 2c1. BrotherGym displays an error message without changing the plan.
 
     Use case ends.
 
 ### U11: Unmark a completed workout plan
 
 Use case: U11 - Unmark a completed workout plan
+
+**Precondition:** A student must be selected using `viewStudent` (U4) before unmarking a plan.
 
 **MSS:**
 
@@ -789,17 +777,12 @@ Use case: U11 - Unmark a completed workout plan
 
 **Extensions:**
 
-* 2a. No student is selected.
-  * 2a1. BrotherGym displays an error message asking the trainer to select a student.
-  * 2a2. Trainer selects a student using `viewStudent` (U4).
+* 2a. Trainer specifies an invalid workout plan index.
+  * 2a1. BrotherGym displays an error message without changing the plan.
 
     Use case resumes at step 2.
-* 2b. Trainer specifies an invalid workout plan index.
+* 2b. The plan is already Pending or Overdue.
   * 2b1. BrotherGym displays an error message without changing the plan.
-
-    Use case resumes at step 2.
-* 2c. The plan is already Pending or Overdue.
-  * 2c1. BrotherGym displays an error message without changing the plan.
 
     Use case ends.
 
@@ -821,12 +804,6 @@ Use case: U12 - View exercises of a workout plan
 
 * 2a. Trainer selects an invalid workout plan.
   * 2a1. BrotherGym displays an error message.
-
-    Use case resumes at step 2.
-
-* 2b. No student is selected.
-  * 2b1. BrotherGym displays an error message asking the trainer to use `viewStudent` first.
-  * 2b2. Trainer selects a student using `viewStudent` (U4).
 
     Use case resumes at step 2.
 
@@ -858,17 +835,11 @@ Use case: U13 - Remove a workout plan
 
     Use case resumes at step 2.
 
-* 2b. No student is selected.
-  * 2b1. BrotherGym displays an error message asking the trainer to use `viewStudent` first.
-  * 2b2. Trainer selects a student using `viewStudent` (U4).
-
-    Use case resumes at step 2.
-
 ### U14: Add an exercise
 
 Use case: U14 - Add an exercise
 
-**Precondition:** The workout plan is currently being viewed (U12).
+**Precondition:** A workout plan must be selected using `viewPlan` (U12) before adding an exercise.
 
 **MSS:**
 
@@ -881,21 +852,16 @@ Use case: U14 - Add an exercise
 
 **Extensions:**
 
-* 2a. No student or workout plan is selected.
-  * 2a1. BrotherGym displays an error message asking the trainer to select a student and plan.
-  * 2a2. Trainer <u>views exercises of a workout plan (U12)</u>.
+* 2a. Trainer provides invalid or incomplete exercise details.
+  * 2a1. BrotherGym displays an error message without adding the exercise.
 
     Use case resumes at step 2.
-* 2b. Trainer provides invalid or incomplete exercise details.
-  * 2b1. BrotherGym displays an error message without adding the exercise.
+* 2b. The exercise already exists in the selected plan.
+  * 2b1. BrotherGym displays an error message without adding the duplicate exercise.
 
     Use case resumes at step 2.
-* 2c. The exercise already exists in the selected plan.
-  * 2c1. BrotherGym displays an error message without adding the duplicate exercise.
-
-    Use case resumes at step 2.
-* 2d. The plan already contains 100 exercises.
-  * 2d1. BrotherGym displays an error message without adding the exercise.
+* 2c. The plan already contains 100 exercises.
+  * 2c1. BrotherGym displays an error message without adding the exercise.
 
     Use case ends.
 
@@ -903,7 +869,7 @@ Use case: U14 - Add an exercise
 
 Use case: U15 - Edit an exercise
 
-**Precondition:** The workout plan is currently being viewed (U12).
+**Precondition:** A workout plan must be selected using `viewPlan` (U12) before editing an exercise.
 
 **MSS:**
 
@@ -916,17 +882,12 @@ Use case: U15 - Edit an exercise
 
 **Extensions:**
 
-* 2a. No student or workout plan is selected, or the selected plan is no longer available.
-  * 2a1. BrotherGym displays an error message asking the trainer to select the missing student or plan.
-  * 2a2. Trainer <u>views exercises of a workout plan (U12)</u>.
+* 2a. Trainer specifies an invalid exercise index, invalid details, or no fields to edit.
+  * 2a1. BrotherGym displays an error message without changing the exercise.
 
     Use case resumes at step 2.
-* 2b. Trainer specifies an invalid exercise index, invalid details, or no fields to edit.
+* 2b. The edited exercise would duplicate another exercise in the plan.
   * 2b1. BrotherGym displays an error message without changing the exercise.
-
-    Use case resumes at step 2.
-* 2c. The edited exercise would duplicate another exercise in the plan.
-  * 2c1. BrotherGym displays an error message without changing the exercise.
 
     Use case resumes at step 2.
 
@@ -934,7 +895,7 @@ Use case: U15 - Edit an exercise
 
 Use case: U16 - Delete an exercise
 
-**Precondition:** The workout plan is currently being viewed (U12).
+**Precondition:** A workout plan must be selected using `viewPlan` (U12) before deleting an exercise.
 
 **MSS:**
 
@@ -947,13 +908,8 @@ Use case: U16 - Delete an exercise
 
 **Extensions:**
 
-* 2a. No student or workout plan is selected, or the selected plan is no longer available.
-  * 2a1. BrotherGym displays an error message asking the trainer to select the missing student or plan.
-  * 2a2. Trainer <u>views exercises of a workout plan (U12)</u>.
-
-    Use case resumes at step 2.
-* 2b. Trainer specifies an invalid exercise index.
-  * 2b1. BrotherGym displays an error message without deleting an exercise.
+* 2a. Trainer specifies an invalid exercise index.
+  * 2a1. BrotherGym displays an error message without deleting an exercise.
 
     Use case resumes at step 2.
 * 4a. The deleted exercise was the last exercise in the plan.
