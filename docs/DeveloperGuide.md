@@ -13,7 +13,12 @@
 
 ## **Acknowledgements**
 
-* _{List the sources of reused or adapted ideas, code, documentation, and third-party libraries here, with links to the originals.}_
+BrotherGym is based on and adapted from the [AddressBook-Level3 project](https://github.com/NUS-CS2103-AY2627-S1/tp), created by the [SE-EDU initiative](https://se-education.org).
+We reused and extended parts of its codebase, project structure, and documentation conventions to develop BrotherGym.
+
+During development, we used AI tools, including OpenAI Codex, Anthropic Claude and GitHub Copilot, to assist with coding, documentation, and GitHub issue management. All AI-assisted contributions were reviewed and adapted by the team.
+
+Libraries used include [JavaFX](https://openjfx.io/) for the GUI, [Jackson](https://github.com/FasterXML/jackson) for JSON data storage, and [JUnit 5](https://github.com/junit-team/junit5) for testing.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -72,15 +77,21 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/se-
 
 <puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
 
-The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `StudentListPanel`, `WorkoutPlanListPanel`, and `StatusBarFooter`. `StudentListPanel` displays students using `StudentCard` objects, while `WorkoutPlanListPanel` displays the current student's plans using `WorkoutPlanCard` objects. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
+The UI is coordinated by `MainWindow`, which owns the command box, result display, student list, workout-plan list, and status bar, and opens the Help window.
+
+* `StudentListPanel` displays students using `StudentCard` objects.
+* `WorkoutPlanListPanel` displays the current student's workout plans using `WorkoutPlanCard` objects. It also controls which card is expanded to show its numbered exercises.
+* `CommandBox` passes command text to `MainWindow`, while `ResultDisplay` shows the returned feedback or error message.
+* The visible UI classes inherit from the abstract `UiPart` class, which provides their common FXML-loading behavior.
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/MainWindow.java).
 
 The `UI` component,
 
 * executes user commands using the `Logic` component.
-* listens for changes to `Model` data so that the UI can be updated with the modified data. In particular, `MainWindow` observes `Logic#currentStudentProperty()` and updates `WorkoutPlanListPanel` when the current student changes.
+* listens for changes to the current student and selected workout plan exposed by `Logic`, so `MainWindow` can keep `StudentListPanel` and `WorkoutPlanListPanel` synchronized with the current navigation state.
 * keeps a reference to the `Logic` component, because the `UI` relies on the `Logic` to execute commands.
+  * the `HelpWindow` also requires [command metadata](#metadata-classes) from `Logic` to render the command cards of the help page.
 * depends on some classes in the `Model` component because it displays `Student` and `WorkoutPlan` objects from the model.
 
 ### Logic component
@@ -105,73 +116,141 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 ##### Interaction with the UI
 
-`Logic` exposes the filtered student list, the current student and its read-only observable property, and GUI settings to the UI.
+`Logic` exposes the filtered student list, the current student and its read-only observable property, GUI settings, and the command categories displayed in the Help window to the UI.
 
 * **Student list and selection:** The UI observes the filtered student list so it reflects changes to the student filter. `MainWindow` observes the current-student property and updates the student selection and workout-plan panel when it changes.
 * **GUI settings:** The UI reads these settings when initializing the window and updates them through `Logic` when exiting.
 * **Workout plans and exercises:** The `home` command shows all students and clears the current selection. Plan commands operate on the selected student; `viewPlan` selects a plan within that student. Exercise commands operate only on this selected plan.
+* **Help page metadata:** `LogicManager#getCommandCategories()` obtains the command categories from `CommandMetadataCatalog` and exposes them through the `Logic` interface for the UI to display.
+
+#### Metadata Classes
+
+The `logic.metadata` package supplies the command information displayed in the Help window.
+
+<puml src="diagrams/CommandMetadataClasses.puml" width="500"/>
+
+* `CommandMetadataCatalog` constructs and exposes the ordered list of command categories.
+* `CommandCategory` groups related commands under a Help page section title.
+* `CommandMetadata` stores a command's word, parameters, description, and example. Its `format()` method produces the command format displayed by the UI.
+
+The `CommandMetadataCatalog` object is passed to the `HelpWindow` of the `Ui` component through the `LogicManager` facade, which uses it to create 
+* one section for each `CommandCategory`; and 
+* one command card for each `CommandMetadata` entry.
 
 #### Parser Classes
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
-<puml src="diagrams/ParserClasses.puml" width="600"/>
+<puml src="diagrams/ParserClasses.puml" width="800"/>
 
 Here are the classes dedicated to parsing the arguments of the command strings:
 
 <puml src="diagrams/ArgumentProcessors.puml" width="600"/>
 
 How the parsing works:
-* When called upon to parse a user command, the `BrotherGymParser` class creates either an `XYZCommandParser` or a `SingleIndexCommandParser`
-  * `addStudent`, `addPlan`, `addExercise`, `editStudent`, `editPlan`, and `editExercise` commands each have a dedicated `XYZCommandParser`
-    (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`),
-  * `viewStudent`, `viewPlan`, `deleteStudent`, `deletePlan`, and `deleteExercise` commands are `SingleIndexCommand`s that only parse a single index,
-    hence they use the same generic `SingleIndexCommandParser`
-  * both types of parsers implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+
+* After identifying the command word, `BrotherGymParser` delegates the arguments to one of the following parser categories:
+
+| Parser category                    | Commands | Responsibility                                                                           |
+|------------------------------------|----------|------------------------------------------------------------------------------------------|
+| Dedicated `XYZCommandParser`       | `addStudent`, `addPlan`, `addExercise`, `editStudent`, `editPlan`, `editExercise`, `find` | Each command has its own dedicated parser (`XYZ` is a placeholder for the command name). |
+| Generic `SingleIndexCommandParser` | `viewStudent`, `viewPlan`, `deleteStudent`, `deletePlan`, `deleteExercise`, `markPlan`, `unmarkPlan` | Generic parser for `SingleIndexCommand`s that accept a single positive index.            |
+| Generic `NoArgumentCommandParser`  | `help`, `home`, `exit`, `clear` | Generic parser that rejects any arguments after the command word.                        |
+
+* Every concrete parser represented in the table implements the `Parser` interface.
+
 * The parser class uses a few dependencies to parse the user input into a valid command object (e.g. `AddStudentCommand`, `DeleteStudentCommand`):
   1. The user input string is passed into `ArgumentTokenizer` to create a `ArgumentMultimap` object to store the entered arguments.
   2. The `ArgumentValidator` ensures that the `ArgumentMultimap` contains the correct arguments for the command.
-  3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the `Command` object
-* The `BrotherGymParser` returns that object as a `Command` object.
+  3. The arguments in the `ArgumentMultimap` is then passed into the relevant `ParserUtil` class to generate the objects required for creating the corresponding command object
+
+* The `BrotherGymParser` returns the created command as `Command` object.
 
 The sequence diagram shows how the parser classes create the `DeleteStudentCommand` object 
 when `BrotherGymParser#parseCommand("deleteStudent 1")` is called from `LogicManager`:
 
 <puml src="diagrams/DeleteParserSequenceDiagram.puml" alt="Sequence Diagram for parsing 'delete 1'"/>
 
+#### Parser Exception Handling
+The `ArgumentValidator` and `ParserUtil` classes shown above also define the workflow’s two failure paths:
+* Format errors (e.g. incorrect use of prefixes) of command inputs produce an `InputFormatInvalidException` during argument validation by `ArgumentValidator`
+* Invalid values provided for the command arguments produce a `FieldValueInvalidException` during field parsing by `ParserUtil`.
+
+Both exception types are subclasses of `ParseException`, and the parser methods wrap the raw exceptions with the command usage message
+in another `ParseException` object to be thrown to the higher levels.
+
 ### Model component
-**API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
+**API**: [`Model.java`](https://github.com/AY2627S1-CS2103T-T11-4/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
 The class diagram below shows the high-level structure of the `Model` component.
 
-<puml src="diagrams/ModelClassDiagram.puml" width="450" />
+<puml src="diagrams/ModelClassDiagram.puml" width="650" />
 
 
-The `Model` component,
+The `Model` component:
 
-* stores all `Student` objects in a `UniqueStudentList`. Each `Student` contains a `WorkoutPlansList` of `WorkoutPlan` objects.
-* exposes students matching the current filter, such as search results, as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to.
-* stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
-* tracks `currentStudent`, the `Student` whose workout plans the user has chosen to view or edit.
-* does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
+* Stores all `Student` objects in a `UniqueStudentList`.
+* Exposes students matching the current filter, such as search results, as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to.
+* Stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). Other components access these preferences through the `ReadOnlyUserPrefs` interface.
+* Tracks `currentStudent`, the `Student` whose workout plans the user has chosen to view or edit.
+* Tracks `currentWorkoutPlan`, the `WorkoutPlan` belonging to `currentStudent` that the user has chosen to view or edit.
+* Does not depend on the `UI`, `Logic`, or `Storage` components. Its domain entities are defined independently of these components.
 
 
-The entity diagram expands `UniqueStudentList` and `Student` to show student details, tags, and workout plans:
+The following entity diagram expands `UniqueStudentList` and `Student` to show student details, tags, and each student's workout plan list.
 
-<puml src="diagrams/ModelEntitiesClassDiagram.puml" alt="Model entities and their internal relationships" width="700" />
+<puml src="diagrams/ModelEntitiesClassDiagram.puml" alt="Student entities, tags, and workout plan list" width="800" />
 
-<box type="info" seamless>
-</box>
+The following diagram shows the entities referenced by `WorkoutPlan`.
 
+<puml src="diagrams/WorkoutPlanClassDiagram.puml" alt="Workout plan entities, exercises, and tags" width="1000" />
+
+#### Model checks and state updates
+
+The `Model` package enforces domain rules when model objects are constructed or changed. These rules are enforced through validation in entity constructors and checks coordinated by `ModelManager` when updating stored data:
+
+1. Entities enforce constraints when they are created, such as character limits on certain fields.
+
+2. `ModelManager`, `BrotherGym`, and the list classes validate changes to stored data, checking that target objects exist and that uniqueness constraints are met.
+
+#### Interaction with `Model` during user input execution
+
+Changes to nested plan and exercise data follow an immutable update pattern: each edit creates replacement lists and entities, reuses unchanged fields, and builds a replacement `Student` to take the place of the stored student.
+
+#### Entity construction
+
+The timing of entity construction depends on whether the supplied fields are sufficient or existing model data is also required. Entities whose construction requires existing model data are created during command execution.
+
+For example, in `addPlan`, parsing can produce a complete plan without reading the selected student's data.
+
+<puml src="diagrams/AddPlanEntityCreationSequenceDiagram.puml" alt="Creating a workout plan from addPlan input" width="850" />
+
+For example, in `editPlan`, entity construction waits until command execution because some fields depend on the stored plan.
+<puml src="diagrams/EditPlanEntityCreationSequenceDiagram.puml" alt="Creating an edited workout plan from the selected student" width="1000" />
+
+#### Updating stored data
+
+The following diagrams show the relevant execution flow within `Model` for a successful `addPlan` command. Error handling and selection updates are omitted.
+
+<puml src="diagrams/AddPlanBrotherGymUpdateSequenceDiagram.puml" alt="Adding a workout plan to BrotherGym" width="1000" />
+
+<puml src="diagrams/AddPlanUpdatedStudentSequenceDiagram.puml" alt="Constructing the updated student for addPlan" width="900" />
+
+The command requests changes through the `Model` API, while `ModelManager` validates and updates the stored data.
+
+After replacing the selected student, `ModelManager` updates `currentStudent` and `currentWorkoutPlan` correspondingly.
+Selection maintenance is omitted from the diagrams for clarity.
+
+After a successful change to workout plans or exercises, the command refreshes the current student's workout statuses through `updateStudentWorkoutsState`.
+This may replace the student again if any of the student's workout plan statuses have changed. The internals of status refresh are omitted from the diagrams above for clarity.
 
 ### Storage component
-
-**API**: `seedu.address.storage.Storage` (defined in `src/main/java/seedu/address/storage/Storage.java`).
+**API** : [`Storage.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/storage/Storage.java)
 
 The `Storage` component persists BrotherGym data and user preferences as local JSON files. It converts stored data into model objects when the application starts and writes model data back to disk when requested by `LogicManager` or `MainApp`.
 
-#### Structure and responsibilities
+The `Storage` component,
 
-<puml src="diagrams/StorageClassDiagram.puml" alt="Storage classes and their JSON adapters, including nested workout plans" width="700" />
+<puml src="diagrams/StorageClassDiagram.puml" alt="Storage classes and their JSON adapters, including nested workout plans and exercises" width="450" />
 
 * `Storage` exposes methods to read and save BrotherGym data and user preferences, and to retrieve their file paths. Callers use this interface without handling JSON conversion themselves.
 * `StorageManager` implements `Storage` and delegates operations to `JsonBrotherGymStorage` and `JsonUserPrefsStorage`, with one storage object per file.
@@ -180,101 +259,25 @@ The `Storage` component persists BrotherGym data and user preferences as local J
 
 Both file storage classes use `JsonUtil` from the `Commons` component for JSON file access. Storage depends on the model types it persists; the model does not depend on Storage.
 
-#### Stored data and file locations
-
-`MainApp` supplies the following paths when constructing the storage objects. Both paths are relative to the application's working directory.
-
-| File | Contents | Representation |
-|------|----------|----------------|
-| `data/brothergym.json` | All students, their contact details, tags, and workout plans | `JsonSerializableBrotherGym` and its nested adapters |
-| `preferences.json` | GUI settings, including window size and position | `UserPrefs` |
-
-BrotherGym data is stored as a top-level `students` array. The following example shows one student with one workout plan:
-
-```json
-{
-  "students": [
-    {
-      "name": "Alex Tan",
-      "phone": "91234567",
-      "email": "alex@example.com",
-      "address": "123 Gym Road",
-      "tags": ["beginner"],
-      "workoutPlans": [
-        {
-          "title": "Leg day",
-          "workoutDescription": "Squats: 3 sets of 10 reps",
-          "date": "2026-10-15",
-          "tags": ["strength"]
-        }
-      ]
-    }
-  ]
-}
-```
-
-Workout dates use ISO local-date format (`yyyy-MM-dd`). `JsonAdaptedWorkoutPlan` converts between this string and the model's `WorkoutDate` using the system's default time zone. Tags are JSON strings; their type is determined by whether they belong to a student or a workout plan.
-
-Missing or `null` tag lists and student workout-plan lists are treated as empty lists. Jackson ignores unknown JSON properties. These choices allow older files without the optional lists to load, but required student fields and workout-plan fields must still be present.
-
 #### Loading and validation
 
-During startup, `MainApp` first loads preferences through `JsonUserPrefsStorage`, then constructs `StorageManager` and reads BrotherGym data through the `Storage` interface. The sequence below shows a successful BrotherGym read; nested adapter conversions are summarized in the note.
+During startup, `MainApp` loads preferences and BrotherGym data through Storage. `StorageManager` delegates the data read to `JsonBrotherGymStorage`, which uses `JsonUtil` to deserialize JSON into adapters. The adapters reconstruct the model hierarchy of students, workout plans, exercises, and tags for student and workout-plan.
 
-<puml src="diagrams/StorageReadSequenceDiagram.puml" alt="Successful startup read from JSON through adapters into the model" width="800" />
+<puml src="diagrams/StorageModelConversionSequenceDiagram.puml" alt="Nested conversion of JSON adapters into model objects" width="800" />
 
-The following diagram expands the `JsonSerializableBrotherGym.toModelType()` call to show the nested adapter conversions. It continues from deserialized JSON, so file access and startup are omitted.
-
-<puml src="diagrams/StorageModelConversionSequenceDiagram.puml" alt="Nested conversion of JSON adapters into students, workout plans and tags" width="800" />
-
-1. `StorageManager` delegates `readBrotherGym()` to `JsonBrotherGymStorage`.
-1. `JsonUtil.readJsonFile()` reads the file and deserializes it into `JsonSerializableBrotherGym`.
-1. `JsonSerializableBrotherGym.toModelType()` creates an empty `BrotherGym` and calls `JsonAdaptedStudent.toModelType()` for each stored student. Each student adapter validates its contact fields, converts its tags using `JsonAdaptedTag.toStudentTag()`, and calls `JsonAdaptedWorkoutPlan.toModelType()` for each stored workout plan. Each workout-plan adapter checks required fields, parses its date, and converts its tags using `JsonAdaptedTag.toWorkoutPlanTag()` before constructing a `WorkoutPlan`. The student adapter then collects these plans into a `WorkoutPlansList` and constructs a `Student` using the converted contact fields, tags, and plans. Finally, `JsonSerializableBrotherGym.toModelType()` adds each reconstructed student to the `BrotherGym`. This chain assembles smaller model objects into larger ones: tags and workout fields form workout plans; contact fields, student tags, and workout plans form students; students form the complete `BrotherGym`. Model constructors also enforce their own constraints.
-1. `JsonSerializableBrotherGym` rejects duplicate students using the model's `hasStudent()` check. Only a completed conversion is returned as `Optional<ReadOnlyBrotherGym>`; a failed conversion does not return a partially loaded model.
-
-The caller decides what to use when data cannot be loaded:
-
-| Read outcome | Storage behavior | Startup behavior in `MainApp` |
-|--------------|------------------|-------------------------------|
-| BrotherGym file is missing | Returns `Optional.empty()` | Initializes the model with sample data |
-| BrotherGym file cannot be read or deserialized | Throws `DataLoadingException` | Logs a warning and initializes an empty BrotherGym |
-| An adapter reports an `IllegalValueException`, such as an invalid phone number or duplicate student | Wraps it in `DataLoadingException` | Logs a warning and initializes an empty BrotherGym |
-| Preferences are missing or loading throws `DataLoadingException` | Returns `Optional.empty()` or propagates the exception | Uses default preferences |
-
-The fallback above applies to `DataLoadingException`. Unchecked exceptions from model constructors or malformed nested values are not all translated into this exception by the current adapters.
-
-After initializing preferences, `MainApp` attempts to save them, including defaults if a fallback was used. Loading BrotherGym data itself does not write a data file; sample or empty data is saved on the next successful command.
+Adapters validate stored values during conversion, while model classes enforce domain constraints such as uniqueness and list limits. Storage returns the reconstructed model only after the entire conversion succeeds.
 
 #### Writing data: from model objects to JSON
 
-Writing proceeds from the complete `BrotherGym` down to its nested objects. `JsonBrotherGymStorage.saveBrotherGym()` accepts the model through its `ReadOnlyBrotherGym` interface and constructs a separate tree of JSON adapters. This conversion uses constructors that accept model objects:
+`StorageManager` delegates saves to `JsonBrotherGymStorage`, which converts the `ReadOnlyBrotherGym` model into `JsonSerializableBrotherGym` and its nested adapters. This preserves the student, workout-plan, and exercise hierarchy without modifying the model.
 
-1. **BrotherGym:** `new JsonSerializableBrotherGym(brotherGym)` reads `brotherGym.getStudentList()` and creates a `JsonAdaptedStudent` for each student. These adapters form its `students` list.
-1. **Students:** `new JsonAdaptedStudent(student)` extracts the student's name, phone, email, and address as strings. It converts each student tag into a `JsonAdaptedTag` and each plan in the student's `WorkoutPlansList` into a `JsonAdaptedWorkoutPlan`, collecting them into its `tags` and `workoutPlans` lists.
-1. **Workout plans:** `new JsonAdaptedWorkoutPlan(plan)` extracts the title and workout description as strings, formats the date using `formatDateForStorage()`, and creates a `JsonAdaptedTag` for each workout-plan tag.
-1. **Tags:** `new JsonAdaptedTag(tag)` copies the tag's name. The same adapter accepts both `StudentTag` and `WorkoutPlanTag`; its position in the adapter tree preserves which object owns the tag.
-1. **JSON output:** Once the adapter tree is complete, `JsonUtil.saveJsonFile(data, filePath)` uses Jackson to serialize it into formatted JSON. The adapter lists become JSON arrays, and `JsonAdaptedTag` uses `@JsonValue` to serialize each tag as a string. `FileUtil` then writes the JSON text to the destination file in UTF-8.
+`JsonAdaptedWorkoutPlan` writes the plan's name under the existing `"title"` JSON key, so previously saved data remains readable.
 
-The resulting structure matches the example under **Stored data and file locations**: the top-level `students` array contains student objects, each student's `workoutPlans` array contains workout-plan objects, and both students and workout plans have their own `tags` arrays. The adapters copy values from the model without modifying it.
+`JsonUtil` uses Jackson to serialize the adapters and write the JSON file. Keeping conversion in the adapters separates the stored representation from domain logic.
 
-#### Automatic saving and write failures
+#### Automatic saving
 
 `LogicManager.execute()` calls `storage.saveBrotherGym(model.getBrotherGym())` after a command executes successfully and before returning its `CommandResult`. This happens for every successful command, including commands that only change the view. Parsing errors and command execution errors prevent this save step from being reached.
-
-<puml src="diagrams/StorageSaveSequenceDiagram.puml" alt="Successful automatic save after a command, from the model through JSON adapters to disk" width="800" />
-
-Before conversion, `JsonBrotherGymStorage` creates the data file and any missing parent directories. Each save replaces the existing file contents with the entire BrotherGym rather than appending an individual change. `MainApp.stop()` separately saves the current user preferences on shutdown.
-
-If saving BrotherGym data throws an `IOException`, `LogicManager` reports a `CommandException`; an `AccessDeniedException` produces a message about insufficient write permissions. The command has already executed at this point, so a failed save does not roll back its changes in memory. Preference save failures are logged by `MainApp`.
-
-<box type="info" seamless>
-
-**Persistence limitations:** Writes currently go directly to the destination file, without an atomic file replacement or automatic backup. A write failure can leave the file incomplete. After startup falls back to an empty BrotherGym, the next successful command attempts to overwrite the existing data file with the current in-memory data.
-</box>
-
-Workout plans store their `status` as `PENDING`, `COMPLETED`, or `OVERDUE`. Reading a file preserves the saved status
-without recalculating deadlines. Older files with a missing or null status default to `PENDING`; invalid status values
-cause a data-loading error. Date-based statuses are refreshed when the user runs `viewStudent`.
 
 ### Common classes
 
@@ -296,9 +299,13 @@ Workout-plan statuses are refreshed explicitly when `viewStudent` is executed. `
 
 Changing either selection notifies `MainWindow`, which coalesces related property changes before passing the final student and plan state to `WorkoutPlanListPanel#showStudent()`. With no selected plan, the panel shows the student's collapsed plan cards. `viewPlan` expands the selected card in its original list position and renders numbered exercises inside it, while sibling cards remain available through the same outer scroll pane. An empty plan shows an `Exercises (0)` heading and an inline empty message. With no current student, the panel prompts the user to select one.
 
-The same observable flow redraws the panel after commands such as `markPlan`, `unmarkPlan`, `editExercise`, and `deleteExercise` replace the selected plan. `ModelManager` rebinds the selected plan when an edit or exercise change replaces it with an immutable object. The panel treats the same stored instance or a replacement at the same list index as a retained selection and restores the previous scroll offset. A different `viewPlan` selection is scrolled only far enough to become visible. Removing the selected plan collapses the remaining list without selecting a replacement; navigation away from the student clears the panel state. This keeps the view and subsequent exercise commands on the same stored plan.
+The same observable flow redraws the panel after commands such as `markPlan`, `unmarkPlan`, `editExercise`, and `deleteExercise` replace the selected plan. Because plans are immutable, `ModelManager` rebinds the selected plan to its replacement.
 
-Each `WorkoutPlanCard` reads the plan's title, date, workout description, tags, and status through `WorkoutPlan` getters. Tags are sorted by name and rendered individually as labels, giving a stable display order without relying on `WorkoutPlan#toString()`. The card maps the status to visible `DONE`, `OVERDUE`, or `PENDING` text and applies matching CSS classes to both the badge and card.
+The panel treats the same stored instance, or its replacement at the same list index, as a retained selection. It then restores the previous scroll offset. Selecting a different plan scrolls only far enough to reveal its card.
+
+Deleting another plan retains and reindexes the selection. Deleting the selected plan instead collapses the remaining list without selecting a replacement. Running `viewStudent` collapses the selection and returns the panel to the top, while navigating away from the student clears the panel state. This keeps the visible selection and subsequent exercise commands aligned with the same stored plan.
+
+Each `WorkoutPlanCard` reads the plan's name, date, workout description, tags, and status through `WorkoutPlan` getters. Tags are sorted by name and rendered individually as labels, giving a stable display order without relying on `WorkoutPlan#toString()`. The card maps the status to visible `DONE`, `OVERDUE`, or `PENDING` text and applies matching CSS classes to both the badge and card.
 
 The following sequence diagram shows how the panel is updated when the user executes `viewStudent 1`:
 
@@ -315,11 +322,11 @@ The following sequence diagram shows how the panel is updated when the user exec
   * Pros: The display always reflects the current time without requiring another command.
   * Cons: A timer adds lifecycle complexity, while calculating status in the UI mixes model rules with presentation logic.
 
-**Aspect: Keeping the workout plan panel synchronized with the current student:**
+**Aspect: Keeping the workout plan panel synchronized with navigation:**
 
-* **Alternative 1 (current choice):** Observe the selected student and plan properties in `Logic`.
-  * Pros: The panel updates when navigation or immutable replacements change either selection.
-  * Cons: Commands and `Model` operations must update both properties correctly for listeners to be notified.
+* **Alternative 1 (current choice):** Observe the selected student and plan properties in `Logic` and expand the selected card within the existing list.
+  * Pros: The panel updates when navigation or immutable replacements change either selection, while the surrounding plans remain visible for context.
+  * Cons: Commands and `Model` operations must update both properties correctly, and the panel must preserve a sensible viewport while cards expand, collapse, or are reindexed.
 * **Alternative 2:** Call `WorkoutPlanListPanel#showStudent()` manually after every successful command.
   * Pros: The refresh is explicit in the command-execution flow.
   * Cons: The UI is refreshed even for unrelated commands, and new commands can fail to refresh the panel if the manual call is omitted.
@@ -332,9 +339,11 @@ The following sequence diagram shows how the panel is updated when the user exec
 
 ### Editing an exercise
 
-`EditExerciseCommandParser` accepts a displayed one-based exercise index and optional `--name` and `--description` values. It rejects repeated or unsupported prefixes and requires at least one edited field.
+`EditExerciseCommandParser` accepts the displayed one-based exercise index followed by optional `--name` and `--description` values. It validates the argument structure before parsing the index and supplied fields. Repeated or unsupported prefixes, invalid field values, and commands without an edited field are rejected before a command is created.
 
-`EditExerciseCommand` preserves omitted fields and calls `Model#setExerciseForWorkoutPlan`. The model replaces the immutable exercise list, workout plan, and student while retaining the exercise position and unrelated data. Domain failures are translated into command errors before any model state changes.
+When `EditExerciseCommand` executes, it first requires both a selected student and selected workout plan. It locates the exercise using the displayed index and copies any omitted field from the existing exercise. It then calls `Model#setExerciseForWorkoutPlan` with the replacement.
+
+The exercise remains at the same position, and the selected workout card stays expanded to show the updated value. An out-of-range index, duplicate result, or stale selection produces a command error without a partial update.
 
 ### \[Proposed\] Undo/redo feature
 
@@ -657,55 +666,237 @@ Use case: U7 - View exercises of a workout plan
 
 --------------------------------------------------------------------------------------------------------------------
 
-## **Appendix: Instructions for manual testing**
+## **Appendix: Instructions for Manual Testing**
 
-Given below are instructions to test the app manually.
+The following walkthrough provides a starting point for manual testing. Testers are encouraged to explore
+additional variations. Refer to the [User Guide](UserGuide.md#features) for command syntax and field constraints.
+This appendix should only serve as a starting point to familiarise testers with the functionalities of BrotherGym.
 
-<box type="info" seamless>
+### Before you begin
 
-**Note:** These instructions only provide a starting point for testers to work on;
-testers are expected to do more *exploratory* testing.
-</box>
+* Follow the [Quick start](UserGuide.md#quick-start) instructions to launch the JAR from a separate, empty
+  test folder. Keep the same working directory when relaunching so the app uses the same data file.
+* Use only test data: the walkthrough includes `clear` and deletion commands.
+* Enter `help` and check that the help window opens with readable command instructions; close it to continue.
+* Run the sections in order and enter each command on a separate line. Unless a step says otherwise, retain the
+  data from the previous section. IDs below assume this order; after exploratory changes, use the displayed IDs
+  or recreate the dataset.
 
-### Launch and shutdown
+### Prepare a predictable dataset
 
-1. Initial launch
+Enter the following commands. `clear` removes the initial sample data in this test instance.
 
-   1. Download the JAR file and copy it into an empty folder.
+```text
+clear
+addStudent Alex Tan --hp 91234567 --email alex@example.com --addr 10 Clementi Road --tag beginner
+addStudent Beth Lim --hp 92345678 --email beth@example.com --addr 20 Dover Road
+viewStudent 1
+addPlan Strength Session --plan Practise controlled movements --date 31122099 --tag strength
+addPlan Previous Session --plan Review completed training --date 01012000
+viewPlan 1
+addExercise Squat --description 3 sets of 8 reps at 30kg
+addExercise Plank --description 3 sets of 30 seconds
+```
 
-   1. Double-click the JAR file.<br>
-      Expected: The GUI opens with a set of sample contacts. The window size may not be optimal.
+Expected: There are two students. Alex has two plans, with two numbered exercises in the expanded first plan.
+Beth has no plans. The first plan is `PENDING` and the second is `OVERDUE`, assuming the test date is between
+2 January 2000 and 31 December 2099 (inclusive). For the later checks, which change the first plan
+to 30 December 2099, the expected `PENDING` status assumes the test date is on or before that date.
 
-1. Saving window preferences
+### Manage students and navigate between views
 
-   1. Resize the window to an optimal size. Move the window to a different location. Close the window.
+1. Enter the following commands:
 
-   1. Relaunch the app by double-clicking the JAR file.<br>
-       Expected: The most recent window size and location are retained.
+   ```text
+   find bEtH
+   viewStudent 1
+   home
+   viewStudent 1
+   ```
 
-1. _{ more test cases … }_
+   Expected: The search displays only Beth, numbered 1, and `viewStudent 1` shows her empty workout list.
+   `home` restores both students and clears the selection. The final command shows Alex's two plans.
 
-### Deleting a student
+2. Update Alex's details and tags:
 
-1. Deleting a student while all students are being shown
+   ```text
+   editStudent 1 --name Alex Teo --hp 93456789 --email alexteo@example.com --addr 30 Clementi Road --tag regular
+   editStudent 1 --clearTags
+   ```
 
-   1. Prerequisites: List all students using the `home` command, with multiple students in the list.
+   Expected: The first command updates the specified details and replaces `beginner` with `regular`.
+   The second removes all student tags. Alex's plans and exercises remain intact.
 
-   1. Test case: `deleteStudent 1`<br>
-      Expected: The first contact is deleted from the list. The status message shows the deleted contact's details.
+3. Try adding a duplicate:
 
-   1. Test case: `deleteStudent 0`<br>
-      Expected: No student is deleted. The status message shows error details.
+   ```text
+   addStudent alex teo --hp 94567890 --email duplicate@example.com --addr 40 Dover Road
+   ```
 
-   1. Other incorrect delete commands to try: `deleteStudent`, `deleteStudent x`, `...` (where x is larger than the list size)<br>
-      Expected: Similar to previous.
+   Expected: The command is rejected despite the different letter case and contact details. There are still two students.
 
-1. _{ more test cases … }_
+### Manage workout plans and track progress
 
-### Saving data
+1. Select Alex and edit the first plan:
 
-1. Dealing with missing/corrupted data files
+   ```text
+   viewStudent 1
+   viewPlan 1
+   editPlan 1 --name Strength Training --plan Focus on controlled technique --date 30122099 --tag technique
+   editPlan 1 --clearTags
+   ```
 
-   1. _{Explain how to simulate missing or corrupted data files and state the expected behavior.}_
+   Expected: The first plan's details update, its tags are replaced and then cleared, and its two exercises remain.
+   The plan stays expanded throughout these edits.
+   Try `addPlan Strength Training --plan Focus on controlled technique --date 30122099`.
+   Expected: The duplicate is rejected and there are still two plans.
 
-1. _{ more test cases … }_
+2. Check status changes:
+
+   ```text
+   viewStudent 1
+   markPlan 1
+   markPlan 1
+   unmarkPlan 1
+   markPlan 2
+   unmarkPlan 2
+   unmarkPlan 2
+   ```
+
+   Expected: Plan 1 becomes `DONE`, the repeated mark is rejected, and unmarking restores `PENDING`.
+   Plan 2 becomes `DONE`, then returns to `OVERDUE`; the repeated unmark is rejected.
+
+3. Check calendar validation:
+
+   ```text
+   editPlan 1 --date 31022027
+   editPlan 1 --date 29022028
+   editPlan 1 --date 30122099
+   ```
+
+   Expected: The impossible date is rejected without changing the plan. The leap-day date is accepted, and the
+   final command restores the future date. For the today boundary, temporarily set an unmarked plan's date to
+   today's date in `DDMMYYYY` format: its status should be `PENDING`. Restore the original date afterward.
+
+4. Enter `viewPlan 2`, then `viewPlan 1`.
+
+   Expected: Only the selected plan expands, while both plans remain in their original order from the one
+   scrollable list. Plan 2 shows an empty exercise list. The selected plan's details and numbered exercises
+   are readable.
+   `viewStudent 1` collapses the expansion and returns the list to the top; enter `viewPlan 1` again to
+   continue.
+
+### Manage exercises within a selected plan
+
+Prerequisite: Alex's first plan is expanded and still contains Squat and Plank.
+
+1. Enter:
+
+   ```text
+   editExercise 1 --description 3 sets of 10 reps at 30kg
+   addExercise Squat --description 3 sets of 10 reps at 30kg
+   editExercise 2 --name Squat --description 3 sets of 10 reps at 30kg
+   ```
+
+   Expected: The first exercise keeps its name and position while its description changes. Both subsequent
+   commands are rejected as duplicates, leaving the two exercises unchanged.
+
+2. Enter:
+
+   ```text
+   editExercise 2 --name Side Plank
+   deleteExercise 1
+   deleteExercise 1
+   ```
+
+   Expected: Renaming retains the second exercise's description. The first deletion leaves Side Plank numbered 1;
+   the second leaves an empty plan showing `Exercises (none)` and an empty message. The plan stays expanded.
+
+3. Add an exercise back for the saving checks:
+
+   ```text
+   addExercise Goblet Squat --description 3 sets of 10 reps at 12kg
+   viewPlan 2
+   viewStudent 2
+   viewStudent 1
+   viewPlan 1
+   ```
+
+   Expected: Plan 2 remains empty and Beth still has no plans. Returning to Alex's first plan shows Goblet Squat,
+   confirming that exercise changes affected only the selected plan.
+
+### Check selection rules and rejected inputs
+
+1. Enter these commands in order:
+
+   ```text
+   home
+   addPlan Unselected Session --plan Selection check --date 31122099
+   viewStudent 1
+   addExercise Unselected Exercise --description Selection check
+   viewPlan 1
+   ```
+
+   Expected: The plan command is rejected because no student is selected. The exercise command is rejected
+   because no plan is selected. Selecting the student and plan afterward succeeds without losing existing data.
+
+2. With Alex and plan 1 selected, try this representative set of invalid inputs:
+
+   | Input | What to check |
+   | --- | --- |
+   | `viewStudent 0` | Non-positive index is rejected. |
+   | `viewPlan 01` | Leading-zero index is rejected. |
+   | `deleteExercise 999` | Out-of-range index is rejected; Goblet Squat remains. |
+   | `addExercise Curl` | Missing required description is reported. |
+   | `editExercise 1 --tag strength` | Unsupported prefix is rejected. |
+   | `editExercise 1 --name Curl --name Row` | Repeated single-value prefix is rejected. |
+   | `editStudent 1` | An edit without any fields is rejected. |
+   | `find !!!` | Search without a valid keyword is rejected. |
+   | `home extra` | Extra arguments to a no-argument command are rejected. |
+
+   Expected for each: Feedback explains the error and no student, plan, or exercise data changes.
+   Enter `viewStudent 1` and `viewPlan 2` afterward to confirm that valid commands still work.
+
+### Verify saving, deletion, and recovery
+
+1. **Persist the nested data.** Enter `markPlan 2`, then `exit`. Relaunch from the same working directory and
+   enter `viewStudent 1`, then `viewPlan 1`.
+
+   Expected: Alex's edited contact details, cleared tags, both plans, and Goblet Squat are retained. Plan 2 is
+   still `DONE`. Check the saved data rather than expecting the previous view selection to be restored.
+
+2. **Delete plans around an expanded plan.** Enter `viewPlan 2`, then `deletePlan 1`.
+
+   Expected: Previous Session remains expanded and becomes plan 1. Enter `deletePlan 1` again.
+   The selected plan disappears and the list collapses without selecting another plan.
+
+3. **Delete a student with nested data.** Recreate a plan and exercise for Alex:
+
+   ```text
+   addPlan Cleanup Session --plan Check nested deletion --date 31122099
+   viewPlan 1
+   addExercise Lunge --description 2 sets of 10 reps
+   home
+   find Alex
+   deleteStudent 1
+   home
+   ```
+
+   Expected: Alex and the associated plan and exercise are removed. Beth remains unchanged. Enter `clear`,
+   then `exit`, and relaunch. The student list remains empty rather than being replaced by sample data.
+
+4. **Missing data file.** Close the app and copy `data/brothergym.json` to a backup outside the `data` folder.
+   Remove the original file and relaunch from the same working directory.
+
+   Expected: The app opens with sample data. Close the app and restore the backup before the next check.
+
+5. **Corrupted data file.** With the app closed and the backup retained, replace the contents of
+   `data/brothergym.json` with the following invalid JSON, then relaunch:
+
+   ```text
+   { invalid json
+   ```
+
+   Expected: The app opens with an empty student list. Before entering any command, inspect the file externally:
+   it should still contain the invalid text. Enter `home` and inspect it again: the successful command saves
+   valid data for the empty list. Close the app, restore the backup, and relaunch to verify recovery.

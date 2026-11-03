@@ -22,8 +22,8 @@ public class UnmarkPlanCommand extends SingleIndexCommand {
 
     public static final String MESSAGE_DESCRIPTION =
             "Unmarks a workout plan belonging to the student currently being viewed.";
-    public static final String MESSAGE_PARAMETERS = "PLAN_ID (must be a positive integer)";
-    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1";
+    public static final String MESSAGE_PARAMETERS = "PLAN_ID";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 2";
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
             + "Parameters: " + MESSAGE_PARAMETERS + "\n"
             + "Example: " + MESSAGE_EXAMPLE;

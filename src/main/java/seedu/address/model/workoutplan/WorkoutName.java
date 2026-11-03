@@ -4,30 +4,30 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
 /**
- * Represents the title of a workout plan.
+ * Represents the name of a workout plan.
  * Guarantees: immutable and not blank.
  */
-public final class WorkoutTitle {
+public final class WorkoutName {
 
-    public static final String MESSAGE_CONSTRAINTS = "Workout titles should not be blank";
+    public static final String MESSAGE_CONSTRAINTS = "Workout plan names should not be blank";
 
     private final String value;
 
     /**
-     * Constructs a {@code WorkoutTitle}.
+     * Constructs a {@code WorkoutName}.
      *
-     * @param title A non-blank title.
+     * @param name A non-blank name.
      */
-    public WorkoutTitle(String title) {
-        requireNonNull(title);
-        checkArgument(isValidWorkoutTitle(title), MESSAGE_CONSTRAINTS);
-        value = title;
+    public WorkoutName(String name) {
+        requireNonNull(name);
+        checkArgument(isValidName(name), MESSAGE_CONSTRAINTS);
+        value = name;
     }
 
     /**
-     * Returns true if the title contains non-whitespace characters.
+     * Returns true if the name contains non-whitespace characters.
      */
-    public static boolean isValidWorkoutTitle(String test) {
+    public static boolean isValidName(String test) {
         return !test.isBlank();
     }
 
@@ -45,7 +45,7 @@ public final class WorkoutTitle {
         if (other == this) {
             return true;
         }
-        return other instanceof WorkoutTitle otherTitle && value.equals(otherTitle.value);
+        return other instanceof WorkoutName otherName && value.equals(otherName.value);
     }
 
     @Override

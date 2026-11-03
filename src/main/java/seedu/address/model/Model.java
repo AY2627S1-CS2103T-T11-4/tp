@@ -79,7 +79,7 @@ public interface Model {
 
     /**
      * Removes the matching plan and stores an updated student value.
-     * Prefers the same plan instance; otherwise matches title, description, date, tags, and status,
+     * Prefers the same plan instance; otherwise matches name, description, date, tags, and status,
      * ignoring exercises. If several plans match, removes the first one.
      *
      * @throws StudentNotFoundException If the student is not in the model.

@@ -25,10 +25,10 @@ import seedu.address.model.student.Student;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
-import seedu.address.model.workoutplan.WorkoutTitle;
 
 /** Contains unit and integration tests for {@link EditPlanCommand}. */
 public class EditPlanCommandTest {
@@ -37,12 +37,12 @@ public class EditPlanCommandTest {
             new ExerciseName("Squats"), new ExerciseDescription("Barbell back squat"))));
 
     private static final WorkoutPlan FIRST_PLAN = new WorkoutPlan(
-            new WorkoutTitle("Strength"), new WorkoutDescription("Upper body"),
+            new WorkoutName("Strength"), new WorkoutDescription("Upper body"),
             WorkoutDate.fromLocalDate(LocalDate.now().plusDays(1)),
             Set.of(new WorkoutPlanTag("old")), WorkoutPlanStatus.PENDING, EXERCISES);
 
     private static final WorkoutPlan SECOND_PLAN = new WorkoutPlan(
-            new WorkoutTitle("Cardio"), new WorkoutDescription("Running"),
+            new WorkoutName("Cardio"), new WorkoutDescription("Running"),
             WorkoutDate.fromLocalDate(LocalDate.now().plusDays(2)));
 
     @Test
@@ -55,16 +55,16 @@ public class EditPlanCommandTest {
                 new EditPlanCommand(Index.fromOneBased(1), null));
     }
 
-    // Each valid input at least once: title-only edit succeeds.
+    // Each valid input at least once: name-only edit succeeds.
     @Test
     public void execute_fieldSpecified_preservesOtherFieldsAndTags() throws Exception {
         Model model = createModelWithPlans(FIRST_PLAN, SECOND_PLAN);
         Student currentStudent = model.getFilteredStudentList().get(0);
         model.setCurrentStudent(currentStudent);
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
-        descriptor.setTitle(new WorkoutTitle("Updated strength"));
+        descriptor.setName(new WorkoutName("Updated strength"));
 
-        WorkoutPlan expectedPlan = new WorkoutPlan(new WorkoutTitle("Updated strength"),
+        WorkoutPlan expectedPlan = new WorkoutPlan(new WorkoutName("Updated strength"),
                 FIRST_PLAN.getDescription(), FIRST_PLAN.getDate(), FIRST_PLAN.getTags(),
                 FIRST_PLAN.getStatus(), FIRST_PLAN.getExercisesList());
         Student expectedStudent = withPlans(currentStudent, expectedPlan, SECOND_PLAN);
@@ -78,17 +78,17 @@ public class EditPlanCommandTest {
     // EP: editing a completed plan (valid).
     @Test
     public void execute_fieldSpecified_preservesCompletedStatus() throws Exception {
-        WorkoutPlan completedPlan = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getDescription(),
+        WorkoutPlan completedPlan = new WorkoutPlan(FIRST_PLAN.getName(), FIRST_PLAN.getDescription(),
                 FIRST_PLAN.getDate(), FIRST_PLAN.getTags(), WorkoutPlanStatus.COMPLETED,
                 FIRST_PLAN.getExercisesList());
         Model model = createModelWithPlans(completedPlan);
         Student currentStudent = model.getFilteredStudentList().get(0);
         model.setCurrentStudent(currentStudent);
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
-        WorkoutTitle updatedTitle = new WorkoutTitle("Updated strength");
-        descriptor.setTitle(updatedTitle);
+        WorkoutName updatedName = new WorkoutName("Updated strength");
+        descriptor.setName(updatedName);
 
-        WorkoutPlan expectedPlan = new WorkoutPlan(updatedTitle, completedPlan.getDescription(),
+        WorkoutPlan expectedPlan = new WorkoutPlan(updatedName, completedPlan.getDescription(),
                 completedPlan.getDate(), completedPlan.getTags(), WorkoutPlanStatus.COMPLETED,
                 completedPlan.getExercisesList());
         Student expectedStudent = withPlans(currentStudent, expectedPlan);
@@ -126,7 +126,7 @@ public class EditPlanCommandTest {
 
     private void assertDateEdit(int days, WorkoutPlanStatus status, WorkoutPlanStatus expectedStatus) throws Exception {
         LocalDate dueDate = LocalDate.now().plusDays(days);
-        WorkoutPlan original = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getDescription(),
+        WorkoutPlan original = new WorkoutPlan(FIRST_PLAN.getName(), FIRST_PLAN.getDescription(),
                 FIRST_PLAN.getDate(), FIRST_PLAN.getTags(), status);
         Model model = createModelWithPlans(original, SECOND_PLAN);
         model.setCurrentStudent(model.getFilteredStudentList().get(0));
@@ -151,7 +151,7 @@ public class EditPlanCommandTest {
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
         descriptor.setWorkoutPlanTags(Set.of(new WorkoutPlanTag("new")));
 
-        WorkoutPlan expectedPlan = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getDescription(),
+        WorkoutPlan expectedPlan = new WorkoutPlan(FIRST_PLAN.getName(), FIRST_PLAN.getDescription(),
                 FIRST_PLAN.getDate(), Set.of(new WorkoutPlanTag("new")), FIRST_PLAN.getStatus(),
                 FIRST_PLAN.getExercisesList());
         Student expectedStudent = withPlans(currentStudent, expectedPlan);
@@ -170,7 +170,7 @@ public class EditPlanCommandTest {
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
         descriptor.setWorkoutPlanTags(Set.of());
 
-        WorkoutPlan expectedPlan = new WorkoutPlan(FIRST_PLAN.getTitle(), FIRST_PLAN.getDescription(),
+        WorkoutPlan expectedPlan = new WorkoutPlan(FIRST_PLAN.getName(), FIRST_PLAN.getDescription(),
                 FIRST_PLAN.getDate(), Set.of(), FIRST_PLAN.getStatus(), FIRST_PLAN.getExercisesList());
         Student expectedStudent = withPlans(currentStudent, expectedPlan);
         Model expectedModel = modelWithStudent(expectedStudent);
@@ -184,7 +184,7 @@ public class EditPlanCommandTest {
     public void execute_noCurrentStudent_throwsCommandException() {
         Model model = new ModelManager(getTypicalBrotherGym(), new UserPrefs());
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
-        descriptor.setTitle(new WorkoutTitle("Updated"));
+        descriptor.setName(new WorkoutName("Updated"));
 
         CommandTestUtil.assertCommandFailure(new EditPlanCommand(Index.fromOneBased(1), descriptor), model,
                 EditPlanCommand.MESSAGE_NO_STUDENT_SELECTED);
@@ -194,7 +194,7 @@ public class EditPlanCommandTest {
     @Test
     public void execute_nullModel_throwsNullPointerException() {
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
-        descriptor.setTitle(new WorkoutTitle("Updated"));
+        descriptor.setName(new WorkoutName("Updated"));
         EditPlanCommand command = new EditPlanCommand(Index.fromOneBased(1), descriptor);
 
         assertThrows(NullPointerException.class, () -> command.execute(null));
@@ -206,7 +206,7 @@ public class EditPlanCommandTest {
         Model model = createModelWithPlans(FIRST_PLAN);
         model.setCurrentStudent(model.getFilteredStudentList().get(0));
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
-        descriptor.setTitle(new WorkoutTitle("Updated"));
+        descriptor.setName(new WorkoutName("Updated"));
 
         CommandTestUtil.assertCommandFailure(new EditPlanCommand(Index.fromOneBased(2), descriptor), model,
                 EditPlanCommand.MESSAGE_INVALID_WORKOUT_ID);
@@ -226,12 +226,12 @@ public class EditPlanCommandTest {
     @Test
     public void execute_duplicatePlan_throwsCommandException() {
         for (WorkoutPlanStatus status : WorkoutPlanStatus.values()) {
-            WorkoutPlan existing = new WorkoutPlan(SECOND_PLAN.getTitle(), SECOND_PLAN.getDescription(),
+            WorkoutPlan existing = new WorkoutPlan(SECOND_PLAN.getName(), SECOND_PLAN.getDescription(),
                     SECOND_PLAN.getDate(), SECOND_PLAN.getTags(), status);
             Model model = createModelWithPlans(FIRST_PLAN, existing);
             model.setCurrentStudent(model.getFilteredStudentList().get(0));
             EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
-            descriptor.setTitle(existing.getTitle());
+            descriptor.setName(existing.getName());
             descriptor.setDescription(existing.getDescription());
             descriptor.setDate(existing.getDate());
             Set<WorkoutPlanTag> editedTags = status == WorkoutPlanStatus.PENDING
@@ -264,7 +264,7 @@ public class EditPlanCommandTest {
     @Test
     public void equals() {
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
-        descriptor.setTitle(new WorkoutTitle("Updated"));
+        descriptor.setName(new WorkoutName("Updated"));
         EditPlanCommand first = new EditPlanCommand(Index.fromOneBased(1), descriptor);
         EditPlanCommand copy = new EditPlanCommand(Index.fromOneBased(1), descriptor);
         EditPlanCommand different = new EditPlanCommand(Index.fromOneBased(2), descriptor);

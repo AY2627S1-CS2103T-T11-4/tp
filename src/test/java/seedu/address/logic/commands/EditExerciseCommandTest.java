@@ -32,10 +32,10 @@ import seedu.address.model.student.Student;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
 import seedu.address.model.workoutplan.WorkoutPlanStatus;
 import seedu.address.model.workoutplan.WorkoutPlansList;
-import seedu.address.model.workoutplan.WorkoutTitle;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanNotFoundException;
 
 /** Tests exercise editing through the selected student and workout plan. */
@@ -73,7 +73,7 @@ public class EditExerciseCommandTest {
         WorkoutPlan updatedPlan = model.getCurrentWorkoutPlan().orElseThrow();
         assertEquals(String.format(EditExerciseCommand.MESSAGE_SUCCESS, expected), result.getFeedbackToUser());
         assertEquals(List.of(expected, PUSH_UPS), updatedPlan.getExercisesList().getExerciseList());
-        assertEquals(selectedPlan.getTitle(), updatedPlan.getTitle());
+        assertEquals(selectedPlan.getName(), updatedPlan.getName());
         assertEquals(selectedPlan.getDescription(), updatedPlan.getDescription());
         assertEquals(selectedPlan.getDate(), updatedPlan.getDate());
         assertEquals(selectedPlan.getTags(), updatedPlan.getTags());
@@ -215,7 +215,7 @@ public class EditExerciseCommandTest {
     }
 
     private static WorkoutPlan plan(String title, List<Exercise> exercises) {
-        return new WorkoutPlan(new WorkoutTitle(title), new WorkoutDescription("Plan notes"),
+        return new WorkoutPlan(new WorkoutName(title), new WorkoutDescription("Plan notes"),
                 new WorkoutDate(new Date(0)), Set.of(), WorkoutPlanStatus.PENDING,
                 new ExercisesList(exercises));
     }

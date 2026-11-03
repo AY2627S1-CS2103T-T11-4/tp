@@ -126,6 +126,13 @@ public class ModelManager implements Model {
         requireAllNonNull(target, editedStudent);
         logger.fine(() -> "Attempting to set student in model: " + target + " -> " + editedStudent);
         Student storedStudent = brotherGym.validateStudentInBrotherGym(target);
+        replaceStoredStudent(storedStudent, editedStudent);
+    }
+
+    /**
+     * Replaces the stored student after the caller resolves it from BrotherGym.
+     */
+    private void replaceStoredStudent(Student storedStudent, Student editedStudent) {
         WorkoutPlan selectedPlan = currentStudent.get() == storedStudent ? currentWorkoutPlan.get() : null;
         WorkoutPlan reboundPlan = selectedPlan == null ? null
                 : retainedSelectedPlan(editedStudent, selectedPlan);
@@ -139,7 +146,7 @@ public class ModelManager implements Model {
                 clearCurrentStudent();
             }
         }
-        logger.info(() -> "Student set in model: " + target.getName() + " -> " + editedStudent.getName());
+        logger.info(() -> "Student set in model: " + storedStudent.getName() + " -> " + editedStudent.getName());
     }
 
     @Override
@@ -150,9 +157,9 @@ public class ModelManager implements Model {
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().addWorkoutPlan(plan);
         Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
-        setStudent(storedStudent, updatedStudent);
+        replaceStoredStudent(storedStudent, updatedStudent);
 
-        logger.info(() -> "Workout plan added for student " + student.getName() + ": " + plan.getTitle()
+        logger.info(() -> "Workout plan added for student " + student.getName() + ": " + plan.getName()
                 + "; Total number of workout plans: " + updatedPlans.getWorkoutList().size());
     }
 
@@ -164,9 +171,9 @@ public class ModelManager implements Model {
         Student storedStudent = brotherGym.validateStudentInBrotherGym(student);
         WorkoutPlansList updatedPlans = storedStudent.getWorkoutPlansList().removeWorkoutPlan(plan);
         Student updatedStudent = storedStudent.withWorkoutPlans(updatedPlans);
-        setStudent(storedStudent, updatedStudent);
+        replaceStoredStudent(storedStudent, updatedStudent);
 
-        logger.info(() -> "Workout plan removed for student " + student.getName() + ": " + plan.getTitle()
+        logger.info(() -> "Workout plan removed for student " + student.getName() + ": " + plan.getName()
                 + "; Total number of workout plans: " + updatedPlans.getWorkoutList().size());
     }
 
@@ -183,7 +190,7 @@ public class ModelManager implements Model {
         setStudentWithPlanReplacement(storedStudent, storedPlan, editedPlan, updatedStudent);
 
         logger.info(() -> "Workout plan set for student " + student.getName() + ": "
-                + target.getTitle() + " -> " + editedPlan.getTitle());
+                + target.getName() + " -> " + editedPlan.getName());
     }
 
     @Override
@@ -202,7 +209,7 @@ public class ModelManager implements Model {
         setStudentWithPlanReplacement(storedStudent, storedPlan, updatedPlan, updatedStudent);
 
         logger.info(() -> "Exercise added for student " + student.getName() + " in workout plan "
-                + plan.getTitle() + ": " + exercise + "; Total number of exercises: "
+                + plan.getName() + ": " + exercise + "; Total number of exercises: "
                 + updatedExercises.getExerciseList().size());
     }
 
@@ -223,7 +230,7 @@ public class ModelManager implements Model {
         setStudentWithPlanReplacement(storedStudent, storedPlan, updatedPlan, updatedStudent);
 
         logger.info(() -> "Exercise set for student " + student.getName() + " in workout plan "
-                + plan.getTitle() + ": " + target + " -> " + editedExercise);
+                + plan.getName() + ": " + target + " -> " + editedExercise);
     }
 
     @Override
@@ -242,7 +249,7 @@ public class ModelManager implements Model {
         setStudentWithPlanReplacement(storedStudent, storedPlan, updatedPlan, updatedStudent);
 
         logger.info(() -> "Exercise removed for student " + student.getName() + " in workout plan "
-                + plan.getTitle() + ": " + target + "; Total number of exercises: "
+                + plan.getName() + ": " + target + "; Total number of exercises: "
                 + updatedExercises.getExerciseList().size());
     }
 
@@ -254,7 +261,7 @@ public class ModelManager implements Model {
             int selectedIndex = currentStudent.get() == storedStudent
                     ? indexOfInstance(storedStudent.getWorkoutPlansList().getWorkoutList(), currentWorkoutPlan.get())
                     : -1;
-            setStudent(storedStudent, updatedStudent);
+            replaceStoredStudent(storedStudent, updatedStudent);
             if (selectedIndex >= 0 && currentStudent.get() == updatedStudent) {
                 setCurrentWorkoutPlan(updatedStudent.getWorkoutPlansList().getWorkoutPlan(selectedIndex));
             }
@@ -262,10 +269,10 @@ public class ModelManager implements Model {
         return updatedStudent;
     }
 
-    private void setStudentWithPlanReplacement(Student student, WorkoutPlan target,
+    private void setStudentWithPlanReplacement(Student storedStudent, WorkoutPlan target,
             WorkoutPlan replacement, Student updatedStudent) {
-        boolean wasSelected = currentStudent.get() == student && currentWorkoutPlan.get() == target;
-        setStudent(student, updatedStudent);
+        boolean wasSelected = currentStudent.get() == storedStudent && currentWorkoutPlan.get() == target;
+        replaceStoredStudent(storedStudent, updatedStudent);
         if (wasSelected && currentStudent.get() == updatedStudent) {
             setCurrentWorkoutPlan(replacement);
         }

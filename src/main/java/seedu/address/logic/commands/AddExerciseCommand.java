@@ -19,9 +19,9 @@ public class AddExerciseCommand extends Command {
     public static final String COMMAND_WORD = "addExercise";
 
     public static final String MESSAGE_DESCRIPTION = "Adds an exercise to the workout plan currently being viewed.";
-    public static final String MESSAGE_PARAMETERS = "EXERCISE_TITLE " + PREFIX_DESCRIPTION + " DESCRIPTION";
+    public static final String MESSAGE_PARAMETERS = "EXERCISE_NAME " + PREFIX_DESCRIPTION + " DESCRIPTION";
     public static final String MESSAGE_EXAMPLE =
-            COMMAND_WORD + " Squats " + PREFIX_DESCRIPTION + " Barbell back squat 30kg * 5 reps";
+            COMMAND_WORD + " Squats " + PREFIX_DESCRIPTION + " 30kg * 3 sets * 5 reps";
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
             + "Parameters: " + MESSAGE_PARAMETERS + "\n" + "Example: " + MESSAGE_EXAMPLE;
     public static final String MESSAGE_SUCCESS = "New exercise added: %1$s";

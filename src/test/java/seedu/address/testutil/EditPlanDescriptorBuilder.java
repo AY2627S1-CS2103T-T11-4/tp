@@ -9,8 +9,8 @@ import seedu.address.logic.commands.EditPlanCommand.EditPlanDescriptor;
 import seedu.address.model.tag.WorkoutPlanTag;
 import seedu.address.model.workoutplan.WorkoutDate;
 import seedu.address.model.workoutplan.WorkoutDescription;
+import seedu.address.model.workoutplan.WorkoutName;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutTitle;
 
 /**
  * A utility class to help with building EditPlanDescriptor objects.
@@ -32,17 +32,17 @@ public class EditPlanDescriptorBuilder {
      */
     public EditPlanDescriptorBuilder(WorkoutPlan plan) {
         descriptor = new EditPlanDescriptor();
-        descriptor.setTitle(plan.getTitle());
+        descriptor.setName(plan.getName());
         descriptor.setDescription(plan.getDescription());
         descriptor.setDate(plan.getDate());
         descriptor.setWorkoutPlanTags(plan.getTags());
     }
 
     /**
-     * Sets the {@code Title} of the {@code EditPlanDescriptor} that we are building.
+     * Sets the {@code Name} of the {@code EditPlanDescriptor} that we are building.
      */
-    public EditPlanDescriptorBuilder withTitle(String title) {
-        descriptor.setTitle(new WorkoutTitle(title));
+    public EditPlanDescriptorBuilder withName(String name) {
+        descriptor.setName(new WorkoutName(name));
         return this;
     }
 

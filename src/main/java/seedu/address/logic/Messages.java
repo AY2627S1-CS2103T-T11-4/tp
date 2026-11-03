@@ -108,7 +108,7 @@ public class Messages {
                 .toLocalDate()
                 .format(WORKOUT_PLAN_DATE_FORMATTER);
         StringBuilder builder = new StringBuilder()
-                .append(workoutPlan.getTitle().getValue())
+                .append(workoutPlan.getName().getValue())
                 .append(" - ")
                 .append(workoutPlan.getDescription().getValue())
                 .append(" (")

@@ -13,8 +13,9 @@ package "Parser classes"{
     Class BrotherGymParser
     Class XYZCommandParser
     Class SingleIndexCommandParser
+    Class NoArgumentCommandParser
 
-    package "Argument Processors" {}
+    package "Argument Processors" as ArgProcessor {}
     Class ParserUtil
     Class CliSyntax
     Class Prefix
@@ -23,26 +24,38 @@ package "Parser classes"{
 Class HiddenOutside #FFFFFF
 HiddenOutside ..> BrotherGymParser
 
-BrotherGymParser ..> Parser : <<create>>
+BrotherGymParser *--> " *  " Parser
 XYZCommandParser .up.|> Parser
 SingleIndexCommandParser .up.|> Parser
+NoArgumentCommandParser .up.|> Parser
 
-XYZCommandParser .up.> XYZCommand : <<create>>
-SingleIndexCommandParser .up.> SingleIndexCommand : <<create>>
+XYZCommandParser .up.> XYZCommand : creates
+SingleIndexCommandParser .down.> SingleIndexCommand : creates
+NoArgumentCommandParser .up.> XYZCommand : creates
 
-BrotherGymParser ..> Command : <<create>>
+BrotherGymParser ..> Command : returns
 XYZCommand -up-|> Command
 SingleIndexCommand -up-|> Command
 
-XYZCommandParser ..> "Argument Processors"
-SingleIndexCommandParser ..> "Argument Processors"
+XYZCommandParser ..> ArgProcessor
+SingleIndexCommandParser ..> ArgProcessor
+NoArgumentCommandParser ..> ArgProcessor
 XYZCommandParser ..> ParserUtil
 SingleIndexCommandParser ..> ParserUtil
 XYZCommandParser ..> CliSyntax
-SingleIndexCommandParser ..> CliSyntax
 
-"Argument Processors" ..> Prefix
+note right of XYZCommandParser
+    Represents dedicated
+    parser classes such as
+    AddStudentCommandParser
+    and FindCommandParser.
+end note
+
+ArgProcessor ..> Prefix
 CliSyntax ..> Prefix
 ParserUtil ..> Prefix
+
+ArgProcessor -[hidden]right- ParserUtil
+ParserUtil -[hidden]right- CliSyntax
 
 @enduml

@@ -1,0 +1,38 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+skinparam maxMessageSize 250
+
+participant ":EditPlanCommand" as Command LOGIC_COLOR
+participant ":ModelManager" as Model MODEL_COLOR
+participant "currentStudent:Student" as Student MODEL_COLOR
+participant "plans:WorkoutPlansList" as Plans MODEL_COLOR
+participant "editedPlan:WorkoutPlan" as EditedPlan MODEL_COLOR
+
+note over Command
+  Successful creation during execute(model).
+  Selection and field checks are omitted.
+end note
+Command -> Model : getCurrentStudent()
+activate Model
+Model --> Command : Optional.of(currentStudent)
+deactivate Model
+Command -> Student : getWorkoutPlansList()
+activate Student
+Student --> Command : plans
+deactivate Student
+Command -> Plans : getWorkoutPlan(targetIndex.getZeroBased())
+activate Plans
+Plans --> Command : planToEdit
+deactivate Plans
+note over Command, Plans
+  createEditedPlan(...) combines descriptor values
+  with unchanged fields from planToEdit.
+  Status and exercises are retained.
+end note
+create EditedPlan
+Command -> EditedPlan : new WorkoutPlan(...)
+activate EditedPlan
+EditedPlan --> Command : editedPlan
+deactivate EditedPlan
+@enduml

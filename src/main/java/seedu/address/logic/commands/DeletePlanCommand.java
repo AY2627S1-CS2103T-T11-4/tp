@@ -9,7 +9,6 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 import seedu.address.model.workoutplan.WorkoutPlan;
-import seedu.address.model.workoutplan.WorkoutPlansList;
 import seedu.address.model.workoutplan.exceptions.WorkoutPlanIndexOutOfBoundsException;
 
 /**
@@ -21,8 +20,8 @@ public class DeletePlanCommand extends SingleIndexCommand {
 
     public static final String MESSAGE_DESCRIPTION =
             "Deletes a workout plan from the Student currently being viewed.";
-    public static final String MESSAGE_PARAMETERS = "PLAN_ID (must be a positive integer)";
-    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 1";
+    public static final String MESSAGE_PARAMETERS = "PLAN_ID";
+    public static final String MESSAGE_EXAMPLE = COMMAND_WORD + " 3";
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": " + MESSAGE_DESCRIPTION + "\n"
             + "Parameters: " + MESSAGE_PARAMETERS + "\n"
             + "Example: " + MESSAGE_EXAMPLE;
@@ -50,10 +49,8 @@ public class DeletePlanCommand extends SingleIndexCommand {
                 .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
 
         final WorkoutPlan planToDelete;
-        final WorkoutPlansList updatedPlans;
         try {
             planToDelete = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
-            updatedPlans = currentStudent.getWorkoutPlansList().removeWorkoutPlan(targetIndex.getZeroBased());
         } catch (WorkoutPlanIndexOutOfBoundsException e) {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
@@ -61,6 +58,7 @@ public class DeletePlanCommand extends SingleIndexCommand {
                 currentStudent.getEmail(), currentStudent.getAddress(), currentStudent.getTags(), updatedPlans);
         model.setStudent(currentStudent, updatedStudent);
         model.updateStudentWorkoutsState(model.getCurrentStudent().orElseThrow());
+        model.removeWorkoutPlanForStudent(currentStudent, planToDelete);
 
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(planToDelete)));
     }
