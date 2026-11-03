@@ -378,7 +378,7 @@ Furthermore, certain edits can cause the BrotherGym to behave in unexpected ways
 
 1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
 2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
-3. **If the application is used past midnight** , the workout plan statuses does not automatically refresh. The update is only invoked on plan-related and exercise-related commands. The remedy is to run viewStudent STUDENT_ID to refresh the workout plan statuses.
+3. **If the application remains open past midnight**, workout plan statuses do not refresh automatically when the date changes. They refresh for the selected student when you successfully run `viewStudent`, a workout plan command, or an exercise command. To refresh a student’s workout plan statuses, run `viewStudent STUDENT_ID`, using the student’s index in the currently displayed student list.
 
 --------------------------------------------------------------------------------------------------------------------
 
