@@ -46,7 +46,7 @@ If you type quickly, BrotherGym can help you manage students and workouts faster
 
    * `deleteStudent 3` : Deletes the 3rd student shown in the current BrotherGym student list.
 
-   * `clear` : Deletes all students.
+   * `clear` : Deletes all students and their workout plans and exercises.
 
    * `exit` : Exits the app.
 
@@ -82,25 +82,7 @@ If you type quickly, BrotherGym can help you manage students and workouts faster
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </box>
 
-### Common Commands
-
-#### Viewing help: `help`
-
-Shows a message explaining how to access the help page.
-
-Format: `help`
-
-#### Clearing all entries: `clear`
-
-Clears all entries from the BrotherGym student list.
-
-Format: `clear`
-
-#### Exiting the program: `exit`
-
-Exits the program.
-
-Format: `exit`
+### General Commands
 
 #### Listing all students: `home`
 
@@ -108,7 +90,19 @@ Shows a list of all students in the BrotherGym student list and removes the sele
 
 Format: `home`
 
-### Student-related Commands
+#### Viewing help: `help`
+
+Shows a message explaining how to access the help page.
+
+Format: `help`
+
+#### Exiting the program: `exit`
+
+Exits the program.
+
+Format: `exit`
+
+### Student-related commands
 
 #### Adding a student: `addStudent`
 
@@ -152,6 +146,17 @@ Examples:
 *  `editStudent 2 --name Betsy Crower --clearTags` Edits the name of the 2nd student to be `Betsy Crower` and clears all existing tags.
 *  `editStudent 1 --tag temporary --clearTags` clears all tags, including `temporary`.
 
+#### Viewing all workout plans of a student: `viewStudent`
+
+Displays all the workout plans saved for the specified student.
+
+Format: `viewStudent STUDENT_ID`
+
+* Displays the list of workout plans for the student at the specified `INDEX`,
+  which can now be edited through [workout plan commands](#workout-plan-related-commands)
+* The student id refers to the index number shown in the displayed student list.
+* The student id **must be a positive integer** 1, 2, 3, ...
+
 #### Locating students by name: `find`
 
 Finds students whose names contain any of the given keywords.
@@ -172,17 +177,6 @@ Examples:
 
   ![result for 'Find Amelie John'](images/find-command-ui-ss.png)
 
-#### Viewing all workout plans of a student: `viewStudent`
-
-Displays all the workout plans saved for the specified student.
-
-Format: `viewStudent STUDENT_ID`
-
-* Displays the list of workout plans for the student at the specified `INDEX`,
-  which can now be edited through [workout plan commands](#workout-plan-related-commands)
-* The student id refers to the index number shown in the displayed student list.
-* The student id **must be a positive integer** 1, 2, 3, ...
-
 #### Deleting a student: `deleteStudent`
 
 Deletes the specified student from the BrotherGym student list.
@@ -197,7 +191,13 @@ Examples:
 * `home` followed by `deleteStudent 2` deletes the 2nd student in the BrotherGym student list.
 * `find Betsy` followed by `deleteStudent 1` deletes the 1st student in the results of the `find` command.
 
-### Workout plan related commands
+#### Clearing all students: `clear`
+
+Clears all students and their workout plans and exercises from BrotherGym.
+
+Format: `clear`
+
+### Workout plan-related commands
 
 <box type="important">
 These commands can only be performed after a specific student has been selected via `viewStudent`
