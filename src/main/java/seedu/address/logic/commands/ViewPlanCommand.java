@@ -48,16 +48,15 @@ public class ViewPlanCommand extends SingleIndexCommand {
         requireNonNull(model);
         Student currentStudent = model.getCurrentStudent()
                 .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
-
+        final WorkoutPlan workoutPlan;
         try {
-            currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
+            workoutPlan = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
         } catch (WorkoutPlanIndexOutOfBoundsException e) {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
-
-        currentStudent = model.updateStudentWorkoutsState(currentStudent);
-        WorkoutPlan workoutPlan = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
         model.setCurrentWorkoutPlan(workoutPlan);
+        model.updateStudentWorkoutsState(model.getCurrentStudent().orElseThrow());
+       
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(workoutPlan),
                 formatExercises(workoutPlan.getExercisesList().getExerciseList())));
     }
