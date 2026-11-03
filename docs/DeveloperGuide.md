@@ -714,7 +714,7 @@ Use case: U9 - Edit a workout plan
 **MSS:**
 
 1. Trainer <u>views workout plans for a specific student (U4)</u>.
-2. Trainer identifies a plan and provides changes to its name, description, date, or tags.
+2. Trainer identifies a plan and provides changes to its name, description, or date.
 3. BrotherGym updates the specified fields, preserving omitted fields and the plan's exercises.
 4. BrotherGym displays a success message and the updated plan.
 
