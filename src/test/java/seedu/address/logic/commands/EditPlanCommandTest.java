@@ -244,6 +244,24 @@ public class EditPlanCommandTest {
     }
 
     @Test
+    public void execute_staleExistingPlan_refreshesExistingAndEditedPlans() throws Exception {
+        WorkoutDate yesterday = WorkoutDate.fromLocalDate(LocalDate.now().minusDays(1));
+        WorkoutPlan first = new WorkoutPlan(new WorkoutName("First"), new WorkoutDescription("Test"), yesterday);
+        Model model = createModelWithPlans(first, SECOND_PLAN);
+        model.setCurrentStudent(model.getFilteredStudentList().get(0));
+        EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
+        descriptor.setDate(yesterday);
+
+        new EditPlanCommand(Index.fromOneBased(2), descriptor).execute(model);
+
+        List<WorkoutPlan> plans = model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutList();
+        assertEquals(2, plans.size());
+        assertEquals(WorkoutPlanStatus.OVERDUE, plans.get(0).getStatus());
+        assertEquals(WorkoutPlanStatus.OVERDUE, plans.get(1).getStatus());
+        assertEquals(plans.get(0).getDate(), plans.get(1).getDate());
+    }
+
+    @Test
     public void equals() {
         EditPlanCommand.EditPlanDescriptor descriptor = new EditPlanCommand.EditPlanDescriptor();
         descriptor.setName(new WorkoutName("Updated"));

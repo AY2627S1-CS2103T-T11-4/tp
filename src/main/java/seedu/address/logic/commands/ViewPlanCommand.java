@@ -48,7 +48,6 @@ public class ViewPlanCommand extends SingleIndexCommand {
         requireNonNull(model);
         Student currentStudent = model.getCurrentStudent()
                 .orElseThrow(() -> new CommandException(MESSAGE_NO_STUDENT_SELECTED));
-
         final WorkoutPlan workoutPlan;
         try {
             workoutPlan = currentStudent.getWorkoutPlansList().getWorkoutPlan(targetIndex.getZeroBased());
@@ -56,6 +55,8 @@ public class ViewPlanCommand extends SingleIndexCommand {
             throw new CommandException(MESSAGE_INVALID_WORKOUT_ID, e);
         }
         model.setCurrentWorkoutPlan(workoutPlan);
+        model.updateStudentWorkoutsState(model.getCurrentStudent().orElseThrow());
+
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(workoutPlan),
                 formatExercises(workoutPlan.getExercisesList().getExerciseList())));
     }

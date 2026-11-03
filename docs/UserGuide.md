@@ -6,7 +6,7 @@
 
 # BrotherGym User Guide
 
-BrotherGym is a **desktop application for gym trainers to manage the workout plans of their students, optimized for use through a Command Line Interface (CLI)** while retaining the benefits of a Graphical User Interface (GUI). 
+BrotherGym is a **desktop application for gym trainers to manage the workout plans of their students, optimized for use through a Command Line Interface (CLI)** while retaining the benefits of a Graphical User Interface (GUI).
 If you type quickly, BrotherGym can help you manage students and workouts faster than traditional GUI applications.
 
 <!-- * Table of Contents -->
@@ -32,9 +32,9 @@ If you type quickly, BrotherGym can help you manage students and workouts faster
 
    * `home` : Lists all students.
 
-   * `addStudent John Doe --hp 98765432 --email johnd@example.com --addr John street, block 123, #01-01`: 
+   * `addStudent John Doe --hp 98765432 --email johnd@example.com --addr John street, block 123, #01-01`:
      Adds a student named `John Doe` to the BrotherGym student list.
-   
+
    * `viewStudent 2` : Selects the second student in the list to view all workout plans of that student.
 
    * `addPlan Leg Day --description focus on form --date 20102026`:
@@ -213,7 +213,7 @@ Format: `addPlan PLAN_NAME --description DESCRIPTION --date DDMMYYYY [--tag TAG]
 * Name and description of the workout plan cannot be empty.
 * Description cannot exceed 500 characters.
 * Date field must be provided in `DDMMYYYY` format
-  
+
 Examples:
 * `addPlan Leg Day --description focus on form --date 20102026`
 * `addPlan Chest Day --description Push for PR --date 31102026`
@@ -227,8 +227,8 @@ Format: `editPlan PLAN_ID [--name PLAN_NAME] [--description DESCRIPTION] [--date
 
 Dates follow the same calendar validation as `addPlan`, including leap-year checks.
 
-* Edits the plan at the specified `PLAN_ID`. 
-  The plan id refers to the index number shown in the displayed list of workout plans. 
+* Edits the plan at the specified `PLAN_ID`.
+  The plan id refers to the index number shown in the displayed list of workout plans.
   The plan id **must be a positive integer** 1, 2, 3, ...
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
@@ -239,7 +239,7 @@ Dates follow the same calendar validation as `addPlan`, including leap-year chec
 
 Examples:
 * `editPlan 2 --description Bicep Curls 15kg 10 reps x3 --date 06072027`:
-   Edits the description and date of the second workout plan of the student's list of workout plans 
+   Edits the description and date of the second workout plan of the student's list of workout plans
    to `Full body conditioning` and `06072027`
 * `editPlan 3 --clearTags`: Clears all tags for the third workout plan of the student's list of workout plans
 
@@ -254,7 +254,7 @@ By default, workout plans have a `PENDING` status, which will change to `OVERDUE
 
 Format: `markPlan PLAN_ID`
 
-* Marks the workout plan at the specified `PLAN_ID` as `COMPLETED` 
+* Marks the workout plan at the specified `PLAN_ID` as `COMPLETED`
 * Shows an error if the workout plan is already marked as completed
 * The plan id refers to the index number shown in the displayed list of workout plans
 * The plan id **must be a positive integer** 1, 2, 3, ...
@@ -373,17 +373,19 @@ Furthermore, certain edits can cause the BrotherGym to behave in unexpected ways
 ## Known issues
 
 1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
+2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
+3. **If the application is used past midnight** , the workout plan statuses does not automatically refresh. The update is only invoked on plan-related and exercise-related commands. The remedy is to run viewStudent STUDENT_ID to refresh the workout plan statuses.
 
 --------------------------------------------------------------------------------------------------------------------
 
 ## Command summary
 General Commands
 
-Action     | Format, Examples 
+Action     | Format, Examples
 -----------|------------------
 **Return to homepage (List all students)**   | `home`
-**Help**   | `help`           
-**Exit**   | `exit`           
+**Help**   | `help`
+**Exit**   | `exit`
 
 Student-related commands
 

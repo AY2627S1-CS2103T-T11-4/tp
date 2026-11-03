@@ -9,6 +9,7 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.TypicalStudents.getTypicalBrotherGym;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +61,8 @@ public class DeletePlanCommandTest {
         DeletePlanCommand command = new DeletePlanCommand(Index.fromOneBased(1));
 
         Student updatedStudent = new Student(baseStudent.getName(), baseStudent.getPhone(), baseStudent.getEmail(),
-                baseStudent.getAddress(), baseStudent.getTags(), new WorkoutPlansList(List.of(SECOND_PLAN)));
+                baseStudent.getAddress(), baseStudent.getTags(),
+                new WorkoutPlansList(List.of(SECOND_PLAN.updateState(LocalDate.now()))));
         Model expectedModel = new ModelManager(model.getBrotherGym(), new UserPrefs());
         expectedModel.setStudent(studentWithPlans, updatedStudent);
 
@@ -86,9 +88,10 @@ public class DeletePlanCommandTest {
 
         new DeletePlanCommand(Index.fromOneBased(1)).execute(model);
 
-        assertEquals(List.of(SECOND_PLAN),
+        assertEquals(List.of(SECOND_PLAN.updateState(LocalDate.now())),
                 model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutList());
-        assertSame(SECOND_PLAN, model.getCurrentWorkoutPlan().orElseThrow());
+        assertSame(model.getCurrentStudent().orElseThrow().getWorkoutPlansList().getWorkoutPlan(0),
+                model.getCurrentWorkoutPlan().orElseThrow());
     }
 
     // EP: no current student is selected (invalid).
