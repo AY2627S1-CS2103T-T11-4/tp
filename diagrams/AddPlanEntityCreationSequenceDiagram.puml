@@ -19,7 +19,6 @@ Plan -> Exercises : new ExercisesList()
 activate Exercises
 Exercises --> Plan : exercises
 deactivate Exercises
-note right of Plan : Initial status is PENDING.
 Plan --> Parser : plan
 deactivate Plan
 @enduml
